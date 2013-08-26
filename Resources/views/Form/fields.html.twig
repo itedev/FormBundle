@@ -1,0 +1,118 @@
+{% extends 'MopaBootstrapBundle:Form:fields.html.twig' %}
+
+{% block button_stylesheet %}{% endblock button_stylesheet %}
+
+{% block button_javascript %}{% endblock button_javascript %}
+
+{% block daterange_javascript %}
+    <script type="text/javascript">
+        jQuery(document).ready(function($) {
+            var $field = $('#{{ id }}');
+            $field.daterangepicker({
+                ranges: {
+                    'Today': [new Date(), new Date()],
+                    'Yesterday': [moment().subtract('days', 1), moment().subtract('days', 1)],
+                    'Last 7 Days': [moment().subtract('days', 6), new Date()],
+                    'Last 30 Days': [moment().subtract('days', 29), new Date()],
+                    'This Month': [moment().startOf('month'), moment().endOf('month')],
+                    'Last Month': [moment().subtract('month', 1).startOf('month'), moment().subtract('month', 1).endOf('month')]
+                },
+                opens: 'left',
+                format: 'DD/MM/YYYY'
+            });
+        });
+    </script>
+{% endblock daterange_javascript %}
+
+{% block form_start %}
+    {% spaceless %}
+        {{ parent() }}
+        {% if ajax %}
+            {{ ite_form_sf_add_element('ajaxForm', '#' ~ id, element_data) }}
+        {% endif %}
+    {% endspaceless %}
+{% endblock form_start %}
+
+{% block widget_addon %}
+    {% spaceless %}
+        {% if widget_addon.button|default(false) %}
+            <button type="submit" class="btn">
+                {% if widget_addon.icon|default(null) is not empty %} <i class="icon-{{ widget_addon.icon }}"></i> {% endif %}
+                {{ widget_addon.text|trans({}, translation_domain) }}
+            </button>
+        {% else %}
+            {{ parent() }}
+        {% endif %}
+    {% endspaceless %}
+{% endblock widget_addon %}
+
+{% block ite_select2_choice_widget %}
+    {{ block('choice_widget') }}
+    {{ ite_form_sf_add_element('select2', '#' ~ id, element_data) }}
+{% endblock ite_select2_choice_widget %}
+
+{% block ite_select2_entity_widget %}
+    {{ block('choice_widget') }}
+    {{ ite_form_sf_add_element('select2', '#' ~ id, element_data) }}
+{% endblock ite_select2_entity_widget %}
+
+{% block ite_select2_ajax_entity_widget %}
+    {{ block('hidden_widget') }}
+    {{ ite_form_sf_add_element('select2', '#' ~ id, element_data) }}
+{% endblock ite_select2_ajax_entity_widget %}
+
+{% block ite_bootstrap_date_picker_widget %}
+    <div id="{{ id }}_date_picker" class="input-append bootstrap-date-picker">
+        {{ block('form_widget_simple') }}
+        <span class="add-on">
+            <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+        </span>
+    </div>
+    {{ ite_form_sf_add_element('bootstrapDateTimePicker', '#' ~ id ~ '_date_picker', element_data) }}
+{% endblock ite_bootstrap_date_picker_widget %}
+
+{% block ite_bootstrap_datetime_picker_widget %}
+    <div id="{{ id }}_datetime_picker" class="input-append bootstrap-datetime-picker">
+        {{ block('form_widget_simple') }}
+        <span class="add-on">
+            <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+        </span>
+    </div>
+    {{ ite_form_sf_add_element('bootstrapDateTimePicker', '#' ~ id ~ '_datetime_picker', element_data) }}
+{% endblock ite_bootstrap_datetime_picker_widget %}
+
+{% block ite_bootstrap_time_picker_widget %}
+    <div id="{{ id }}_time_picker" class="input-append bootstrap-time-picker">
+        {{ block('form_widget_simple') }}
+        <span class="add-on">
+            <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+        </span>
+    </div>
+    {{ ite_form_sf_add_element('bootstrapDateTimePicker', '#' ~ id ~ '_time_picker', element_data) }}
+{% endblock ite_bootstrap_time_picker_widget %}
+
+{% block form_errors %}
+    {% spaceless %}
+        {% if error_flash_style is defined %}
+            {% from 'MopaBootstrapBundle::flash.html.twig' import flash %}
+            {% for error in errors %}
+                {{
+                flash(
+                'error',
+                error.messagePluralization is null
+                ? error.messageTemplate|trans(error.messageParameters, 'validators')
+                : error.messageTemplate|transchoice(error.messagePluralization, error.messageParameters, 'validators'),
+                null,
+                false,
+                null,
+                null,
+                null,
+                false
+                )
+                }}
+            {% endfor %}
+        {% else %}
+            {{ parent() }}
+        {% endif %}
+    {% endspaceless %}
+{% endblock form_errors %}
