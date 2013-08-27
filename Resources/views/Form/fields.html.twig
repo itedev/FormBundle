@@ -91,6 +91,11 @@
     {{ ite_form_sf_add_element('bootstrapDateTimePicker', '#' ~ id ~ '_time_picker', element_data) }}
 {% endblock ite_bootstrap_time_picker_widget %}
 
+{% block ite_tinymce_textarea_widget %}
+    {{ block('textarea_widget') }}
+    {{ ite_form_sf_add_element('tinymce', '#' ~ id, element_data) }}
+{% endblock ite_tinymce_textarea_widget %}
+
 {% block form_errors %}
     {% spaceless %}
         {% if error_flash_style is defined %}

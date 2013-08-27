@@ -16,6 +16,8 @@ parameters:
     ite_form.form.bootstrap_datetime_picker_type.class:  ITE\FormBundle\Form\Core\Type\BootstrapDateTimePickerType
     ite_form.form.bootstrap_time_picker_type.class:      ITE\FormBundle\Form\Core\Type\BootstrapTimePickerType
 
+    ite_form.form.tinymce_textarea_type.class:           ITE\FormBundle\Form\Core\Type\TinymceTextareaType
+
     ite_form.form.ajax_entity_type.class:                ITE\FormBundle\Form\Doctrine\Type\AjaxEntityType
 
 services:
@@ -80,6 +82,11 @@ services:
         class:                                              %ite_form.form.bootstrap_time_picker_type.class%
         tags:
             - { name: form.type, alias: ite_bootstrap_time_picker }
+
+    ite_form.form.tinymce_textarea_type:
+        class:                                              %ite_form.form.tinymce_textarea_type.class%
+        tags:
+            - { name: form.type, alias: ite_tinymce_textarea }
 
     ite_form.form.ajax_entity_type:
         class:                                              %ite_form.form.ajax_entity_type.class%
