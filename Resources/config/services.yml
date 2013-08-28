@@ -15,6 +15,9 @@ parameters:
 
     ite_form.form.ajax_entity_type.class:                ITE\FormBundle\Form\Doctrine\Type\AjaxEntityType
 
+    assetic.twig_extension.class:                        ITE\FormBundle\Twig\Extension\AsseticExtension
+    assetic.asset_factory.class:                         ITE\FormBundle\Factory\AssetFactory
+
 services:
     ite_form.sf.extension.form:
         class:                                              %ite_form.sf.extension.form.class%
