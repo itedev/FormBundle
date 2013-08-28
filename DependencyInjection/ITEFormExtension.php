@@ -4,6 +4,7 @@ namespace ITE\FormBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\DefinitionDecorator;
 use Symfony\Component\DependencyInjection\Loader\FileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Loader;
@@ -19,7 +20,8 @@ class ITEFormExtension extends Extension
      * @var array $plugins
      */
     protected $plugins = array(
-        'tinymce'
+        'select2',
+        'tinymce',
     );
 
     /**
@@ -49,11 +51,62 @@ class ITEFormExtension extends Extension
      * @param array $config
      * @param ContainerBuilder $container
      */
+    protected function loadSelect2Configuration(FileLoader $loader, array $config, ContainerBuilder $container)
+    {
+        $container->setParameter('ite_form.plugins.select2.extras', $config['extras']);
+        $container->setParameter('ite_form.plugins.select2.options', $config['options']);
+
+        $loader->load('select2.yml');
+
+        $this->addExtendedChoiceTypes('ite_form.form.type.select2_abstract', 'select2', $container);
+    }
+
+    /**
+     * @param FileLoader $loader
+     * @param array $config
+     * @param ContainerBuilder $container
+     */
     protected function loadTinymceConfiguration(FileLoader $loader, array $config, ContainerBuilder $container)
     {
         $container->setParameter('ite_form.plugins.tinymce.extras', $config['extras']);
         $container->setParameter('ite_form.plugins.tinymce.options', $config['options']);
 
         $loader->load('tinymce.yml');
+    }
+
+    /**
+     * @param $serviceId
+     * @param $name
+     * @param ContainerBuilder $container
+     */
+    private function addExtendedChoiceTypes($serviceId, $name, ContainerBuilder $container)
+    {
+        foreach ($this->getChoiceTypeNames() as $type) {
+            $definition = new DefinitionDecorator($serviceId);
+            $definition
+                ->addMethodCall('setType', array($type))
+                ->addTag('form.type', array(
+                    'alias' => 'ite_' . $name . '_' . $type)
+                );
+
+            $extendedServiceId = preg_replace('/(abstract)$/', $type, $serviceId);
+            $container->setDefinition($extendedServiceId, $definition);
+        }
+    }
+
+    /**
+     * @return array
+     */
+    private function getChoiceTypeNames()
+    {
+        return array(
+            'choice',
+            'language',
+            'country',
+            'timezone',
+            'locale',
+            'currency',
+            'entity',
+        );
     }
 }

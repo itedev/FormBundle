@@ -1,9 +1,9 @@
 parameters:
-    ite_form.form.tinymce_textarea_type.class:           ITE\FormBundle\Form\Core\Type\TinymceTextareaType
+    ite_form.form.type.tinymce_textarea.class:           ITE\FormBundle\Form\Core\Type\TinymceTextareaType
 
 services:
-    ite_form.form.tinymce_textarea_type:
-        class:                                           %ite_form.form.tinymce_textarea_type.class%
+    ite_form.form.type.tinymce_textarea:
+        class:                                           %ite_form.form.type.tinymce_textarea.class%
         arguments: [ %ite_form.plugins.tinymce.extras%, %ite_form.plugins.tinymce.options% ]
         tags:
             - { name: form.type, alias: ite_tinymce_textarea }

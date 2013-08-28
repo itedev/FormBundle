@@ -8,10 +8,10 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * Class TinymceTextareaType
+ * Class Select2AbstractType
  * @package ITE\FormBundle\Form\Core\Type
  */
-class TinymceTextareaType extends AbstractType
+class Select2AbstractType extends AbstractType
 {
     /**
      * @var array $extras
@@ -24,6 +24,11 @@ class TinymceTextareaType extends AbstractType
     protected $options;
 
     /**
+     * @var string $type
+     */
+    protected $type;
+
+    /**
      * @param $extras
      * @param $options
      */
@@ -31,6 +36,14 @@ class TinymceTextareaType extends AbstractType
     {
         $this->extras = $extras;
         $this->options = $options;
+    }
+
+    /**
+     * @param $type
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
     }
 
     /**
@@ -64,7 +77,7 @@ class TinymceTextareaType extends AbstractType
      */
     public function getParent()
     {
-        return 'textarea';
+        return $this->type;
     }
 
     /**
@@ -72,6 +85,6 @@ class TinymceTextareaType extends AbstractType
      */
     public function getName()
     {
-        return 'ite_tinymce_textarea';
+        return 'ite_select2_' . $this->type;
     }
 }

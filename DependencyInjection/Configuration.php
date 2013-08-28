@@ -23,6 +23,7 @@ class Configuration implements ConfigurationInterface
 
         $pluginsNode = $rootNode->children()->arrayNode('plugins');
 
+        $this->addSelect2($pluginsNode);
         $this->addTinymce($pluginsNode);
 
         $rootNode
@@ -32,6 +33,28 @@ class Configuration implements ConfigurationInterface
         ->end();
 
         return $treeBuilder;
+    }
+
+    /**
+     * @param ArrayNodeDefinition $pluginsNode
+     */
+    private function addSelect2(ArrayNodeDefinition $pluginsNode)
+    {
+        $pluginsNode
+            ->children()
+                ->arrayNode('select2')
+                    ->canBeUnset()
+                    ->addDefaultsIfNotSet()
+                    ->treatNullLike(array('enabled' => true))
+                    ->treatTrueLike(array('enabled' => true))
+                    ->children()
+                        ->booleanNode('enabled')->defaultTrue()->end()
+                        ->variableNode('extras')->defaultValue(array())->end()
+                        ->variableNode('options')->defaultValue(array())->end()
+                    ->end()
+                ->end()
+            ->end()
+        ;
     }
 
     /**
@@ -55,4 +78,5 @@ class Configuration implements ConfigurationInterface
             ->end()
         ;
     }
+
 }

@@ -1,0 +1,15 @@
+parameters:
+    ite_form.form.type.select2_abstract.class:          ITE\FormBundle\Form\Core\Type\Select2AbstractType
+    ite_form.form.type.select2_ajax_entity.class:       ITE\FormBundle\Form\Doctrine\Type\Select2AjaxEntityType
+
+services:
+    ite_form.form.type.select2_abstract:
+        class:                                          %ite_form.form.type.select2_abstract.class%
+        arguments: [ %ite_form.plugins.select2.extras%, %ite_form.plugins.select2.options% ]
+        abstract: true
+
+    ite_form.form.type.select2_ajax_entity:
+        class:                                          %ite_form.form.type.select2_ajax_entity.class%
+        arguments: [ %ite_form.plugins.select2.extras%, %ite_form.plugins.select2.options% ]
+        tags:
+            - { name: form.type, alias: ite_select2_ajax_entity }

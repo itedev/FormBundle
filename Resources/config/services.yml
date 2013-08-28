@@ -9,14 +9,9 @@ parameters:
     ite_form.form.widget_form_type_extension.class:      ITE\FormBundle\Form\Core\Extension\WidgetFormTypeExtension
 
     ite_form.form.daterange_type.class:                  ITE\FormBundle\Form\Core\Type\DateRangeType
-    ite_form.form.select2_choice_type.class:             ITE\FormBundle\Form\Core\Type\Select2ChoiceType
-    ite_form.form.select2_entity_type.class:             ITE\FormBundle\Form\Doctrine\Type\Select2EntityType
-    ite_form.form.select2_ajax_entity_type.class:        ITE\FormBundle\Form\Doctrine\Type\Select2AjaxEntityType
     ite_form.form.bootstrap_date_picker_type.class:      ITE\FormBundle\Form\Core\Type\BootstrapDatePickerType
     ite_form.form.bootstrap_datetime_picker_type.class:  ITE\FormBundle\Form\Core\Type\BootstrapDateTimePickerType
     ite_form.form.bootstrap_time_picker_type.class:      ITE\FormBundle\Form\Core\Type\BootstrapTimePickerType
-
-    ite_form.form.tinymce_textarea_type.class:           ITE\FormBundle\Form\Core\Type\TinymceTextareaType
 
     ite_form.form.ajax_entity_type.class:                ITE\FormBundle\Form\Doctrine\Type\AjaxEntityType
 
@@ -52,22 +47,6 @@ services:
         tags:
             - { name: form.type, alias: daterange }
 
-    ite_form.form.select2_choice_type:
-        class:                                              %ite_form.form.select2_choice_type.class%
-        tags:
-            - { name: form.type, alias: ite_select2_choice }
-
-    ite_form.form.select2_entity_type:
-        class:                                              %ite_form.form.select2_entity_type.class%
-        tags:
-            - { name: form.type, alias: ite_select2_entity }
-
-    ite_form.form.select2_ajax_entity_type:
-        class:                                              %ite_form.form.select2_ajax_entity_type.class%
-        arguments: [ @property_accessor ]
-        tags:
-            - { name: form.type, alias: ite_select2_ajax_entity }
-
     ite_form.form.bootstrap_date_picker_type:
         class:                                              %ite_form.form.bootstrap_date_picker_type.class%
         tags:
@@ -82,11 +61,6 @@ services:
         class:                                              %ite_form.form.bootstrap_time_picker_type.class%
         tags:
             - { name: form.type, alias: ite_bootstrap_time_picker }
-
-    ite_form.form.tinymce_textarea_type:
-        class:                                              %ite_form.form.tinymce_textarea_type.class%
-        tags:
-            - { name: form.type, alias: ite_tinymce_textarea }
 
     ite_form.form.ajax_entity_type:
         class:                                              %ite_form.form.ajax_entity_type.class%

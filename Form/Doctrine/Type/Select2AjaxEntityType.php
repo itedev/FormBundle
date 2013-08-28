@@ -8,21 +8,53 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+/**
+ * Class Select2AjaxEntityType
+ * @package ITE\FormBundle\Form\Doctrine\Type
+ */
 class Select2AjaxEntityType extends AbstractType
 {
+    /**
+     * @var array $extras
+     */
+    protected $extras;
+
+    /**
+     * @var array $options
+     */
+    protected $options;
+
+    /**
+     * @param $extras
+     * @param $options
+     */
+    public function __construct($extras, $options)
+    {
+        $this->extras = array_merge_recursive($extras, array(
+            'ajax' => true
+        ));
+        $this->options = $options;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'plugin_options' => array(),
             'extras' => array(),
+            'plugin_options' => array(),
             'error_bubbling' => false,
         ));
         $resolver->setAllowedTypes(array(
-            'plugin_options' => array('array'),
             'extras' => array('array'),
+            'plugin_options' => array('array'),
         ));
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         if ($form->getData()) {
@@ -59,10 +91,10 @@ class Select2AjaxEntityType extends AbstractType
         }
 
         $view->vars['element_data'] = array(
-            'extras' => array_merge_recursive($options['extras'], array(
+            'extras' => array_merge_recursive($this->extras, $options['extras'], array(
                 'ajax' => true
             )),
-            'options' => array_merge_recursive($options['plugin_options'], array(
+            'options' => array_merge_recursive($this->options, $options['plugin_options'], array(
                 'ajax' => array(
                     'url' => $options['url'],
                 )
@@ -70,11 +102,17 @@ class Select2AjaxEntityType extends AbstractType
         );
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParent()
     {
         return 'ite_ajax_entity';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getName()
     {
         return 'ite_select2_ajax_entity';
