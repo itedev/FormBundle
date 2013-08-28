@@ -11,9 +11,20 @@ use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
 class SFFormExtension implements SFExtensionInterface
 {
     /**
-     * @var ElementBag $elementBug
+     * Plugins
      */
-    protected $elementBug;
+    const PLUGIN_SELECT2 = 'select2';
+    const PLUGIN_TINYMCE = 'tinymce';
+
+    protected static $plugins = array(
+        self::PLUGIN_SELECT2,
+        self::PLUGIN_TINYMCE,
+    );
+
+    /**
+     * @var ElementBag $elementBag
+     */
+    protected $elementBag;
 
     /**
      * @var array
@@ -118,5 +129,13 @@ class SFFormExtension implements SFExtensionInterface
         foreach ($element->children as $child) {
             $this->processChildrenRecursive($formErrors, $child);
         }
+    }
+
+    /**
+     * @return array
+     */
+    public static function getPlugins()
+    {
+        return self::$plugins;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace ITE\FormBundle\DependencyInjection;
 
+use ITE\FormBundle\Service\SFFormExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\DefinitionDecorator;
@@ -17,14 +18,6 @@ use Symfony\Component\DependencyInjection\Loader;
 class ITEFormExtension extends Extension
 {
     /**
-     * @var array $plugins
-     */
-    protected $plugins = array(
-        'select2',
-        'tinymce',
-    );
-
-    /**
      * {@inheritDoc}
      */
     public function load(array $configs, ContainerBuilder $container)
@@ -37,7 +30,7 @@ class ITEFormExtension extends Extension
 
         $container->setParameter('ite_form.timezone', $config['timezone']);
 
-        foreach ($this->plugins as $plugin) {
+        foreach (SFFormExtension::getPlugins() as $plugin) {
             if (isset($config['plugins'][$plugin]) && !empty($config['plugins'][$plugin]['enabled'])) {
                 $method = 'load' . ucfirst($plugin) . 'Configuration';
 
