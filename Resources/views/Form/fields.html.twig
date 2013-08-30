@@ -96,6 +96,14 @@
     {{ ite_form_sf_add_element('tinymce', '#' ~ id, element_data) }}
 {% endblock ite_tinymce_textarea_widget %}
 
+{% block ite_input_entity_widget %}
+    {% if widget == 'hidden' %}
+        {{ block('hidden_widget') }}
+    {% else %}
+        {{ block('text_widget') }}
+    {% endif %}
+{% endblock ite_input_entity_widget %}
+
 {% block form_errors %}
     {% spaceless %}
         {% if error_flash_style is defined %}

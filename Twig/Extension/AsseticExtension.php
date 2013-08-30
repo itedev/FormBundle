@@ -51,7 +51,7 @@ class AsseticExtension extends BaseAsseticExtension
      * @param $tag
      * @param $output
      * @param bool $single
-     * @return AsseticTokenParser|\Symfony\Bundle\AsseticBundle\Twig\AsseticTokenParser
+     * @return AsseticTokenParser
      */
     private function createTokenParser($tag, $output, $single = false)
     {

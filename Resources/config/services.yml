@@ -15,6 +15,8 @@ parameters:
 
     ite_form.form.ajax_entity_type.class:                ITE\FormBundle\Form\Doctrine\Type\AjaxEntityType
 
+    ite_form.form.input_entity_type.class:               ITE\FormBundle\Form\Doctrine\Type\InputEntityType
+
     assetic.twig_extension.class:                        ITE\FormBundle\Twig\Extension\AsseticExtension
     assetic.asset_factory.class:                         ITE\FormBundle\Factory\AssetFactory
 
@@ -70,3 +72,9 @@ services:
         arguments: [ @router ]
         tags:
             - { name: form.type, alias: ite_ajax_entity }
+
+    ite_form.form.input_entity_type:
+        class:                                              %ite_form.form.input_entity_type.class%
+        arguments: [ @doctrine.orm.entity_manager ]
+        tags:
+            - { name: form.type, alias: ite_input_entity }
