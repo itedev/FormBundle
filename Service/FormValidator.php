@@ -4,7 +4,11 @@ namespace ITE\FormBundle\Service;
 
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\ConstraintValidatorFactoryInterface;
+use Symfony\Component\Validator\ExecutionContext;
+use Symfony\Component\Validator\Mapping\PropertyMetadata;
 use Symfony\Component\Validator\MetadataFactoryInterface;
 use Symfony\Component\Validator\ValidationVisitor;
 
@@ -53,7 +57,7 @@ class FormValidator
     /**
      * {@inheritDoc}
      */
-    public function getValidators($value, $groups = null, $traverse = false, $deep = false)
+    public function getRules($value, $groups = null, $traverse = false, $deep = false)
     {
         $visitor = $this->createVisitor($value);
 
@@ -62,6 +66,7 @@ class FormValidator
         }
 
         $validatorFactory = $visitor->getValidatorFactory();
+
         $refClass = new \ReflectionClass(get_class($validatorFactory));
         $property = $refClass->getProperty('validators');
         $property->setAccessible(true);
@@ -75,7 +80,35 @@ class FormValidator
             return 0 === strpos(get_class($validator), 'Symfony\\Component\\Validator\\Constraints\\');
         });
 
-        return $validators;
+        $rules = array();
+        foreach ($validators as $validator) {
+            /** @var $validator ConstraintValidator */
+            $refClass = new \ReflectionClass(get_class($validator));
+            $property = $refClass->getProperty('context');
+            $property->setAccessible(true);
+
+            /** @var $context ExecutionContext */
+            $context = $property->getValue($validator);
+
+            /** @var $metadata PropertyMetadata */
+            $metadata = $context->getMetadata();
+
+            foreach ($metadata->getConstraints() as $constraint) {
+                /** @var $constraint Constraint */
+                if ($constraint instanceof Length) {
+                    $rules['length'] = array(
+                        'property' => $metadata->getPropertyName(),
+                        'maxMessage' => $constraint->maxMessage,
+                        'minMessage' => $constraint->minMessage,
+                        'exactMessage' => $constraint->exactMessage,
+                        'max' => $constraint->max,
+                        'min' => $constraint->min,
+                    );
+                }
+            }
+        }
+
+        return $rules;
     }
 
     /**

@@ -46,15 +46,10 @@
     {% endspaceless %}
 {% endblock widget_addon %}
 
-{% block ite_select2_choice_widget %}
+{% block ite_select2_widget %}
     {{ block('choice_widget') }}
     {{ ite_form_sf_add_element('select2', '#' ~ id, element_data) }}
-{% endblock ite_select2_choice_widget %}
-
-{% block ite_select2_entity_widget %}
-    {{ block('choice_widget') }}
-    {{ ite_form_sf_add_element('select2', '#' ~ id, element_data) }}
-{% endblock ite_select2_entity_widget %}
+{% endblock ite_select2_widget %}
 
 {% block ite_select2_ajax_entity_widget %}
     {{ block('hidden_widget') }}

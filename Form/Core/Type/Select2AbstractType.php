@@ -70,6 +70,13 @@ class Select2AbstractType extends AbstractType
             'extras' => array_merge_recursive($this->extras, $options['extras']),
             'options' => array_merge_recursive($this->options, $options['plugin_options'])
         );
+
+        array_splice(
+            $view->vars['block_prefixes'],
+            array_search($this->getName(), $view->vars['block_prefixes']),
+            0,
+            'ite_select2'
+        );
     }
 
     /**
