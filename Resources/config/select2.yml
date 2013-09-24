@@ -1,6 +1,7 @@
 parameters:
     ite_form.form.type.select2_abstract.class:          ITE\FormBundle\Form\Core\Type\Select2AbstractType
     ite_form.form.type.select2_ajax_entity.class:       ITE\FormBundle\Form\Doctrine\Type\Select2AjaxEntityType
+    ite_form.select2.converter.class:                   ITE\FormBundle\Service\Plugin\Select2Converter
 
 services:
     ite_form.form.type.select2_abstract:
@@ -10,6 +11,10 @@ services:
 
     ite_form.form.type.select2_ajax_entity:
         class:                                          %ite_form.form.type.select2_ajax_entity.class%
-        arguments: [ %ite_form.plugins.select2.extras%, %ite_form.plugins.select2.options% ]
+        arguments: [ @router, %ite_form.plugins.select2.extras%, %ite_form.plugins.select2.options% ]
         tags:
             - { name: form.type, alias: ite_select2_ajax_entity }
+
+    ite_form.select2.converter:
+        class:                                          %ite_form.select2.converter.class%
+        arguments: [ @doctrine.orm.entity_manager ]

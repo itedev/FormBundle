@@ -2,11 +2,15 @@
 
 namespace ITE\FormBundle\Form\Doctrine\Type;
 
+use RuntimeException;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\View\ChoiceView;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Routing\RouterInterface;
 
 /**
  * Class Select2AjaxEntityType
@@ -14,6 +18,11 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
  */
 class Select2AjaxEntityType extends AbstractType
 {
+    /**
+     * @var RouterInterface $router
+     */
+    protected $router;
+
     /**
      * @var array $extras
      */
@@ -25,15 +34,27 @@ class Select2AjaxEntityType extends AbstractType
     protected $options;
 
     /**
+     * @param RouterInterface $router
      * @param $extras
      * @param $options
      */
-    public function __construct($extras, $options)
+    public function __construct(RouterInterface $router, $extras, $options)
     {
+        $this->router = $router;
         $this->extras = array_merge_recursive($extras, array(
-            'ajax' => true
-        ));
+                'ajax' => true
+            ));
         $this->options = $options;
+    }
+
+    /**
+     * Get router
+     *
+     * @return RouterInterface
+     */
+    public function getRouter()
+    {
+        return $this->router;
     }
 
     /**
@@ -41,15 +62,31 @@ class Select2AjaxEntityType extends AbstractType
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
+        $type = $this;
+        $createUrl = function (Options $options) use ($type) {
+            if ($options['allow_create']) {
+                if (isset($options['create_route'])) {
+                    return $type->getRouter()->generate($options['create_route']);
+                }
+                throw new RuntimeException('You must specify create_route when using true for allow_create option.');
+            }
+            return null;
+        };
         $resolver->setDefaults(array(
-            'extras' => array(),
-            'plugin_options' => array(),
-            'error_bubbling' => false,
-        ));
+                'extras' => array(),
+                'plugin_options' => array(),
+                'allow_create' => false,
+                'create_url' => $createUrl,
+                'error_bubbling' => false,
+            ));
         $resolver->setAllowedTypes(array(
-            'extras' => array('array'),
-            'plugin_options' => array('array'),
-        ));
+                'extras' => array('array'),
+                'plugin_options' => array('array'),
+                'allow_create' => array('bool')
+            ));
+        $resolver->setOptional(array(
+                'create_route',
+            ));
     }
 
     /**
@@ -92,13 +129,15 @@ class Select2AjaxEntityType extends AbstractType
 
         $view->vars['element_data'] = array(
             'extras' => array_merge_recursive($this->extras, $options['extras'], array(
-                'ajax' => true
-            )),
+                    'ajax' => true,
+                    'allow_create' => $options['allow_create'],
+                    'create_url' => $options['create_url'],
+                )),
             'options' => array_merge_recursive($this->options, $options['plugin_options'], array(
-                'ajax' => array(
-                    'url' => $options['url'],
-                )
-            ))
+                    'ajax' => array(
+                        'url' => $options['url'],
+                    )
+                ))
         );
     }
 
