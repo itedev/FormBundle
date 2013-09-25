@@ -30,8 +30,13 @@ class ITEFormExtension extends Extension
 
         $container->setParameter('ite_form.timezone', $config['timezone']);
 
+        // load plugins configuration
         foreach (SFFormExtension::getPlugins() as $plugin) {
-            if (isset($config['plugins'][$plugin]) && !empty($config['plugins'][$plugin]['enabled'])) {
+            $enabled = isset($config['plugins'][$plugin]) && !empty($config['plugins'][$plugin]['enabled']);
+
+            $container->setParameter(sprintf('ite_form.plugins.%s.enabled', $plugin), $enabled);
+
+            if ($enabled) {
                 $method = 'load' . ucfirst($plugin) . 'Configuration';
 
                 $this->$method($loader, $config['plugins'][$plugin], $container);
@@ -49,7 +54,7 @@ class ITEFormExtension extends Extension
         $container->setParameter('ite_form.plugins.select2.extras', $config['extras']);
         $container->setParameter('ite_form.plugins.select2.options', $config['options']);
 
-        $loader->load('select2.yml');
+        $loader->load('plugins/select2.yml');
 
         $this->addExtendedChoiceTypes('ite_form.form.type.select2_abstract', 'select2', $container);
     }
@@ -64,7 +69,7 @@ class ITEFormExtension extends Extension
         $container->setParameter('ite_form.plugins.tinymce.extras', $config['extras']);
         $container->setParameter('ite_form.plugins.tinymce.options', $config['options']);
 
-        $loader->load('tinymce.yml');
+        $loader->load('plugins/tinymce.yml');
     }
 
     /**

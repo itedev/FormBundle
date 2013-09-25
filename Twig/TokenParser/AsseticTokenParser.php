@@ -27,10 +27,10 @@ class AsseticTokenParser extends BaseAsseticTokenParser
     protected function createNode(AssetInterface $asset, \Twig_NodeInterface $body, array $inputs, array $filters, $name, array $attributes = array(), $lineno = 0, $tag = null)
     {
         if ('javascripts' === $tag) {
-            $inputs = array_merge($inputs, array(
-                '@ITEFormBundle/Resources/public/js/plugins/sf.select2.js',
-            ));
+            $inputs[] = '@ITEFormBundle/Resources/public/js/plugins/sf.select2.js';
         }
-        return new AsseticNode($asset, $body, $inputs, $filters, $name, $attributes, $lineno, $tag);
+
+        return parent::createNode($asset, $body, $inputs, $filters, $name, $attributes, $lineno, $tag);
+//        return new AsseticNode($asset, $body, $inputs, $filters, $name, $attributes, $lineno, $tag);
     }
 }

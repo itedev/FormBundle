@@ -17,7 +17,7 @@ parameters:
 
     ite_form.form.input_entity_type.class:               ITE\FormBundle\Form\Doctrine\Type\InputEntityType
 
-    assetic.twig_extension.class:                        ITE\FormBundle\Twig\Extension\AsseticExtension
+#    assetic.twig_extension.class:                        ITE\FormBundle\Twig\Extension\AsseticExtension
     assetic.asset_factory.class:                         ITE\FormBundle\Factory\AssetFactory
 
 services:
