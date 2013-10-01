@@ -17,6 +17,8 @@ parameters:
 
     ite_form.form.input_entity_type.class:               ITE\FormBundle\Form\Doctrine\Type\InputEntityType
 
+    ite_form.entity_converter.class:                     ITE\FormBundle\Service\EntityConverter
+
 #    assetic.twig_extension.class:                        ITE\FormBundle\Twig\Extension\AsseticExtension
     assetic.asset_factory.class:                         ITE\FormBundle\Factory\AssetFactory
 
@@ -78,3 +80,7 @@ services:
         arguments: [ @doctrine.orm.entity_manager ]
         tags:
             - { name: form.type, alias: ite_input_entity }
+
+    ite_form.entity_converter:
+        class:                                              %ite_form.entity_converter.class%
+        arguments: [ @doctrine.orm.entity_manager ]

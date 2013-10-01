@@ -2,7 +2,7 @@
 
 namespace ITE\FormBundle\Service\Plugin;
 
-use Doctrine\ORM\EntityManager;
+use ITE\FormBundle\Service\EntityConverter;
 use Symfony\Component\Form\Exception\StringCastException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
@@ -10,48 +10,47 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 class Select2Converter
 {
     /**
-     * @var EntityManager
+     * @var EntityConverter
      */
-    protected $em;
+    protected $entityConverter;
 
     /**
-     * @var PropertyAccessor
+     * @param EntityConverter $entityConverter
      */
-    protected $propertyAccessor;
-
-    /**
-     * @param EntityManager $em
-     */
-    public function __construct(EntityManager $em)
+    public function __construct(EntityConverter $entityConverter)
     {
-        $this->em = $em;
-        $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
+        $this->entityConverter = $entityConverter;
     }
 
     /**
      * @param $entity
      * @param null $labelPath
      * @return array
-     * @throws StringCastException
      */
     public function convertEntityToOption($entity, $labelPath = null)
     {
-        $meta = $this->em->getClassMetadata(get_class($entity));
-
-        $idFieldNames = $meta->getIdentifierFieldNames();
-        $idPath = array_shift($idFieldNames);
-
-        if ($labelPath) {
-            $label = $this->propertyAccessor->getValue($entity, $labelPath);
-        } elseif (is_object($entity) && method_exists($entity, '__toString')) {
-            $label = (string) $entity;
-        } else {
-            throw new StringCastException(sprintf('A "__toString()" method was not found on the objects of type "%s" passed to the choice field. To read a custom getter instead, set the argument $labelPath to the desired property path.', get_class($entity)));
-        }
+        $option = $this->entityConverter->convertEntityToOption($entity, $labelPath);
 
         return array(
-            'id' => $this->propertyAccessor->getValue($entity, $idPath),
-            'text' => $label
+            'id' => $option['id'],
+            'text' => $option['label'],
         );
+    }
+
+    /**
+     * @param $entities
+     * @param null $labelPath
+     * @return array
+     */
+    public function convertEntitiesToOptions($entities, $labelPath = null)
+    {
+        $options = $this->entityConverter->convertEntitiesToOptions($entities, $labelPath);
+
+        return array_map(function($option) {
+                return array(
+                    'id' => $option['id'],
+                    'text' => $option['label'],
+                );
+            }, $options);
     }
 }
