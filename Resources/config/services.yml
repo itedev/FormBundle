@@ -6,6 +6,7 @@ parameters:
     ite_form.form_validator.class:                       ITE\FormBundle\Service\FormValidator
 
     ite_form.form.form_type_extension.class:             ITE\FormBundle\Form\Core\Extension\FormTypeExtension
+    ite_form.form.button_type_extension.class:           ITE\FormBundle\Form\Core\Extension\ButtonTypeExtension
     ite_form.form.widget_form_type_extension.class:      ITE\FormBundle\Form\Core\Extension\WidgetFormTypeExtension
 
     ite_form.form.daterange_type.class:                  ITE\FormBundle\Form\Core\Type\DateRangeType
@@ -21,6 +22,7 @@ parameters:
 
 #    assetic.twig_extension.class:                        ITE\FormBundle\Twig\Extension\AsseticExtension
     assetic.asset_factory.class:                         ITE\FormBundle\Factory\AssetFactory
+#    form.resolved_type_factory.class:                    ITE\FormBundle\Form\ResolvedFormTypeFactory
 
 services:
     ite_form.sf.extension.form:
@@ -43,6 +45,11 @@ services:
         arguments: [ @session, %ite_form.timezone% ]
         tags:
             - { name: form.type_extension, alias: form }
+
+    ite_form.form.button_type_extension:
+        class:                                              %ite_form.form.button_type_extension.class%
+        tags:
+            - { name: form.type_extension, alias: button }
 
     ite_form.form.widget_form_type_extension:
         class:                                              %ite_form.form.widget_form_type_extension.class%
