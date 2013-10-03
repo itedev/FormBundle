@@ -22,7 +22,7 @@ parameters:
 
 #    assetic.twig_extension.class:                        ITE\FormBundle\Twig\Extension\AsseticExtension
     assetic.asset_factory.class:                         ITE\FormBundle\Factory\AssetFactory
-#    form.resolved_type_factory.class:                    ITE\FormBundle\Form\ResolvedFormTypeFactory
+    form.resolved_type_factory.class:                    ITE\FormBundle\Form\ResolvedFormTypeFactory
 
 services:
     ite_form.sf.extension.form:

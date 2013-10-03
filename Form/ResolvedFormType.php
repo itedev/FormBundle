@@ -13,6 +13,10 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\ResolvedFormType as BaseResolvedFormType;
 use Symfony\Component\Form\SubmitButtonTypeInterface;
 
+/**
+ * Class ResolvedFormType
+ * @package ITE\FormBundle\Form
+ */
 class ResolvedFormType extends BaseResolvedFormType
 {
     /**

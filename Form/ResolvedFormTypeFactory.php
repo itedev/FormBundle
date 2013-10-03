@@ -6,6 +6,10 @@ use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\Form\ResolvedFormTypeFactory as BaseResolvedFormTypeFactory;
 use Symfony\Component\Form\ResolvedFormTypeInterface;
 
+/**
+ * Class ResolvedFormTypeFactory
+ * @package ITE\FormBundle\Form
+ */
 class ResolvedFormTypeFactory extends BaseResolvedFormTypeFactory
 {
     /**
