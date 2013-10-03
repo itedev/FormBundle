@@ -17,6 +17,7 @@ parameters:
     ite_form.form.ajax_entity_type.class:                ITE\FormBundle\Form\Doctrine\Type\AjaxEntityType
 
     ite_form.form.input_entity_type.class:               ITE\FormBundle\Form\Doctrine\Type\InputEntityType
+    ite_form.form.markup_type.class:                     ITE\FormBundle\Form\Core\Type\MarkupType
 
     ite_form.entity_converter.class:                     ITE\FormBundle\Service\EntityConverter
 
@@ -87,6 +88,11 @@ services:
         arguments: [ @doctrine.orm.entity_manager ]
         tags:
             - { name: form.type, alias: ite_input_entity }
+
+    ite_form.form.markup_type:
+        class:                                              %ite_form.form.markup_type.class%
+        tags:
+            - { name: form.type, alias: ite_markup }
 
     ite_form.entity_converter:
         class:                                              %ite_form.entity_converter.class%

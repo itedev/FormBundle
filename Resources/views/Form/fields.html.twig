@@ -99,6 +99,12 @@
     {% endif %}
 {% endblock ite_input_entity_widget %}
 
+{% block ite_markup_widget %}
+    {% spaceless %}
+        {{ markup|raw }}
+    {% endspaceless %}
+{% endblock ite_markup_widget %}
+
 {% block form_errors %}
     {% spaceless %}
         {% if error_flash_style is defined %}

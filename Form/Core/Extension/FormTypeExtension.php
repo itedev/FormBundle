@@ -38,7 +38,7 @@ class FormTypeExtension extends AbstractTypeExtension
         $resolver->setDefaults(array(
             'model_timezone' => $this->modelTimezone,
             'view_timezone' => $this->viewTimezone,
-            'weight' => 0,
+            'position' => null,
         ));
         $resolver->setOptional(array(
             'ajax',

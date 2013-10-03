@@ -5,6 +5,10 @@ namespace ITE\FormBundle\Form\Core\Extension;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+/**
+ * Class ButtonTypeExtension
+ * @package ITE\FormBundle\Form\Core\Extension
+ */
 class ButtonTypeExtension extends AbstractTypeExtension
 {
     /**
@@ -13,10 +17,13 @@ class ButtonTypeExtension extends AbstractTypeExtension
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'weight' => 0,
+            'position' => null,
         ));
     }
 
+    /**
+     * @return string
+     */
     public function getExtendedType()
     {
         return 'button';

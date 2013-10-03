@@ -30,22 +30,9 @@ class ResolvedFormType extends BaseResolvedFormType
 
         $this->buildView($view, $form, $options);
 
-//        $weights = array();
-//        foreach ($form as $name => $child) {
-//            /* @var FormInterface $child */
-//            $options = $child->getConfig()->getOptions();
-//            $weights[$name] = isset($options['weight']) ? $options['weight'] : 0;
-//        }
-//        asort($weights, SORT_NUMERIC);
-//        $weights = array_keys($weights);
-//
-//        foreach ($weights as $name) {
-//            $view->children[$name] = $form[$name]->createView($view);
-//        }
-
-        foreach ($form as $name => $child) {
-            /* @var FormInterface $child */
-            $view->children[$name] = $child->createView($view);
+        $orderer = new FormOrderer();
+        foreach ($orderer->order($form) as $name) {
+            $view->children[$name] = $form[$name]->createView($view);
         }
 
         $this->finishView($view, $form, $options);
