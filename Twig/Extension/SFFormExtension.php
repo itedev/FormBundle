@@ -7,6 +7,10 @@ use Twig_Environment;
 use Twig_Extension;
 use Symfony\Component\Locale\Locale;
 
+/**
+ * Class SFFormExtension
+ * @package ITE\FormBundle\Twig\Extension
+ */
 class SFFormExtension extends Twig_Extension
 {
     /**
