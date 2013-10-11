@@ -39,7 +39,7 @@ This bundle add new field to SF object: SF.elements. To apply plugins on needed 
 ```js
 SF.elements.apply();
 ```
-function. If you are using plugin fields in collection field, you need to call this function after inserting html to dom and pass prototype_name and collection item index to it:
+function. If you are using plugin fields in collection field, you need to call this function after inserting html to DOM and pass prototype_name and collection item index to it:
 ```js
 SF.elements.apply({'__name__': 1});
 ```
@@ -163,4 +163,12 @@ ite_form:
                     - visualchars
                     - wordcount
 ```    
+FormBuilder
+-----------
 
+Two new methods are added to FormBuilder:
+```php
+public function replaceType($name, $type); // change type for existing field
+
+public function replaceOptions($name, $options); // change options for existing field
+```
