@@ -25,6 +25,7 @@ Provide next field types:
  * ite_select2_entity
  * ite_select2_ajax_entity (this type does not load all entities at once and use AJAX autocomplete instead of it)
 Examples:
+
 ```php
 ->add('entity', 'ite_select2_entity', array(
     'class' => 'AcmeDemoBundle:Foo',
@@ -34,6 +35,7 @@ Examples:
     )
 ))
 ```
+
 ```php
 ->add('fundingCode', 'ite_select2_ajax_entity', array(
     'class' => 'AcmeDemoBundle:Foo',
@@ -50,6 +52,7 @@ Examples:
 Provide next field types:
 * ite_tinymce_textarea
 Configuration:
+
 ```yml
 ite_form:
     plugins:
