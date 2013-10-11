@@ -165,10 +165,12 @@ ite_form:
 ```    
 FormBuilder
 -----------
-
 Two new methods are added to FormBuilder:
 ```php
 public function replaceType($name, $type); // change type for existing field
 
 public function replaceOptions($name, $options); // change options for existing field
 ```
+Field order
+-----------
+
