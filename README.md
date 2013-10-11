@@ -24,10 +24,10 @@ Provide next field types:
  * ite_select2_currency
  * ite_select2_entity
  * ite_select2_ajax_entity (this type does not load all entities at once and use AJAX autocomplete instead of it)
-
+Examples:
 ```php
 ->add('entity', 'ite_select2_entity', array(
-    ...
+    'class' => 'AcmeDemoBundle:Foo',
     'plugin_options' => array(          
         'placeholder' => 'Type smth...', // these options go directly javascript when plugin will be initialized 
         'minimumInputLength' => 2,
@@ -46,3 +46,56 @@ Provide next field types:
     ),
 ))
 ```
+<h4>Tinymce</h4>
+Provide next field types:
+* ite_tinymce_textarea
+Configuration:
+```yml
+ite_form:
+    plugins:
+        tinymce:
+            enabled:      true
+            options:      
+                script_url: '/bundles/acmedemo/js/tinymce/tinymce.min.js'
+                theme: modern
+                plugins:
+                    - advlist
+                    - anchor
+                    - autolink
+                    - autoresize
+                    - autosave
+                    - bbcode
+                    - charmap
+                    - code
+                    - contextmenu
+                    - directionality
+                    - emoticons
+                    - example
+                    - example_dependency
+                    - fullscreen
+                    - hr
+                    - image
+                    - insertdatetime
+                    - layer
+                    - legacyoutput
+                    - link
+                    - lists
+                    - media
+                    - nonbreaking
+                    - noneditable
+                    - pagebreak
+                    - paste
+                    - preview
+                    - print
+                    - save
+                    - searchreplace
+                    - spellchecker
+                    - tabfocus
+                    - table
+                    - template
+                    - textcolor
+                    - visualblocks
+                    - visualchars
+                    - wordcount
+```    
+
