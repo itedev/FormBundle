@@ -9,6 +9,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 
+/**
+ * Class AssetFactory
+ * @package ITE\FormBundle\Factory
+ */
 class AssetFactory extends BaseAssetFactory
 {
     /**
@@ -39,7 +43,7 @@ class AssetFactory extends BaseAssetFactory
     public function createAsset($inputs = array(), $filters = array(), array $options = array())
     {
         if ('.js' === substr($options['output'], -3)) {
-            // add plugin javascript
+            // add plugin js
             foreach (SFFormExtension::getPlugins() as $plugin) {
                 if ($enabled = $this->container->getParameter(sprintf('ite_form.plugins.%s.enabled', $plugin))) {
                     $inputs[] = sprintf('@ITEFormBundle/Resources/public/js/plugins/sf.%s.js', $plugin);

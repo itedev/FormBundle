@@ -48,6 +48,7 @@ class SFFormExtension implements SFExtensionInterface
         if ($this->elementBag->count()) {
             $dump .= 'SF.elements.set(' . json_encode($this->elementBag->peekAll()) . ');';
         }
+        $dump .= 'SF.elements.apply();';
         return $dump;
     }
 

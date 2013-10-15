@@ -7,29 +7,21 @@ use Symfony\Component\Form\Exception\StringCastException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
-class Select2Converter
+/**
+ * Class Select2Converter
+ * @package ITE\FormBundle\Service\Plugin
+ */
+class Select2Converter extends EntityConverter
 {
-    /**
-     * @var EntityConverter
-     */
-    protected $entityConverter;
-
-    /**
-     * @param EntityConverter $entityConverter
-     */
-    public function __construct(EntityConverter $entityConverter)
-    {
-        $this->entityConverter = $entityConverter;
-    }
-
     /**
      * @param $entity
      * @param null $labelPath
+     * @param null $idPath
      * @return array
      */
-    public function convertEntityToOption($entity, $labelPath = null)
+    public function convertEntityToOption($entity, $labelPath = null, $idPath = null)
     {
-        $option = $this->entityConverter->convertEntityToOption($entity, $labelPath);
+        $option = parent::convertEntityToOption($entity, $labelPath, $idPath);
 
         return array(
             'id' => $option['id'],
@@ -44,7 +36,7 @@ class Select2Converter
      */
     public function convertEntitiesToOptions($entities, $labelPath = null)
     {
-        $options = $this->entityConverter->convertEntitiesToOptions($entities, $labelPath);
+        $options = parent::convertEntitiesToOptions($entities, $labelPath);
 
         return array_map(function($option) {
                 return array(

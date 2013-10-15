@@ -2,6 +2,10 @@
 
 namespace ITE\FormBundle\Service;
 
+/**
+ * Class ElementBag
+ * @package ITE\FormBundle\Service
+ */
 class ElementBag
 {
     /**

@@ -10,6 +10,7 @@
     // ajax
     if (extras.hasOwnProperty('ajax')) {
       var initSelectionCallback = options.hasOwnProperty('initSelection') ? options['initSelection'] : null;
+      var property = element.data('property');
 
       options = $.extend(true, options, {
         initSelection: function(el, callback) {
@@ -25,7 +26,9 @@
         ajax: {
           data: function(term, page) {
             return {
-              q: term
+              term: term,
+              page: page,
+              property: property
             };
           },
           results: function(data, page) {

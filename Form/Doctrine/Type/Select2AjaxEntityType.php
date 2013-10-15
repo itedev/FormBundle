@@ -127,6 +127,8 @@ class Select2AjaxEntityType extends AbstractType
             $view->vars['attr']['data-default-value'] = json_encode($defaultValue);
         }
 
+        $view->vars['attr']['data-property'] = $options['property'];
+
         $view->vars['element_data'] = array(
             'extras' => array_merge_recursive($this->extras, $options['extras'], array(
                     'ajax' => true,

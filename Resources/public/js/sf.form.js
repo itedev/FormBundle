@@ -119,7 +119,7 @@
     $(document).trigger('sf.element.set');
   };
 
-  ElementBag.fn.apply = function(replacementTokens) {
+  ElementBag.fn.apply = function(replacementTokens, context) {
     var plugin, selector, elementData, element;
     for (plugin in this.plugins) {
       for (selector in this.plugins[plugin]) {
@@ -131,7 +131,7 @@
           }
         }
 
-        element = $(selector);
+        element = $(selector, context);
 
         if (!element.length) {
           continue;

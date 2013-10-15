@@ -17,4 +17,4 @@ services:
 
     ite_form.select2.converter:
         class:                                          %ite_form.select2.converter.class%
-        arguments: [ @ite_form.entity_converter ]
+        parent:                                         ite_form.entity_converter

@@ -7,7 +7,11 @@ use Symfony\Component\Form\Exception\StringCastException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
-class EntityConverter 
+/**
+ * Class EntityConverter
+ * @package ITE\FormBundle\Service
+ */
+class EntityConverter implements EntityConverterInterface
 {
     /**
      * @var EntityManager
@@ -33,7 +37,7 @@ class EntityConverter
      * @param null $labelPath
      * @param null $idPath
      * @return array
-     * @throws \Symfony\Component\Form\Exception\StringCastException
+     * @throws StringCastException
      */
     public function convertEntityToOption($entity, $labelPath = null, $idPath = null)
     {
