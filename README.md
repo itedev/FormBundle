@@ -21,11 +21,9 @@ Form field types and other plugin services are loaded ONLY if plugin enabled in 
 {% javascripts
     '@ITEJsBundle/Resources/public/js/sf.js'
     ...
-    '@AcmeDemoBundle/Resources/public/js/select2/select2.js' {# include library javascript #}
+    {# javascript libraries  #}
     ...
     '@ITEFormBundle/Resources/public/js/sf.form.js'
-    ...
-    '@AcmeDemoBundle/Resources/public/js/script.js' {# file where you call `SF.elements.apply();` in document.ready() #}
 %}
 <script type="text/javascript" src="{{ asset_url }}"></script>
 {% endjavascripts %}
