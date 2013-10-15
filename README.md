@@ -97,11 +97,12 @@ class AjaxFooController extends Controller
      */
     public function searchAction(Request $request)
     {
-        $query = $request->query->get('q');
+        $term = $request->query->get('term');
+        $property = $request->query->get('property');
 
-        $result = this->em->getRepository('AcmeDemoBundle:Foo')->search($query);
+        $result = $this->em->getRepository('AcmeDemoBundle:Foo')->yourSearchMethod($query);
 
-        return $this->get('ite_form.select2.converter')->convertEntitiesToOptions($result, $labelPath);
+        return $this->get('ite_form.select2.converter')->convertEntitiesToOptions($result, $property);
     }
     ...
 }
