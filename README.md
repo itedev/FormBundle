@@ -37,7 +37,7 @@ This bundle add new field to SF object: SF.elements. To apply plugins on needed 
 ```js
 SF.elements.apply();
 ```
-function. If you are using plugin fields in collection field, you need to call this function after inserting html to DOM and pass prototype_name and collection item index to it:
+function. If you are using plugin fields inside collection field, you need to call this function after inserting html to DOM and pass prototype_name and collection item index to it:
 ```js
 SF.elements.apply({'__name__': 1});
 ```
