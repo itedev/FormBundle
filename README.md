@@ -7,10 +7,10 @@ Configuration
 # app/config/config.yml
 ite_form:
     plugins:
-        select2:          ~     # just enable plugin with default settings
+        select2:          ~     # enable plugin with empty options
         tinymce:
             enabled:      true
-            options:      {}    # you can set also default plugin settings, which you can override for in specific field
+            options:      {}    # global plugin settings, which you can override in specific field
     timezone:             Asia/Omsk
 ```   
 Form field types and other plugin services are loaded ONLY if plugin enabled in config.
@@ -21,11 +21,9 @@ Form field types and other plugin services are loaded ONLY if plugin enabled in 
 {% javascripts
     '@ITEJsBundle/Resources/public/js/sf.js'
     ...
-    '@AcmeDemoBundle/Resources/public/js/select2/select2.js' {# include library javascript #}
+    {# javascript libraries  #}
     ...
     '@ITEFormBundle/Resources/public/js/sf.form.js'
-    ...
-    '@AcmeDemoBundle/Resources/public/js/script.js' {# file where you call `SF.elements.apply();` in document.ready() #}
 %}
 <script type="text/javascript" src="{{ asset_url }}"></script>
 {% endjavascripts %}
@@ -39,7 +37,7 @@ This bundle add new field to SF object: SF.elements. To apply plugins on needed 
 ```js
 SF.elements.apply();
 ```
-function. If you are using plugin fields in collection field, you need to call this function after inserting html to DOM and pass prototype_name and collection item index to it:
+function. If you are using plugin fields inside collection field, you need to call this function after inserting html to DOM and pass prototype_name and collection item index to it:
 ```js
 SF.elements.apply({'__name__': 1});
 ```
@@ -99,11 +97,12 @@ class AjaxFooController extends Controller
      */
     public function searchAction(Request $request)
     {
-        $query = $request->query->get('q');
+        $term = $request->query->get('term');
+        $property = $request->query->get('property');
 
-        $result = this->em->getRepository('AcmeDemoBundle:Foo')->search($query);
+        $result = $this->em->getRepository('AcmeDemoBundle:Foo')->yourSearchMethod($query);
 
-        return $this->get('ite_form.select2.converter')->convertEntitiesToOptions($result, $labelPath);
+        return $this->get('ite_form.select2.converter')->convertEntitiesToOptions($result, $property);
     }
     ...
 }
