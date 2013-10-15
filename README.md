@@ -7,10 +7,10 @@ Configuration
 # app/config/config.yml
 ite_form:
     plugins:
-        select2:          ~     # just enable plugin with default settings
+        select2:          ~     # enable plugin with empty options
         tinymce:
             enabled:      true
-            options:      {}    # you can set also default plugin settings, which you can override for in specific field
+            options:      {}    # global plugin settings, which you can override in specific field
     timezone:             Asia/Omsk
 ```   
 Form field types and other plugin services are loaded ONLY if plugin enabled in config.
