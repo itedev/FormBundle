@@ -96,4 +96,5 @@ services:
 
     ite_form.entity_converter:
         class:                                              %ite_form.entity_converter.class%
-        arguments: [ @doctrine.orm.entity_manager ]
+        scope:                                              request
+        arguments: [ @doctrine.orm.entity_manager, @request ]

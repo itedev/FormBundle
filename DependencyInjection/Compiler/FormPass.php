@@ -5,6 +5,10 @@ namespace ITE\FormBundle\DependencyInjection\Compiler;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
+/**
+ * Class FormPass
+ * @package ITE\FormBundle\DependencyInjection\Compiler
+ */
 class FormPass implements CompilerPassInterface
 {
     /**

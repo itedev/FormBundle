@@ -33,15 +33,33 @@ class ITEFormExtension extends Extension
         // load plugins configuration
         foreach (SFFormExtension::getPlugins() as $plugin) {
             $enabled = isset($config['plugins'][$plugin]) && !empty($config['plugins'][$plugin]['enabled']);
-
             $container->setParameter(sprintf('ite_form.plugins.%s.enabled', $plugin), $enabled);
 
             if ($enabled) {
-                $method = 'load' . ucfirst($plugin) . 'Configuration';
+                // load common plugin configuration
+                $this->loadPluginConfiguration($plugin, $loader, $config['plugins'][$plugin], $container);
 
-                $this->$method($loader, $config['plugins'][$plugin], $container);
+                // load specific plugin configuration
+                $method = 'load' . ucfirst($plugin) . 'Configuration';
+                if (method_exists($this, $method)) {
+                    $this->$method($loader, $config['plugins'][$plugin], $container);
+                }
             }
         }
+    }
+
+    /**
+     * @param $plugin
+     * @param FileLoader $loader
+     * @param array $config
+     * @param ContainerBuilder $container
+     */
+    protected function loadPluginConfiguration($plugin, FileLoader $loader, array $config, ContainerBuilder $container)
+    {
+        $container->setParameter(sprintf('ite_form.plugins.%s.extras', $plugin), $config['extras']);
+        $container->setParameter(sprintf('ite_form.plugins.%s.options', $plugin), $config['options']);
+
+        $loader->load(sprintf('plugins/%s.yml', $plugin));
     }
 
     /**
@@ -51,40 +69,22 @@ class ITEFormExtension extends Extension
      */
     protected function loadSelect2Configuration(FileLoader $loader, array $config, ContainerBuilder $container)
     {
-        $container->setParameter('ite_form.plugins.select2.extras', $config['extras']);
-        $container->setParameter('ite_form.plugins.select2.options', $config['options']);
-
-        $loader->load('plugins/select2.yml');
-
         $this->addExtendedChoiceTypes('ite_form.form.type.select2_abstract', 'select2', $container);
     }
 
     /**
-     * @param FileLoader $loader
-     * @param array $config
-     * @param ContainerBuilder $container
-     */
-    protected function loadTinymceConfiguration(FileLoader $loader, array $config, ContainerBuilder $container)
-    {
-        $container->setParameter('ite_form.plugins.tinymce.extras', $config['extras']);
-        $container->setParameter('ite_form.plugins.tinymce.options', $config['options']);
-
-        $loader->load('plugins/tinymce.yml');
-    }
-
-    /**
      * @param $serviceId
-     * @param $name
+     * @param $plugin
      * @param ContainerBuilder $container
      */
-    private function addExtendedChoiceTypes($serviceId, $name, ContainerBuilder $container)
+    protected function addExtendedChoiceTypes($serviceId, $plugin, ContainerBuilder $container)
     {
         foreach ($this->getChoiceTypeNames() as $type) {
             $definition = new DefinitionDecorator($serviceId);
             $definition
                 ->addMethodCall('setType', array($type))
                 ->addTag('form.type', array(
-                    'alias' => 'ite_' . $name . '_' . $type)
+                    'alias' => sprintf('ite_%s_%s', $plugin, $type))
                 );
 
             $extendedServiceId = preg_replace('/(abstract)$/', $type, $serviceId);
@@ -95,7 +95,7 @@ class ITEFormExtension extends Extension
     /**
      * @return array
      */
-    private function getChoiceTypeNames()
+    protected function getChoiceTypeNames()
     {
         return array(
             'choice',

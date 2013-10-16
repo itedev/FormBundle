@@ -10,11 +10,10 @@ interface EntityConverterInterface
 {
     /**
      * @param $entity
-     * @param string|null $labelPath
-     * @param string|null $idPath
+     * @param null $labelPath
      * @return mixed
      */
-    public function convertEntityToOption($entity, $labelPath = null, $idPath = null);
+    public function convertEntityToOption($entity, $labelPath = null);
 
     /**
      * @param $entities

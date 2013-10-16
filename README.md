@@ -12,7 +12,7 @@ ite_form:
             enabled:      true
             options:      {}    # global plugin settings, which you can override in specific field
     timezone:             Asia/Omsk
-```   
+```
 Form field types and other plugin services are loaded ONLY if plugin enabled in config.
 
 ```twig
@@ -64,6 +64,7 @@ Examples:
 ```php
 ->add('entity', 'ite_select2_entity', array(
     'class' => 'AcmeDemoBundle:Foo',
+    'property' => 'bar',
     'plugin_options' => array(          
         'placeholder' => 'Type smth...', // these options go directly javascript when plugin will be initialized 
         'minimumInputLength' => 2,
@@ -74,6 +75,7 @@ Examples:
 ```php
 ->add('fundingCode', 'ite_select2_ajax_entity', array(
     'class' => 'AcmeDemoBundle:Foo',
+    'property' => 'bar',
     'route' => 'acme_demo_ajax_foo_search', // route for searching Foo records by given query
     // 'allow_create' => true,
     // 'create_route' => 'acme_demo_ajax_foo_create', // route for creating Foo entity using given query
@@ -98,11 +100,13 @@ class AjaxFooController extends Controller
     public function searchAction(Request $request)
     {
         $term = $request->query->get('term');
-        $property = $request->query->get('property');
 
+        // get an array of entities
         $result = $this->em->getRepository('AcmeDemoBundle:Foo')->yourSearchMethod($query);
 
-        return $this->get('ite_form.select2.converter')->convertEntitiesToOptions($result, $property);
+        // 'property' value will be taken from corresponding value of field definition,
+        // but you can set it obviously via second parameter of convertEntitiesToOptions()
+        return $this->get('ite_form.select2.converter')->convertEntitiesToOptions($result);
     }
     ...
 }
