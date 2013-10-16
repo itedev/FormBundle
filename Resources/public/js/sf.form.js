@@ -26,6 +26,14 @@
     return false;
   };
 
+  function camelCase(str) {
+    return str.replace(/[_\-]/g, ' ')
+      .replace(/^([a-z\u00E0-\u00FC])|\s+([a-z\u00E0-\u00FC])/g, function ($1) {
+        return $1.toUpperCase();
+      })
+      .replace(/\s/g, '');
+  }
+
   // ElementBag
   var ElementBag = function() {};
   ElementBag.prototype.fn = ElementBag.prototype;
@@ -137,7 +145,7 @@
           continue;
         }
 
-        var camelizePlugin = plugin.charAt(0).toUpperCase() + plugin.substr(1, plugin.length - 1);
+        var camelizePlugin = camelCase(plugin);
 
         var isAppliedMethod = 'is' + camelizePlugin + 'PluginApplied';
         var applyMethod = 'apply' + camelizePlugin + 'Plugin';

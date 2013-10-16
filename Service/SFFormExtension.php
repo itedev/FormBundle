@@ -8,6 +8,10 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
 
+/**
+ * Class SFFormExtension
+ * @package ITE\FormBundle\Service
+ */
 class SFFormExtension implements SFExtensionInterface
 {
     /**
@@ -15,10 +19,12 @@ class SFFormExtension implements SFExtensionInterface
      */
     const PLUGIN_SELECT2 = 'select2';
     const PLUGIN_TINYMCE = 'tinymce';
+    const PLUGIN_BOOTSTRAP_COLORPICKER = 'bootstrap_colorpicker';
 
     protected static $plugins = array(
         self::PLUGIN_SELECT2,
         self::PLUGIN_TINYMCE,
+        self::PLUGIN_BOOTSTRAP_COLORPICKER,
     );
 
     /**

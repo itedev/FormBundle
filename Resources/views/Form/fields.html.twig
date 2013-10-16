@@ -91,6 +91,11 @@
     {{ ite_form_sf_add_element('tinymce', '#' ~ id, element_data) }}
 {% endblock ite_tinymce_textarea_widget %}
 
+{% block ite_bootstrap_colorpicker_text_widget %}
+    {{ block('form_widget_simple') }}
+    {{ ite_form_sf_add_element('bootstrap_colorpicker', '#' ~ id, element_data) }}
+{% endblock ite_bootstrap_colorpicker_text_widget %}
+
 {% block ite_input_entity_widget %}
     {% if widget == 'hidden' %}
         {{ block('hidden_widget') }}

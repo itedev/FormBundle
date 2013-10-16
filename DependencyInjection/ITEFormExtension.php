@@ -2,6 +2,7 @@
 
 namespace ITE\FormBundle\DependencyInjection;
 
+use Doctrine\Common\Inflector\Inflector;
 use ITE\FormBundle\Service\SFFormExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
@@ -40,7 +41,7 @@ class ITEFormExtension extends Extension
                 $this->loadPluginConfiguration($plugin, $loader, $config['plugins'][$plugin], $container);
 
                 // load specific plugin configuration
-                $method = 'load' . ucfirst($plugin) . 'Configuration';
+                $method = 'load' . Inflector::classify($plugin) . 'Configuration';
                 if (method_exists($this, $method)) {
                     $this->$method($loader, $config['plugins'][$plugin], $container);
                 }
@@ -54,7 +55,7 @@ class ITEFormExtension extends Extension
      * @param array $config
      * @param ContainerBuilder $container
      */
-    protected function loadPluginConfiguration($plugin, FileLoader $loader, array $config, ContainerBuilder $container)
+    private function loadPluginConfiguration($plugin, FileLoader $loader, array $config, ContainerBuilder $container)
     {
         $container->setParameter(sprintf('ite_form.plugins.%s.extras', $plugin), $config['extras']);
         $container->setParameter(sprintf('ite_form.plugins.%s.options', $plugin), $config['options']);
@@ -67,7 +68,7 @@ class ITEFormExtension extends Extension
      * @param array $config
      * @param ContainerBuilder $container
      */
-    protected function loadSelect2Configuration(FileLoader $loader, array $config, ContainerBuilder $container)
+    private function loadSelect2Configuration(FileLoader $loader, array $config, ContainerBuilder $container)
     {
         $this->addExtendedChoiceTypes('ite_form.form.type.select2_abstract', 'select2', $container);
     }
@@ -77,7 +78,7 @@ class ITEFormExtension extends Extension
      * @param $plugin
      * @param ContainerBuilder $container
      */
-    protected function addExtendedChoiceTypes($serviceId, $plugin, ContainerBuilder $container)
+    private function addExtendedChoiceTypes($serviceId, $plugin, ContainerBuilder $container)
     {
         foreach ($this->getChoiceTypeNames() as $type) {
             $definition = new DefinitionDecorator($serviceId);
@@ -95,7 +96,7 @@ class ITEFormExtension extends Extension
     /**
      * @return array
      */
-    protected function getChoiceTypeNames()
+    private function getChoiceTypeNames()
     {
         return array(
             'choice',
