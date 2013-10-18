@@ -8,10 +8,10 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * Class Select2AbstractType
+ * Class BootstrapDateTimePickerDateTimeType
  * @package ITE\FormBundle\Form\Core\Type
  */
-class Select2AbstractType extends AbstractType
+class BootstrapDateTimePickerDateTimeType extends AbstractType
 {
     /**
      * @var array $extras
@@ -24,11 +24,6 @@ class Select2AbstractType extends AbstractType
     protected $options;
 
     /**
-     * @var string $type
-     */
-    protected $type;
-
-    /**
      * @param $extras
      * @param $options
      */
@@ -39,25 +34,22 @@ class Select2AbstractType extends AbstractType
     }
 
     /**
-     * @param $type
-     */
-    public function setType($type)
-    {
-        $this->type = $type;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
+            'widget' => 'single_text',
+            'format' => 'yyyy-MM-dd HH:mm:ss',
             'plugin_options' => array(),
             'extras' => array(),
         ));
         $resolver->setAllowedTypes(array(
             'plugin_options' => array('array'),
             'extras' => array('array'),
+        ));
+        $resolver->setAllowedValues(array(
+            'widget' => array('single_text'),
         ));
     }
 
@@ -66,21 +58,36 @@ class Select2AbstractType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        if ('entity' === $this->type) {
-            $view->vars['attr']['data-property'] = $options['property'];
-        }
-
         $view->vars['element_data'] = array(
             'extras' => (object) array_replace_recursive($this->extras, $options['extras']),
-            'options' => (object) array_replace_recursive($this->options, $options['plugin_options'])
+            'options' => array_replace_recursive($this->options, $options['plugin_options'], array(
+                'format' => strtr($options['format'], array(
+                    'a' => 'p', // am/pm marker
+                    'm' => 'i', // minute in hour
+                    'h' => 'H', // hour in am/pm (1~12)
+                    'H' => 'h', // hour in day (0~23)
+                    'MMMM' => 'MM', // month in year (September)
+                    'MMM' => 'M', // month in year (Sept)
+                    'MM' => 'mm', // month in year (09)
+                    'M' => 'm', // month in year (9)
+                )),
+            ))
         );
 
         array_splice(
             $view->vars['block_prefixes'],
             array_search($this->getName(), $view->vars['block_prefixes']),
             0,
-            'ite_select2'
+            'ite_bootstrap_datetimepicker'
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function finishView(FormView $view, FormInterface $form, array $options)
+    {
+        $view->vars['type'] = 'text';
     }
 
     /**
@@ -88,7 +95,7 @@ class Select2AbstractType extends AbstractType
      */
     public function getParent()
     {
-        return $this->type;
+        return 'datetime';
     }
 
     /**
@@ -96,6 +103,6 @@ class Select2AbstractType extends AbstractType
      */
     public function getName()
     {
-        return 'ite_select2_' . $this->type;
+        return 'ite_bootstrap_datetimepicker_datetime';
     }
 }

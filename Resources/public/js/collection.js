@@ -10,11 +10,9 @@
 
     this.collectionSelector = '#' + $collection.attr('id');
     this.collectionId = $collection.data('collection-id');
-    this.itemSelector = $collection.data('widget-controls') === 'true'
-      ? this.collectionSelector + ' > .controls > .collection-item'
-      : this.collectionSelector + ' > .collection-item'
-    ;
-    this.index = $(this.itemSelector).length - 1;
+    this.collectionItemsSelector = this.collectionSelector + ' .collection-items:first';
+    this.collectionItemSelector = this.collectionItemsSelector + ' > .collection-item';
+    this.index = $(this.collectionItemSelector).length - 1;
 
     $.extend(true, this, $.fn.collection.defaults, $.fn.collection.collections[this.collectionId]);
   };
@@ -22,6 +20,23 @@
   Collection.prototype = {
     constructor: Collection,
     add: function () {
+      var self = this;
+      function afterShow() {
+        // apply plugins
+        var replacementTokens = {};
+        $item.parents('.collection-item').each(function() {
+          var parentCollectionItem = $(this);
+
+          var parentPrototypeName = parentCollectionItem.closest('[data-collection-id]').data('prototype-name');
+          replacementTokens[parentPrototypeName] = parentCollectionItem.data('index');
+        });
+        replacementTokens[prototypeName] = self.index;
+        SF.elements.apply(replacementTokens, $item);
+
+        self.onAdd.apply($collection, [$item, self.index, $collection]);
+        $collection.triggerHandler('add.ite-collection-item', [$item, self.index, $collection]);
+      }
+
       this.index++;
 
       var $collection = $(this.collectionSelector);
@@ -30,7 +45,7 @@
         prototypeName = '__name__';
       }
 
-      var splitRe = new RegExp("(data\\-collection\\-id=(?:\"|&quot;)[^\"&]*?" + prototypeName + "[^\"&]*?(?:\"|&quot;))", 'g');
+      var splitRe = new RegExp("(data\\-collection\\-id=(?:\"|&quot;)[^\"&]*?(?:\"|&quot;))", 'g');
       var replaceRe = new RegExp(prototypeName, 'g');
 
       var prototype = $collection.data('prototype');
@@ -49,28 +64,34 @@
         return;
       }
 
-      if ($collection.data('widget-controls') === 'true') {
-        $collection.children('.controls:first').append($item);
-      } else {
-        $collection.append($item);
+      $item.hide();
+      $(this.collectionItemsSelector).append($item);
+
+      switch (this.show.type.toLowerCase()) {
+        case 'fade':
+          $item.fadeIn(this.show.length, afterShow);
+          break;
+        case 'slide':
+          $item.slideDown(this.show.length, afterShow);
+          break;
+        case 'show':
+          $item.show(this.show.length, afterShow);
+          break;
+        default:
+          $item.show(null, afterShow);
+          break;
       }
-
-      // apply plugins
-      var replacementTokens = {};
-      $item.parents('.collection-item').each(function() {
-        var parentCollectionItem = $(this);
-
-        var parentPrototypeName = parentCollectionItem.closest('[data-collection-id]').data('prototype-name');
-        replacementTokens[parentPrototypeName] = parentCollectionItem.data('index');
-      });
-      replacementTokens[prototypeName] = this.index;
-      SF.elements.apply(replacementTokens, $item);
-
-      this.onAdd.apply($collection, [$item, this.index, $collection]);
-      $collection.triggerHandler('add.ite-collection-item', [$item]);
     },
     remove: function ($btn) {
-      if ($btn.parents('.collection-item').length !== 0) {
+      var self = this;
+      function afterHide() {
+        $item.remove();
+
+        self.onRemove.apply($collection, [$item, index, $collection]);
+        $collection.triggerHandler('remove.ite-collection-item', [$item, index, $collection]);
+      }
+
+      if (0 !== $btn.parents('.collection-item').length) {
         var $item = $btn.closest('.collection-item');
         var index = $item.data('index');
         var $collection = $(this.collectionSelector);
@@ -80,14 +101,24 @@
           return;
         }
 
-        $item.remove();
-
-        this.onRemove.apply($collection, [$item, index, $collection]);
-        $collection.triggerHandler('remove.ite-collection-item', [$item]);
+        switch (this.hide.type.toLowerCase()) {
+          case 'fade':
+            $item.fadeOut(this.hide.length, afterHide);
+            break;
+          case 'slide':
+            $item.slideUp(this.hide.length, afterHide);
+            break;
+          case 'hide':
+            $item.hide(this.hide.length, afterHide);
+            break;
+          default:
+            $item.hide(null, afterHide);
+            break;
+        }
       }
     },
     getItems: function() {
-      return $(this.itemSelector);
+      return $(this.collectionItemSelector);
     },
     getParents: function() {
       return $(this.collectionSelector).parents('[data-collection-id]');
@@ -122,7 +153,15 @@
     beforeAdd: function(item, index, collection) {},
     onAdd: function(item, index, collection) {},
     beforeRemove: function(item, index, collection) {},
-    onRemove: function(item, index, collection) {}
+    onRemove: function(item, index, collection) {},
+    show: {
+      type: 'show',
+      length: 0
+    },
+    hide: {
+      type: 'hide',
+      length: 0
+    }
   };
   $.fn.collection.collections = {};
 

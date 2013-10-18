@@ -9,10 +9,10 @@ use Twig_Extension;
 use Symfony\Component\Locale\Locale;
 
 /**
- * Class SFFormExtension
+ * Class SFExtension
  * @package ITE\FormBundle\Twig\Extension
  */
-class SFFormExtension extends Twig_Extension
+class SFExtension extends Twig_Extension
 {
     /**
      * @var SFInterface
@@ -34,7 +34,6 @@ class SFFormExtension extends Twig_Extension
     {
         return array(
             new \Twig_SimpleFunction('ite_form_sf_add_element', array($this, 'sfAddElement')),
-            new \Twig_SimpleFunction('ite_form_collection_id', array($this, 'getCollectionId')),
         );
     }
 
@@ -49,25 +48,11 @@ class SFFormExtension extends Twig_Extension
     }
 
     /**
-     * @param FormView $view
-     */
-    public function getCollectionId(FormView $view)
-    {
-        $id = $view->vars['id'];
-        while (null !== $view->parent) {
-            $view = $view->parent;
-            if (in_array('collection', $view->vars['block_prefixes'])) {
-
-            }
-        }
-    }
-
-    /**
      * @return string
      */
     public function getName()
     {
-        return 'ite_form.twig.sf_form_extension';
+        return 'ite_form.twig.sf_extension';
     }
 
 }

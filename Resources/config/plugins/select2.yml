@@ -1,7 +1,7 @@
 parameters:
     ite_form.form.type.select2_abstract.class:          ITE\FormBundle\Form\Core\Type\Select2AbstractType
     ite_form.form.type.select2_ajax_entity.class:       ITE\FormBundle\Form\Doctrine\Type\Select2AjaxEntityType
-    ite_form.select2.entity_converter.class:                   ITE\FormBundle\Service\Plugin\Select2EntityConverter
+    ite_form.select2.entity_converter.class:            ITE\FormBundle\Service\Plugin\Select2EntityConverter
 
 services:
     ite_form.form.type.select2_abstract:

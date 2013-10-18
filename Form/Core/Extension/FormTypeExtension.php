@@ -8,6 +8,10 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+/**
+ * Class FormTypeExtension
+ * @package ITE\FormBundle\Form\Core\Extension
+ */
 class FormTypeExtension extends AbstractTypeExtension
 {
     /**
@@ -31,7 +35,7 @@ class FormTypeExtension extends AbstractTypeExtension
     }
 
     /**
-     * @param OptionsResolverInterface $resolver
+     * {@inheritdoc}
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
@@ -58,6 +62,9 @@ class FormTypeExtension extends AbstractTypeExtension
         ));
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $ajax = isset($options['ajax']) ? $options['ajax'] : false;
@@ -74,6 +81,9 @@ class FormTypeExtension extends AbstractTypeExtension
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getExtendedType()
     {
         return 'form';

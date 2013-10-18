@@ -54,8 +54,8 @@ class BootstrapColorpickerTextType extends AbstractType
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['element_data'] = array(
-            'extras' => array_merge_recursive($this->extras, $options['extras']),
-            'options' => array_merge_recursive($this->options, $options['plugin_options'])
+            'extras' => array_replace_recursive($this->extras, $options['extras']),
+            'options' => array_replace_recursive($this->options, $options['plugin_options'])
         );
     }
 

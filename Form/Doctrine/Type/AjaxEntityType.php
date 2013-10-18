@@ -11,6 +11,10 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use ITE\FormBundle\Form\Doctrine\ChoiceList\AjaxEntityChoiceList;
 use Symfony\Component\Routing\RouterInterface;
 
+/**
+ * Class AjaxEntityType
+ * @package ITE\FormBundle\Form\Doctrine\Type
+ */
 class AjaxEntityType extends AbstractType
 {
     /**

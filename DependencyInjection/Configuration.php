@@ -22,8 +22,8 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('ite_form');
 
+        // add plugin configuration
         $pluginsNode = $rootNode->children()->arrayNode('plugins');
-
         foreach (SFFormExtension::getPlugins() as $plugin) {
             $this->addPlugin($plugin, $pluginsNode);
         }

@@ -106,6 +106,8 @@ class ITEFormExtension extends Extension
             'locale',
             'currency',
             'entity',
+            'document',
+            'model',
         );
     }
 }

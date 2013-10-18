@@ -41,9 +41,9 @@ class Select2AjaxEntityType extends AbstractType
     public function __construct(RouterInterface $router, $extras, $options)
     {
         $this->router = $router;
-        $this->extras = array_merge_recursive($extras, array(
-                'ajax' => true
-            ));
+        $this->extras = array_replace_recursive($extras, array(
+            'ajax' => true
+        ));
         $this->options = $options;
     }
 
@@ -73,20 +73,20 @@ class Select2AjaxEntityType extends AbstractType
             return null;
         };
         $resolver->setDefaults(array(
-                'extras' => array(),
-                'plugin_options' => array(),
-                'allow_create' => false,
-                'create_url' => $createUrl,
-                'error_bubbling' => false,
-            ));
+            'extras' => array(),
+            'plugin_options' => array(),
+            'allow_create' => false,
+            'create_url' => $createUrl,
+            'error_bubbling' => false,
+        ));
         $resolver->setAllowedTypes(array(
-                'extras' => array('array'),
-                'plugin_options' => array('array'),
-                'allow_create' => array('bool')
-            ));
+            'extras' => array('array'),
+            'plugin_options' => array('array'),
+            'allow_create' => array('bool')
+        ));
         $resolver->setOptional(array(
-                'create_route',
-            ));
+            'create_route',
+        ));
     }
 
     /**
@@ -130,16 +130,16 @@ class Select2AjaxEntityType extends AbstractType
         $view->vars['attr']['data-property'] = $options['property'];
 
         $view->vars['element_data'] = array(
-            'extras' => array_merge_recursive($this->extras, $options['extras'], array(
-                    'ajax' => true,
-                    'allow_create' => $options['allow_create'],
-                    'create_url' => $options['create_url'],
-                )),
-            'options' => array_merge_recursive($this->options, $options['plugin_options'], array(
-                    'ajax' => array(
-                        'url' => $options['url'],
-                    )
-                ))
+            'extras' => array_replace_recursive($this->extras, $options['extras'], array(
+                'ajax' => true,
+                'allow_create' => $options['allow_create'],
+                'create_url' => $options['create_url'],
+            )),
+            'options' => array_replace_recursive($this->options, $options['plugin_options'], array(
+                'ajax' => array(
+                    'url' => $options['url'],
+                )
+            ))
         );
     }
 

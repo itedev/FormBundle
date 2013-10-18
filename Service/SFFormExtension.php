@@ -20,11 +20,15 @@ class SFFormExtension implements SFExtensionInterface
     const PLUGIN_SELECT2 = 'select2';
     const PLUGIN_TINYMCE = 'tinymce';
     const PLUGIN_BOOTSTRAP_COLORPICKER = 'bootstrap_colorpicker';
+    const PLUGIN_BOOTSTRAP_DATETIMEPICKER = 'bootstrap_datetimepicker';
+    const PLUGIN_BOOTSTRAP_DATETIMEPICKER2 = 'bootstrap_datetimepicker2';
 
     protected static $plugins = array(
         self::PLUGIN_SELECT2,
         self::PLUGIN_TINYMCE,
         self::PLUGIN_BOOTSTRAP_COLORPICKER,
+        self::PLUGIN_BOOTSTRAP_DATETIMEPICKER,
+        self::PLUGIN_BOOTSTRAP_DATETIMEPICKER2,
     );
 
     /**

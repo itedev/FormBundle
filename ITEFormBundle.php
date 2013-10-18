@@ -6,10 +6,14 @@ use ITE\FormBundle\DependencyInjection\Compiler\FormPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
+/**
+ * Class ITEFormBundle
+ * @package ITE\FormBundle
+ */
 class ITEFormBundle extends Bundle
 {
     /**
-     * {@inheritdoc}
+     * @param ContainerBuilder $container
      */
     public function build(ContainerBuilder $container)
     {

@@ -21,11 +21,7 @@ class AssetFactory extends BaseAssetFactory
     private $container;
 
     /**
-     * @param KernelInterface $kernel
-     * @param ContainerInterface $container
-     * @param ParameterBagInterface $parameterBag
-     * @param string $baseDir
-     * @param bool $debug
+     * {@inheritdoc}
      */
     public function __construct(KernelInterface $kernel, ContainerInterface $container, ParameterBagInterface $parameterBag, $baseDir, $debug = false)
     {
@@ -35,17 +31,15 @@ class AssetFactory extends BaseAssetFactory
     }
 
     /**
-     * @param array $inputs
-     * @param array $filters
-     * @param array $options
-     * @return AssetCollection
+     * {@inheritdoc}
      */
     public function createAsset($inputs = array(), $filters = array(), array $options = array())
     {
         if ('.js' === substr($options['output'], -3)) {
             // add plugin js
             foreach (SFFormExtension::getPlugins() as $plugin) {
-                if ($enabled = $this->container->getParameter(sprintf('ite_form.plugins.%s.enabled', $plugin))) {
+                $enabled = $this->container->getParameter(sprintf('ite_form.plugins.%s.enabled', $plugin));
+                if ($enabled) {
                     $inputs[] = sprintf('@ITEFormBundle/Resources/public/js/plugins/sf.%s.js', $plugin);
                 }
             }

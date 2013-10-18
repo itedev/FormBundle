@@ -12,7 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 class ButtonTypeExtension extends AbstractTypeExtension
 {
     /**
-     * @param OptionsResolverInterface $resolver
+     * {@inheritdoc}
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
@@ -22,7 +22,7 @@ class ButtonTypeExtension extends AbstractTypeExtension
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getExtendedType()
     {

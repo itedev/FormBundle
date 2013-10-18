@@ -65,8 +65,8 @@ Examples:
 ->add('entity', 'ite_select2_entity', array(
     'class' => 'AcmeDemoBundle:Foo',
     'property' => 'bar',
-    'plugin_options' => array(          
-        'placeholder' => 'Type smth...', // these options go directly javascript when plugin will be initialized 
+    'plugin_options' => array( // these options go directly javascript when plugin will be initialized
+        'placeholder' => 'Type smth...',
         'minimumInputLength' => 2,
     )
 ))
@@ -77,6 +77,7 @@ Examples:
     'class' => 'AcmeDemoBundle:Foo',
     'property' => 'bar',
     'route' => 'acme_demo_ajax_foo_search', // route for searching Foo records by given query
+    'route_parameters' => array(), // optional
     // 'allow_create' => true,
     // 'create_route' => 'acme_demo_ajax_foo_create', // route for creating Foo entity using given query
     'plugin_options' => array(

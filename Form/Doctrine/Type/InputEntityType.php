@@ -11,6 +11,10 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+/**
+ * Class InputEntityType
+ * @package ITE\FormBundle\Form\Doctrine\Type
+ */
 class InputEntityType extends AbstractType
 {
     protected $em;

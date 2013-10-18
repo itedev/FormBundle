@@ -1,29 +1,26 @@
 parameters:
     ite_form.sf.extension.form.class:                    ITE\FormBundle\Service\SFFormExtension
 
-    ite_form.twig.sf_form_extension.class:               ITE\FormBundle\Twig\Extension\SFFormExtension
-
-    ite_form.form_validator.class:                       ITE\FormBundle\Service\FormValidator
+    ite_form.twig.sf_extension.class:                    ITE\FormBundle\Twig\Extension\SFExtension
 
     ite_form.form.form_type_extension.class:             ITE\FormBundle\Form\Core\Extension\FormTypeExtension
+    ite_form.form.collection_type_extension.class:       ITE\FormBundle\Form\Core\Extension\CollectionTypeExtension
     ite_form.form.button_type_extension.class:           ITE\FormBundle\Form\Core\Extension\ButtonTypeExtension
-    ite_form.form.widget_form_type_extension.class:      ITE\FormBundle\Form\Core\Extension\WidgetFormTypeExtension
 
-    ite_form.form.daterange_type.class:                  ITE\FormBundle\Form\Core\Type\DateRangeType
-    ite_form.form.bootstrap_date_picker_type.class:      ITE\FormBundle\Form\Core\Type\BootstrapDatePickerType
-    ite_form.form.bootstrap_datetime_picker_type.class:  ITE\FormBundle\Form\Core\Type\BootstrapDateTimePickerType
-    ite_form.form.bootstrap_time_picker_type.class:      ITE\FormBundle\Form\Core\Type\BootstrapTimePickerType
+    ite_form.entity_converter.class:                     ITE\FormBundle\Service\EntityConverter
 
     ite_form.form.ajax_entity_type.class:                ITE\FormBundle\Form\Doctrine\Type\AjaxEntityType
 
     ite_form.form.input_entity_type.class:               ITE\FormBundle\Form\Doctrine\Type\InputEntityType
     ite_form.form.markup_type.class:                     ITE\FormBundle\Form\Core\Type\MarkupType
 
-    ite_form.entity_converter.class:                     ITE\FormBundle\Service\EntityConverter
-
 #    assetic.twig_extension.class:                        ITE\FormBundle\Twig\Extension\AsseticExtension
     assetic.asset_factory.class:                         ITE\FormBundle\Factory\AssetFactory
     form.resolved_type_factory.class:                    ITE\FormBundle\Form\ResolvedFormTypeFactory
+
+#    refactor below
+    ite_form.form_validator.class:                       ITE\FormBundle\Service\FormValidator
+#    ite_form.form.daterange_type.class:                  ITE\FormBundle\Form\Core\Type\DateRangeType
 
 services:
     ite_form.sf.extension.form:
@@ -31,15 +28,11 @@ services:
         tags:
             - { name: ite_js.sf.extension, alias: form }
 
-    ite_form.twig.sf_form_extension:
-        class:                                              %ite_form.twig.sf_form_extension.class%
+    ite_form.twig.sf_extension:
+        class:                                              %ite_form.twig.sf_extension.class%
         arguments: [ @ite_js.sf ]
         tags:
             - { name: twig.extension }
-
-    ite_form.form_validator:
-        class:                                              %ite_form.form_validator.class%
-        arguments: [ @validator.mapping.class_metadata_factory, @validator.validator_factory, @translator.default, %validator.translation_domain%, [] ]
 
     ite_form.form.form_type_extension:
         class:                                              %ite_form.form.form_type_extension.class%
@@ -47,35 +40,15 @@ services:
         tags:
             - { name: form.type_extension, alias: form }
 
+    ite_form.form.collection_type_extension:
+        class:                                              %ite_form.form.collection_type_extension.class%
+        tags:
+            - { name: form.type_extension, alias: collection }
+
     ite_form.form.button_type_extension:
         class:                                              %ite_form.form.button_type_extension.class%
         tags:
             - { name: form.type_extension, alias: button }
-
-    ite_form.form.widget_form_type_extension:
-        class:                                              %ite_form.form.widget_form_type_extension.class%
-        tags:
-            - { name: form.type_extension, alias: form }
-
-    ite_form.form.daterange_type:
-        class:                                              %ite_form.form.daterange_type.class%
-        tags:
-            - { name: form.type, alias: daterange }
-
-    ite_form.form.bootstrap_date_picker_type:
-        class:                                              %ite_form.form.bootstrap_date_picker_type.class%
-        tags:
-            - { name: form.type, alias: ite_bootstrap_date_picker }
-
-    ite_form.form.bootstrap_datetime_picker_type:
-        class:                                              %ite_form.form.bootstrap_datetime_picker_type.class%
-        tags:
-            - { name: form.type, alias: ite_bootstrap_datetime_picker }
-
-    ite_form.form.bootstrap_time_picker_type:
-        class:                                              %ite_form.form.bootstrap_time_picker_type.class%
-        tags:
-            - { name: form.type, alias: ite_bootstrap_time_picker }
 
     ite_form.form.ajax_entity_type:
         class:                                              %ite_form.form.ajax_entity_type.class%
@@ -98,3 +71,13 @@ services:
         class:                                              %ite_form.entity_converter.class%
         scope:                                              request
         arguments: [ @doctrine.orm.entity_manager, @request ]
+
+#    refactor below
+    ite_form.form_validator:
+        class:                                              %ite_form.form_validator.class%
+        arguments: [ @validator.mapping.class_metadata_factory, @validator.validator_factory, @translator.default, %validator.translation_domain%, [] ]
+
+#    ite_form.form.daterange_type:
+#        class:                                              %ite_form.form.daterange_type.class%
+#        tags:
+#            - { name: form.type, alias: daterange }
