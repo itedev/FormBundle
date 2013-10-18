@@ -1,65 +1,123 @@
 FormBundle
 ==========
 
+Installation
+------------
+
+1. Add bundle to your project in composer.json:
+
+```json
+// composer.json
+"require": {
+    // ...
+    "ite/form-bundle": "dev-master",
+    // ...
+}
+```
+
+2. Install bundle:
+
+```
+php composer.phar ite/form-bundle install
+```
+
+3. Add bundle to your app/AppKernel.php:
+
+```php
+// app/AppKernel.php
+public function registerBundles()
+{
+    $bundles = array(
+        // ...
+        new ITE\JsBundle\ITEJsBundle(), // don't forget to enable ITEJsBundle!
+        // ...
+        new ITE\FormBundle\ITEFormBundle(),
+        // ...
+    );
+}
+```
+
 Configuration
 -------------
+An example configuration is shown below:
+
 ```yml
 # app/config/config.yml
 ite_form:
     plugins:
-        select2:          ~     # enable plugin with empty options
-        tinymce:
-            enabled:      true
-            options:      {}    # global plugin settings, which you can override in specific field
-    timezone:             Asia/Omsk
+        plugin_name:            ~               # just enable plugin with empty options
+        another_plugin_name:                    # enable plugin and set its global options
+            enabled:            true
+            options:            {}              # global plugin options, which you can override in specific field
+    timezone:                   Europe/London
 ```
-Form field types and other plugin services are loaded ONLY if plugin enabled in config.
+List of javascripts, that you need to include in your global template:
 
 ```twig
 {# app/Resources/views/base.html.twig #}
-
 {% javascripts
-    '@ITEJsBundle/Resources/public/js/sf.js'
-    ...
+    '@AcmeDemoBundle/Resources/public/js/jquery.js'
     {# javascript libraries  #}
-    ...
+    '@ITEJsBundle/Resources/public/js/sf.js' {# don't forget to include js from ITEJsBundle! #}
     '@ITEFormBundle/Resources/public/js/sf.form.js'
+    '@ITEFormBundle/Resources/public/js/collection.js' {# optional, include it if you want to use extended form collections #}
 %}
 <script type="text/javascript" src="{{ asset_url }}"></script>
 {% endjavascripts %}
-{{ ite_js_sf_dump() }}
+{{ ite_js_sf_dump() }} {# this function dumps all needed data for SF object in ONE inline js #}
 ```
-Internally some more javascripts are included automatically in javascripts tag for each enabled plugin, for example: '@ITEFormBundle/Resources/public/js/plugins/sf.select2.js'.
+Internally some more javascripts are appended automatically in javascripts tag for each enabled plugin, it looks like this: '@ITEFormBundle/Resources/public/js/plugins/sf.plugin_name.js'.
+
+Form field types and other plugin services are loaded ONLY if plugin enabled in config.
 
 SF object extension
 -------------------
 This bundle add new field to SF object: SF.elements. To apply plugins on needed elements you need to call 
+
 ```js
 SF.elements.apply();
 ```
 function. If you are using plugin fields inside collection field, you need to call this function after inserting html to DOM and pass prototype_name and collection item index to it:
+
 ```js
 SF.elements.apply({'__name__': 1});
 ```
 And event if you are using collection in collection, you can do so:
+
 ```js
 SF.elements.apply({'__name__': 1, '__another_name__': 2});
 ```
 
 Plugins
 -------
+
 <h4>Select2</h4>
-Provide next field types:
- * ite_select2_choice
- * ite_select2_language
- * ite_select2_country
- * ite_select2_timezone
- * ite_select2_locale
- * ite_select2_currency
- * ite_select2_entity
+
+Homepage: http://ivaynberg.github.io/select2/
+
+Provided field types:
+
+ * ite_select2_choice (inherits choice type)
+ * ite_select2_language (inherits language type)
+ * ite_select2_country (inherits country type)
+ * ite_select2_timezone (inherits timezone type)
+ * ite_select2_locale (inherits locale type)
+ * ite_select2_currency (inherits currency type)
+ * ite_select2_entity (inherits entity type)
+ * ite_select2_document (inherits document type)
+ * ite_select2_model (inherits model type)
  * ite_select2_ajax_entity (this type does not load all entities at once and use AJAX autocomplete instead of it)
 
-Examples:
+Example configuration:
+
+```yml
+# app/config/config.yml
+ite_form:
+    plugins:
+        select2:    ~
+```
+
+Usage:
 
 ```php
 ->add('entity', 'ite_select2_entity', array(
@@ -114,10 +172,14 @@ class AjaxFooController extends Controller
 ```
 
 <h4>Tinymce</h4>
-Provide next field types:
-* ite_tinymce_textarea
 
-Configuration:
+Homepage: http://www.tinymce.com/
+
+Provided field types:
+
+* ite_tinymce_textarea (inherits textarea type)
+
+Example configuration:
 
 ```yml
 ite_form:
@@ -166,7 +228,46 @@ ite_form:
                     - visualblocks
                     - visualchars
                     - wordcount
-```    
+```
+
+Usage:
+
+```php
+->add('textarea', 'ite_tinymce_textarea', array(
+    'plugin_options' => array()
+))
+```
+
+<h4>Bootstrap DateTimePicker (by smalot)</h4>
+
+Homepage: http://www.malot.fr/bootstrap-datetimepicker/
+
+Provided field types:
+
+* ite_bootstrap_datetimepicker_datetime (inherits datetime type)
+* ite_bootstrap_datetimepicker_date (inherits date type)
+* ite_bootstrap_datetimepicker_time (inherits time type)
+* ite_bootstrap_datetimepicker_birthday (inherits ite_bootstrap_datetimepicker_date type)
+
+<h4>Bootstrap DateTimePicker2 (by tarruda)</h4>
+
+Homepage: http://tarruda.github.io/bootstrap-datetimepicker/
+
+Provided field types:
+
+* ite_bootstrap_datetimepicker2_datetime (inherits datetime type)
+* ite_bootstrap_datetimepicker2_date (inherits date type)
+* ite_bootstrap_datetimepicker2_time (inherits time type)
+* ite_bootstrap_datetimepicker2_birthday (inherits ite_bootstrap_datetimepicker2_date type)
+
+<h4>Bootstrap ColorPicker</h4>
+
+Homepage: http://www.eyecon.ro/bootstrap-colorpicker/
+
+Provided field types:
+
+* ite_bootstrap_colorpicker (inherits text type)
+
 FormBuilder
 -----------
 Two new methods are added to FormBuilder:
