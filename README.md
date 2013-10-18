@@ -162,7 +162,7 @@ class FooController extends Controller
 
         // 'property' value will be taken from corresponding value of field definition,
         // but you can set it obviously via second parameter of convertEntitiesToOptions()
-        return $this->get('ite_form.select2.converter')->convertEntitiesToOptions($result);
+        return $this->get('ite_form.select2.entity_converter')->convertEntitiesToOptions($result);
     }
     ...
 }
