@@ -131,7 +131,7 @@ Usage:
 ->add('entity', 'ite_select2_ajax_entity', array(
     'class' => 'AcmeDemoBundle:Foo',
     'property' => 'bar',
-    'route' => 'acme_demo_ajax_foo_search', // route for searching Foo records by given query
+    'route' => 'acme_demo_foo_search', // route for searching Foo records by given query
     'route_parameters' => array(), // optional
     // 'allow_create' => true,
     // 'create_route' => 'acme_demo_ajax_foo_create', // route for creating Foo entity using given query
