@@ -7,11 +7,8 @@ Installation
 1. Add bundle to your project in composer.json:
 
 ```json
-// composer.json
 "require": {
-    // ...
     "ite/form-bundle": "dev-master",
-    // ...
 }
 ```
 
@@ -131,10 +128,10 @@ Usage:
 ```
 
 ```php
-->add('fundingCode', 'ite_select2_ajax_entity', array(
+->add('entity', 'ite_select2_ajax_entity', array(
     'class' => 'AcmeDemoBundle:Foo',
     'property' => 'bar',
-    'route' => 'acme_demo_ajax_foo_search', // route for searching Foo records by given query
+    'route' => 'acme_demo_foo_search', // route for searching Foo records by given query
     'route_parameters' => array(), // optional
     // 'allow_create' => true,
     // 'create_route' => 'acme_demo_ajax_foo_create', // route for creating Foo entity using given query
@@ -146,14 +143,14 @@ Usage:
 ```
 
 ```php
-// /src/Acme/DemoBundle/Controller/AjaxFooController.php
+// /src/Acme/DemoBundle/Controller/FooController.php
 
 use FOS\RestBundle\Controller\Annotations\View;
 
-class AjaxFooController extends Controller
+class FooController extends Controller
 {
     /**
-     * @Route("/search", name="acme_demo_ajax_foo_search")
+     * @Route("/search", name="acme_demo_foo_search")
      * @View()
      */
     public function searchAction(Request $request)
@@ -165,7 +162,7 @@ class AjaxFooController extends Controller
 
         // 'property' value will be taken from corresponding value of field definition,
         // but you can set it obviously via second parameter of convertEntitiesToOptions()
-        return $this->get('ite_form.select2.converter')->convertEntitiesToOptions($result);
+        return $this->get('ite_form.select2.entity_converter')->convertEntitiesToOptions($result);
     }
     ...
 }
