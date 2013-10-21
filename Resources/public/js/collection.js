@@ -33,8 +33,8 @@
         replacementTokens[prototypeName] = self.index;
         SF.elements.apply(replacementTokens, $item);
 
-        self.onAdd.apply($collection, [$item, self.index, $collection]);
-        $collection.triggerHandler('add.ite-collection-item', [$item, self.index, $collection]);
+        self.onAdd.apply($collection, [$item, $collection]);
+        $collection.trigger('add.ite-collection', [$item]);
       }
 
       this.index++;
@@ -45,21 +45,11 @@
         prototypeName = '__name__';
       }
 
-      var splitRe = new RegExp("(data\\-collection\\-id=(?:\"|&quot;)[^\"&]*?(?:\"|&quot;))", 'g');
-      var replaceRe = new RegExp(prototypeName, 'g');
-
-      var prototype = $collection.data('prototype');
-      var parts = prototype.split(splitRe);
-      for (var i in parts) {
-        if (-1 === parts[i].indexOf('data-collection-id')) {
-          parts[i] = parts[i].replace(replaceRe, this.index);
-        }
-      }
-
-      var itemHtml = parts.join('');
+      var re = new RegExp(prototypeName, 'g');
+      var itemHtml = $collection.data('prototype').replace(re, this.index);
       var $item = $(itemHtml).attr('data-index', this.index);
 
-      var result = this.beforeAdd.apply($collection, [$item, this.index, $collection]);
+      var result = this.beforeAdd.apply($collection, [$item, $collection]);
       if (false === result) {
         return;
       }
@@ -87,16 +77,15 @@
       function afterHide() {
         $item.remove();
 
-        self.onRemove.apply($collection, [$item, index, $collection]);
-        $collection.triggerHandler('remove.ite-collection-item', [$item, index, $collection]);
+        self.onRemove.apply($collection, [$item, $collection]);
+        $collection.trigger('remove.ite-collection', [$item]);
       }
 
       if (0 !== $btn.parents('.collection-item').length) {
         var $item = $btn.closest('.collection-item');
-        var index = $item.data('index');
         var $collection = $(this.collectionSelector);
 
-        var result = this.beforeRemove.apply($collection, [$item, index, $collection]);
+        var result = this.beforeRemove.apply($collection, [$item, $collection]);
         if (false === result) {
           return;
         }
@@ -117,14 +106,23 @@
         }
       }
     },
-    getItems: function() {
+    items: function() {
       return $(this.collectionItemSelector);
     },
-    getParents: function() {
+    itemsCount: function() {
+      return this.items().length;
+    },
+    parents: function() {
       return $(this.collectionSelector).parents('[data-collection-id]');
     },
+    parentsCount: function() {
+      return this.parents().length;
+    },
     hasParent: function() {
-      return 0 !== $(this.collectionSelector).parents('[data-collection-id]').length;
+      return 0 !== this.parentsCount().length;
+    },
+    itemsWrapper: function() {
+      return $(this.collectionItemsSelector);
     }
   };
 
@@ -133,8 +131,8 @@
    * ======================== */
 
   $.fn.collection = function(method) {
-    var methodArguments = arguments;
-    return this.each(function() {
+    var methodArguments = arguments, value;
+    this.each(function() {
       var $this = $(this);
 
       var data = $this.data('collection');
@@ -142,18 +140,19 @@
         $this.data('collection', (data = new Collection(this)));
       }
       if ($.isFunction(data[method])) {
-        data[method].apply(data, Array.prototype.slice.call(methodArguments, 1));
+        value = data[method].apply(data, Array.prototype.slice.call(methodArguments, 1));
       } else {
         $.error('Method with name "' +  method + '" does not exist in jQuery.collection');
       }
     });
+    return ('undefined' === typeof value) ? this : value;
   };
 
   $.fn.collection.defaults = {
-    beforeAdd: function(item, index, collection) {},
-    onAdd: function(item, index, collection) {},
-    beforeRemove: function(item, index, collection) {},
-    onRemove: function(item, index, collection) {},
+    beforeAdd: function(item, collection) {},
+    onAdd: function(item, collection) {},
+    beforeRemove: function(item, collection) {},
+    onRemove: function(item, collection) {},
     show: {
       type: 'show',
       length: 0

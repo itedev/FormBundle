@@ -22,7 +22,7 @@
             {% if prototype is defined %}
                 {% set data_prototype = 'collection' in form.vars.block_prefixes and not omit_collection_item ? '<' ~ collection_item_tag|default('div') ~ ' class="collection-item ' ~ widget_items_attr.class|default()|join(' ') ~ '" id="' ~ prototype.vars.id ~ '_control_group">' ~ form_row(prototype) ~ '</' ~ collection_item_tag|default('div') ~ '>' : form_row(prototype) %} {# add collection_item_tag #}
                 {% set data_prototype_name = form.vars.form.vars.prototype.vars.name|default('__name__') %}
-                {% set widget_control_group_attr = widget_control_group_attr|merge({'data-prototype': data_prototype, 'data-prototype-name': data_prototype_name, 'data-widget-controls': widget_controls|default(false) ? 'true' : 'false', 'data-collection-id': collection_id|default(prototype.parent.vars.id ~ '_control_group')})|merge(attr) %} {# add 'data-collection-id' #}
+                {% set widget_control_group_attr = widget_control_group_attr|merge({'data-prototype': data_prototype, 'data-prototype-name': data_prototype_name, 'data-widget-controls': widget_controls|default(false) ? 'true' : 'false', 'data-collection-id': collection_id|default(unique_block_prefix)})|merge(attr) %} {# add 'data-collection-id' #}
             {% endif %}
             {% set widget_control_group_attr = widget_control_group_attr|merge({'id': id ~ '_control_group', 'class': widget_control_group_attr.class|default('') ~ ' control-group'}) %}
             {% if errors|length > 0 %}

@@ -34,6 +34,7 @@ class SFExtension extends Twig_Extension
     {
         return array(
             new \Twig_SimpleFunction('ite_form_sf_add_element', array($this, 'sfAddElement')),
+            new \Twig_SimpleFunction('ite_form_test', array($this, 'test')),
         );
     }
 
@@ -45,6 +46,14 @@ class SFExtension extends Twig_Extension
     public function sfAddElement($plugin, $selector, $options)
     {
         $this->sf->getExtension('form')->addElement($plugin, $selector, $options);
+    }
+
+    /**
+     * @param FormView $view
+     */
+    public function test(FormView $view)
+    {
+        $a = 1;
     }
 
     /**
