@@ -87,24 +87,13 @@
     {% endif %}
 {% endblock form_label %}
 
-{% block widget_control_group_end %}
-    {% spaceless %}
-        {% if widget_control_group|default(false) or form.parent == null %}
-            {% if widget_add_btn %}
-                {{ block('form_widget_add_btn') }}
-            {% endif %}
-            {% if widget_controls|default(false) or form.parent == null %}
-                </div>
-            {% endif %}
-            </div>
-        {% endif %}
-    {% endspaceless %}
-{% endblock widget_control_group_end %}
-
 {% block collection_widget %}
     {% spaceless %}
         <div class="collection-items">
             {{ block('form_widget') }}
         </div>
+        {% if widget_add_btn %}
+            {{ block('form_widget_add_btn') }}
+        {% endif %}
     {% endspaceless %}
 {% endblock collection_widget %}

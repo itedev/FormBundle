@@ -127,7 +127,7 @@
     $(document).trigger('sf.element.set');
   };
 
-  ElementBag.fn.apply = function(replacementTokens, context) {
+  ElementBag.fn.apply = function(context, replacementTokens) {
     var plugin, selector, elementData, element;
     for (plugin in this.plugins) {
       for (selector in this.plugins[plugin]) {

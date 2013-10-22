@@ -31,7 +31,7 @@
           replacementTokens[parentPrototypeName] = parentCollectionItem.data('index');
         });
         replacementTokens[prototypeName] = self.index;
-        SF.elements.apply(replacementTokens, $item);
+        SF.elements.apply($item, replacementTokens);
 
         self.onAdd.apply($collection, [$item, $collection]);
         $collection.trigger('add.ite-collection', [$item]);
