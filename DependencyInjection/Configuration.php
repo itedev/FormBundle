@@ -51,7 +51,7 @@ class Configuration implements ConfigurationInterface
                     ->treatNullLike(array('enabled' => true))
                     ->treatTrueLike(array('enabled' => true))
                     ->children()
-                        ->booleanNode('enabled')->defaultTrue()->end()
+                        ->booleanNode('enabled')->defaultFalse()->end()
                         ->variableNode('extras')->defaultValue(array())->end()
                         ->variableNode('options')->defaultValue(array())->end()
                     ->end()
