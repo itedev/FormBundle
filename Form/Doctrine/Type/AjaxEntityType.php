@@ -3,6 +3,7 @@
 namespace ITE\FormBundle\Form\Doctrine\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceList;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -51,26 +52,21 @@ class AjaxEntityType extends AbstractType
         };
 
         $resolver->setDefaults(array(
-            'em'               => null,
-            'property'         => null,
-            'query_builder'    => null,
-            'choices'          => null,
-            'group_by'         => null,
-            'route_parameters' => array(),
-            'url'              => $url,
-            'choice_list'      => function (Options $options) {
-                return new AjaxEntityChoiceList(
-                    $options['em'],
-                    $options['class'],
-                    $options['property'],
-                    $options['choices'],
-                    $options['group_by']
-                );
-            },
-        ));
+                'route_parameters' => array(),
+                'url'              => $url,
+                'choice_list'      => function (Options $options) {
+                    return new AjaxEntityChoiceList(
+                        $options['em'],
+                        $options['class'],
+                        $options['property'],
+                        $options['choices'],
+                        $options['group_by']
+                    );
+                },
+            ));
         $resolver->setRequired(array(
-            'route',
-        ));
+                'route',
+            ));
     }
 
     /**
@@ -81,8 +77,8 @@ class AjaxEntityType extends AbstractType
         /** @var $options['choice_list'] AjaxEntityChoiceList */
         $options['choice_list']->addEntities($form->getData());
         $view->vars = array_replace($view->vars, array(
-            'choices' => $options['choice_list']->getRemainingViews(),
-        ));
+                'choices' => $options['choice_list']->getRemainingViews(),
+            ));
     }
 
     /**
