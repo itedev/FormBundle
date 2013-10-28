@@ -2,6 +2,7 @@ parameters:
     ite_form.sf.extension.form.class:                    ITE\FormBundle\Service\SFFormExtension
 
     ite_form.twig.sf_extension.class:                    ITE\FormBundle\Twig\Extension\SFExtension
+    ite_form.twig.debug_extension.class:                 ITE\FormBundle\Twig\Extension\DebugExtension
 
     ite_form.form.form_type_extension.class:             ITE\FormBundle\Form\Core\Extension\FormTypeExtension
     ite_form.form.collection_type_extension.class:       ITE\FormBundle\Form\Core\Extension\CollectionTypeExtension
@@ -31,6 +32,11 @@ services:
     ite_form.twig.sf_extension:
         class:                                              %ite_form.twig.sf_extension.class%
         arguments: [ @ite_js.sf ]
+        tags:
+            - { name: twig.extension }
+
+    ite_form.twig.debug_extension:
+        class:                                              %ite_form.twig.debug_extension.class%
         tags:
             - { name: twig.extension }
 
