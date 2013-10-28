@@ -162,4 +162,6 @@
 
   SF.fn.elements = ElementBag;
 
+  // http://stackoverflow.com/questions/5202296/add-a-hook-to-all-ajax-requests-on-a-page/5202312#5202312
+
 })(jQuery);
