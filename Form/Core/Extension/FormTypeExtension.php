@@ -67,6 +67,9 @@ class FormTypeExtension extends AbstractTypeExtension
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
+        if ($form->isRoot()) {
+            $view->vars['submitted'] = $form->isSubmitted();
+        }
         $ajax = isset($options['ajax']) ? $options['ajax'] : false;
         if ($form->isRoot()) {
             $view->vars['ajax'] = $ajax;
