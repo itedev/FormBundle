@@ -5,6 +5,7 @@ parameters:
     ite_form.twig.debug_extension.class:                 ITE\FormBundle\Twig\Extension\DebugExtension
 
     ite_form.form.form_type_extension.class:             ITE\FormBundle\Form\Core\Extension\FormTypeExtension
+    ite_form.form.hierarchical_form_type_extension.class: ITE\FormBundle\Form\Core\Extension\HierarchicalFormTypeExtension
     ite_form.form.collection_type_extension.class:       ITE\FormBundle\Form\Core\Extension\CollectionTypeExtension
     ite_form.form.button_type_extension.class:           ITE\FormBundle\Form\Core\Extension\ButtonTypeExtension
 
@@ -43,6 +44,11 @@ services:
     ite_form.form.form_type_extension:
         class:                                              %ite_form.form.form_type_extension.class%
         arguments: [ @session, %ite_form.timezone% ]
+        tags:
+            - { name: form.type_extension, alias: form }
+
+    ite_form.form.hierarchical_form_type_extension:
+        class:                                              %ite_form.form.hierarchical_form_type_extension.class%
         tags:
             - { name: form.type_extension, alias: form }
 
