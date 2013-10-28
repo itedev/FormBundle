@@ -46,11 +46,11 @@ class DebugExtension extends Twig_Extension
             }
         }
 
-        unset($context, $count, $i, $key, $value);
-
-        if (function_exists('xdebug_break')) {
-            xdebug_break();
-        }
+        call_user_func(function() use ($variables) {
+            if (function_exists('xdebug_break')) {
+                xdebug_break();
+            }
+        });
     }
 
     /**
