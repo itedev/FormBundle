@@ -1,6 +1,6 @@
 <?php
 
-namespace ITE\FormBundle\Form\Core\Type;
+namespace ITE\FormBundle\Form\Type;
 
 use Symfony\Component\Form\Extension\Core\Type\BaseType;
 use Symfony\Component\Form\FormInterface;
@@ -9,7 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
  * Class MarkupType
- * @package ITE\FormBundle\Form\Core\Type
+ * @package ITE\FormBundle\Form\Type
  */
 class MarkupType extends BaseType
 {

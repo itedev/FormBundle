@@ -1,13 +1,13 @@
 <?php
 
-namespace ITE\FormBundle\Form\Core\Extension;
+namespace ITE\FormBundle\Form\Extension;
 
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
  * Class ButtonTypeExtension
- * @package ITE\FormBundle\Form\Core\Extension
+ * @package ITE\FormBundle\Form\Extension
  */
 class ButtonTypeExtension extends AbstractTypeExtension
 {

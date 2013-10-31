@@ -1,6 +1,6 @@
 <?php
 
-namespace ITE\FormBundle\Form\Core\Type;
+namespace ITE\FormBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\DataTransformer\DateTimeToLocalizedStringTransformer;
@@ -9,31 +9,11 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * Class BootstrapDateTimePickerBirthdayType
- * @package ITE\FormBundle\Form\Core\Type
+ * Class BootstrapDateTimePicker2BirthdayType
+ * @package ITE\FormBundle\Form\Type
  */
-class BootstrapDateTimePickerBirthdayType extends AbstractType
+class BootstrapDateTimePicker2BirthdayType extends AbstractType
 {
-    /**
-     * @var array $extras
-     */
-    protected $extras;
-
-    /**
-     * @var array $options
-     */
-    protected $options;
-
-    /**
-     * @param $extras
-     * @param $options
-     */
-    public function __construct($extras, $options)
-    {
-        $this->extras = $extras;
-        $this->options = $options;
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -57,8 +37,7 @@ class BootstrapDateTimePickerBirthdayType extends AbstractType
         $dateTimeToLocalizedStringTransformer = $viewTransformers[0];
 
         $view->vars['element_data']['options'] = array_replace_recursive($view->vars['element_data']['options'], array(
-            'startView' => 4, // decade view
-            'minView' => 2, // month view
+            'viewMode' => 2, //years
             'startDate' => $dateTimeToLocalizedStringTransformer->transform($startDate),
             'endDate' => $dateTimeToLocalizedStringTransformer->transform($endDate),
         ));
@@ -69,7 +48,7 @@ class BootstrapDateTimePickerBirthdayType extends AbstractType
      */
     public function getParent()
     {
-        return 'ite_bootstrap_datetimepicker_date';
+        return 'ite_bootstrap_datetimepicker2_date';
     }
 
     /**
@@ -77,6 +56,6 @@ class BootstrapDateTimePickerBirthdayType extends AbstractType
      */
     public function getName()
     {
-        return 'ite_bootstrap_datetimepicker_birthday';
+        return 'ite_bootstrap_datetimepicker2_birthday';
     }
 }

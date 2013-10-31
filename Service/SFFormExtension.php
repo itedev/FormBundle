@@ -22,6 +22,7 @@ class SFFormExtension implements SFExtensionInterface
     const PLUGIN_BOOTSTRAP_COLORPICKER = 'bootstrap_colorpicker';
     const PLUGIN_BOOTSTRAP_DATETIMEPICKER = 'bootstrap_datetimepicker';
     const PLUGIN_BOOTSTRAP_DATETIMEPICKER2 = 'bootstrap_datetimepicker2';
+    const PLUGIN_FILEUPLOAD = 'fileupload';
 
     protected static $plugins = array(
         self::PLUGIN_SELECT2,
@@ -29,6 +30,7 @@ class SFFormExtension implements SFExtensionInterface
         self::PLUGIN_BOOTSTRAP_COLORPICKER,
         self::PLUGIN_BOOTSTRAP_DATETIMEPICKER,
         self::PLUGIN_BOOTSTRAP_DATETIMEPICKER2,
+        self::PLUGIN_FILEUPLOAD,
     );
 
     /**
@@ -71,11 +73,15 @@ class SFFormExtension implements SFExtensionInterface
         $result = $event->getControllerResult();
 
         // is form was submitted via ajax - get its errors if exist
-        $property = 'POST' === $request->getMethod() ? 'request' : 'query';
-        foreach ($result as $var) {
-            if ($var instanceof FormView && $request->$property->has($var->vars['name'])) {
-                $this->collectFormErrors($var);
-                break;
+        if (in_array($request->getMethod(), array('GET', 'POST'))) {
+            $property = 'POST' === $request->getMethod() ? 'request' : 'query';
+            if (is_array($result) || $result instanceof \Traversable) {
+                foreach ($result as $var) {
+                    if ($var instanceof FormView && $request->$property->has($var->vars['name'])) {
+                        $this->collectFormErrors($var);
+                        break;
+                    }
+                }
             }
         }
     }

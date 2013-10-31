@@ -1,6 +1,6 @@
 <?php
 
-namespace ITE\FormBundle\Form\Core\Type;
+namespace ITE\FormBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
@@ -8,28 +8,21 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * Class BootstrapDateTimePickerDateType
- * @package ITE\FormBundle\Form\Core\Type
+ * Class BootstrapDateTimePickerDateTimeType
+ * @package ITE\FormBundle\Form\Type
  */
-class BootstrapDateTimePickerDateType extends AbstractType
+class BootstrapDateTimePickerDateTimeType extends AbstractType
 {
-    /**
-     * @var array $extras
-     */
-    protected $extras;
-
     /**
      * @var array $options
      */
     protected $options;
 
     /**
-     * @param $extras
      * @param $options
      */
-    public function __construct($extras, $options)
+    public function __construct($options)
     {
-        $this->extras = $extras;
         $this->options = $options;
     }
 
@@ -40,6 +33,7 @@ class BootstrapDateTimePickerDateType extends AbstractType
     {
         $resolver->setDefaults(array(
             'widget' => 'single_text',
+            'format' => 'yyyy-MM-dd HH:mm:ss',
             'plugin_options' => array(),
             'extras' => array(),
         ));
@@ -58,7 +52,7 @@ class BootstrapDateTimePickerDateType extends AbstractType
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['element_data'] = array(
-            'extras' => (object) array_replace_recursive($this->extras, $options['extras']),
+            'extras' => (object) $options['extras'],
             'options' => array_replace_recursive($this->options, $options['plugin_options'], array(
                 'format' => strtr($options['format'], array(
                     'a' => 'p', // am/pm marker
@@ -70,8 +64,6 @@ class BootstrapDateTimePickerDateType extends AbstractType
                     'MM' => 'mm', // month in year (09)
                     'M' => 'm', // month in year (9)
                 )),
-                'minView' => 2, // month view
-                'maxView' => 4, // decade view
             ))
         );
 
@@ -96,7 +88,7 @@ class BootstrapDateTimePickerDateType extends AbstractType
      */
     public function getParent()
     {
-        return 'date';
+        return 'datetime';
     }
 
     /**
@@ -104,6 +96,6 @@ class BootstrapDateTimePickerDateType extends AbstractType
      */
     public function getName()
     {
-        return 'ite_bootstrap_datetimepicker_date';
+        return 'ite_bootstrap_datetimepicker_datetime';
     }
 }

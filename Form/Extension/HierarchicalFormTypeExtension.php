@@ -1,6 +1,6 @@
 <?php
 
-namespace ITE\FormBundle\Form\Core\Extension;
+namespace ITE\FormBundle\Form\Extension;
 
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormInterface;
@@ -9,7 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
  * Class HierarchicalFormTypeExtension
- * @package ITE\FormBundle\Form\Core\Extension
+ * @package ITE\FormBundle\Form\Extension
  */
 class HierarchicalFormTypeExtension extends AbstractTypeExtension
 {

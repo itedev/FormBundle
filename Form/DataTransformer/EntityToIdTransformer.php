@@ -1,6 +1,6 @@
 <?php
 
-namespace ITE\FormBundle\Form\Doctrine\DataTransformer;
+namespace ITE\FormBundle\Form\DataTransformer;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\NoResultException;
@@ -12,6 +12,10 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\PropertyAccess\PropertyPath;
 
+/**
+ * Class EntityToIdTransformer
+ * @package ITE\FormBundle\Form\DataTransformer
+ */
 class EntityToIdTransformer implements DataTransformerInterface
 {
     private $em;

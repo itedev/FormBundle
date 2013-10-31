@@ -1,6 +1,6 @@
 <?php
 
-namespace ITE\FormBundle\Form\Doctrine\ChoiceList;
+namespace ITE\FormBundle\Form\ChoiceList;
 
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Form\Extension\Core\ChoiceList\ObjectChoiceList;
@@ -9,6 +9,10 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Form\Exception\RuntimeException;
 use Doctrine\Common\Persistence\ObjectManager;
 
+/**
+ * Class AjaxEntityChoiceList
+ * @package ITE\FormBundle\Form\ChoiceList
+ */
 class AjaxEntityChoiceList extends ObjectChoiceList
 {
     /**

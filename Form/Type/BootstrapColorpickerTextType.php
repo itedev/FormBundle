@@ -1,6 +1,6 @@
 <?php
 
-namespace ITE\FormBundle\Form\Core\Type;
+namespace ITE\FormBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
@@ -8,28 +8,21 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * Class TinymceTextareaType
- * @package ITE\FormBundle\Form\Core\Type
+ * Class BootstrapColorpickerTextType
+ * @package ITE\FormBundle\Form\Type
  */
-class TinymceTextareaType extends AbstractType
+class BootstrapColorpickerTextType extends AbstractType
 {
-    /**
-     * @var array $extras
-     */
-    protected $extras;
-
     /**
      * @var array $options
      */
     protected $options;
 
     /**
-     * @param $extras
      * @param $options
      */
-    public function __construct($extras, $options)
+    public function __construct($options)
     {
-        $this->extras = $extras;
         $this->options = $options;
     }
 
@@ -54,7 +47,7 @@ class TinymceTextareaType extends AbstractType
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['element_data'] = array(
-            'extras' => (object) array_replace_recursive($this->extras, $options['extras']),
+            'extras' => (object) $options['extras'],
             'options' => (object) array_replace_recursive($this->options, $options['plugin_options'])
         );
     }
@@ -64,7 +57,7 @@ class TinymceTextareaType extends AbstractType
      */
     public function getParent()
     {
-        return 'textarea';
+        return 'text';
     }
 
     /**
@@ -72,6 +65,6 @@ class TinymceTextareaType extends AbstractType
      */
     public function getName()
     {
-        return 'ite_tinymce_textarea';
+        return 'ite_bootstrap_colorpicker_text';
     }
 }

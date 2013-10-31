@@ -1,9 +1,9 @@
 <?php
 
-namespace ITE\FormBundle\Form\Doctrine\Type;
+namespace ITE\FormBundle\Form\Type;
 
 use Doctrine\ORM\EntityManager;
-use ITE\FormBundle\Form\Doctrine\DataTransformer\EntityToIdTransformer;
+use ITE\FormBundle\Form\DataTransformer\EntityToIdTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
@@ -13,7 +13,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
  * Class InputEntityType
- * @package ITE\FormBundle\Form\Doctrine\Type
+ * @package ITE\FormBundle\Form\Type
  */
 class InputEntityType extends AbstractType
 {

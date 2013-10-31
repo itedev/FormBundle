@@ -1,6 +1,6 @@
 <?php
 
-namespace ITE\FormBundle\Form\Core\Type;
+namespace ITE\FormBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\DataTransformer\DateTimeToLocalizedStringTransformer;
@@ -9,11 +9,24 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * Class BootstrapDateTimePicker2BirthdayType
- * @package ITE\FormBundle\Form\Core\Type
+ * Class BootstrapDateTimePickerBirthdayType
+ * @package ITE\FormBundle\Form\Type
  */
-class BootstrapDateTimePicker2BirthdayType extends AbstractType
+class BootstrapDateTimePickerBirthdayType extends AbstractType
 {
+    /**
+     * @var array $options
+     */
+    protected $options;
+
+    /**
+     * @param $options
+     */
+    public function __construct($options)
+    {
+        $this->options = $options;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -37,7 +50,8 @@ class BootstrapDateTimePicker2BirthdayType extends AbstractType
         $dateTimeToLocalizedStringTransformer = $viewTransformers[0];
 
         $view->vars['element_data']['options'] = array_replace_recursive($view->vars['element_data']['options'], array(
-            'viewMode' => 2, //years
+            'startView' => 4, // decade view
+            'minView' => 2, // month view
             'startDate' => $dateTimeToLocalizedStringTransformer->transform($startDate),
             'endDate' => $dateTimeToLocalizedStringTransformer->transform($endDate),
         ));
@@ -48,7 +62,7 @@ class BootstrapDateTimePicker2BirthdayType extends AbstractType
      */
     public function getParent()
     {
-        return 'ite_bootstrap_datetimepicker2_date';
+        return 'ite_bootstrap_datetimepicker_date';
     }
 
     /**
@@ -56,6 +70,6 @@ class BootstrapDateTimePicker2BirthdayType extends AbstractType
      */
     public function getName()
     {
-        return 'ite_bootstrap_datetimepicker2_birthday';
+        return 'ite_bootstrap_datetimepicker_birthday';
     }
 }

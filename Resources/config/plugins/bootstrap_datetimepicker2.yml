@@ -1,30 +1,30 @@
 parameters:
-    ite_form.form.type.bootstrap_datetimepicker2_datetime.class: ITE\FormBundle\Form\Core\Type\BootstrapDateTimePicker2DateTimeType
-    ite_form.form.type.bootstrap_datetimepicker2_date.class:     ITE\FormBundle\Form\Core\Type\BootstrapDateTimePicker2DateType
-    ite_form.form.type.bootstrap_datetimepicker2_time.class:     ITE\FormBundle\Form\Core\Type\BootstrapDateTimePicker2TimeType
-    ite_form.form.type.bootstrap_datetimepicker2_birthday.class: ITE\FormBundle\Form\Core\Type\BootstrapDateTimePicker2BirthdayType
+    ite_form.form.type.bootstrap_datetimepicker2_datetime.class: ITE\FormBundle\Form\Type\BootstrapDateTimePicker2DateTimeType
+    ite_form.form.type.bootstrap_datetimepicker2_date.class:     ITE\FormBundle\Form\Type\BootstrapDateTimePicker2DateType
+    ite_form.form.type.bootstrap_datetimepicker2_time.class:     ITE\FormBundle\Form\Type\BootstrapDateTimePicker2TimeType
+    ite_form.form.type.bootstrap_datetimepicker2_birthday.class: ITE\FormBundle\Form\Type\BootstrapDateTimePicker2BirthdayType
 
 services:
     ite_form.form.type.bootstrap_datetimepicker2_datetime:
         class:                                                  %ite_form.form.type.bootstrap_datetimepicker2_datetime.class%
-        arguments: [ %ite_form.plugins.bootstrap_datetimepicker2.extras%, %ite_form.plugins.bootstrap_datetimepicker2.options% ]
+        arguments: [ %ite_form.plugins.bootstrap_datetimepicker2.options% ]
         tags:
             - { name: form.type, alias: ite_bootstrap_datetimepicker2_datetime }
 
     ite_form.form.type.bootstrap_datetimepicker2_date:
         class:                                                  %ite_form.form.type.bootstrap_datetimepicker2_date.class%
-        arguments: [ %ite_form.plugins.bootstrap_datetimepicker2.extras%, %ite_form.plugins.bootstrap_datetimepicker2.options% ]
+        arguments: [ %ite_form.plugins.bootstrap_datetimepicker2.options% ]
         tags:
             - { name: form.type, alias: ite_bootstrap_datetimepicker2_date }
 
     ite_form.form.type.bootstrap_datetimepicker2_time:
         class:                                                  %ite_form.form.type.bootstrap_datetimepicker2_time.class%
-        arguments: [ %ite_form.plugins.bootstrap_datetimepicker2.extras%, %ite_form.plugins.bootstrap_datetimepicker2.options% ]
+        arguments: [ %ite_form.plugins.bootstrap_datetimepicker2.options% ]
         tags:
             - { name: form.type, alias: ite_bootstrap_datetimepicker2_time }
 
     ite_form.form.type.bootstrap_datetimepicker2_birthday:
         class:                                                  %ite_form.form.type.bootstrap_datetimepicker2_birthday.class%
-        arguments: [ %ite_form.plugins.bootstrap_datetimepicker2.extras%, %ite_form.plugins.bootstrap_datetimepicker2.options% ]
+        arguments: [ %ite_form.plugins.bootstrap_datetimepicker2.options% ]
         tags:
             - { name: form.type, alias: ite_bootstrap_datetimepicker2_birthday }

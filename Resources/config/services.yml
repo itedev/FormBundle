@@ -4,17 +4,17 @@ parameters:
     ite_form.twig.sf_extension.class:                    ITE\FormBundle\Twig\Extension\SFExtension
     ite_form.twig.debug_extension.class:                 ITE\FormBundle\Twig\Extension\DebugExtension
 
-    ite_form.form.form_type_extension.class:             ITE\FormBundle\Form\Core\Extension\FormTypeExtension
-    ite_form.form.hierarchical_form_type_extension.class: ITE\FormBundle\Form\Core\Extension\HierarchicalFormTypeExtension
-    ite_form.form.collection_type_extension.class:       ITE\FormBundle\Form\Core\Extension\CollectionTypeExtension
-    ite_form.form.button_type_extension.class:           ITE\FormBundle\Form\Core\Extension\ButtonTypeExtension
+    ite_form.form.form_type_extension.class:             ITE\FormBundle\Form\Extension\FormTypeExtension
+    ite_form.form.hierarchical_form_type_extension.class: ITE\FormBundle\Form\Extension\HierarchicalFormTypeExtension
+    ite_form.form.collection_type_extension.class:       ITE\FormBundle\Form\Extension\CollectionTypeExtension
+    ite_form.form.button_type_extension.class:           ITE\FormBundle\Form\Extension\ButtonTypeExtension
 
     ite_form.entity_converter.class:                     ITE\FormBundle\Service\EntityConverter
 
-    ite_form.form.ajax_entity_type.class:                ITE\FormBundle\Form\Doctrine\Type\AjaxEntityType
+    ite_form.form.ajax_entity_type.class:                ITE\FormBundle\Form\Type\AjaxEntityType
 
-    ite_form.form.input_entity_type.class:               ITE\FormBundle\Form\Doctrine\Type\InputEntityType
-    ite_form.form.markup_type.class:                     ITE\FormBundle\Form\Core\Type\MarkupType
+    ite_form.form.input_entity_type.class:               ITE\FormBundle\Form\Type\InputEntityType
+    ite_form.form.markup_type.class:                     ITE\FormBundle\Form\Type\MarkupType
 
 #    assetic.twig_extension.class:                        ITE\FormBundle\Twig\Extension\AsseticExtension
     assetic.asset_factory.class:                         ITE\FormBundle\Factory\AssetFactory

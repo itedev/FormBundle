@@ -43,7 +43,7 @@ class ITEFormExtension extends Extension
                 // load specific plugin configuration
                 $method = 'load' . Inflector::classify($plugin) . 'Configuration';
                 if (method_exists($this, $method)) {
-                    $this->$method($loader, $config['plugins'][$plugin], $container);
+                    $this->$method($plugin, $loader, $config['plugins'][$plugin], $container);
                 }
             }
         }
@@ -57,20 +57,33 @@ class ITEFormExtension extends Extension
      */
     private function loadPluginConfiguration($plugin, FileLoader $loader, array $config, ContainerBuilder $container)
     {
-        $container->setParameter(sprintf('ite_form.plugins.%s.extras', $plugin), $config['extras']);
         $container->setParameter(sprintf('ite_form.plugins.%s.options', $plugin), $config['options']);
 
         $loader->load(sprintf('plugins/%s.yml', $plugin));
     }
 
     /**
+     * @param $plugin
      * @param FileLoader $loader
      * @param array $config
      * @param ContainerBuilder $container
      */
-    private function loadSelect2Configuration(FileLoader $loader, array $config, ContainerBuilder $container)
+    private function loadSelect2Configuration($plugin, FileLoader $loader, array $config, ContainerBuilder $container)
     {
-        $this->addExtendedChoiceTypes('ite_form.form.type.select2_abstract', 'select2', $container);
+        $this->addExtendedChoiceTypes('ite_form.form.type.select2_abstract', $plugin, $container);
+    }
+
+    /**
+     * @param $plugin
+     * @param FileLoader $loader
+     * @param array $config
+     * @param ContainerBuilder $container
+     */
+    private function loadFileuploadConfiguration($plugin, FileLoader $loader, array $config, ContainerBuilder $container)
+    {
+        foreach (array('web_root', 'prefix', 'file_manager') as $option) {
+            $container->setParameter(sprintf('ite_form.plugins.%s.%s', $plugin, $option), $config[$option]);
+        }
     }
 
     /**
