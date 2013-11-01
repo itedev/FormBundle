@@ -8,6 +8,7 @@ parameters:
     ite_form.form.hierarchical_form_type_extension.class: ITE\FormBundle\Form\Extension\HierarchicalFormTypeExtension
     ite_form.form.collection_type_extension.class:       ITE\FormBundle\Form\Extension\CollectionTypeExtension
     ite_form.form.button_type_extension.class:           ITE\FormBundle\Form\Extension\ButtonTypeExtension
+    ite_form.form.ajax_token_form_type_extension.class:  ITE\FormBundle\Form\Extension\AjaxTokenFormTypeExtension
 
     ite_form.entity_converter.class:                     ITE\FormBundle\Service\EntityConverter
 
@@ -16,9 +17,10 @@ parameters:
     ite_form.form.input_entity_type.class:               ITE\FormBundle\Form\Type\InputEntityType
     ite_form.form.markup_type.class:                     ITE\FormBundle\Form\Type\MarkupType
 
-#    assetic.twig_extension.class:                        ITE\FormBundle\Twig\Extension\AsseticExtension
     assetic.asset_factory.class:                         ITE\FormBundle\Factory\AssetFactory
     form.resolved_type_factory.class:                    ITE\FormBundle\Form\ResolvedFormTypeFactory
+
+    ite_form.default_ajax_token_provider.class:          ITE\FormBundle\Form\Extension\AjaxToken\DefaultAjaxTokenProvider
 
 #    refactor below
     ite_form.form_validator.class:                       ITE\FormBundle\Service\FormValidator
@@ -43,12 +45,18 @@ services:
 
     ite_form.form.form_type_extension:
         class:                                              %ite_form.form.form_type_extension.class%
-        arguments: [ @session, %ite_form.timezone% ]
+        arguments: [ @session, @request=,  %ite_form.timezone% ]
         tags:
             - { name: form.type_extension, alias: form }
 
     ite_form.form.hierarchical_form_type_extension:
         class:                                              %ite_form.form.hierarchical_form_type_extension.class%
+        tags:
+            - { name: form.type_extension, alias: form }
+
+    ite_form.form.ajax_token_form_type_extension:
+        class:                                              %ite_form.form.ajax_token_form_type_extension.class%
+        arguments: [ @ite_form.default_ajax_token_provider ]
         tags:
             - { name: form.type_extension, alias: form }
 
@@ -83,6 +91,10 @@ services:
         class:                                              %ite_form.entity_converter.class%
         scope:                                              request
         arguments: [ @doctrine.orm.entity_manager, @request ]
+
+    ite_form.default_ajax_token_provider:
+        class:                                              %ite_form.default_ajax_token_provider.class%
+        arguments: [ @request= ]
 
 #    refactor below
     ite_form.form_validator:

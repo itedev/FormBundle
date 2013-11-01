@@ -9,6 +9,9 @@ services:
         tags:
             - { name: form.type, alias: ite_fileupload_file }
 
-    ite_form.plugin.fileupload_file.file_manager:
+    ite_form.plugin.fileupload.file_manager:
         class:                                          %ite_form.plugin.fileupload.file_manager.class%
-        arguments: [ @request= ]
+        arguments:
+            - @request=
+            - { web_root: %ite_form.plugins.fileupload.web_root%, prefix: %ite_form.plugins.fileupload.prefix% }
+            - %ite_form.plugins.fileupload.file_manager%

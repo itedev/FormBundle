@@ -5,6 +5,7 @@ namespace ITE\FormBundle\Form\Extension;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
@@ -25,13 +26,20 @@ class FormTypeExtension extends AbstractTypeExtension
     protected $modelTimezone;
 
     /**
-     * @param SessionInterface $session
-     * @param $dataTimezone
+     * @var Request $request
      */
-    public function __construct(SessionInterface $session, $dataTimezone)
+    protected $request;
+
+    /**
+     * @param SessionInterface $session
+     * @param Request $request
+     * @param $modelTimezone
+     */
+    public function __construct(SessionInterface $session, Request $request, $modelTimezone)
     {
-        $this->viewTimezone = $session->get('timezone', $dataTimezone);
-        $this->modelTimezone = $dataTimezone;
+        $this->viewTimezone = $session->get('timezone', $modelTimezone);
+        $this->request = $request;
+        $this->modelTimezone = $modelTimezone;
     }
 
     /**
@@ -69,9 +77,9 @@ class FormTypeExtension extends AbstractTypeExtension
     {
         if ($form->isRoot()) {
             $view->vars['submitted'] = $form->isSubmitted();
-        }
-        $ajax = isset($options['ajax']) ? $options['ajax'] : false;
-        if ($form->isRoot()) {
+
+            // ajax
+            $ajax = isset($options['ajax']) ? $options['ajax'] : false;
             $view->vars['ajax'] = $ajax;
             if (!isset($view->vars['attr']['id'])) {
                 $view->vars['attr']['id'] = $view->vars['id'];

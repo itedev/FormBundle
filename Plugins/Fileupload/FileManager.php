@@ -2,8 +2,13 @@
 
 namespace ITE\FormBundle\Plugins\Fileupload;
 
+use RuntimeException;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Process\Process;
+use Symfony\Component\Process\ProcessBuilder;
 
 /**
  * Class FileManager
@@ -45,39 +50,100 @@ class FileManager
     }
 
     /**
-     * Get a list of files already present. The 'folder' option is required.
-     * If you pass consistent options to this method and handleFileUpload with
-     * regard to paths, then you will get consistent results.
+     * @param $folder
+     * @return array
      */
-    public function getFiles($options = array())
+    public function getFiles($folder)
     {
-        return $this->options['file_manager']->getFiles($options);
+        $prefix = !empty($this->config['prefix']) ? $this->config['prefix'] . '/' : '';
+        $folderDir = $this->config['web_root'] . '/' . $prefix . $folder . '/';
+
+        if (!is_dir($folderDir)) {
+            return array();
+        }
+
+        $finder = new Finder();
+        $finder->files()->in($folderDir);
+
+        $files = array();
+        foreach ($finder as $file) {
+            /** @var $file SplFileInfo */
+            $files[] = $file->getBasename();
+        }
+
+        return $files;
     }
 
     /**
-     * Remove the folder specified by 'folder' and its contents.
-     * If you pass consistent options to this method and handleFileUpload with
-     * regard to paths, then you will get consistent results.
+     * @param $folder
+     * @throws \RuntimeException
      */
-    public function removeFiles($options = array())
+    public function removeFiles($folder)
     {
-        return $this->options['file_manager']->removeFiles($options);
+        $prefix = !empty($this->config['prefix']) ? $this->config['prefix'] . '/' : '';
+        $folderDir = $this->config['web_root'] . '/' . $prefix . $folder . '/';
+
+        if (!is_dir($folderDir)) {
+            return;
+        }
+
+        $process = ProcessBuilder::create()
+            ->setPrefix('rm')
+            ->setArguments(array(
+                '-rf',
+                $folderDir,
+            ))
+            ->getProcess();
+        $process->run();
+        if (!$process->isSuccessful()) {
+            throw new RuntimeException($process->getErrorOutput());
+        }
     }
 
     /**
-     * Sync existing files from one folder to another. The 'fromFolder' and 'toFolder'
-     * options are required. As with the 'folder' option elsewhere, these are appended
-     * to the file_base_path for you, missing parent folders are created, etc. If
-     * 'fromFolder' does not exist no error is reported as this is common if no files
-     * have been uploaded. If there are files and the sync reports errors an exception
-     * is thrown.
-     *
-     * If you pass consistent options to this method and handleFileUpload with
-     * regard to paths, then you will get consistent results.
+     * @param $from
+     * @param $to
+     * @param bool $removeFrom
+     * @throws RuntimeException
      */
-    public function syncFiles($options = array())
+    public function syncFiles($from, $to, $removeFrom = false)
     {
-        return $this->options['file_manager']->syncFiles($options);
+        $prefix = !empty($this->config['prefix']) ? $this->config['prefix'] . '/' : '';
+        $fromDir = $this->config['web_root'] . '/' . $prefix . $from . '/';
+        $toDir = $this->config['web_root'] . '/' . $prefix . $to . '/';
+
+        if (!is_dir($fromDir)) {
+            return;
+        }
+        $this->fs->mkdir($toDir);
+
+        $process = ProcessBuilder::create()
+            ->setPrefix('rsync')
+            ->setArguments(array(
+                '-a',
+                '--delete',
+                $fromDir,
+                $toDir
+            ))
+            ->getProcess();
+        $process->run();
+        if (!$process->isSuccessful()) {
+            throw new RuntimeException($process->getErrorOutput());
+        }
+
+        if ($removeFrom) {
+            $process = ProcessBuilder::create()
+                ->setPrefix('rm')
+                ->setArguments(array(
+                    '-rf',
+                    $fromDir,
+                ))
+                ->getProcess();
+            $process->run();
+            if (!$process->isSuccessful()) {
+                throw new RuntimeException($process->getErrorOutput());
+            }
+        }
     }
 
     /**
@@ -91,50 +157,19 @@ class FileManager
 //        // Build a regular expression like /\.(gif|jpe?g|png)$/i
 //        $allowedExtensionsRegex = '/\.(' . implode('|', $allowedExtensions) . ')$/i';
 
-        $uploadDir = $this->config['web_dir'] . '/' . $folder . '/';
-        $uploadUrl = $this->config['web_url'] . '/' . $folder . '/';
+        $prefix = !empty($this->config['prefix']) ? $this->config['prefix'] . '/' : '';
+        $uploadDir = $this->config['web_root'] . '/' . $prefix . $folder . '/';
+        $uploadUrl = $prefix . $folder . '/';
 
         $options = array_replace_recursive($this->options, $options, array(
             'upload_dir' => $uploadDir,
             'upload_url' => $uploadUrl ,
             'script_url' => $this->request->getUri(),
+            'param_name' => $this->request->query->get('paramName')
 //                'accept_file_types' => $allowedExtensionsRegex,
         ));
 
-        $this->fs->mkdir($uploadDir);
         $uploadHandler = new UploadHandler($options);
-
-        // From https://github.com/blueimp/jQuery-File-Upload/blob/master/server/php/index.php
-        // There's lots of REST fanciness here to support different upload methods, so we're
-        // keeping the blueimp implementation which goes straight to the PHP standard library.
-        header('Pragma: no-cache');
-        header('Cache-Control: no-store, no-cache, must-revalidate');
-        header('Content-Disposition: inline; filename="files.json"');
-        header('X-Content-Type-Options: nosniff');
-        header('Access-Control-Allow-Origin: *');
-        header('Access-Control-Allow-Methods: OPTIONS, HEAD, GET, POST, PUT, DELETE');
-        header('Access-Control-Allow-Headers: X-File-Name, X-File-Type, X-File-Size');
-
-        switch ($_SERVER['REQUEST_METHOD']) {
-            case 'OPTIONS':
-                break;
-            case 'HEAD':
-            case 'GET':
-                $uploadHandler->get();
-                break;
-            case 'POST':
-                if (isset($_REQUEST['_method']) && $_REQUEST['_method'] === 'DELETE') {
-                    $uploadHandler->delete();
-                } else {
-                    $uploadHandler->post();
-                }
-                break;
-            case 'DELETE':
-                $uploadHandler->delete();
-                break;
-            default:
-                header('HTTP/1.1 405 Method Not Allowed');
-        }
 
         // Without this Symfony will try to respond; the BlueImp upload handler class already did,
         // so it's time to hush up

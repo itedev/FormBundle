@@ -12,6 +12,7 @@ namespace ITE\FormBundle\Plugins\Fileupload;
  * Licensed under the MIT license:
  * http://www.opensource.org/licenses/MIT
  */
+
 class UploadHandler
 {
 
@@ -274,7 +275,7 @@ class UploadHandler
 
     protected function get_file_object($file_name) {
         if ($this->is_valid_file_object($file_name)) {
-            $file = new stdClass();
+            $file = new \stdClass();
             $file->name = $file_name;
             $file->size = $this->get_file_size(
                 $this->get_upload_path($file_name)
@@ -688,7 +689,7 @@ class UploadHandler
     protected function imagick_get_image_object($file_path, $no_cache = false) {
         if (empty($this->image_objects[$file_path]) || $no_cache) {
             $this->imagick_destroy_image_object($file_path);
-            $this->image_objects[$file_path] = new Imagick($file_path);
+            $this->image_objects[$file_path] = new \Imagick($file_path);
         }
         return $this->image_objects[$file_path];
     }
@@ -737,7 +738,7 @@ class UploadHandler
         $success = $image->resizeImage(
             $new_width,
             $new_height,
-            isset($options['filter']) ? $options['filter'] : imagick::FILTER_LANCZOS,
+            isset($options['filter']) ? $options['filter'] : \imagick::FILTER_LANCZOS,
             isset($options['blur']) ? $options['blur'] : 1,
             $new_width && $new_height // fit image into constraints if not to be cropped
         );
@@ -757,7 +758,7 @@ class UploadHandler
             case 'jpg':
             case 'jpeg':
                 if (!empty($options['jpeg_quality'])) {
-                    $image->setImageCompression(Imagick::COMPRESSION_JPEG);
+                    $image->setImageCompression(\Imagick::COMPRESSION_JPEG);
                     $image->setImageCompressionQuality($options['jpeg_quality']);
                 }
                 break;
@@ -771,35 +772,35 @@ class UploadHandler
     protected function imagick_orient_image($file_path) {
         $image = $this->imagick_get_image_object($file_path);
         $orientation = $image->getImageOrientation();
-        $background = new ImagickPixel('none');
+        $background = new \ImagickPixel('none');
         switch ($orientation) {
-            case imagick::ORIENTATION_TOPRIGHT: // 2
+            case \imagick::ORIENTATION_TOPRIGHT: // 2
                 $image->flopImage(); // horizontal flop around y-axis
                 break;
-            case imagick::ORIENTATION_BOTTOMRIGHT: // 3
+            case \imagick::ORIENTATION_BOTTOMRIGHT: // 3
                 $image->rotateImage($background, 180);
                 break;
-            case imagick::ORIENTATION_BOTTOMLEFT: // 4
+            case \imagick::ORIENTATION_BOTTOMLEFT: // 4
                 $image->flipImage(); // vertical flip around x-axis
                 break;
-            case imagick::ORIENTATION_LEFTTOP: // 5
+            case \imagick::ORIENTATION_LEFTTOP: // 5
                 $image->flopImage(); // horizontal flop around y-axis
                 $image->rotateImage($background, 270);
                 break;
-            case imagick::ORIENTATION_RIGHTTOP: // 6
+            case \imagick::ORIENTATION_RIGHTTOP: // 6
                 $image->rotateImage($background, 90);
                 break;
-            case imagick::ORIENTATION_RIGHTBOTTOM: // 7
+            case \imagick::ORIENTATION_RIGHTBOTTOM: // 7
                 $image->flipImage(); // vertical flip around x-axis
                 $image->rotateImage($background, 270);
                 break;
-            case imagick::ORIENTATION_LEFTBOTTOM: // 8
+            case \imagick::ORIENTATION_LEFTBOTTOM: // 8
                 $image->rotateImage($background, 270);
                 break;
             default:
                 return false;
         }
-        $image->setImageOrientation(imagick::ORIENTATION_TOPLEFT); // 1
+        $image->setImageOrientation(\imagick::ORIENTATION_TOPLEFT); // 1
         return $image->writeImage($file_path);
     }
 
@@ -886,7 +887,7 @@ class UploadHandler
 
     protected function handle_file_upload($uploaded_file, $name, $size, $type, $error,
             $index = null, $content_range = null) {
-        $file = new stdClass();
+        $file = new \stdClass();
         $file->name = $this->get_file_name($name, $type, $index, $content_range);
         $file->size = $this->fix_integer_overflow(intval($size));
         $file->type = $type;

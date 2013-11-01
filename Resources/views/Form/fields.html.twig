@@ -36,7 +36,11 @@
 {% endblock ite_bootstrap_datetimepicker2_widget %}
 
 {% block ite_fileupload_file_widget %}
-    {{ block('form_widget_simple') }}
+    <span class="btn btn-success fileinput-button">
+        <i class="icon-plus"></i>
+        Browse
+        {{ block('form_widget_simple') }}
+    </span>
     {{ ite_form_sf_add_element('fileupload', '#' ~ id, element_data) }}
 {% endblock ite_fileupload_file_widget %}
 

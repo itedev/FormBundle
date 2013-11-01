@@ -2,6 +2,7 @@
 
 namespace ITE\FormBundle\Form\Type;
 
+use ITE\FormBundle\Util\UrlUtils;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -75,11 +76,26 @@ class FileUploadFileType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
+        $root = $view;
+        while (null !== $root->parent) {
+            $root = $root->parent;
+        }
+        $url = $options['url'];
+        if ($root->vars['ajax_token']) {
+            $url = UrlUtils::addGetParameter(
+                $url,
+                $root->vars['ajax_token_field_name'],
+                $root->vars['ajax_token_value']
+            );
+        }
+
         $view->vars['element_data'] = array(
             'extras' => (object) $options['extras'],
-            'options' => (object) array_replace_recursive($this->options, $options['plugin_options'], array(
-                    'url' => $options['url'],
-                ))
+            'options' => array_replace_recursive(array(
+                'paramName' => 'file',
+            ), $this->options, $options['plugin_options'], array(
+                'url' => $url
+            ))
         );
     }
 
