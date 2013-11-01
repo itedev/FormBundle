@@ -6,6 +6,7 @@ use RuntimeException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\ProcessBuilder;
@@ -68,7 +69,7 @@ class FileManager
         $files = array();
         foreach ($finder as $file) {
             /** @var $file SplFileInfo */
-            $files[] = $file->getBasename();
+            $files[] = new File($file->getRealPath());
         }
 
         return $files;
