@@ -12,13 +12,5 @@ interface AjaxTokenProviderInterface
      * @param $ajaxTokenFieldName
      * @return string
      */
-    public function getAjaxToken($ajaxTokenFieldName);
-
-    /**
-     * @param $action
-     * @param $ajaxTokenFieldName
-     * @param $ajaxTokenValue
-     * @return string
-     */
-    public function addAjaxTokenToAction($action, $ajaxTokenFieldName, $ajaxTokenValue);
+    public function generateAjaxToken($ajaxTokenFieldName);
 } 

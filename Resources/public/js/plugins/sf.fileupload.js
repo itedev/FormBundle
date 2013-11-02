@@ -24,7 +24,13 @@
     var options = elementData.options;
 
     options = $.extend(true, options, {
-      url: addGetParameter(options['url'], 'paramName', options['paramName'])
+      url: addGetParameter(options['url'], 'paramName', options['paramName']),
+      uploadTemplate: function (o) {
+        return Twig.render(template_upload, {o: o});
+      },
+      downloadTemplate: function (o) {
+        return Twig.render(template_download, {o: o});
+      }
     });
 
     element.fileupload(options);

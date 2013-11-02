@@ -64,7 +64,7 @@ class FileManager
         }
 
         $finder = new Finder();
-        $finder->files()->in($folderDir);
+        $finder->files()->in($folderDir)->sortByModifiedTime();
 
         $files = array();
         foreach ($finder as $file) {
@@ -77,7 +77,7 @@ class FileManager
 
     /**
      * @param $folder
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     public function removeFiles($folder)
     {

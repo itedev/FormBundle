@@ -57,18 +57,18 @@ class FileUploadFileType extends AbstractType
         };
 
         $resolver->setDefaults(array(
-            'route_parameters' => array(),
-            'url' => $url,
-            'extras' => array(),
-            'plugin_options' => array(),
-        ));
+                'route_parameters' => array(),
+                'url' => $url,
+                'extras' => array(),
+                'plugin_options' => array(),
+            ));
         $resolver->setAllowedTypes(array(
-            'extras' => array('array'),
-            'plugin_options' => array('array'),
-        ));
+                'extras' => array('array'),
+                'plugin_options' => array('array'),
+            ));
         $resolver->setRequired(array(
-            'route',
-        ));
+                'route',
+            ));
     }
 
     /**
@@ -76,10 +76,7 @@ class FileUploadFileType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $root = $view;
-        while (null !== $root->parent) {
-            $root = $root->parent;
-        }
+        $root = $this->getRootView($view);
         $url = $options['url'];
         if ($root->vars['ajax_token']) {
             $url = UrlUtils::addGetParameter(
@@ -92,10 +89,13 @@ class FileUploadFileType extends AbstractType
         $view->vars['element_data'] = array(
             'extras' => (object) $options['extras'],
             'options' => array_replace_recursive(array(
-                'paramName' => 'file',
-            ), $this->options, $options['plugin_options'], array(
-                'url' => $url
-            ))
+                    'paramName' => 'files',
+                    'filesContainer' => '#' . $view->vars['id'] . '_files',
+                    'uploadTemplateId' => null,
+                    'downloadTemplateId' => null,
+                ), $this->options, $options['plugin_options'], array(
+                    'url' => $url
+                ))
         );
     }
 
@@ -113,5 +113,19 @@ class FileUploadFileType extends AbstractType
     public function getName()
     {
         return 'ite_fileupload_file';
+    }
+
+    /**
+     * @param FormView $view
+     * @return FormView
+     */
+    protected function getRootView(FormView $view)
+    {
+        $root = $view;
+        while (null !== $root->parent) {
+            $root = $root->parent;
+        }
+
+        return $root;
     }
 }

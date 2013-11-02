@@ -35,7 +35,7 @@ class AjaxTokenFormTypeExtension extends AbstractTypeExtension
     {
         $resolver->setDefaults(array(
             'ajax_token' => false,
-            'ajax_token_field_name' => 'ajax_token',
+            'ajax_token_field_name' => '_ajax_token',
         ));
         $resolver->setAllowedTypes(array(
             'ajax_token' => 'bool',
@@ -51,7 +51,11 @@ class AjaxTokenFormTypeExtension extends AbstractTypeExtension
         if (!$options['ajax_token']) {
             return;
         }
-        $builder->setAttribute('ajax_token_value', $this->ajaxTokenProvider->getAjaxToken($options['ajax_token_field_name']));
+
+        $builder->setAttribute('ajax_token_factory', $builder->getFormFactory());
+
+        $fullFieldName = sprintf('%s[%s]', $builder->getName(), $options['ajax_token_field_name']);
+        $builder->setAttribute('ajax_token_value', $this->ajaxTokenProvider->generateAjaxToken($fullFieldName));
     }
 
     /**
@@ -62,16 +66,28 @@ class AjaxTokenFormTypeExtension extends AbstractTypeExtension
         if (!$options['ajax_token']) {
             return;
         }
+
         if ($form->isRoot()) {
-            $ajaxTokenValue = $form->getConfig()->getAttribute('ajax_token_value');
-            $view->vars['action'] = $this->ajaxTokenProvider->addAjaxTokenToAction(
-                $view->vars['action'],
-                $options['ajax_token_field_name'],
-                $ajaxTokenValue
-            );
             $view->vars['ajax_token'] = $options['ajax_token'];
             $view->vars['ajax_token_field_name'] = $options['ajax_token_field_name'];
-            $view->vars['ajax_token_value'] = $ajaxTokenValue;
+            $view->vars['ajax_token_value'] = $form->getConfig()->getAttribute('ajax_token_value');
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function finishView(FormView $view, FormInterface $form, array $options)
+    {
+        if ($options['ajax_token'] && !$view->parent && $options['compound']) {
+            $factory = $form->getConfig()->getAttribute('ajax_token_factory');
+            $data = $form->getConfig()->getAttribute('ajax_token_value');
+
+            $ajaxTokenForm = $factory->createNamed($options['ajax_token_field_name'], 'hidden', $data, array(
+                    'mapped' => false,
+                ));
+
+            $view->children[$options['ajax_token_field_name']] = $ajaxTokenForm->createView($view);
         }
     }
 

@@ -1,6 +1,7 @@
 <?php
 
 namespace ITE\FormBundle\Form\Extension\AjaxToken;
+
 use ITE\FormBundle\Util\UrlUtils;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Util\SecureRandom;
@@ -28,40 +29,14 @@ class DefaultAjaxTokenProvider implements AjaxTokenProviderInterface
      * @param $ajaxTokenFieldName
      * @return string
      */
-    public function getAjaxToken($ajaxTokenFieldName)
+    public function generateAjaxToken($ajaxTokenFieldName)
     {
-        if ($this->request->query->has($ajaxTokenFieldName)) {
-            return $this->request->query->get($ajaxTokenFieldName);
+        if (null !== $ajaxToken = $this->request->get($ajaxTokenFieldName, null, true)) {
+            return $ajaxToken;
         }
 
-        return $this->generateAjaxToken();
-    }
-
-    /**
-     * @param $action
-     * @param $ajaxTokenFieldName
-     * @param $ajaxTokenValue
-     * @return string
-     */
-    public function addAjaxTokenToAction($action, $ajaxTokenFieldName, $ajaxTokenValue)
-    {
-        if (empty($action)) {
-            $action = $this->request->getRequestUri();
-        }
-        if ($this->request->query->has($ajaxTokenFieldName)) {
-            return $action;
-        }
-
-        return UrlUtils::addGetParameter($action, $ajaxTokenFieldName, $ajaxTokenValue);
-    }
-
-    /**
-     * @return string
-     */
-    protected function generateAjaxToken()
-    {
         $generator = new SecureRandom();
 
-        return str_replace(array('+', '=', '/'), '', base64_encode($generator->nextBytes(20)));
+        return sha1($generator->nextBytes(20));
     }
 } 
