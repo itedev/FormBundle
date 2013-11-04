@@ -3,6 +3,7 @@
 namespace ITE\FormBundle\Form\Extension;
 
 use ITE\FormBundle\Form\Extension\AjaxToken\AjaxTokenProviderInterface;
+use ITE\FormBundle\Form\Extension\AjaxToken\EventListener\AjaxTokenSubscriber;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
@@ -15,10 +16,12 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
  */
 class AjaxTokenFormTypeExtension extends AbstractTypeExtension
 {
+    const DEFAULT_AJAX_TOKEN_FIELD_NAME = '_ajax_token';
+
     /**
      * @var AjaxTokenProviderInterface $ajaxTokenProvider
      */
-    private $ajaxTokenProvider;
+    protected $ajaxTokenProvider;
 
     /**
      * @param AjaxTokenProviderInterface $ajaxTokenProvider
@@ -34,13 +37,13 @@ class AjaxTokenFormTypeExtension extends AbstractTypeExtension
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'ajax_token' => false,
-            'ajax_token_field_name' => '_ajax_token',
-        ));
+                'ajax_token' => false,
+                'ajax_token_field_name' => self::DEFAULT_AJAX_TOKEN_FIELD_NAME,
+            ));
         $resolver->setAllowedTypes(array(
-            'ajax_token' => 'bool',
-            'ajax_token_field_name' => 'string',
-        ));
+                'ajax_token' => 'bool',
+                'ajax_token_field_name' => 'string',
+            ));
     }
 
     /**
@@ -52,10 +55,12 @@ class AjaxTokenFormTypeExtension extends AbstractTypeExtension
             return;
         }
 
-        $builder->setAttribute('ajax_token_factory', $builder->getFormFactory());
-
         $fullFieldName = sprintf('%s[%s]', $builder->getName(), $options['ajax_token_field_name']);
-        $builder->setAttribute('ajax_token_value', $this->ajaxTokenProvider->generateAjaxToken($fullFieldName));
+        $builder
+          ->setAttribute('ajax_token_factory', $builder->getFormFactory())
+          ->setAttribute('ajax_token_value', $this->ajaxTokenProvider->getAjaxToken($fullFieldName))
+          ->addEventSubscriber(new AjaxTokenSubscriber($options['ajax_token_field_name']))
+        ;
     }
 
     /**

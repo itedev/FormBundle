@@ -1,0 +1,22 @@
+parameters:
+    ite_form.form.ajax_token_form_type_extension.class:     ITE\FormBundle\Form\Extension\AjaxTokenFormTypeExtension
+    ite_form.default_ajax_token_provider.class:             ITE\FormBundle\Form\Extension\AjaxToken\DefaultAjaxTokenProvider
+    ite_form.file_manager.class:                            ITE\FormBundle\Service\File\FileManager
+
+services:
+    ite_form.form.ajax_token_form_type_extension:
+        class:                                              %ite_form.form.ajax_token_form_type_extension.class%
+        arguments: [ @ite_form.default_ajax_token_provider ]
+        tags:
+            - { name: form.type_extension, alias: form }
+
+    ite_form.default_ajax_token_provider:
+        class:                                              %ite_form.default_ajax_token_provider.class%
+        arguments: [ @request= ]
+
+    ite_form.file_manager:
+        class:                                              %ite_form.file_manager.class%
+        calls:
+            - [ setRequest, [ @request= ] ]
+            - [ setWebRoot, [ %ite_form.file_manager.web_root% ] ]
+            - [ setTmpPrefix, [ %ite_form.file_manager.tmp_prefix% ] ]

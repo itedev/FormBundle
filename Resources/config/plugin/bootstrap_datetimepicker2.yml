@@ -1,0 +1,30 @@
+parameters:
+    ite_form.form.type.plugin.bootstrap_datetimepicker2.datetime.class: ITE\FormBundle\Form\Type\Plugin\Bootstrapdatetimepicker2\DateTimeType
+    ite_form.form.type.plugin.bootstrap_datetimepicker2.date.class:     ITE\FormBundle\Form\Type\Plugin\Bootstrapdatetimepicker2\DateType
+    ite_form.form.type.plugin.bootstrap_datetimepicker2.time.class:     ITE\FormBundle\Form\Type\Plugin\Bootstrapdatetimepicker2\TimeType
+    ite_form.form.type.plugin.bootstrap_datetimepicker2.birthday.class: ITE\FormBundle\Form\Type\Plugin\Bootstrapdatetimepicker2\BirthdayType
+
+services:
+    ite_form.form.type.plugin.bootstrap_datetimepicker2.datetime:
+        class:                                                  %ite_form.form.type.plugin.bootstrap_datetimepicker2.datetime.class%
+        arguments: [ %ite_form.plugin.bootstrap_datetimepicker2.options% ]
+        tags:
+            - { name: form.type, alias: ite_bootstrap_datetimepicker2_datetime }
+
+    ite_form.form.type.plugin.bootstrap_datetimepicker2.date:
+        class:                                                  %ite_form.form.type.plugin.bootstrap_datetimepicker2.date.class%
+        arguments: [ %ite_form.plugin.bootstrap_datetimepicker2.options% ]
+        tags:
+            - { name: form.type, alias: ite_bootstrap_datetimepicker2_date }
+
+    ite_form.form.type.plugin.bootstrap_datetimepicker2.time:
+        class:                                                  %ite_form.form.type.plugin.bootstrap_datetimepicker2.time.class%
+        arguments: [ %ite_form.plugin.bootstrap_datetimepicker2.options% ]
+        tags:
+            - { name: form.type, alias: ite_bootstrap_datetimepicker2_time }
+
+    ite_form.form.type.plugin.bootstrap_datetimepicker2.birthday:
+        class:                                                  %ite_form.form.type.plugin.bootstrap_datetimepicker2.birthday.class%
+        arguments: [ %ite_form.plugin.bootstrap_datetimepicker2.options% ]
+        tags:
+            - { name: form.type, alias: ite_bootstrap_datetimepicker2_birthday }

@@ -3,7 +3,7 @@
 namespace ITE\FormBundle\Factory;
 
 use Assetic\Asset\AssetCollection;
-use ITE\FormBundle\Service\SFFormExtension;
+use ITE\FormBundle\SF\SFFormExtension;
 use Symfony\Bundle\AsseticBundle\Factory\AssetFactory as BaseAssetFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -38,9 +38,9 @@ class AssetFactory extends BaseAssetFactory
         if ('.js' === substr($options['output'], -3)) {
             // add plugin js
             foreach (SFFormExtension::getPlugins() as $plugin) {
-                $enabled = $this->container->getParameter(sprintf('ite_form.plugins.%s.enabled', $plugin));
+                $enabled = $this->container->getParameter(sprintf('ite_form.plugin.%s.enabled', $plugin));
                 if ($enabled) {
-                    $inputs[] = sprintf('@ITEFormBundle/Resources/public/js/plugins/sf.%s.js', $plugin);
+                    $inputs[] = sprintf('@ITEFormBundle/Resources/public/js/plugin/sf.%s.js', $plugin);
                 }
             }
         }

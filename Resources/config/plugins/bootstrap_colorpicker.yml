@@ -1,9 +1,0 @@
-parameters:
-    ite_form.form.type.bootstrap_colorpicker_text.class: ITE\FormBundle\Form\Type\BootstrapColorpickerTextType
-
-services:
-    ite_form.form.type.bootstrap_colorpicker_text:
-        class:                                           %ite_form.form.type.bootstrap_colorpicker_text.class%
-        arguments: [ %ite_form.plugins.bootstrap_colorpicker.options% ]
-        tags:
-            - { name: form.type, alias: ite_bootstrap_colorpicker_text }

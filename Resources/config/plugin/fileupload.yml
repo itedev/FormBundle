@@ -1,0 +1,15 @@
+parameters:
+    ite_form.form.type.plugin.fileupload.file.class:    ITE\FormBundle\Form\Type\Plugin\Fileupload\FileType
+    ite_form.fileupload.file_manager.class:             ITE\FormBundle\Service\File\Plugin\Fileupload\FileManager
+
+services:
+    ite_form.form.type.plugin.fileupload.file:
+        class:                                          %ite_form.form.type.plugin.fileupload.file.class%
+        arguments: [ %ite_form.plugin.fileupload.options%, @router, @ite_form.fileupload.file_manager ]
+        tags:
+            - { name: form.type, alias: ite_fileupload_file }
+
+    ite_form.fileupload.file_manager:
+        class:                                          %ite_form.fileupload.file_manager.class%
+        parent:                                         ite_form.file_manager
+        arguments: [ %ite_form.plugin.fileupload.file_manager% ]

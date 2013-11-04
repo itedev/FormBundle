@@ -1,43 +1,24 @@
 parameters:
-    ite_form.sf.extension.form.class:                    ITE\FormBundle\Service\SFFormExtension
-
-    ite_form.twig.sf_extension.class:                    ITE\FormBundle\Twig\Extension\SFExtension
     ite_form.twig.debug_extension.class:                 ITE\FormBundle\Twig\Extension\DebugExtension
 
     ite_form.form.form_type_extension.class:             ITE\FormBundle\Form\Extension\FormTypeExtension
     ite_form.form.hierarchical_form_type_extension.class: ITE\FormBundle\Form\Extension\HierarchicalFormTypeExtension
-    ite_form.form.collection_type_extension.class:       ITE\FormBundle\Form\Extension\CollectionTypeExtension
     ite_form.form.button_type_extension.class:           ITE\FormBundle\Form\Extension\ButtonTypeExtension
-    ite_form.form.ajax_token_form_type_extension.class:  ITE\FormBundle\Form\Extension\AjaxTokenFormTypeExtension
 
-    ite_form.entity_converter.class:                     ITE\FormBundle\Service\EntityConverter
+    ite_form.entity_converter.class:                     ITE\FormBundle\Service\Converter\EntityConverter
 
     ite_form.form.ajax_entity_type.class:                ITE\FormBundle\Form\Type\AjaxEntityType
 
     ite_form.form.input_entity_type.class:               ITE\FormBundle\Form\Type\InputEntityType
     ite_form.form.markup_type.class:                     ITE\FormBundle\Form\Type\MarkupType
 
-    assetic.asset_factory.class:                         ITE\FormBundle\Factory\AssetFactory
     form.resolved_type_factory.class:                    ITE\FormBundle\Form\ResolvedFormTypeFactory
-
-    ite_form.default_ajax_token_provider.class:          ITE\FormBundle\Form\Extension\AjaxToken\DefaultAjaxTokenProvider
 
 #    refactor below
     ite_form.form_validator.class:                       ITE\FormBundle\Service\FormValidator
 #    ite_form.form.daterange_type.class:                  ITE\FormBundle\Form\Core\Type\DateRangeType
 
 services:
-    ite_form.sf.extension.form:
-        class:                                              %ite_form.sf.extension.form.class%
-        tags:
-            - { name: ite_js.sf.extension, alias: form }
-
-    ite_form.twig.sf_extension:
-        class:                                              %ite_form.twig.sf_extension.class%
-        arguments: [ @ite_js.sf ]
-        tags:
-            - { name: twig.extension }
-
     ite_form.twig.debug_extension:
         class:                                              %ite_form.twig.debug_extension.class%
         tags:
@@ -53,17 +34,6 @@ services:
         class:                                              %ite_form.form.hierarchical_form_type_extension.class%
         tags:
             - { name: form.type_extension, alias: form }
-
-    ite_form.form.ajax_token_form_type_extension:
-        class:                                              %ite_form.form.ajax_token_form_type_extension.class%
-        arguments: [ @ite_form.default_ajax_token_provider ]
-        tags:
-            - { name: form.type_extension, alias: form }
-
-    ite_form.form.collection_type_extension:
-        class:                                              %ite_form.form.collection_type_extension.class%
-        tags:
-            - { name: form.type_extension, alias: collection }
 
     ite_form.form.button_type_extension:
         class:                                              %ite_form.form.button_type_extension.class%
@@ -89,12 +59,7 @@ services:
 
     ite_form.entity_converter:
         class:                                              %ite_form.entity_converter.class%
-        scope:                                              request
-        arguments: [ @doctrine.orm.entity_manager, @request ]
-
-    ite_form.default_ajax_token_provider:
-        class:                                              %ite_form.default_ajax_token_provider.class%
-        arguments: [ @request= ]
+        arguments: [ @doctrine.orm.entity_manager, @request= ]
 
 #    refactor below
     ite_form.form_validator:

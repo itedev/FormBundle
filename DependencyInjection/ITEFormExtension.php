@@ -3,7 +3,7 @@
 namespace ITE\FormBundle\DependencyInjection;
 
 use Doctrine\Common\Inflector\Inflector;
-use ITE\FormBundle\Service\SFFormExtension;
+use ITE\FormBundle\SF\SFFormExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\DefinitionDecorator;
@@ -27,14 +27,21 @@ class ITEFormExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader->load('sf.yml');
+        $loader->load('collection.yml');
         $loader->load('services.yml');
 
         $container->setParameter('ite_form.timezone', $config['timezone']);
 
+        // load ajax file upload configuration
+        if (isset($config['ajax_file_upload'])) {
+            $this->loadAjaxFileUploadConfiguration($loader, $config['ajax_file_upload'], $container);
+        }
+
         // load plugins configuration
         foreach (SFFormExtension::getPlugins() as $plugin) {
             $enabled = isset($config['plugins'][$plugin]) && !empty($config['plugins'][$plugin]['enabled']);
-            $container->setParameter(sprintf('ite_form.plugins.%s.enabled', $plugin), $enabled);
+            $container->setParameter(sprintf('ite_form.plugin.%s.enabled', $plugin), $enabled);
 
             if ($enabled) {
                 // load common plugin configuration
@@ -50,6 +57,18 @@ class ITEFormExtension extends Extension
     }
 
     /**
+     * @param FileLoader $loader
+     * @param array $config
+     * @param ContainerBuilder $container
+     */
+    private function loadAjaxFileUploadConfiguration(FileLoader $loader, array $config, ContainerBuilder $container)
+    {
+        $container->setParameter('ite_form.file_manager.web_root', $config['web_root']);
+        $container->setParameter('ite_form.file_manager.tmp_prefix', $config['tmp_prefix']);
+        $loader->load('ajax_file_upload.yml');
+    }
+
+    /**
      * @param $plugin
      * @param FileLoader $loader
      * @param array $config
@@ -57,9 +76,9 @@ class ITEFormExtension extends Extension
      */
     private function loadPluginConfiguration($plugin, FileLoader $loader, array $config, ContainerBuilder $container)
     {
-        $container->setParameter(sprintf('ite_form.plugins.%s.options', $plugin), $config['options']);
+        $container->setParameter(sprintf('ite_form.plugin.%s.options', $plugin), $config['options']);
 
-        $loader->load(sprintf('plugins/%s.yml', $plugin));
+        $loader->load(sprintf('plugin/%s.yml', $plugin));
     }
 
     /**
@@ -70,7 +89,7 @@ class ITEFormExtension extends Extension
      */
     private function loadSelect2Configuration($plugin, FileLoader $loader, array $config, ContainerBuilder $container)
     {
-        $this->addExtendedChoiceTypes('ite_form.form.type.select2_abstract', $plugin, $container);
+        $this->addExtendedChoiceTypes(sprintf('ite_form.form.type.plugin.%s.abstract', $plugin), $plugin, $container);
     }
 
     /**
@@ -81,9 +100,7 @@ class ITEFormExtension extends Extension
      */
     private function loadFileuploadConfiguration($plugin, FileLoader $loader, array $config, ContainerBuilder $container)
     {
-        foreach (array('web_root', 'prefix', 'file_manager') as $option) {
-            $container->setParameter(sprintf('ite_form.plugins.%s.%s', $plugin, $option), $config[$option]);
-        }
+        $container->setParameter(sprintf('ite_form.plugin.%s.%s', $plugin, 'file_manager'), $config['file_manager']);
     }
 
     /**
@@ -96,10 +113,10 @@ class ITEFormExtension extends Extension
         foreach ($this->getChoiceTypeNames() as $type) {
             $definition = new DefinitionDecorator($serviceId);
             $definition
-                ->addMethodCall('setType', array($type))
-                ->addTag('form.type', array(
-                    'alias' => sprintf('ite_%s_%s', $plugin, $type))
-                );
+              ->addMethodCall('setType', array($type))
+              ->addTag('form.type', array(
+                      'alias' => sprintf('ite_%s_%s', $plugin, $type))
+              );
 
             $extendedServiceId = preg_replace('/(abstract)$/', $type, $serviceId);
             $container->setDefinition($extendedServiceId, $definition);

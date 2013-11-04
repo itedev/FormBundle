@@ -1,0 +1,30 @@
+parameters:
+    ite_form.form.type.plugin.bootstrap_datetimepicker.datetime.class: ITE\FormBundle\Form\Type\Plugin\BootstrapDatetimepicker\DateTimeType
+    ite_form.form.type.plugin.bootstrap_datetimepicker.date.class:     ITE\FormBundle\Form\Type\Plugin\BootstrapDatetimepicker\DateType
+    ite_form.form.type.plugin.bootstrap_datetimepicker.time.class:     ITE\FormBundle\Form\Type\Plugin\BootstrapDatetimepicker\TimeType
+    ite_form.form.type.plugin.bootstrap_datetimepicker.birthday.class: ITE\FormBundle\Form\Type\Plugin\BootstrapDatetimepicker\BirthdayType
+
+services:
+    ite_form.form.type.plugin.bootstrap_datetimepicker.datetime:
+        class:                                                  %ite_form.form.type.plugin.bootstrap_datetimepicker.datetime.class%
+        arguments: [ %ite_form.plugin.bootstrap_datetimepicker.options% ]
+        tags:
+            - { name: form.type, alias: ite_bootstrap_datetimepicker_datetime }
+
+    ite_form.form.type.plugin.bootstrap_datetimepicker.date:
+        class:                                                  %ite_form.form.type.plugin.bootstrap_datetimepicker.date.class%
+        arguments: [ %ite_form.plugin.bootstrap_datetimepicker.options% ]
+        tags:
+            - { name: form.type, alias: ite_bootstrap_datetimepicker_date }
+
+    ite_form.form.type.plugin.bootstrap_datetimepicker.time:
+        class:                                                  %ite_form.form.type.plugin.bootstrap_datetimepicker.time.class%
+        arguments: [ %ite_form.plugin.bootstrap_datetimepicker.options% ]
+        tags:
+            - { name: form.type, alias: ite_bootstrap_datetimepicker_time }
+
+    ite_form.form.type.plugin.bootstrap_datetimepicker.birthday:
+        class:                                                  %ite_form.form.type.plugin.bootstrap_datetimepicker.birthday.class%
+        arguments: [%ite_form.plugin.bootstrap_datetimepicker.options% ]
+        tags:
+            - { name: form.type, alias: ite_bootstrap_datetimepicker_birthday }

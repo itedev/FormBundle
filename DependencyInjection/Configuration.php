@@ -3,9 +3,10 @@
 namespace ITE\FormBundle\DependencyInjection;
 
 use Doctrine\Common\Inflector\Inflector;
-use ITE\FormBundle\Service\SFFormExtension;
+use ITE\FormBundle\SF\SFFormExtension;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeBuilder;
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -24,8 +25,11 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('ite_form');
 
+        // ajax file upload configuration
+        $this->addAjaxUploadFileConfiguration($rootNode);
+
         // add plugins configuration
-        $pluginsNode = $rootNode->children()->arrayNode('plugins');
+        $pluginsNode = $rootNode->children()->arrayNode('plugins')->canBeUnset();
         foreach (SFFormExtension::getPlugins() as $plugin) {
             // add common plugin configuration
             $pluginNode = $this->addPluginConfiguration($plugin, $pluginsNode);
@@ -44,6 +48,24 @@ class Configuration implements ConfigurationInterface
         ->end();
 
         return $treeBuilder;
+    }
+
+    /**
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addAjaxUploadFileConfiguration(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('ajax_file_upload')
+                    ->canBeUnset()
+                    ->children()
+                        ->scalarNode('web_root')->defaultValue('%kernel.root_dir%/../web')->end()
+                        ->scalarNode('tmp_prefix')->cannotBeEmpty()->isRequired()->end()
+                    ->end()
+                ->end()
+            ->end()
+        ;
     }
 
     /**
@@ -82,8 +104,6 @@ class Configuration implements ConfigurationInterface
     private function addFileuploadConfiguration(NodeBuilder $pluginNode)
     {
         $pluginNode
-            ->scalarNode('web_root')->defaultValue('%kernel.root_dir%/../web')->end()
-            ->scalarNode('prefix')->defaultValue('')->end()
             ->variableNode('file_manager')->defaultValue(array())->end();
         ;
     }

@@ -3,6 +3,7 @@
 namespace ITE\FormBundle\Form\Extension\AjaxToken;
 
 use ITE\FormBundle\Util\UrlUtils;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Util\SecureRandom;
 
@@ -26,10 +27,19 @@ class DefaultAjaxTokenProvider implements AjaxTokenProviderInterface
     }
 
     /**
+     * @param $form
+     * @return string|void
+     */
+    public function getAjaxTokenFromForm(FormInterface $form)
+    {
+        $a = 1;
+    }
+
+    /**
      * @param $ajaxTokenFieldName
      * @return string
      */
-    public function generateAjaxToken($ajaxTokenFieldName)
+    public function getAjaxToken($ajaxTokenFieldName)
     {
         if (null !== $ajaxToken = $this->request->get($ajaxTokenFieldName, null, true)) {
             return $ajaxToken;
