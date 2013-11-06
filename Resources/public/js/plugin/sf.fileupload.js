@@ -23,14 +23,13 @@
   SF.elements.fn.applyFileuploadPlugin = function(element, elementData) {
     var options = elementData.options;
 
-    var name = element.is('input[type="file"]')
+    var propertyPath = element.is('input[type="file"]')
       ? element.attr('name')
       : element.find('input[type="file"]').attr('name');
-    var property = name.substr(name.indexOf('['));
 
     var url = options['url'];
     url = addGetParameter(url, 'paramName', options['paramName']);
-    url = addGetParameter(url, 'property', property);
+    url = addGetParameter(url, 'propertyPath', propertyPath);
 
     options = $.extend(true, options, {
       url: url,

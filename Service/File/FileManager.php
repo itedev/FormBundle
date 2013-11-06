@@ -9,6 +9,10 @@ use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Class FileManager
+ * @package ITE\FormBundle\Service\File
+ */
 class FileManager implements FileManagerInterface
 {
     /**
@@ -168,20 +172,20 @@ class FileManager implements FileManagerInterface
 
     /**
      * @param null $ajaxToken
-     * @param null $property
+     * @param null $propertyPath
      * @return string
      */
-    protected function getAjaxTempDir($ajaxToken = null, $property = null)
+    protected function getAjaxTempDir($ajaxToken = null, $propertyPath = null)
     {
         $ajaxToken = isset($ajaxToken)
           ? $ajaxToken
           : $this->request->query->get(AjaxTokenFormTypeExtension::DEFAULT_AJAX_TOKEN_FIELD_NAME);
 
-        $property = isset($property)
-          ? $property
-          : $this->request->query->get('property');
+        $propertyPath = isset($propertyPath)
+          ? $propertyPath
+          : $this->request->query->get('propertyPath');
 
-        return $this->tmpPrefix . '/' . $ajaxToken . (isset($property) ? '/' . $property : '');
+        return $this->tmpPrefix . '/' . $ajaxToken . (isset($propertyPath) ? '/' . $propertyPath : '');
     }
 
     /**
@@ -192,9 +196,9 @@ class FileManager implements FileManagerInterface
     {
         if (!isset($dir) || is_array($dir)) {
             $ajaxToken = is_array($dir) && isset($dir[0]) ? $dir[0] : null;
-            $property = is_array($dir) && isset($dir[1]) ? $dir[1] : null;
+            $propertyPath = is_array($dir) && isset($dir[1]) ? $dir[1] : null;
 
-            return $this->webRoot . '/' . $this->getAjaxTempDir($ajaxToken, $property);
+            return $this->webRoot . '/' . $this->getAjaxTempDir($ajaxToken, $propertyPath);
         }
 
         return $this->webRoot . '/' . trim($dir, '/');

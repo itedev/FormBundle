@@ -48,9 +48,9 @@ class FileuploadSubscriber implements EventSubscriberInterface
         $root = $form->getRoot();
 
         $ajaxToken = $root->getConfig()->getAttribute('ajax_token_value');
-        $property = $this->getFullPropertyPath($form);
+        $propertyPath = $this->getFullPropertyPath($form);
 
-        $files = $this->fileManager->getFiles(array($ajaxToken, $property));
+        $files = $this->fileManager->getFiles(array($ajaxToken, $propertyPath));
         if (!empty($files)) {
             /** @var $file File */
             $file = array_shift($files);
@@ -61,14 +61,19 @@ class FileuploadSubscriber implements EventSubscriberInterface
         }
     }
 
+    /**
+     * @param FormInterface $form
+     * @return string
+     */
     protected function getFullPropertyPath(FormInterface $form)
     {
         $propertyPath = '';
 
-        $parent = $form;
-        while (!$parent->isRoot()) {
-            $propertyPath = sprintf('[%s]', $parent->getConfig()->getName()) . $propertyPath;
-            $parent = $parent->getParent();
+        for ($type = $form; null !== $type; $type = $type->getParent()) {
+            $propertyPath = (!$type->isRoot() ? '[' : '')
+                . $type->getName()
+                . (!$type->isRoot() ? ']' : '')
+                . $propertyPath;
         }
 
         return $propertyPath;
