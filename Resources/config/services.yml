@@ -8,6 +8,7 @@ parameters:
     ite_form.entity_converter.class:                     ITE\FormBundle\Service\Converter\EntityConverter
 
     ite_form.form.ajax_entity_type.class:                ITE\FormBundle\Form\Type\AjaxEntityType
+    ite_form.form.google_font_type.class:                ITE\FormBundle\Form\Type\GoogleFontType
 
     ite_form.form.input_entity_type.class:               ITE\FormBundle\Form\Type\InputEntityType
     ite_form.form.markup_type.class:                     ITE\FormBundle\Form\Type\MarkupType
@@ -45,6 +46,12 @@ services:
         arguments: [ @router ]
         tags:
             - { name: form.type, alias: ite_ajax_entity }
+
+    ite_form.form.google_font_type:
+        class:                                              %ite_form.form.google_font_type.class%
+        arguments: [ @router ]
+        tags:
+            - { name: form.type, alias: ite_google_font }
 
     ite_form.form.input_entity_type:
         class:                                              %ite_form.form.input_entity_type.class%

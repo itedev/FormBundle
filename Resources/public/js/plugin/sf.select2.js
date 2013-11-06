@@ -7,6 +7,16 @@
     var extras = elementData.extras;
     var options = elementData.options;
 
+    // google fonts
+    if (extras.hasOwnProperty('google_fonts')) {
+      options = $.extend(true, options, {
+        formatResult: function(state) {
+          var option = $(state.element);
+          return '<div style="height: 28px; background: url(/bundles/iteform/img/google_fonts.png); background-position: 0 -' + ((option.index() * 30) - 2) + 'px;"></div>';
+        }
+      });
+    }
+
     // ajax
     if (extras.hasOwnProperty('ajax')) {
       var initSelectionCallback = options.hasOwnProperty('initSelection') ? options['initSelection'] : null;

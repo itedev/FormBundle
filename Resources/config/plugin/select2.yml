@@ -1,5 +1,6 @@
 parameters:
     ite_form.form.type.plugin.select2.abstract.class:          ITE\FormBundle\Form\Type\Plugin\Select2\AbstractType
+    ite_form.form.type.plugin.select2.google_font.class:       ITE\FormBundle\Form\Type\Plugin\Select2\GoogleFontType
     ite_form.form.type.plugin.select2.ajax_entity.class:       ITE\FormBundle\Form\Type\Plugin\Select2\AjaxEntityType
     ite_form.select2.entity_converter.class:                   ITE\FormBundle\Service\Converter\Plugin\Select2\EntityConverter
 
@@ -8,6 +9,12 @@ services:
         class:                                          %ite_form.form.type.plugin.select2.abstract.class%
         arguments: [ %ite_form.plugin.select2.options% ]
         abstract: true
+
+    ite_form.form.type.plugin.select2.google_font:
+        class:                                          %ite_form.form.type.plugin.select2.google_font.class%
+        arguments: [ %ite_form.plugin.select2.options% ]
+        tags:
+            - { name: form.type, alias: ite_select2_google_font }
 
     ite_form.form.type.plugin.select2.ajax_entity:
         class:                                          %ite_form.form.type.plugin.select2.ajax_entity.class%
