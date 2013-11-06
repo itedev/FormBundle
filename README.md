@@ -71,21 +71,26 @@ Form field types and other plugin services are loaded ONLY if plugin enabled in 
 
 SF object extension
 -------------------
-This bundle add new field to SF object: SF.elements. To apply plugins on needed elements you need to call 
+This bundle add new field to SF object: SF.elements. To apply plugins on all elements on the page you need to call 
 
 ```js
 SF.elements.apply();
 ```
-function. If you are using plugin fields inside collection field, you need to call this function after inserting html to DOM and pass prototype_name and collection item index to it:
+function. You can pass context (http://api.jquery.com/jQuery/#jQuery-selector-context) as first argument, for applying plugins inside specific element.
 
-```js
-SF.elements.apply({'__name__': 1});
-```
-And event if you are using collection in collection, you can do so:
+Collections
+-----------
 
-```js
-SF.elements.apply({'__name__': 1, '__another_name__': 2});
+For using advanced collections, you need to add additional js in your template:
+```twig
+{# app/Resources/views/base.html.twig #}
+{% javascripts
+    '@ITEFormBundle/Resources/public/js/collection.js'
+%}
+<script type="text/javascript" src="{{ asset_url }}"></script>
+{% endjavascripts %}
 ```
+...
 
 Plugins
 -------
