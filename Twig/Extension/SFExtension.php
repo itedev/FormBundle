@@ -2,7 +2,7 @@
 
 namespace ITE\FormBundle\Twig\Extension;
 
-use ITE\JsBundle\Service\SFInterface;
+use ITE\JsBundle\SF\SFInterface;
 use Symfony\Component\Form\FormView;
 use Twig_Environment;
 use Twig_Extension;
