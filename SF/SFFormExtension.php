@@ -57,10 +57,14 @@ class SFFormExtension implements SFExtensionInterface
     public function dump()
     {
         $dump = '';
+        $dump .= '(function($){$(function(){';
+
         if ($this->elementBag->count()) {
             $dump .= 'SF.elements.set(' . json_encode($this->elementBag->peekAll()) . ');';
         }
         $dump .= 'SF.elements.apply();';
+
+        $dump .= '});})(jQuery);';
         return $dump;
     }
 
