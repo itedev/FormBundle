@@ -2,7 +2,7 @@
 
 namespace ITE\FormBundle\SF;
 
-use ITE\JsBundle\Service\SFExtensionInterface;
+use ITE\JsBundle\SF\SFExtensionInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
