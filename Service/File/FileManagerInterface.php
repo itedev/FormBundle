@@ -11,20 +11,14 @@ use Symfony\Component\HttpFoundation\File\File;
 interface FileManagerInterface
 {
     /**
-     * @param string|array|null $dir
+     * @param string $ajaxToken
+     * @param string $propertyPath
      * @return array<File>
      */
-    public function getFiles($dir = null);
+    public function getFiles($ajaxToken, $propertyPath);
 
     /**
-     * @param string|array|null $dir
-     * @return void
+     * @param string $ajaxToken
      */
-    public function removeFiles($dir = null);
-
-    /**
-     * @param string|array|null $dir
-     * @return mixed
-     */
-    public function handleUpload($dir = null);
+    public function removeFiles($ajaxToken);
 } 

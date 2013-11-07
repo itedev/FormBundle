@@ -12,6 +12,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 /**
  * Class FileController
  * @package ITE\FormBundle\Controller\Plugin\Fileupload
+ *
+ * @Route("/ite-form/fileupload")
  */
 class FileController extends Controller
 {
@@ -20,6 +22,6 @@ class FileController extends Controller
      */
     public function uploadAction()
     {
-        $this->get('ite_form.fileupload.file_manager')->handleUpload();
+        $this->get('ite_form.fileupload.file_uploader')->handleUpload();
     }
 }

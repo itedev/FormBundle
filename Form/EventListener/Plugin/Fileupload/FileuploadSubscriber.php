@@ -36,7 +36,21 @@ class FileuploadSubscriber implements EventSubscriberInterface
     {
         return array(
             FormEvents::PRE_SUBMIT => 'preSubmit',
+            FormEvents::PRE_SET_DATA => 'preSetData',
         );
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function preSetData(FormEvent $event)
+    {
+//        $form = $event->getForm();
+//        $data = $event->getData();
+//
+//        if ($data instanceof File) {
+//            $path = $data->getRealPath();
+//        }
     }
 
     /**
@@ -50,7 +64,7 @@ class FileuploadSubscriber implements EventSubscriberInterface
         $ajaxToken = $root->getConfig()->getAttribute('ajax_token_value');
         $propertyPath = $this->getFullPropertyPath($form);
 
-        $files = $this->fileManager->getFiles(array($ajaxToken, $propertyPath));
+        $files = $this->fileManager->getFiles($ajaxToken, $propertyPath);
         if (!empty($files)) {
             /** @var $file File */
             $file = array_shift($files);

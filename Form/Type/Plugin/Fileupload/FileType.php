@@ -62,21 +62,21 @@ class FileType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $type = $this;
-        $url = function (Options $options) use ($type) {
+        $url = function(Options $options) use ($type) {
             return $type->getRouter()->generate($options['route'], $options['route_parameters']);
         };
 
         $resolver->setDefaults(array(
-                'route' => 'ite_form_plugin_fileupload_file_upload',
-                'route_parameters' => array(),
-                'url' => $url,
-                'extras' => array(),
-                'plugin_options' => array(),
-            ));
+            'route' => 'ite_form_plugin_fileupload_file_upload',
+            'route_parameters' => array(),
+            'url' => $url,
+            'extras' => array(),
+            'plugin_options' => array(),
+        ));
         $resolver->setAllowedTypes(array(
-                'extras' => array('array'),
-                'plugin_options' => array('array'),
-            ));
+            'extras' => array('array'),
+            'plugin_options' => array('array'),
+        ));
     }
 
     /**
@@ -95,22 +95,28 @@ class FileType extends AbstractType
         $root = $this->getRootView($view);
         $url = $options['url'];
         if (isset($root->vars['ajax_token']) && !empty($root->vars['ajax_token'])) {
-            $url = UrlUtils::addGetParameter(
-                $url,
-                'ajaxToken',
-                $root->vars['ajax_token_value']
-            );
+            $url = $this->router->generate($options['route'], array_merge(
+                $options['route_parameters'],
+                array(
+                    'ajaxToken' => $root->vars['ajax_token_value'],
+                    'multiple' => $options['multiple'] ? 1 : 0
+                )
+            ));
+        }
+
+        if (!$options['multiple']) {
+            $options['plugin_options']['maxNumberOfFiles'] = 1;
         }
 
         $view->vars['element_data'] = array(
             'extras' => (object) $options['extras'],
             'options' => array_replace_recursive(array(
-                    'paramName' => 'files',
-                    'uploadTemplateId' => null,
-                    'downloadTemplateId' => null,
-                ), $this->options, $options['plugin_options'], array(
-                    'url' => $url
-                ))
+                'paramName' => 'files',
+                'uploadTemplateId' => null,
+                'downloadTemplateId' => null,
+            ), $this->options, $options['plugin_options'], array(
+                'url' => $url,
+            ))
         );
     }
 
