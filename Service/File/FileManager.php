@@ -179,7 +179,7 @@ class FileManager implements FileManagerInterface
     {
         $ajaxToken = isset($ajaxToken)
           ? $ajaxToken
-          : $this->request->query->get(AjaxTokenFormTypeExtension::DEFAULT_AJAX_TOKEN_FIELD_NAME);
+          : $this->request->query->get('ajaxToken');
 
         $propertyPath = isset($propertyPath)
           ? $propertyPath

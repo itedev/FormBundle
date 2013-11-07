@@ -28,6 +28,7 @@ class FileType extends AbstractType
      * @var RouterInterface $router
      */
     protected $router;
+
     /**
      * @var FileManagerInterface
      */
@@ -96,7 +97,7 @@ class FileType extends AbstractType
         if (isset($root->vars['ajax_token']) && !empty($root->vars['ajax_token'])) {
             $url = UrlUtils::addGetParameter(
                 $url,
-                $root->vars['ajax_token_field_name'],
+                'ajaxToken',
                 $root->vars['ajax_token_value']
             );
         }

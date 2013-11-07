@@ -4,6 +4,7 @@ parameters:
     ite_form.form.form_type_extension.class:             ITE\FormBundle\Form\Extension\FormTypeExtension
     ite_form.form.hierarchical_form_type_extension.class: ITE\FormBundle\Form\Extension\HierarchicalFormTypeExtension
     ite_form.form.button_type_extension.class:           ITE\FormBundle\Form\Extension\ButtonTypeExtension
+    ite_form.form.multiple_file_type_extension.class:    ITE\FormBundle\Form\Extension\MultipleFileTypeExtension
 
     ite_form.entity_converter.class:                     ITE\FormBundle\Service\Converter\EntityConverter
 
@@ -40,6 +41,11 @@ services:
         class:                                              %ite_form.form.button_type_extension.class%
         tags:
             - { name: form.type_extension, alias: button }
+
+    ite_form.form.multiple_file_type_extension:
+        class:                                              %ite_form.form.multiple_file_type_extension.class%
+        tags:
+            - { name: form.type_extension, alias: file }
 
     ite_form.form.ajax_entity_type:
         class:                                              %ite_form.form.ajax_entity_type.class%
