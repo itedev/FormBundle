@@ -31,12 +31,12 @@ class MultipleFileTypeExtension extends AbstractTypeExtension
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $view->vars = array_replace_recursive($view->vars, array(
-            'multiple' => $options['multiple'],
-            'attr' => array(
-                'multiple' => 'multiple'
-            )
+        $view->vars = array_replace($view->vars, array(
+            'multiple' => $options['multiple']
         ));
+        if ($options['multiple']) {
+            $view->vars['attr']['multiple'] = 'multiple';
+        }
 
         if ($options['multiple']) {
             $view->vars['full_name'] = $view->vars['full_name'] . '[]';

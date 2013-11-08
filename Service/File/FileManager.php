@@ -2,12 +2,9 @@
 
 namespace ITE\FormBundle\Service\File;
 
-use ITE\FormBundle\Form\Extension\AjaxTokenFormTypeExtension;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
-use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class FileManager
@@ -31,22 +28,27 @@ class FileManager extends AbstractFileService implements FileManagerInterface
     /**
      * @param string $ajaxToken
      * @param string $propertyPath
-     * @return array<File>
+     * @return array<WebFile>
      */
     public function getFiles($ajaxToken, $propertyPath)
     {
-        $dir = $this->getAbsolutePath($ajaxToken, $propertyPath);
-        if (!is_dir($dir)) {
+        $propertyPath = md5($propertyPath);
+        $absolutePath = $this->getAbsolutePath($ajaxToken, $propertyPath);
+        if (!is_dir($absolutePath)) {
             return array();
         }
 
         $finder = new Finder();
-        $finder->files()->in($dir)->sortByChangedTime();
+        $finder->files()->in($absolutePath)->sortByChangedTime();
 
-        return array_map(function($file) {
+        $relativePath = $this->getRelativePath($ajaxToken, $propertyPath);
+
+        return array_map(function($file) use ($relativePath) {
             /** @var $file SplFileInfo */
-            return new File($file->getRealPath());
-        }, iterator_to_array($finder));
+            $uri = $relativePath . '/' . $file->getBasename();
+
+            return new WebFile($file->getRealPath(), $uri);
+        }, iterator_to_array($finder, false));
     }
 
     /**

@@ -11,6 +11,11 @@ use Symfony\Component\Form\FormBuilder as BaseFormBuilder;
 class FormBuilder extends BaseFormBuilder
 {
     /**
+     * @var array $extras
+     */
+    protected $extras;
+
+    /**
      * @param $name
      * @param $type
      */
@@ -35,5 +40,49 @@ class FormBuilder extends BaseFormBuilder
         $options = array_replace_recursive($currentOptions, $options);
 
         $this->add($name, $type, $options);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getExtras()
+    {
+        return $this->extras;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasExtra($name)
+    {
+        return array_key_exists($name, $this->extras);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getExtra($name, $default = null)
+    {
+        return array_key_exists($name, $this->extras) ? $this->extras[$name] : $default;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setExtra($name, $value)
+    {
+        $this->extras[$name] = $value;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setExtras(array $extras)
+    {
+        $this->extras = $extras;
+
+        return $this;
     }
 }

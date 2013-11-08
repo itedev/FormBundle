@@ -28,7 +28,6 @@
       : element.find('input[type="file"]').attr('name');
 
     var url = options['url'];
-    url = addGetParameter(url, 'paramName', options['paramName']);
     url = addGetParameter(url, 'propertyPath', propertyPath);
 
     options = $.extend(true, options, {

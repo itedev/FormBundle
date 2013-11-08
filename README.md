@@ -76,7 +76,27 @@ This bundle add new field to SF object: SF.elements. To apply plugins on all ele
 ```js
 SF.elements.apply();
 ```
-function. You can pass context (http://api.jquery.com/jQuery/#jQuery-selector-context) as first argument, for applying plugins inside specific element.
+function. You can pass context (http://api.jquery.com/jQuery/#jQuery-selector-context) as first argument, for applying plugins only inside specific element. Also you can pass object as a second parameter, that looks like this:
+
+```js
+{
+  '__name__': 1,
+  '__another_name__': 'abc'
+}
+```
+
+
+If you need to change plugin options, which you cannot change via 'plugin_options' in PHP (i.e. callbacks,
+
+```js
+$('selector').on('apply.element.ite-form', function(e, elementData) {
+  var $this = $(this);
+
+  elementData.options = $.extend(true, elementData.options, {
+    // extend plugin options
+  });
+});
+```
 
 Collections
 -----------
@@ -111,6 +131,7 @@ Provided field types:
  * ite_select2_document (inherits document type)
  * ite_select2_model (inherits model type)
  * ite_select2_ajax_entity (this type does not load all entities at once and use AJAX autocomplete instead of it)
+ * ite_select2_google_font (inherits choice type) - test
 
 Example configuration:
 

@@ -35,133 +35,97 @@
   }
 
   // ElementBag
-  var ElementBag = function() {};
-  ElementBag.prototype.fn = ElementBag.prototype;
-  ElementBag = new ElementBag();
-
-  ElementBag.fn.plugins = {};
-  ElementBag.fn.elements = {};
-
-  ElementBag.fn.hasPlugin = function(plugin) {
-    return _.has(this.plugins, plugin);
+  var ElementBag = function() {
+    this.plugins = {};
+    this.elements = {};
   };
+  ElementBag.prototype = {
+    hasPlugin: function(plugin) {
+      return this.plugins.hasOwnProperty(plugin);
+    },
 
-  ElementBag.fn.getPlugins = function() {
-    return _.keys(this.plugins);
-  };
+    getPlugins: function() {
+      var plugins = [];
 
-  ElementBag.fn.getPluginElements = function(plugin) {
-    return this.hasPlugin(plugin) ? this.plugins[plugin] : {};
-  };
-
-  ElementBag.fn.hasElement = function(selector) {
-    return _.has(this.elements, selector);
-  };
-
-  ElementBag.fn.getElements = function() {
-    return _.keys(this.elements);
-  };
-
-  ElementBag.fn.addElement = function(plugin, selector, data) {
-    if (!this.hasPlugin(plugin)) {
-      this.plugins[plugin] = {};
-    }
-    this.plugins[plugin][selector] = data;
-    this.elements[selector] = plugin;
-  };
-
-  ElementBag.fn.getElementData = function(selector) {
-    if (!this.hasElement(selector)) {
-      return null;
-    }
-    return this.plugins[this.elements[selector]][selector];
-  };
-
-  ElementBag.fn.getElementOptions = function(selector) {
-    var elementData = this.getElementData(selector);
-    return elementData['options'];
-  };
-
-  ElementBag.fn.setElementOptions = function(selector, options) {
-    if (!this.hasElement(selector)) {
-      return;
-    }
-    this.plugins[this.elements[selector]][selector]['options'] = options;
-  };
-
-  ElementBag.fn.updateElementOptions = function(selector, callback) {
-    var mixSelectors = selector instanceof Array ? selector : [selector];
-
-    var allSelectors = this.getElements();
-
-    var cleanSelectors = [];
-    _.each(allSelectors, function(selector) {
-      _.each(mixSelectors, function(mixSelector) {
-        if (mixSelector instanceof RegExp) {
-          if (mixSelector.test(selector)) {
-            cleanSelectors.push(selector);
-          }
-        } else if ('string' === typeof mixSelector) {
-          if (mixSelector === selector) {
-            cleanSelectors.push(selector);
-          }
-        }
+      $.each(this.plugins, function(i, plugin) {
+        plugins.push(plugin);
       });
-    });
 
-    _.each(cleanSelectors, function(selector) {
-      var elementData = this.getElementData(selector);
-      var options = callback.call(null, elementData);
-      this.setElementOptions(selector, options);
-    }, this);
-  };
+      return plugins;
+    },
 
-  ElementBag.fn.set = function(pluginElements) {
-    var self = this;
-    _.each(pluginElements, function(selectors, plugin) {
-      _.each(selectors, function(options, selector) {
-        self.addElement(plugin, selector, options);
+    getPluginElements: function(plugin) {
+      return this.hasPlugin(plugin) ? this.plugins[plugin] : {};
+    },
+
+    hasElement: function(selector) {
+      return this.elements.hasOwnProperty(selector);
+    },
+
+    getElements: function() {
+      var elements = [];
+
+      $.each(this.elements, function(i, element) {
+        elements.push(element);
       });
-    });
 
-    $(document).trigger('sf.element.set');
-  };
+      return elements;
+    },
 
-  ElementBag.fn.apply = function(context, replacementTokens) {
-    var plugin, selector, elementData, element;
-    for (plugin in this.plugins) {
-      for (selector in this.plugins[plugin]) {
-        elementData = this.plugins[plugin][selector];
-
-        if ('object' === typeof replacementTokens) {
-          for (var from in replacementTokens) {
-            selector = selector.replace(new RegExp(from, 'g'), replacementTokens[from]);
-          }
-        }
-
-        element = $(selector, context);
-
-        if (!element.length) {
-          continue;
-        }
-
-        var camelizePlugin = camelCase(plugin);
-
-        var isAppliedMethod = 'is' + camelizePlugin + 'PluginApplied';
-        var applyMethod = 'apply' + camelizePlugin + 'Plugin';
-
-        if ('undefined' === typeof this[isAppliedMethod] || this[isAppliedMethod](element)) {
-          continue;
-        }
-        if ('undefined' !== typeof this[applyMethod]) {
-          this[applyMethod](element, elementData);
-        }
+    addElement: function(plugin, selector, elementData) {
+      if (!this.hasPlugin(plugin)) {
+        this.plugins[plugin] = {};
       }
+      this.plugins[plugin][selector] = elementData;
+      this.elements[selector] = plugin;
+    },
+
+    set: function(pluginElements) {
+      var self = this;
+
+      $.each(pluginElements, function(plugin, selectors) {
+        $.each(selectors, function(selector, elementData) {
+          self.addElement(plugin, selector, elementData);
+        });
+      });
+    },
+
+    apply: function(context, replacementTokens) {
+      var self = this;
+
+      $.each(this.plugins, function(plugin, selectors) {
+        $.each(selectors, function(selector, elementData) {
+          if ('object' === typeof replacementTokens) {
+            $.each(replacementTokens, function(from, to) {
+              selector = selector.replace(new RegExp(from, 'g'), to);
+            });
+          }
+
+          var element = $(selector, context);
+          if (!element.length) {
+            return;
+          }
+
+          var camelizePlugin = camelCase(plugin);
+          var isAppliedMethod = 'is' + camelizePlugin + 'PluginApplied';
+          var applyMethod = 'apply' + camelizePlugin + 'Plugin';
+
+          if ('undefined' === typeof self[isAppliedMethod] || self[isAppliedMethod](element)) {
+            return;
+          }
+          if ('undefined' !== typeof self[applyMethod]) {
+            element.trigger('apply.element.ite-form', [elementData]);
+            self[applyMethod](element, elementData);
+          }
+        });
+      });
     }
   };
 
-  SF.fn.elements = ElementBag;
+  ElementBag.prototype.fn = ElementBag.prototype;
 
-  // http://stackoverflow.com/questions/5202296/add-a-hook-to-all-ajax-requests-on-a-page/5202312#5202312
+  SF.fn.elements = new ElementBag();
+
+// http://stackoverflow.com/questions/5202296/add-a-hook-to-all-ajax-requests-on-a-page/5202312#5202312
 
 })(jQuery);

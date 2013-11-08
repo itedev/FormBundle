@@ -43,7 +43,7 @@ abstract class FileUploader extends AbstractFileService implements FileUploaderI
     public function handleUpload()
     {
         $ajaxToken = $this->request->query->get('ajaxToken');
-        $propertyPath = $this->request->query->get('propertyPath');
+        $propertyPath = md5($this->request->query->get('propertyPath'));
 
         $absolutePath = $this->getAbsolutePath($ajaxToken, $propertyPath);
         $relativePath = $this->getRelativePath($ajaxToken, $propertyPath);

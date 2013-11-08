@@ -36,21 +36,7 @@ class FileuploadSubscriber implements EventSubscriberInterface
     {
         return array(
             FormEvents::PRE_SUBMIT => 'preSubmit',
-            FormEvents::PRE_SET_DATA => 'preSetData',
         );
-    }
-
-    /**
-     * @param FormEvent $event
-     */
-    public function preSetData(FormEvent $event)
-    {
-//        $form = $event->getForm();
-//        $data = $event->getData();
-//
-//        if ($data instanceof File) {
-//            $path = $data->getRealPath();
-//        }
     }
 
     /**
@@ -69,7 +55,14 @@ class FileuploadSubscriber implements EventSubscriberInterface
             /** @var $file File */
             $file = array_shift($files);
 
-            $data = new UploadedFile($file->getRealPath(), $file->getBasename(), $file->getMimeType(), $file->getSize(), null, true);
+            $data = new UploadedFile(
+                $file->getRealPath(),
+                $file->getBasename(),
+                $file->getMimeType(),
+                $file->getSize(),
+                null,
+                true
+            );
 
             $event->setData($data);
         }

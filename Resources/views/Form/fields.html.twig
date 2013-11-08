@@ -36,46 +36,53 @@
 {% endblock ite_bootstrap_datetimepicker2_widget %}
 
 {% block ite_fileupload_file_widget %}
-    {#<span class="btn btn-success fileinput-button">#}
-    {#<i class="icon-plus"></i>#}
-    {#Browse#}
-    {#{{ block('form_widget_simple') }}#}
-    {#</span>#}
-    <div id="{{ id }}_container">
-        <div class="row-fluid fileupload-buttonbar">
-            <div class="span7">
+    {% set selector = id %}
+    {% if widget == 'basic' %}
+        <span class="btn btn-success fileinput-button">
+        <i class="icon-plus"></i>
+            Add files...
+            {{ block('form_widget_simple') }}
+        </span>
+    {% elseif widget == 'basic_plus' %}
+
+    {% else %}
+        <div id="{{ id }}_container">
+            <div class="row-fluid fileupload-buttonbar">
+                <div class="span7">
                 <span class="btn btn-success fileinput-button">
                     <i class="icon-plus"></i>
                     Add files...
                     {{ block('form_widget_simple') }}
                 </span>
-                <button type="submit" class="btn btn-primary start">
-                    <i class="icon-upload"></i>
-                    Start upload
-                </button>
-                <button type="reset" class="btn btn-warning cancel">
-                    <i class="icon-ban-circle"></i>
-                    Cancel upload
-                </button>
-                <button type="button" class="btn btn-danger delete">
-                    <i class="icon-trash"></i>
-                    Delete
-                </button>
-                <input type="checkbox" class="toggle">
-                <span class="fileupload-process"></span>
-            </div>
-            <div class="span5 fileupload-progress fade">
-                <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">
-                    <div class="progress-bar progress-bar-success" style="width:0%;"></div>
+                    <button type="submit" class="btn btn-primary start">
+                        <i class="icon-upload"></i>
+                        Start upload
+                    </button>
+                    <button type="reset" class="btn btn-warning cancel">
+                        <i class="icon-ban-circle"></i>
+                        Cancel upload
+                    </button>
+                    <button type="button" class="btn btn-danger delete">
+                        <i class="icon-trash"></i>
+                        Delete
+                    </button>
+                    <input type="checkbox" class="toggle">
+                    <span class="fileupload-process"></span>
                 </div>
-                <div class="progress-extended">&nbsp;</div>
+                <div class="span5 fileupload-progress fade">
+                    <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+                        <div class="progress-bar progress-bar-success" style="width:0%;"></div>
+                    </div>
+                    <div class="progress-extended">&nbsp;</div>
+                </div>
             </div>
+            <table role="presentation" class="table table-striped">
+                <tbody class="files"></tbody>
+            </table>
         </div>
-        <table role="presentation" class="table table-striped">
-            <tbody class="files"></tbody>
-        </table>
-    </div>
-    {{ ite_form_sf_add_element('fileupload', '#' ~ id ~ '_container', element_data) }}
+        {% set selector = id ~ '_container' %}
+    {% endif %}
+    {{ ite_form_sf_add_element('fileupload', '#' ~ selector, element_data) }}
 {% endblock ite_fileupload_file_widget %}
 
 {# refactor below #}
