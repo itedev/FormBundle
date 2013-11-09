@@ -1,5 +1,7 @@
-FormBundle
-==========
+ITEFormBundle
+=============
+
+ITEFormBundle adds a lot of cool features to Symfony 2 forms, such as: new field types and extensions, integration with popular JavaScript libraries and jQuery plugins, improved collection field, automatic AJAX file upload handling, etc.
 
 Installation
 ------------
@@ -59,7 +61,7 @@ List of javascripts, that you need to include in your global template:
     {# javascript libraries  #}
     '@ITEJsBundle/Resources/public/js/sf.js' {# don't forget to include js from ITEJsBundle! #}
     '@ITEFormBundle/Resources/public/js/sf.form.js'
-    '@ITEFormBundle/Resources/public/js/collection.js' {# optional, include it if you want to use extended form collections #}
+    '@ITEFormBundle/Resources/public/js/collection.js' {# optional, include it if you want to use improved form collections #}
 %}
 <script type="text/javascript" src="{{ asset_url }}"></script>
 {% endjavascripts %}
@@ -71,22 +73,22 @@ Form field types and other plugin services are loaded ONLY if plugin enabled in 
 
 SF object extension
 -------------------
-This bundle add new field to SF object: SF.elements. To apply plugins on all elements on the page you need to call 
+This bundle add new field to SF object: SF.elements. To apply plugins on all elements on the page you need to call `SF.elements.apply()` function. 
 
-```js
-SF.elements.apply();
-```
-function. You can pass context (http://api.jquery.com/jQuery/#jQuery-selector-context) as first argument, for applying plugins only inside specific element. Also you can pass object as a second parameter, that looks like this:
+**Note:** this method is automatically called inside `ite_js_sf_dump()` function.
+
+You can pass context (http://api.jquery.com/jQuery/#jQuery-selector-context) as first argument, for applying plugins only inside specific element (i.e. content that was retrieved through AJAX). Also you can pass object as a second parameter, that looks like this:
 
 ```js
 {
   '__name__': 1,
-  '__another_name__': 'abc'
+  '__another_name__': 2
 }
 ```
 
+When SF object will iterate through all its elements to apply plugins, it will replace keys from this object to corresponding values in element selectors. It is used internally in **collection.js** for replacing collection's *prototype_name* to collection item indexes.
 
-If you need to change plugin options, which you cannot change via 'plugin_options' in PHP (i.e. callbacks,
+If you need to change plugin options, which you cannot change via 'plugin_options' in PHP (i.e. callbacks, regexps, dates, etc), you can add such event listener:
 
 ```js
 $('selector').on('apply.element.ite-form', function(e, elementData) {
@@ -98,10 +100,14 @@ $('selector').on('apply.element.ite-form', function(e, elementData) {
 });
 ```
 
+It will be called right before plugin will be applied.
+
 Collections
 -----------
 
-For using advanced collections, you need to add additional js in your template:
+This bundle greatly improves Symfony 2 collections (and collections from MopaBootstrapBundle). 
+
+For using it, you need to add additional js in your template:
 ```twig
 {# app/Resources/views/base.html.twig #}
 {% javascripts
