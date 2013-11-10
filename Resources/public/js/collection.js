@@ -34,7 +34,7 @@
         SF.elements.apply($item, replacementTokens);
 
         self.onAdd.apply($collection, [$item, $collection]);
-        $collection.trigger('add.ite-collection', [$item]);
+        $collection.trigger('add.collection.ite-form', [$item]);
       }
 
       this.index++;
@@ -78,7 +78,7 @@
         $item.remove();
 
         self.onRemove.apply($collection, [$item, $collection]);
-        $collection.trigger('remove.ite-collection', [$item]);
+        $collection.trigger('remove.collection.ite-form', [$item]);
       }
 
       if (0 !== $btn.parents('.collection-item').length) {
