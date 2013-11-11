@@ -1,8 +1,8 @@
 parameters:
-    ite_form.form.type.plugin.bootstrap_datetimepicker2.datetime.class: ITE\FormBundle\Form\Type\Plugin\Bootstrapdatetimepicker2\DateTimeType
-    ite_form.form.type.plugin.bootstrap_datetimepicker2.date.class:     ITE\FormBundle\Form\Type\Plugin\Bootstrapdatetimepicker2\DateType
-    ite_form.form.type.plugin.bootstrap_datetimepicker2.time.class:     ITE\FormBundle\Form\Type\Plugin\Bootstrapdatetimepicker2\TimeType
-    ite_form.form.type.plugin.bootstrap_datetimepicker2.birthday.class: ITE\FormBundle\Form\Type\Plugin\Bootstrapdatetimepicker2\BirthdayType
+    ite_form.form.type.plugin.bootstrap_datetimepicker2.datetime.class: ITE\FormBundle\Form\Type\Plugin\BootstrapDatetimepicker2\DateTimeType
+    ite_form.form.type.plugin.bootstrap_datetimepicker2.date.class:     ITE\FormBundle\Form\Type\Plugin\BootstrapDatetimepicker2\DateType
+    ite_form.form.type.plugin.bootstrap_datetimepicker2.time.class:     ITE\FormBundle\Form\Type\Plugin\BootstrapDatetimepicker2\TimeType
+    ite_form.form.type.plugin.bootstrap_datetimepicker2.birthday.class: ITE\FormBundle\Form\Type\Plugin\BootstrapDatetimepicker2\BirthdayType
 
 services:
     ite_form.form.type.plugin.bootstrap_datetimepicker2.datetime:
