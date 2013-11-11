@@ -28,7 +28,7 @@ services:
 
     ite_form.form.form_type_extension:
         class:                                              %ite_form.form.form_type_extension.class%
-        arguments: [ @session, @request=,  %ite_form.timezone% ]
+        arguments: [ @session, %ite_form.timezone% ]
         tags:
             - { name: form.type_extension, alias: form }
 

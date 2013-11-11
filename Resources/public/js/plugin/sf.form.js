@@ -1,9 +1,9 @@
 (function($) {
-  SF.elements.fn.isAjaxFormPluginApplied = function(element) {
+  SF.elements.fn.isFormPluginApplied = function(element) {
     return element.hasEvent('submit.form-plugin');
   };
 
-  SF.elements.fn.applyAjaxFormPlugin = function(element, elementData) {
+  SF.elements.fn.applyFormPlugin = function(element, elementData) {
     var extras = elementData.extras;
     var options = elementData.options;
 

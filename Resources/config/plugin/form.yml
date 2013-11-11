@@ -1,0 +1,8 @@
+parameters:
+    ite_form.form.ajax_form_type_extension.class:           ITE\FormBundle\Form\Extension\AjaxFormTypeExtension
+
+services:
+    ite_form.form.ajax_form_type_extension:
+        class:                                              %ite_form.form.ajax_form_type_extension.class%
+        tags:
+            - { name: form.type_extension, alias: form }

@@ -5,7 +5,6 @@ namespace ITE\FormBundle\Form\Extension;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
@@ -26,19 +25,12 @@ class FormTypeExtension extends AbstractTypeExtension
     protected $modelTimezone;
 
     /**
-     * @var Request $request
-     */
-    protected $request;
-
-    /**
      * @param SessionInterface $session
-     * @param Request $request
      * @param $modelTimezone
      */
-    public function __construct(SessionInterface $session, Request $request, $modelTimezone)
+    public function __construct(SessionInterface $session, $modelTimezone)
     {
         $this->viewTimezone = $session->get('timezone', $modelTimezone);
-        $this->request = $request;
         $this->modelTimezone = $modelTimezone;
     }
 
@@ -52,22 +44,6 @@ class FormTypeExtension extends AbstractTypeExtension
             'view_timezone' => $this->viewTimezone,
             'position' => null,
         ));
-        $resolver->setOptional(array(
-            'ajax',
-        ));
-        $resolver->setAllowedTypes(array(
-            'ajax' => 'bool',
-        ));
-
-        $resolver->setDefaults(array(
-            'plugin_options' => array(),
-            'extras' => array(),
-            'error_bubbling' => false,
-        ));
-        $resolver->setAllowedTypes(array(
-            'plugin_options' => array('array'),
-            'extras' => array('array'),
-        ));
     }
 
     /**
@@ -78,17 +54,9 @@ class FormTypeExtension extends AbstractTypeExtension
         if ($form->isRoot()) {
             $view->vars['submitted'] = $form->isSubmitted();
 
-            // ajax
-            $ajax = isset($options['ajax']) ? $options['ajax'] : false;
-            $view->vars['ajax'] = $ajax;
             if (!isset($view->vars['attr']['id'])) {
-                $view->vars['attr']['id'] = $view->vars['id'];
+                $view->vars['attr']['id'] = $view->vars['id'] . '_form';
             }
-
-            $view->vars['element_data'] = array(
-                'extras' => (object) $options['extras'],
-                'options' => (object) $options['plugin_options']
-            );
         }
     }
 

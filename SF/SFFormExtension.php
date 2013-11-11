@@ -23,7 +23,11 @@ class SFFormExtension implements SFExtensionInterface
     const PLUGIN_BOOTSTRAP_DATETIMEPICKER = 'bootstrap_datetimepicker';
     const PLUGIN_BOOTSTRAP_DATETIMEPICKER2 = 'bootstrap_datetimepicker2';
     const PLUGIN_FILEUPLOAD = 'fileupload';
+    const PLUGIN_FORM = 'form';
 
+    /**
+     * @var array $plugins
+     */
     protected static $plugins = array(
         self::PLUGIN_SELECT2,
         self::PLUGIN_TINYMCE,
@@ -31,6 +35,7 @@ class SFFormExtension implements SFExtensionInterface
         self::PLUGIN_BOOTSTRAP_DATETIMEPICKER,
         self::PLUGIN_BOOTSTRAP_DATETIMEPICKER2,
         self::PLUGIN_FILEUPLOAD,
+        self::PLUGIN_FORM,
     );
 
     /**
