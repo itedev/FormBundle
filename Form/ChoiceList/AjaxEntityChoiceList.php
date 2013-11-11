@@ -3,6 +3,7 @@
 namespace ITE\FormBundle\Form\ChoiceList;
 
 use Doctrine\ORM\QueryBuilder;
+use Symfony\Component\Form\Exception\StringCastException;
 use Symfony\Component\Form\Extension\Core\ChoiceList\ObjectChoiceList;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -95,14 +96,27 @@ class AjaxEntityChoiceList extends ObjectChoiceList
      */
     public function getChoicesForValues(array $values)
     {
-        if ($this->idAsValue) {
-            if (empty($values)) {
-                return array();
-            }
+        // Performance optimization
+        // Also prevents the generation of "WHERE id IN ()" queries through the
+        // entity loader. At least with MySQL and on the development machine
+        // this was tested on, no exception was thrown for such invalid
+        // statements, consequently no test fails when this code is removed.
+        // https://github.com/symfony/symfony/pull/8981#issuecomment-24230557
+        if (empty($values)) {
+            return array();
+        }
 
-            return $this->em->getRepository($this->class)->findBy(array(
+        if ($this->idAsValue) {
+            $entities = $this->em->getRepository($this->class)->findBy(array(
                 $this->idField => $values
             ));
+
+            try {
+                // The second parameter $labels is ignored by ObjectChoiceList
+                parent::initialize($entities, array(), array());
+            } catch (StringCastException $e) {
+                throw new StringCastException(str_replace('argument $labelPath', 'option "property"', $e->getMessage()), null, $e);
+            }
         }
 
         return parent::getChoicesForValues($values);
@@ -119,6 +133,11 @@ class AjaxEntityChoiceList extends ObjectChoiceList
      */
     public function getValuesForChoices(array $entities)
     {
+        // Performance optimization
+        if (empty($entities)) {
+            return array();
+        }
+
         // Optimize performance for single-field identifiers. We already
         // know that the IDs are used as values
 
@@ -126,10 +145,10 @@ class AjaxEntityChoiceList extends ObjectChoiceList
         if ($this->idAsValue) {
             $values = array();
 
-            foreach ($entities as $entity) {
+            foreach ($entities as $i => $entity) {
                 if ($entity instanceof $this->class) {
                     // Make sure to convert to the right format
-                    $values[] = $this->fixValue(current($this->getIdentifierValues($entity)));
+                    $values[$i] = $this->fixValue(current($this->getIdentifierValues($entity)));
                 }
             }
 
@@ -210,7 +229,7 @@ class AjaxEntityChoiceList extends ObjectChoiceList
      *
      * @throws RuntimeException If the entity does not exist in Doctrine's identity map
      */
-    private function getIdentifierValues($entity)
+    protected function getIdentifierValues($entity)
     {
         if (!$this->em->contains($entity)) {
             throw new RuntimeException(
@@ -223,4 +242,5 @@ class AjaxEntityChoiceList extends ObjectChoiceList
 
         return $this->classMetadata->getIdentifierValues($entity);
     }
+
 }
