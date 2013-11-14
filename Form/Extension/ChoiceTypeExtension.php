@@ -3,7 +3,14 @@
 namespace ITE\FormBundle\Form\Extension;
 
 use ITE\FormBundle\Form\ChoiceList\SimpleChoiceList;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use ITE\FormBundle\Form\EventListener\FixCheckboxInputListener;
+use ITE\FormBundle\Form\EventListener\FixRadioInputListener;
+use ITE\FormBundle\Form\EventListener\ModifyChoiceListListener;
+use Symfony\Component\Form\AbstractTypeExtension;
+use Symfony\Component\Form\Extension\Core\EventListener\FixCheckboxInputListener as BaseFixCheckboxInputListener;
+use Symfony\Component\Form\Extension\Core\EventListener\FixRadioInputListener as BaseFixRadioInputListener;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
@@ -11,19 +18,41 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
  * Class ChoiceTypeExtension
  * @package ITE\FormBundle\Form\Extension
  */
-class ChoiceTypeExtension
+class ChoiceTypeExtension extends AbstractTypeExtension
 {
     /**
-     * @var ChoiceType $choiceType
+     * Caches created choice lists.
+     * @var array
      */
-    private $choiceType;
+    protected $choiceListCache = array();
 
     /**
-     * @param ChoiceType $choiceType
+     * {@inheritdoc}
      */
-    public function __construct(ChoiceType $choiceType)
+    public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $this->choiceType = $choiceType;
+        $builder->addEventSubscriber(new ModifyChoiceListListener($options['choice_list']));
+        if ($options['expanded']) {
+            $ed = $builder->getEventDispatcher();
+            $listeners = $ed->getListeners(FormEvents::PRE_SUBMIT);
+            if ($options['multiple']) {
+                foreach ($listeners as $listener) {
+                    if ($listener[0] instanceof BaseFixCheckboxInputListener) {
+                        $ed->removeSubscriber($listener[0]);
+                        break;
+                    }
+                }
+                $builder->addEventSubscriber(new FixCheckboxInputListener($options['choice_list']), 10);
+            } else {
+                foreach ($listeners as $listener) {
+                    if ($listener[0] instanceof BaseFixRadioInputListener) {
+                        $ed->removeSubscriber($listener[0]);
+                        break;
+                    }
+                }
+                $builder->addEventSubscriber(new FixRadioInputListener($options['choice_list'], $builder->has('placeholder')), 10);
+            }
+        }
     }
 
     /**
@@ -42,13 +71,17 @@ class ChoiceTypeExtension
 
             if (!isset($choiceListCache[$hash])) {
                 $choiceListCache[$hash] = new SimpleChoiceList($choices, $options['preferred_choices']);
+                if ($options['allow_modify']) {
+                    $choiceListCache[$hash]->setAllowModify(true);
+                }
             }
 
             return $choiceListCache[$hash];
         };
 
         $resolver->setDefaults(array(
-            'allow_add' => false,
+            'allow_modify' => false,
+            'choice_list' => $choiceList,
         ));
     }
 

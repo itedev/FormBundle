@@ -50,7 +50,6 @@ services:
 
 #    ite_form.form.choice_type_extension:
 #        class:                                              %ite_form.form.choice_type_extension.class%
-#        arguments: [ @form.type.choice ]
 #        tags:
 #            - { name: form.type_extension, alias: choice }
 

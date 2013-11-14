@@ -11,31 +11,31 @@ use Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceList as BaseChoiceLis
 class ChoiceList extends BaseChoiceList
 {
     /**
-     * @var bool $allowAdd
+     * @var bool $allowModify
      */
-    protected $allowAdd = false;
+    protected $allowModify = false;
 
     /**
-     * Set allowAdd
+     * Set allowModify
      *
-     * @param bool $allowAdd
+     * @param boolean $allowModify
      * @return ChoiceList
      */
-    public function setAllowAdd($allowAdd)
+    public function setAllowModify($allowModify)
     {
-        $this->allowAdd = $allowAdd;
+        $this->allowModify = $allowModify;
 
         return $this;
     }
 
     /**
-     * Get allowAdd
+     * Get allowModify
      *
      * @return boolean
      */
-    public function getAllowAdd()
+    public function getAllowModify()
     {
-        return $this->allowAdd;
+        return $this->allowModify;
     }
 
 } 

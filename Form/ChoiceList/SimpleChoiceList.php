@@ -43,11 +43,15 @@ class SimpleChoiceList extends ChoiceList
     }
 
     /**
-     * {@inheritdoc} !!!
+     * {@inheritdoc}
      */
     public function getChoicesForValues(array $values)
     {
         $values = $this->fixValues($values);
+
+        if (array('') !== $values && $this->allowModify) {
+            return $this->fixChoices($values);
+        }
 
         // The values are identical to the choices, so we can just return them
         // to improve performance a little bit
