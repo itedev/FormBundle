@@ -78,16 +78,12 @@ class ModifyChoiceListListener implements EventSubscriberInterface
             $child = $form->get($i);
 
             $refObj = new \ReflectionObject($child);
-
             $refProp = $refObj->getProperty('submitted');
             $refProp->setAccessible(true);
-
             $refProp->setValue($child, false);
 
             $form->remove($i);
         }
-
-//        $form->remove('3');
     }
 
     /**
