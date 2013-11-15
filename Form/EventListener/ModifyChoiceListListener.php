@@ -32,23 +32,62 @@ class ModifyChoiceListListener implements EventSubscriberInterface
      */
     public function preSubmit(FormEvent $event)
     {
-//        $form = $event->getForm();
-//        $data = $event->getData();
-//
-//        $field = $form->getName();
-//        $options = $form->getConfig()->getOptions();
-//        $type = $form->getConfig()->getType()->getName();
-//
-//        $parent = $form->getParent();
-//        $parent->add($field, $type, array_replace($options, array(
-//            'choice_list' => new SimpleChoiceList(
-//                    array_merge(
-//                        $this->choiceList->getChoices(),
-//                        array('4' => 'four')
-//                    ),
-//                    $options['preferred_choices']
-//                )
-//        )));
+        $form = $event->getForm();
+        $data = $event->getData();
+
+        $this->choiceList->setNewValuesFromData($data);
+
+        $options = $form->getConfig()->getOptions();
+        if (!$options['expanded']) {
+            return;
+        }
+
+        $newValues = $this->choiceList->getNewValues();
+        foreach ($newValues as $i => $value) {
+            $choiceOpts = array(
+                'value' => $value,
+                'label' => '',
+                'translation_domain' => $options['translation_domain'],
+            );
+
+            if ($options['multiple']) {
+                $choiceType = 'checkbox';
+                $choiceOpts['required'] = false;
+            } else {
+                $choiceType = 'radio';
+            }
+
+            $form->add($i, $choiceType, $choiceOpts);
+        }
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function submit(FormEvent $event)
+    {
+        $form = $event->getForm();
+
+        $options = $form->getConfig()->getOptions();
+        if (!$options['expanded']) {
+            return;
+        }
+
+        $newValues = $this->choiceList->getNewValues();
+        foreach ($newValues as $i => $newValue) {
+            $child = $form->get($i);
+
+            $refObj = new \ReflectionObject($child);
+
+            $refProp = $refObj->getProperty('submitted');
+            $refProp->setAccessible(true);
+
+            $refProp->setValue($child, false);
+
+            $form->remove($i);
+        }
+
+//        $form->remove('3');
     }
 
     /**
@@ -57,7 +96,8 @@ class ModifyChoiceListListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
-            FormEvents::PRE_SUBMIT => 'preSubmit'
+            FormEvents::PRE_SUBMIT => 'preSubmit',
+            FormEvents::SUBMIT => 'submit'
         );
     }
 } 

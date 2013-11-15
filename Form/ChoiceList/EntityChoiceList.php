@@ -5,7 +5,7 @@ namespace ITE\FormBundle\Form\ChoiceList;
 use Symfony\Bridge\Doctrine\Form\ChoiceList\EntityLoaderInterface;
 use Symfony\Component\Form\Exception\RuntimeException;
 use Symfony\Component\Form\Exception\StringCastException;
-use Symfony\Component\Form\Extension\Core\ChoiceList\ObjectChoiceList;
+use ITE\FormBundle\Form\ChoiceList\ObjectChoiceList;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 

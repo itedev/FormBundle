@@ -31,6 +31,10 @@ class ChoiceTypeExtension extends AbstractTypeExtension
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        if (!$options['allow_modify']) {
+            return;
+        }
+
         $builder->addEventSubscriber(new ModifyChoiceListListener($options['choice_list']));
         if ($options['expanded']) {
             $ed = $builder->getEventDispatcher();
