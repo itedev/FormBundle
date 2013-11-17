@@ -4,14 +4,7 @@ parameters:
     ite_form.form.form_type_extension.class:             ITE\FormBundle\Form\Extension\FormTypeExtension
     ite_form.form.hierarchical_form_type_extension.class: ITE\FormBundle\Form\Extension\HierarchicalFormTypeExtension
     ite_form.form.button_type_extension.class:           ITE\FormBundle\Form\Extension\ButtonTypeExtension
-    ite_form.form.multiple_file_type_extension.class:    ITE\FormBundle\Form\Extension\MultipleFileTypeExtension
 
-    ite_form.form.choice_type_extension.class:           ITE\FormBundle\Form\Extension\ChoiceTypeExtension
-    ite_form.form.entity_type_extension.class:           ITE\FormBundle\Form\Extension\EntityTypeExtension
-
-    ite_form.entity_converter.class:                     ITE\FormBundle\Service\Converter\EntityConverter
-
-    ite_form.form.ajax_entity_type.class:                ITE\FormBundle\Form\Type\AjaxEntityType
     ite_form.form.google_font_type.class:                ITE\FormBundle\Form\Type\GoogleFontType
 
     ite_form.form.input_entity_type.class:               ITE\FormBundle\Form\Type\InputEntityType
@@ -45,27 +38,6 @@ services:
         tags:
             - { name: form.type_extension, alias: button }
 
-    ite_form.form.multiple_file_type_extension:
-        class:                                              %ite_form.form.multiple_file_type_extension.class%
-        tags:
-            - { name: form.type_extension, alias: file }
-
-#    ite_form.form.choice_type_extension:
-#        class:                                              %ite_form.form.choice_type_extension.class%
-#        tags:
-#            - { name: form.type_extension, alias: choice }
-#
-#    ite_form.form.entity_type_extension:
-#        class:                                              %ite_form.form.entity_type_extension.class%
-#        tags:
-#            - { name: form.type_extension, alias: entity }
-
-    ite_form.form.ajax_entity_type:
-        class:                                              %ite_form.form.ajax_entity_type.class%
-        arguments: [ @router ]
-        tags:
-            - { name: form.type, alias: ite_ajax_entity }
-
     ite_form.form.google_font_type:
         class:                                              %ite_form.form.google_font_type.class%
         arguments: [ @router ]
@@ -82,10 +54,6 @@ services:
         class:                                              %ite_form.form.markup_type.class%
         tags:
             - { name: form.type, alias: ite_markup }
-
-    ite_form.entity_converter:
-        class:                                              %ite_form.entity_converter.class%
-        arguments: [ @doctrine.orm.entity_manager, @request= ]
 
 #    refactor below
     ite_form.form_validator:

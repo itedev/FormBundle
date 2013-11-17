@@ -1,0 +1,28 @@
+parameters:
+    ite_form.form.dynamic_choice_type_extension.class:      ITE\FormBundle\Form\Extension\DynamicChoiceTypeExtension
+    ite_form.form.dynamic_entity_type_extension.class:      ITE\FormBundle\Form\Extension\DynamicEntityTypeExtension
+
+    ite_form.entity_converter.class:                        ITE\FormBundle\Service\Converter\EntityConverter
+
+    ite_form.form.ajax_entity_type.class:                   ITE\FormBundle\Form\Type\AjaxEntityType
+
+services:
+    ite_form.form.dynamic_choice_type_extension:
+        class:                                              %ite_form.form.dynamic_choice_type_extension.class%
+        tags:
+            - { name: form.type_extension, alias: choice }
+
+    ite_form.form.dynamic_entity_type_extension:
+        class:                                              %ite_form.form.dynamic_entity_type_extension.class%
+        tags:
+            - { name: form.type_extension, alias: entity }
+
+    ite_form.entity_converter:
+        class:                                              %ite_form.entity_converter.class%
+        arguments: [ @doctrine.orm.entity_manager, @request= ]
+
+    ite_form.form.ajax_entity_type:
+        class:                                              %ite_form.form.ajax_entity_type.class%
+        arguments: [ @router ]
+        tags:
+            - { name: form.type, alias: ite_ajax_entity }

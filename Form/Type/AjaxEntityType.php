@@ -54,18 +54,22 @@ class AjaxEntityType extends AbstractType
         $resolver->setDefaults(array(
                 'route_parameters' => array(),
                 'url'              => $url,
+                'choices'          => array(),
                 'choice_list'      => function (Options $options) {
-                    return new AjaxEntityChoiceList(
-                        $options['em'],
-                        $options['class'],
-                        $options['property'],
-                        $options['choices'],
-                        $options['group_by']
-                    );
-                },
+                      return new AjaxEntityChoiceList(
+                          $options['em'],
+                          $options['class'],
+                          $options['property']
+                      );
+                  },
+                'allow_modify' => true,
             ));
         $resolver->setRequired(array(
                 'route',
+            ));
+        $resolver->setAllowedValues(array(
+                'allow_modify' => array(true),
+                'choices' => array(array()),
             ));
     }
 
@@ -74,7 +78,6 @@ class AjaxEntityType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        /** @var $options['choice_list'] AjaxEntityChoiceList */
         $options['choice_list']->addEntities($form->getData());
         $view->vars = array_replace($view->vars, array(
                 'choices' => $options['choice_list']->getRemainingViews(),

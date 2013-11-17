@@ -3,6 +3,7 @@
 namespace ITE\FormBundle\DependencyInjection;
 
 use Doctrine\Common\Inflector\Inflector;
+use ITE\FormBundle\Components;
 use ITE\FormBundle\SF\SFFormExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
@@ -38,6 +39,23 @@ class ITEFormExtension extends Extension
             $this->loadAjaxFileUploadConfiguration($loader, $config['ajax_file_upload'], $container);
         }
 
+        // load components configuration
+        foreach (Components::$components as $component) {
+            $enabled = isset($config['components'][$component]) && !empty($config['components'][$component]['enabled']);
+            $container->setParameter(sprintf('ite_form.component.%s.enabled', $component), $enabled);
+
+            if ($enabled) {
+                // load specific component configuration
+                $method = 'load' . Inflector::classify($component) . 'ComponentConfiguration';
+                if (method_exists($this, $method)) {
+                    $this->$method($component, $loader, $config['components'][$component], $container);
+                }
+
+                // load common component configuration
+                $this->loadComponentConfiguration($component, $loader, $config['components'][$component], $container);
+            }
+        }
+
         // load plugins configuration
         foreach (SFFormExtension::getPlugins() as $plugin) {
             $enabled = isset($config['plugins'][$plugin]) && !empty($config['plugins'][$plugin]['enabled']);
@@ -48,7 +66,7 @@ class ITEFormExtension extends Extension
                 $this->loadPluginConfiguration($plugin, $loader, $config['plugins'][$plugin], $container);
 
                 // load specific plugin configuration
-                $method = 'load' . Inflector::classify($plugin) . 'Configuration';
+                $method = 'load' . Inflector::classify($plugin) . 'PluginConfiguration';
                 if (method_exists($this, $method)) {
                     $this->$method($plugin, $loader, $config['plugins'][$plugin], $container);
                 }
@@ -57,15 +75,26 @@ class ITEFormExtension extends Extension
     }
 
     /**
+     * @param $component
      * @param FileLoader $loader
      * @param array $config
      * @param ContainerBuilder $container
      */
-    private function loadAjaxFileUploadConfiguration(FileLoader $loader, array $config, ContainerBuilder $container)
+    private function loadComponentConfiguration($component, FileLoader $loader, array $config, ContainerBuilder $container)
+    {
+        $loader->load(sprintf('component/%s.yml', $component));
+    }
+
+    /**
+     * @param $component
+     * @param FileLoader $loader
+     * @param array $config
+     * @param ContainerBuilder $container
+     */
+    private function loadAjaxFileUploadComponentConfiguration($component, FileLoader $loader, array $config, ContainerBuilder $container)
     {
         $container->setParameter('ite_form.file_manager.web_root', $config['web_root']);
         $container->setParameter('ite_form.file_manager.tmp_prefix', $config['tmp_prefix']);
-        $loader->load('ajax_file_upload.yml');
     }
 
     /**
@@ -87,7 +116,7 @@ class ITEFormExtension extends Extension
      * @param array $config
      * @param ContainerBuilder $container
      */
-    private function loadSelect2Configuration($plugin, FileLoader $loader, array $config, ContainerBuilder $container)
+    private function loadSelect2PluginConfiguration($plugin, FileLoader $loader, array $config, ContainerBuilder $container)
     {
         $this->addExtendedChoiceTypes(sprintf('ite_form.form.type.plugin.%s.abstract', $plugin), $plugin, $container);
     }
@@ -98,7 +127,7 @@ class ITEFormExtension extends Extension
      * @param array $config
      * @param ContainerBuilder $container
      */
-    private function loadFileuploadConfiguration($plugin, FileLoader $loader, array $config, ContainerBuilder $container)
+    private function loadFileuploadPluginConfiguration($plugin, FileLoader $loader, array $config, ContainerBuilder $container)
     {
         $container->setParameter(sprintf('ite_form.plugin.%s.%s', $plugin, 'file_manager'), $config['file_manager']);
     }

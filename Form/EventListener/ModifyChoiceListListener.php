@@ -5,6 +5,7 @@ namespace ITE\FormBundle\Form\EventListener;
 use ITE\FormBundle\Form\ChoiceList\SimpleChoiceList;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceListInterface;
+use Symfony\Component\Form\Extension\Core\View\ChoiceView;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
@@ -43,10 +44,14 @@ class ModifyChoiceListListener implements EventSubscriberInterface
         }
 
         $newValues = $this->choiceList->getNewValues();
+        $remainingViews = $this->choiceList->getRemainingViews();
         foreach ($newValues as $i => $value) {
+            /** @var $choiceView ChoiceView */
+            $choiceView = $remainingViews[$i];
+
             $choiceOpts = array(
-                'value' => $value,
-                'label' => '',
+                'value'              => $choiceView->value,
+                'label'              => $choiceView->label,
                 'translation_domain' => $options['translation_domain'],
             );
 
@@ -73,10 +78,12 @@ class ModifyChoiceListListener implements EventSubscriberInterface
             return;
         }
 
+        // remove dynamically added child checkboxes/radios
         $newValues = $this->choiceList->getNewValues();
         foreach ($newValues as $i => $newValue) {
             $child = $form->get($i);
 
+            // change 'submitted' field value to false to prevent 'You cannot remove children from a submitted form' error
             $refObj = new \ReflectionObject($child);
             $refProp = $refObj->getProperty('submitted');
             $refProp->setAccessible(true);
@@ -93,7 +100,7 @@ class ModifyChoiceListListener implements EventSubscriberInterface
     {
         return array(
             FormEvents::PRE_SUBMIT => 'preSubmit',
-            FormEvents::SUBMIT => 'submit'
+            FormEvents::SUBMIT     => 'submit'
         );
     }
 } 

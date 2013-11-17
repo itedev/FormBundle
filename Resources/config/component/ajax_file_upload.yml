@@ -1,9 +1,12 @@
 parameters:
     ite_form.form.ajax_token_form_type_extension.class:     ITE\FormBundle\Form\Extension\AjaxTokenFormTypeExtension
     ite_form.default_ajax_token_provider.class:             ITE\FormBundle\Form\Extension\AjaxToken\DefaultAjaxTokenProvider
+
     ite_form.abstract_file_service.class:                   ITE\FormBundle\Service\File\AbstractFileService
     ite_form.file_manager.class:                            ITE\FormBundle\Service\File\FileManager
     ite_form.file_uploader.class:                           ITE\FormBundle\Service\File\FileUploader
+
+    ite_form.form.multiple_file_type_extension.class:       ITE\FormBundle\Form\Extension\MultipleFileTypeExtension
 
 services:
     ite_form.form.ajax_token_form_type_extension:
@@ -32,3 +35,8 @@ services:
         parent:                                             ite_form.abstract_file_service
         calls:
             - [ setRequest, [ @request= ] ]
+
+    ite_form.form.multiple_file_type_extension:
+        class:                                              %ite_form.form.multiple_file_type_extension.class%
+        tags:
+            - { name: form.type_extension, alias: file }

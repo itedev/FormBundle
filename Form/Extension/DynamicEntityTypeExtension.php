@@ -13,10 +13,10 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 /**
- * Class EntityTypeExtension
+ * Class DynamicEntityTypeExtension
  * @package ITE\FormBundle\Form\Extension
  */
-class EntityTypeExtension extends AbstractTypeExtension
+class DynamicEntityTypeExtension extends AbstractTypeExtension
 {
     /**
      * Caches created choice lists.

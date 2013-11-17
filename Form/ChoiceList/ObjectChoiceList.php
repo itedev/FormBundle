@@ -180,4 +180,22 @@ class ObjectChoiceList extends ChoiceList
             }
         }
     }
+
+    /**
+     * NEW METHODS START
+     */
+
+    /**
+     * @param array $choices
+     */
+    public function addNewValues(array $choices)
+    {
+        $labels = array();
+        $this->extractLabels($choices, $labels);
+        $this->addNewChoices($choices, $labels);
+    }
+
+    /**
+     * NEW METHODS END
+     */
 } 

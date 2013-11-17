@@ -15,10 +15,10 @@ use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * Class ChoiceTypeExtension
+ * Class DynamicChoiceTypeExtension.php
  * @package ITE\FormBundle\Form\Extension
  */
-class ChoiceTypeExtension extends AbstractTypeExtension
+class DynamicChoiceTypeExtension extends AbstractTypeExtension
 {
     /**
      * Caches created choice lists.

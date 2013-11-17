@@ -2,10 +2,11 @@
 
 namespace ITE\FormBundle\Form\ChoiceList;
 
+use Doctrine\ORM\Mapping\ClassMetadataInfo;
+use Doctrine\ORM\Proxy\Proxy;
 use Symfony\Bridge\Doctrine\Form\ChoiceList\EntityLoaderInterface;
 use Symfony\Component\Form\Exception\RuntimeException;
 use Symfony\Component\Form\Exception\StringCastException;
-use ITE\FormBundle\Form\ChoiceList\ObjectChoiceList;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
@@ -22,17 +23,17 @@ class EntityChoiceList extends ObjectChoiceList
     /**
      * @var ObjectManager
      */
-    private $em;
+    protected $em;
 
     /**
      * @var string
      */
-    private $class;
+    protected $class;
 
     /**
      * @var \Doctrine\Common\Persistence\Mapping\ClassMetadata
      */
-    private $classMetadata;
+    protected $classMetadata;
 
     /**
      * Contains the query builder that builds the query for fetching the
@@ -42,28 +43,28 @@ class EntityChoiceList extends ObjectChoiceList
      *
      * @var EntityLoaderInterface
      */
-    private $entityLoader;
+    protected $entityLoader;
 
     /**
      * The identifier field, if the identifier is not composite
      *
      * @var array
      */
-    private $idField = null;
+    protected $idField = null;
 
     /**
      * Whether to use the identifier for index generation
      *
      * @var Boolean
      */
-    private $idAsIndex = false;
+    protected $idAsIndex = false;
 
     /**
      * Whether to use the identifier for value generation
      *
      * @var Boolean
      */
-    private $idAsValue = false;
+    protected $idAsValue = false;
 
     /**
      * Whether the entities have already been loaded.
@@ -77,7 +78,7 @@ class EntityChoiceList extends ObjectChoiceList
      *
      * @var array
      */
-    private $preferredEntities = array();
+    protected $preferredEntities = array();
 
     /**
      * Creates a new entity choice list.
@@ -443,7 +444,7 @@ class EntityChoiceList extends ObjectChoiceList
      *
      * @throws RuntimeException If the entity does not exist in Doctrine's identity map
      */
-    private function getIdentifierValues($entity)
+    protected function getIdentifierValues($entity)
     {
         if (!$this->em->contains($entity)) {
             throw new RuntimeException(
@@ -456,4 +457,75 @@ class EntityChoiceList extends ObjectChoiceList
 
         return $this->classMetadata->getIdentifierValues($entity);
     }
+
+    /**
+     * NEW METHODS START
+     */
+
+    /**
+     * @param $entity
+     * @return array
+     */
+    protected function getIdentifierScalarValues($entity)
+    {
+        $identifierScalarValues = array();
+
+        $identifierValues = $this->getIdentifierValues($entity);
+        foreach ($identifierValues as $fieldName => $value) {
+            if ($this->classMetadata->hasField($fieldName)) {
+                $identifierScalarValues[$fieldName] = $value;
+                continue;
+            }
+
+            $identifierScalarValues[$fieldName] = $this->getSingleEntityIdentifierValue($value);
+        }
+
+        return $identifierScalarValues;
+    }
+
+    /**
+     * @param $entity
+     * @return mixed
+     */
+    protected function getSingleEntityIdentifierValue($entity)
+    {
+//        $this->em->initializeObject($entity);
+
+        if ($entity instanceof Proxy) {
+            $reflection = new \ReflectionObject($entity);
+            $prop = $reflection->getProperty('_identifier');
+            $prop->setAccessible(true);
+
+            return $prop->getValue($entity);
+        }
+
+        /** @var $classMetadata ClassMetadataInfo */
+        $classMetadata = $this->em->getClassMetadata(get_class($entity));
+
+        $identifierValues = $classMetadata->getIdentifierValues($entity);
+
+        return current($identifierValues);
+    }
+
+    /**
+     * @param array $values
+     * @throws RuntimeException
+     */
+    public function addNewValues(array $values)
+    {
+        if (!$this->idAsValue) {
+            throw new RuntimeException("You cannot use entity with composite primary keys along side with enabled " .
+                "'allow_modify' option");
+        }
+
+        $entities = $this->em->getRepository($this->class)->findBy(array(
+                $this->idField => $values
+            ));
+
+        parent::addNewValues($entities);
+    }
+
+    /**
+     * NEW METHODS END
+     */
 } 

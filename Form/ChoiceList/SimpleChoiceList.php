@@ -155,4 +155,23 @@ class SimpleChoiceList extends ChoiceList
         // convert them to strings
         return (string) $choice;
     }
+
+    /**
+     * NEW METHODS START
+     */
+
+    /**
+     * @param array $values
+     * @return void
+     */
+    public function addNewValues(array $values)
+    {
+        $choices = array_combine($values, $values);
+        $this->addNewChoices($choices, $choices);
+    }
+
+    /**
+     * NEW METHODS END
+     */
+
 } 

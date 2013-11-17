@@ -3,6 +3,7 @@
 namespace ITE\FormBundle\Form\ChoiceList;
 
 use Doctrine\ORM\QueryBuilder;
+use Symfony\Bridge\Doctrine\Form\ChoiceList\EntityLoaderInterface;
 use Symfony\Component\Form\Exception\StringCastException;
 use Symfony\Component\Form\Extension\Core\ChoiceList\ObjectChoiceList;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
@@ -14,60 +15,16 @@ use Doctrine\Common\Persistence\ObjectManager;
  * Class AjaxEntityChoiceList
  * @package ITE\FormBundle\Form\ChoiceList
  */
-class AjaxEntityChoiceList extends ObjectChoiceList
+class AjaxEntityChoiceList extends EntityChoiceList
 {
     /**
-     * The identifier field, if the identifier is not composite
-     *
-     * @var array
+     * @param ObjectManager $manager
+     * @param string $class
+     * @param null $labelPath
      */
-    private $idField = null;
-
-    /**
-     * Whether to use the identifier for index generation
-     *
-     * @var Boolean
-     */
-    private $idAsIndex = false;
-
-    /**
-     * Whether to use the identifier for value generation
-     *
-     * @var Boolean
-     */
-    private $idAsValue = false;
-
-    /**
-     * Creates a new entity choice list.
-     *
-     * @param ObjectManager             $manager           An EntityManager instance
-     * @param string                    $class             The class name
-     * @param string                    $labelPath         The property path used for the label
-     * @param array                     $entities          An array of choices
-     * @param string                    $groupPath         A property path pointing to the property used
-     *                                                     to group the choices. Only allowed if
-     *                                                     the choices are given as flat array.
-     * @param PropertyAccessorInterface $propertyAccessor  The reflection graph for reading property paths.
-     */
-    public function __construct(ObjectManager $manager, $class, $labelPath = null, $entities = null, $groupPath = null, PropertyAccessorInterface $propertyAccessor = null)
+    public function __construct(ObjectManager $manager, $class, $labelPath = null)
     {
-        $this->em = $manager;
-        $this->classMetadata = $manager->getClassMetadata($class);
-        $this->class = $this->classMetadata->getName();
-
-        $identifier = $this->classMetadata->getIdentifierFieldNames();
-
-        if (1 === count($identifier)) {
-            $this->idField = $identifier[0];
-            $this->idAsValue = true;
-
-            if (in_array($this->classMetadata->getTypeOfField($this->idField), array('integer', 'smallint', 'bigint'))) {
-                $this->idAsIndex = true;
-            }
-        }
-
-        $entities = array();
-        parent::__construct($entities, $labelPath, array(), null, null, $propertyAccessor);
+        parent::__construct($manager, $class, $labelPath, null, array());
     }
 
     /**
@@ -84,163 +41,4 @@ class AjaxEntityChoiceList extends ObjectChoiceList
 
         parent::initialize($entities, array(), array());
     }
-
-    /**
-     * Returns the entities corresponding to the given values.
-     *
-     * @param array $values
-     *
-     * @return array
-     *
-     * @see Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceListInterface
-     */
-    public function getChoicesForValues(array $values)
-    {
-        // Performance optimization
-        // Also prevents the generation of "WHERE id IN ()" queries through the
-        // entity loader. At least with MySQL and on the development machine
-        // this was tested on, no exception was thrown for such invalid
-        // statements, consequently no test fails when this code is removed.
-        // https://github.com/symfony/symfony/pull/8981#issuecomment-24230557
-        if (empty($values)) {
-            return array();
-        }
-
-        if ($this->idAsValue) {
-            $entities = $this->em->getRepository($this->class)->findBy(array(
-                $this->idField => $values
-            ));
-
-            try {
-                // The second parameter $labels is ignored by ObjectChoiceList
-                parent::initialize($entities, array(), array());
-            } catch (StringCastException $e) {
-                throw new StringCastException(str_replace('argument $labelPath', 'option "property"', $e->getMessage()), null, $e);
-            }
-        }
-
-        return parent::getChoicesForValues($values);
-    }
-
-    /**
-     * Returns the values corresponding to the given entities.
-     *
-     * @param array $entities
-     *
-     * @return array
-     *
-     * @see Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceListInterface
-     */
-    public function getValuesForChoices(array $entities)
-    {
-        // Performance optimization
-        if (empty($entities)) {
-            return array();
-        }
-
-        // Optimize performance for single-field identifiers. We already
-        // know that the IDs are used as values
-
-        // Attention: This optimization does not check choices for existence
-        if ($this->idAsValue) {
-            $values = array();
-
-            foreach ($entities as $i => $entity) {
-                if ($entity instanceof $this->class) {
-                    // Make sure to convert to the right format
-                    $values[$i] = $this->fixValue(current($this->getIdentifierValues($entity)));
-                }
-            }
-
-            return $values;
-        }
-
-        return parent::getValuesForChoices($entities);
-    }
-
-    /**
-     * Creates a new unique index for this entity.
-     *
-     * If the entity has a single-field identifier, this identifier is used.
-     *
-     * Otherwise a new integer is generated.
-     *
-     * @param mixed $entity The choice to create an index for
-     *
-     * @return integer|string A unique index containing only ASCII letters,
-     *                        digits and underscores.
-     */
-    protected function createIndex($entity)
-    {
-        if ($this->idAsIndex) {
-            return $this->fixIndex(current($this->getIdentifierValues($entity)));
-        }
-
-        return parent::createIndex($entity);
-    }
-
-    /**
-     * Creates a new unique value for this entity.
-     *
-     * If the entity has a single-field identifier, this identifier is used.
-     *
-     * Otherwise a new integer is generated.
-     *
-     * @param mixed $entity The choice to create a value for
-     *
-     * @return integer|string A unique value without character limitations.
-     */
-    protected function createValue($entity)
-    {
-        if ($this->idAsValue) {
-            return (string) current($this->getIdentifierValues($entity));
-        }
-
-        return parent::createValue($entity);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function fixIndex($index)
-    {
-        $index = parent::fixIndex($index);
-
-        // If the ID is a single-field integer identifier, it is used as
-        // index. Replace any leading minus by underscore to make it a valid
-        // form name.
-        if ($this->idAsIndex && $index < 0) {
-            $index = strtr($index, '-', '_');
-        }
-
-        return $index;
-    }
-
-    /**
-     * Returns the values of the identifier fields of an entity.
-     *
-     * Doctrine must know about this entity, that is, the entity must already
-     * be persisted or added to the identity map before. Otherwise an
-     * exception is thrown.
-     *
-     * @param object $entity The entity for which to get the identifier
-     *
-     * @return array          The identifier values
-     *
-     * @throws RuntimeException If the entity does not exist in Doctrine's identity map
-     */
-    protected function getIdentifierValues($entity)
-    {
-        if (!$this->em->contains($entity)) {
-            throw new RuntimeException(
-                'Entities passed to the choice field must be managed. Maybe ' .
-                'persist them in the entity manager?'
-            );
-        }
-
-        $this->em->initializeObject($entity);
-
-        return $this->classMetadata->getIdentifierValues($entity);
-    }
-
 }

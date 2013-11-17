@@ -3,6 +3,7 @@
 namespace ITE\FormBundle\DependencyInjection;
 
 use Doctrine\Common\Inflector\Inflector;
+use ITE\FormBundle\Components;
 use ITE\FormBundle\SF\SFFormExtension;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeBuilder;
@@ -25,21 +26,11 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('ite_form');
 
-        // ajax file upload configuration
-        $this->addAjaxUploadFileConfiguration($rootNode);
+        // add components configuration
+        $this->addComponentsConfiguration($rootNode);
 
         // add plugins configuration
-        $pluginsNode = $rootNode->children()->arrayNode('plugins')->canBeUnset();
-        foreach (SFFormExtension::getPlugins() as $plugin) {
-            // add common plugin configuration
-            $pluginNode = $this->addPluginConfiguration($plugin, $pluginsNode);
-
-            // load specific plugin configuration
-            $method = 'add' . Inflector::classify($plugin) . 'Configuration';
-            if (method_exists($this, $method)) {
-                $this->$method($pluginNode);
-            }
-        }
+        $this->addPluginsConfiguration($rootNode);
 
         $rootNode
             ->children()
@@ -53,19 +44,85 @@ class Configuration implements ConfigurationInterface
     /**
      * @param ArrayNodeDefinition $rootNode
      */
-    private function addAjaxUploadFileConfiguration(ArrayNodeDefinition $rootNode)
+    private function addComponentsConfiguration(ArrayNodeDefinition $rootNode)
     {
-        $rootNode
+        $componentsNode = $rootNode
             ->children()
-                ->arrayNode('ajax_file_upload')
+                ->arrayNode('components')
+                    ->canBeUnset();
+
+        foreach (Components::$components as $component) {
+            // add common component configuration
+            $componentNode = $this->addComponentConfiguration($component, $componentsNode);
+
+            // load specific component configuration
+            $method = 'add' . Inflector::classify($component) . 'ComponentConfiguration';
+            if (method_exists($this, $method)) {
+                $this->$method($componentNode);
+            }
+        }
+    }
+
+    /**
+     * @param $component
+     * @param ArrayNodeDefinition $componentsNode
+     * @return NodeBuilder
+     */
+    private function addComponentConfiguration($component, ArrayNodeDefinition $componentsNode)
+    {
+        /** @var $componentNode NodeBuilder */
+        $componentNode = $componentsNode
+            ->children()
+                ->arrayNode($component)
                     ->canBeUnset()
-                    ->children()
-                        ->scalarNode('web_root')->defaultValue('%kernel.root_dir%/../web')->end()
-                        ->scalarNode('tmp_prefix')->cannotBeEmpty()->isRequired()->end()
-                    ->end()
-                ->end()
-            ->end()
+                    ->addDefaultsIfNotSet()
+                    ->treatNullLike(array('enabled' => true))
+                    ->treatTrueLike(array('enabled' => true))
+                    ->children();
+
+        $componentNode
+          ->booleanNode('enabled')->defaultFalse()->end();
+
+//        $componentNode
+//                    ->end()
+//                ->end()
+//            ->end()
+//        ;
+
+        return $componentNode;
+    }
+
+    /**
+     * @param NodeBuilder $componentNode
+     */
+    private function addAjaxFileUploadComponentConfiguration(NodeBuilder $componentNode)
+    {
+        $componentNode
+            ->scalarNode('web_root')->defaultValue('%kernel.root_dir%/../web')->end()
+            ->scalarNode('tmp_prefix')->cannotBeEmpty()->isRequired()->end()
         ;
+    }
+
+    /**
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addPluginsConfiguration(ArrayNodeDefinition $rootNode)
+    {
+        $pluginsNode = $rootNode
+            ->children()
+                ->arrayNode('plugins')
+                    ->canBeUnset();
+
+        foreach (SFFormExtension::getPlugins() as $plugin) {
+            // add common plugin configuration
+            $pluginNode = $this->addPluginConfiguration($plugin, $pluginsNode);
+
+            // load specific plugin configuration
+            $method = 'add' . Inflector::classify($plugin) . 'PluginConfiguration';
+            if (method_exists($this, $method)) {
+                $this->$method($pluginNode);
+            }
+        }
     }
 
     /**
@@ -99,9 +156,9 @@ class Configuration implements ConfigurationInterface
     }
 
     /**
-     * @param $pluginNode
+     * @param NodeBuilder $pluginNode
      */
-    private function addFileuploadConfiguration(NodeBuilder $pluginNode)
+    private function addFileuploadPluginConfiguration(NodeBuilder $pluginNode)
     {
         $pluginNode
             ->variableNode('file_manager')->defaultValue(array())->end();
