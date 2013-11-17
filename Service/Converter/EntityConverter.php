@@ -99,7 +99,7 @@ class EntityConverter implements EntityConverterInterface
     protected function internalConvertEntityToOption($entity, $labelPath, $idPath)
     {
         if ($labelPath) {
-            $label = $this->propertyAccessor->getValue($entity, $labelPath);
+            $label = (string) $this->propertyAccessor->getValue($entity, $labelPath);
         } elseif (is_object($entity) && method_exists($entity, '__toString')) {
             $label = (string) $entity;
         } else {
