@@ -1,17 +1,24 @@
 <?php
 
-namespace ITE\FormBundle\Form\Type\Plugin\Fileupload;
+namespace ITE\FormBundle\Form\Type\Plugin\Fineuploader;
 
+use ITE\FormBundle\Form\EventListener\Plugin\Fileupload\FileuploadSubscriber;
+use ITE\FormBundle\Service\File\FileManagerInterface;
+use ITE\FormBundle\Service\File\WebFile;
 use ITE\FormBundle\Util\UrlUtils;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Routing\RouterInterface;
+use Vich\UploaderBundle\Storage\StorageInterface;
 
 /**
  * Class FileType
- * @package ITE\FormBundle\Form\Type\Plugin\Fileupload
+ * @package ITE\FormBundle\Form\Type\Plugin\Fineuploader
  */
 class FileType extends AbstractType
 {
@@ -34,16 +41,8 @@ class FileType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'route' => 'ite_form_plugin_fileupload_file_upload',
-            'input_name' => 'files',
-            'widget' => 'basic',
-        ));
-        $resolver->setAllowedValues(array(
-            'widget' => array(
-                'basic',
-                'basic_plus',
-                'basic_plus_ui',
-            ),
+            'route' => 'ite_form_plugin_fineuploader_file_upload',
+            'input_name' => 'qqfile',
         ));
     }
 
@@ -52,28 +51,21 @@ class FileType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $pluginOptions = array_replace_recursive(
-            array(
-                'uploadTemplateId' => null,
-                'downloadTemplateId' => null,
-            ),
-            $this->options,
-            $options['plugin_options'],
-            array(
-                'url' => $view->vars['url'],
-                'paramName' => $options['input_name'],
-            )
-        );
-
-        if (!$options['multiple']) {
-            $pluginOptions['maxNumberOfFiles'] = 1;
-        }
-
         $view->vars['element_data'] = array(
             'extras' => (object) array(),
-            'options' => $pluginOptions,
+            'options' => array_replace_recursive(
+                $this->options,
+                $options['plugin_options'],
+                array(
+                    'multiple' => $options['multiple'] ? 1 : 0,
+                    'request' => array(
+                        'endpoint' => $view->vars['url'],
+                        'inputName' => $options['input_name'],
+                    )
+                )
+            )
         );
-        $view->vars['widget'] = $options['widget'];
+        $view->vars['type'] = 'hidden';
     }
 
     /**
@@ -89,6 +81,6 @@ class FileType extends AbstractType
      */
     public function getName()
     {
-        return 'ite_fileupload_file';
+        return 'ite_fineuploader_file';
     }
 }

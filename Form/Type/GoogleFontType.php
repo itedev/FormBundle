@@ -2,10 +2,8 @@
 
 namespace ITE\FormBundle\Form\Type;
 
-use ITE\FormBundle\Form\ChoiceList\GoogleFontChoiceBuilder;
+use ITE\FormBundle\Form\ChoiceList\Builder\GoogleFontChoiceListBuilder;
 use Symfony\Component\Form\AbstractType as BaseAbstractType;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
@@ -20,7 +18,7 @@ class GoogleFontType extends BaseAbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'choices' => GoogleFontChoiceBuilder::getChoices(),
+            'choices' => GoogleFontChoiceListBuilder::getChoices(),
         ));
     }
 

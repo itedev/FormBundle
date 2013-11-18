@@ -5,7 +5,7 @@ parameters:
 services:
     ite_form.form.type.plugin.fileupload.file:
         class:                                          %ite_form.form.type.plugin.fileupload.file.class%
-        arguments: [ %ite_form.plugin.fileupload.options%, @router, @ite_form.file_manager, @?vich_uploader.storage ]
+        arguments: [ %ite_form.plugin.fileupload.options% ]
         tags:
             - { name: form.type, alias: ite_fileupload_file }
 

@@ -8,6 +8,8 @@ parameters:
 
     ite_form.form.multiple_file_type_extension.class:       ITE\FormBundle\Form\Extension\MultipleFileTypeExtension
 
+    ite_form.form.ajax_file_type.class:                     ITE\FormBundle\Form\Type\AjaxFileType
+
 services:
     ite_form.form.ajax_token_form_type_extension:
         class:                                              %ite_form.form.ajax_token_form_type_extension.class%
@@ -40,3 +42,9 @@ services:
         class:                                              %ite_form.form.multiple_file_type_extension.class%
         tags:
             - { name: form.type_extension, alias: file }
+
+    ite_form.form.ajax_file_type:
+        class:                                              %ite_form.form.ajax_file_type.class%
+        arguments: [ @router, @ite_form.file_manager, @?vich_uploader.storage ]
+        tags:
+            - { name: form.type, alias: ite_ajax_file }

@@ -1,6 +1,6 @@
 <?php
 
-namespace ITE\FormBundle\Form\EventListener\Plugin\Fileupload;
+namespace ITE\FormBundle\Form\EventListener;
 
 use ITE\FormBundle\Service\File\FileManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * Class FileuploadSubscriber
- * @package ITE\FormBundle\Form\EventListener\Plugin\Fileupload
+ * @package ITE\FormBundle\Form\EventListener
  */
 class FileuploadSubscriber implements EventSubscriberInterface
 {

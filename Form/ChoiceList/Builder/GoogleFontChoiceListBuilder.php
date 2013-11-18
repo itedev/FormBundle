@@ -1,14 +1,17 @@
 <?php
 
 
-namespace ITE\FormBundle\Form\ChoiceList;
+namespace ITE\FormBundle\Form\ChoiceList\Builder;
 
 /**
- * Class GoogleFontChoiceBuilder
- * @package ITE\FormBundle\Form\ChoiceList
+ * Class GoogleFontChoiceListBuilder
+ * @package ITE\FormBundle\Form\ChoiceList\Builder
  */
-class GoogleFontChoiceBuilder
+class GoogleFontChoiceListBuilder
 {
+    /**
+     * @var array $config
+     */
     protected static $config = array(
         'kind'  => 'webfonts#webfontList',
         'items' => array(

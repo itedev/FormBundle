@@ -1,12 +1,13 @@
 <?php
 
-namespace ITE\FormBundle\Service\File\Plugin\Fileupload;
+namespace ITE\FormBundle\Service\File\Plugin\Fineuploader;
 
 use ITE\FormBundle\Service\File\FileUploader as BaseFileUploader;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * Class FileUploadEngine
- * @package ITE\FormBundle\Service\File\Plugin\Fileupload
+ * @package ITE\FormBundle\Service\File\Plugin\Fineuploader
  */
 class FileUploader extends BaseFileUploader
 {
@@ -18,7 +19,7 @@ class FileUploader extends BaseFileUploader
     /**
      * @param array $options
      */
-    public function __construct($options)
+    public function __construct($options = array())
     {
         $this->options = $options;
         parent::__construct();
@@ -44,15 +45,14 @@ class FileUploader extends BaseFileUploader
      */
     public function upload($absolutePath, $relativePath)
     {
-        $options = array_replace_recursive($this->options, array(
-            'upload_dir' => $absolutePath . '/',
-            'upload_url' => $relativePath . '/' ,
-            'script_url' => $this->request->getUri(),
-            'param_name' => $this->request->query->get('inputName')
-        ));
+        $this->fs->mkdir($absolutePath);
 
-        $uploadHandler = new UploadHandler($options);
+        $uploadHandler = new UploadHandler();
+        $uploadHandler->inputName = $this->request->query->get('inputName');
 
-        exit(0);
+        $data = $uploadHandler->handleUpload($absolutePath);
+        $data['uploadName'] = $uploadHandler->getUploadName();
+
+        return new JsonResponse($data);
     }
 } 

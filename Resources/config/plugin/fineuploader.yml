@@ -1,0 +1,14 @@
+parameters:
+    ite_form.form.type.plugin.fineuploader.file.class:  ITE\FormBundle\Form\Type\Plugin\Fineuploader\FileType
+    ite_form.fineuploader.file_uploader.class:          ITE\FormBundle\Service\File\Plugin\Fineuploader\FileUploader
+
+services:
+    ite_form.form.type.plugin.fineuploader.file:
+        class:                                          %ite_form.form.type.plugin.fineuploader.file.class%
+        arguments: [ %ite_form.plugin.fineuploader.options%, @router, @ite_form.file_manager, @?vich_uploader.storage ]
+        tags:
+            - { name: form.type, alias: ite_fineuploader_file }
+
+    ite_form.fineuploader.file_uploader:
+        class:                                          %ite_form.fineuploader.file_uploader.class%
+        parent:                                         ite_form.file_uploader

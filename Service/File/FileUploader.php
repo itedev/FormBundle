@@ -30,7 +30,7 @@ abstract class FileUploader extends AbstractFileService implements FileUploaderI
      * @param Request $request
      * @return FileUploader
      */
-    public function setRequest(Request $request)
+    public function setRequest(Request $request = null)
     {
         $this->request = $request;
 
@@ -53,7 +53,7 @@ abstract class FileUploader extends AbstractFileService implements FileUploaderI
             $this->fs->remove($absolutePath);
         }
 
-        $this->upload($absolutePath, $relativePath);
+        return $this->upload($absolutePath, $relativePath);
     }
 
     /**

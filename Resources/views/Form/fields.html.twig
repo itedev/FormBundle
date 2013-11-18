@@ -46,7 +46,7 @@
     {% elseif widget == 'basic_plus' %}
 
     {% else %}
-        <div id="{{ id }}_container">
+        <div id="{{ id }}_container" data-property-path="{{ full_name }}">
             <div class="row-fluid fileupload-buttonbar">
                 <div class="span7">
                 <span class="btn btn-success fileinput-button">
@@ -84,6 +84,12 @@
     {% endif %}
     {{ ite_form_sf_add_element('fileupload', '#' ~ selector, element_data) }}
 {% endblock ite_fileupload_file_widget %}
+
+{% block ite_fineuploader_file_widget %}
+    <div id="{{ id }}_fine_uploader" data-property-path="{{ full_name }}"></div>
+    {{ block('form_widget_simple') }}
+    {{ ite_form_sf_add_element('fineuploader', '#' ~ id ~ '_fine_uploader', element_data) }}
+{% endblock ite_fineuploader_file_widget %}
 
 {% block form_start %}
     {% spaceless %}
