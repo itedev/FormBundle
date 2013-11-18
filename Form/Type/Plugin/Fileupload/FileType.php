@@ -2,12 +2,10 @@
 
 namespace ITE\FormBundle\Form\Type\Plugin\Fileupload;
 
-use ITE\FormBundle\Util\UrlUtils;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Symfony\Component\Routing\RouterInterface;
 
 /**
  * Class FileType

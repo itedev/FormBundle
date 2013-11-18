@@ -29,11 +29,6 @@ class AjaxEntityType extends AbstractType
     protected $router;
 
     /**
-     * @var array $extras
-     */
-    protected $extras;
-
-    /**
      * @param $options
      * @param RouterInterface $router
      */
@@ -41,9 +36,6 @@ class AjaxEntityType extends AbstractType
     {
         $this->options = $options;
         $this->router = $router;
-        $this->extras = array(
-            'ajax' => true
-        );
     }
 
     /**
@@ -74,14 +66,12 @@ class AjaxEntityType extends AbstractType
         $resolver->setDefaults(array(
             'multiple' => false,
             'expanded' => false,
-            'extras' => array(),
             'plugin_options' => array(),
             'allow_create' => false,
             'create_url' => $createUrl,
             'error_bubbling' => false,
         ));
         $resolver->setAllowedTypes(array(
-            'extras' => array('array'),
             'plugin_options' => array('array'),
             'allow_create' => array('bool')
         ));
@@ -135,10 +125,16 @@ class AjaxEntityType extends AbstractType
         $view->vars['attr']['data-property'] = $options['property'];
 
         $view->vars['element_data'] = array(
-            'extras' => array_replace_recursive($this->extras, $options['extras'], array(
-                'allow_create' => $options['allow_create'],
-                'create_url' => $options['create_url'],
-            )),
+            'extras' => array_replace_recursive(
+                array(
+                    'ajax' => true
+                ),
+                $options['extras'],
+                array(
+                    'allow_create' => $options['allow_create'],
+                    'create_url' => $options['create_url'],
+                )
+            ),
             'options' => array_replace_recursive($this->options, $options['plugin_options'], array(
                 'ajax' => array(
                     'url' => $options['url'],

@@ -32,11 +32,9 @@ class TextareaType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'extras' => array(),
             'plugin_options' => array(),
         ));
         $resolver->setAllowedTypes(array(
-            'extras' => array('array'),
             'plugin_options' => array('array'),
         ));
     }
@@ -47,7 +45,7 @@ class TextareaType extends AbstractType
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['element_data'] = array(
-            'extras' => (object) $options['extras'],
+            'extras' => (object) array(),
             'options' => (object) array_replace_recursive($this->options, $options['plugin_options'])
         );
     }

@@ -34,11 +34,9 @@ class DateType extends AbstractType
         $resolver->setDefaults(array(
             'widget' => 'single_text',
             'plugin_options' => array(),
-            'extras' => array(),
         ));
         $resolver->setAllowedTypes(array(
             'plugin_options' => array('array'),
-            'extras' => array('array'),
         ));
         $resolver->setAllowedValues(array(
             'widget' => array('single_text'),
@@ -51,7 +49,7 @@ class DateType extends AbstractType
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['element_data'] = array(
-            'extras' => (object) $options['extras'],
+            'extras' => (object) array(),
             'options' => array_replace_recursive($this->options, $options['plugin_options'], array(
                 'format' => strtr($options['format'], array(
                     'a' => 'p', // am/pm marker

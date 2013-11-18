@@ -34,11 +34,9 @@ class TimeType extends AbstractType
         $resolver->setDefaults(array(
             'widget' => 'single_text',
             'plugin_options' => array(),
-            'extras' => array(),
         ));
         $resolver->setAllowedTypes(array(
             'plugin_options' => array('array'),
-            'extras' => array('array'),
         ));
         $resolver->setAllowedValues(array(
             'widget' => array('single_text'),
@@ -59,7 +57,7 @@ class TimeType extends AbstractType
         }
 
         $view->vars['element_data'] = array(
-            'extras' => (object) $options['extras'],
+            'extras' => (object) array(),
             'options' => array_replace_recursive($this->options, $options['plugin_options'], array(
                 'format' => strtr($format, array(
                     'a' => 'p', // am/pm marker

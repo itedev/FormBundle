@@ -2,19 +2,10 @@
 
 namespace ITE\FormBundle\Form\Type\Plugin\Fineuploader;
 
-use ITE\FormBundle\Form\EventListener\Plugin\Fileupload\FileuploadSubscriber;
-use ITE\FormBundle\Service\File\FileManagerInterface;
-use ITE\FormBundle\Service\File\WebFile;
-use ITE\FormBundle\Util\UrlUtils;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Symfony\Component\Routing\RouterInterface;
-use Vich\UploaderBundle\Storage\StorageInterface;
 
 /**
  * Class FileType

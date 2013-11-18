@@ -46,11 +46,9 @@ class AbstractType extends BaseAbstractType
     {
         $resolver->setDefaults(array(
             'plugin_options' => array(),
-            'extras' => array(),
         ));
         $resolver->setAllowedTypes(array(
             'plugin_options' => array('array'),
-            'extras' => array('array'),
         ));
     }
 
@@ -64,7 +62,7 @@ class AbstractType extends BaseAbstractType
         }
 
         $view->vars['element_data'] = array(
-            'extras' => (object) $options['extras'],
+            'extras' => (object) array(),
             'options' => (object) array_replace_recursive($this->options, $options['plugin_options'])
         );
 
