@@ -35,6 +35,8 @@
 
         self.onAdd.apply($collection, [$item, $collection]);
         $collection.trigger('add.collection.ite-form', [$item]);
+
+        // apply
       }
 
       this.index++;

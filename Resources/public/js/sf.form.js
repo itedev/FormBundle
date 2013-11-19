@@ -60,6 +60,16 @@
     return str;
   };
 
+  SF.util.getSimpleName = function(element) {
+    var name = element.attr('name');
+    var bracketIndex = name.lastIndexOf('[');
+    if (-1 !== bracketIndex) {
+      name = name.substr(bracketIndex + 1, name.lastIndexOf(']') - bracketIndex - 1);
+    }
+
+    return name;
+  };
+
   // ElementBag
   var ElementBag = function() {
     this.plugins = {};
@@ -145,8 +155,160 @@
   };
 
   ElementBag.prototype.fn = ElementBag.prototype;
-
   SF.fn.elements = new ElementBag();
+
+  // Element
+  var Element = function(selector, parents, options) {
+    this.selector = selector;
+    this.parents = parents || [];
+    this.children = [];
+    this.options = options || {};
+  };
+  Element.prototype = {
+    getParents: function() {
+      return this.parents;
+    },
+
+    hasParents: function() {
+      return this.parents.length > 0;
+    },
+
+    getSelector: function() {
+      return this.selector;
+    },
+
+    getChildren: function() {
+      return this.children;
+    },
+
+    hasChildren: function() {
+      return this.children.length > 0;
+    },
+
+    getOptions: function() {
+      return this.options;
+    },
+
+    hasChild: function(child) {
+      return -1 !== $.inArray(child, this.children);
+    },
+
+    addChild: function(child) {
+      if (!this.hasChild(child)) {
+        this.children.push(child);
+      }
+    }
+  };
+
+  // ElementTree
+  var ElementTree = function() {
+    this.elements = {};
+  };
+  ElementTree.prototype = {
+    has: function(selector) {
+      return this.elements.hasOwnProperty(selector);
+    },
+
+    get: function(selector, defaultValue) {
+      defaultValue = defaultValue || null;
+      return this.has(selector) ? this.elements[selector] : defaultValue;
+    },
+
+    add: function(selector, parents, options) {
+      if (this.has(selector)) {
+        return;
+      }
+
+      var self = this;
+      $.each(parents, function(index, parent) {
+        if (!self.has(parent)) {
+          self.elements[parent] = new Element(parent);
+        }
+        self.get(parent).addChild(selector);
+      });
+
+      this.elements[selector] = new Element(selector, parents, options);
+    },
+
+    set: function(elementTree) {
+      var self = this;
+
+      $.each(elementTree, function(selector, elementData) {
+        self.add(selector, elementData['parents'], elementData['options']);
+      });
+    },
+
+    getAllParents: function(selector) {
+      var self = this;
+
+      var parents = this.get(selector).getParents();
+      $.each(parents, function(i, parent) {
+        parents = parents.concat(self.getAllParents(parent));
+      });
+
+      return parents;
+    },
+
+    getAllChildren: function(selector) {
+      var self = this;
+
+      var children = this.get(selector).getChildren();
+      $.each(children, function(i, child) {
+        children = children.concat(self.getAllChildren(child));
+      });
+
+      return children;
+    },
+
+    apply: function() {
+      var self = this;
+      $.each(this.elements, function(selector, element) {
+        if (!element.hasParents()) {
+          return;
+        }
+
+        var $parents = $(element.getParents().join(', '));
+        if (!$parents.length) {
+          return;
+        }
+
+        $parents.on('change', function(e) {
+          // clear value
+          var dependentElement = $(selector);
+          dependentElement.html('');
+          dependentElement.select2('val', '');
+
+          // get data
+          var allParents = self.getAllParents(selector);
+          var data = {};
+          $.each(allParents, function(index, parent) {
+            var parentElement = $(parent);
+            var name = SF.util.getSimpleName(parentElement);
+            data[name] = parentElement.val();
+          });
+
+          $.ajax({
+            type: 'post',
+            url: element.getOptions()['url'],
+            data: data,
+            dataType: 'html',
+            success: function(response) {
+              dependentElement.html(response);
+
+              if (dependentElement.children('option').length) {
+                var firstOption = dependentElement.children('option:first');
+                firstOption.prop('selected', true);
+                dependentElement.select2('val', firstOption.attr('value'));
+              }
+            }
+          });
+        });
+      });
+    }
+  };
+
+  ElementTree.prototype.fn = ElementTree.prototype;
+  SF.fn.elementTree = new ElementTree();
 
 // http://stackoverflow.com/questions/5202296/add-a-hook-to-all-ajax-requests-on-a-page/5202312#5202312
 

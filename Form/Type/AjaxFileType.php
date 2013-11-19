@@ -5,6 +5,7 @@ namespace ITE\FormBundle\Form\Type;
 use ITE\FormBundle\Form\EventListener\FileuploadSubscriber;
 use ITE\FormBundle\Service\File\FileManagerInterface;
 use ITE\FormBundle\Service\File\WebFile;
+use ITE\FormBundle\Util\FormUtils;
 use ITE\FormBundle\Util\UrlUtils;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -93,7 +94,7 @@ class AjaxFileType extends AbstractType
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         // fetch ajax token from root form
-        $root = $this->getRootView($view);
+        $root = FormUtils::getRootView($view);
         if (!isset($root->vars['ajax_token']) || empty($root->vars['ajax_token'])) {
             throw new \RuntimeException(sprintf(
                 'Unable to retrieve ajax token value. Maybe you forgot to add "%s" option in your root form?',
@@ -151,17 +152,4 @@ class AjaxFileType extends AbstractType
         return array();
     }
 
-    /**
-     * @param FormView $view
-     * @return FormView
-     */
-    protected function getRootView(FormView $view)
-    {
-        $root = $view;
-        while (null !== $root->parent) {
-            $root = $root->parent;
-        }
-
-        return $root;
-    }
 }

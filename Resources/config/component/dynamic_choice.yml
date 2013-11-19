@@ -2,6 +2,8 @@ parameters:
     ite_form.form.dynamic_choice_type_extension.class:      ITE\FormBundle\Form\Extension\DynamicChoiceTypeExtension
     ite_form.form.dynamic_entity_type_extension.class:      ITE\FormBundle\Form\Extension\DynamicEntityTypeExtension
 
+    ite_form.form.hierarchical_choice_type_extension.class: ITE\FormBundle\Form\Extension\HierarchicalChoiceTypeExtension
+
     ite_form.entity_converter.class:                        ITE\FormBundle\Service\Converter\EntityConverter
 
     ite_form.form.ajax_entity_type.class:                   ITE\FormBundle\Form\Type\AjaxEntityType
@@ -16,6 +18,12 @@ services:
         class:                                              %ite_form.form.dynamic_entity_type_extension.class%
         tags:
             - { name: form.type_extension, alias: entity }
+
+    ite_form.form.hierarchical_choice_type_extension:
+        class:                                              %ite_form.form.hierarchical_choice_type_extension.class%
+        arguments: [ @ite_form.sf.extension.form, @router ]
+        tags:
+            - { name: form.type_extension, alias: choice }
 
     ite_form.entity_converter:
         class:                                              %ite_form.entity_converter.class%

@@ -46,6 +46,11 @@ class SFFormExtension implements SFExtensionInterface
     protected $elementBag;
 
     /**
+     * @var ElementTree $elementTree
+     */
+    protected $elementTree;
+
+    /**
      * @var array
      */
     protected $formErrors = array();
@@ -56,6 +61,7 @@ class SFFormExtension implements SFExtensionInterface
     public function __construct()
     {
         $this->elementBag = new ElementBag();
+        $this->elementTree = new ElementTree();
     }
 
     /**
@@ -68,8 +74,12 @@ class SFFormExtension implements SFExtensionInterface
 
         if ($this->elementBag->count()) {
             $dump .= 'SF.elements.set(' . json_encode($this->elementBag->peekAll()) . ');';
+            $dump .= 'SF.elements.apply();';
         }
-        $dump .= 'SF.elements.apply();';
+        if ($this->elementTree->count()) {
+            $dump .= 'SF.elementTree.set(' . json_encode($this->elementTree->peekAll()) . ');';
+            $dump .= 'SF.elementTree.apply();';
+        }
 
         $dump .= '});})(jQuery);';
         return $dump;
@@ -111,12 +121,22 @@ class SFFormExtension implements SFExtensionInterface
 
     /**
      * @param $plugin
-     * @param $id
+     * @param $selector
      * @param $options
      */
-    public function addElement($plugin, $id, $options)
+    public function addElement($plugin, $selector, $options)
     {
-        $this->elementBag->addElement($plugin, $id, $options);
+        $this->elementBag->addElement($plugin, $selector, $options);
+    }
+
+    /**
+     * @param $element
+     * @param $parents
+     * @param $options
+     */
+    public function addElementInTree($element, $parents, $options)
+    {
+        $this->elementTree->add($element, $parents, $options);
     }
 
     /**
