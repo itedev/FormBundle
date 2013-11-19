@@ -33,6 +33,7 @@
       })
       .replace(/\s/g, '');
   };
+
   SF.util.addGetParameter = function(url, paramName, paramValue) {
     var urlParts = url.split('?', 2);
     var baseURL = urlParts[0];
@@ -48,6 +49,15 @@
     queryString.push(paramName + '=' + encodeURIComponent(paramValue));
 
     return baseURL + '?' + queryString.join('&');
+  };
+
+  SF.util.strtr = function(str, replacementTokens) {
+    if ('object' === typeof replacementTokens) {
+      $.each(replacementTokens, function(from, to) {
+        str = str.replace(new RegExp(from, 'g'), to);
+      });
+    }
+    return str;
   };
 
   // ElementBag
@@ -111,20 +121,16 @@
 
       $.each(this.plugins, function(plugin, selectors) {
         $.each(selectors, function(selector, elementData) {
-          if ('object' === typeof replacementTokens) {
-            $.each(replacementTokens, function(from, to) {
-              selector = selector.replace(new RegExp(from, 'g'), to);
-            });
-          }
+          selector = SF.util.strtr(selector, replacementTokens);
 
           var element = $(selector, context);
           if (!element.length) {
             return;
           }
 
-          var camelizePlugin = SF.util.camelCase(plugin);
-          var isAppliedMethod = 'is' + camelizePlugin + 'PluginApplied';
-          var applyMethod = 'apply' + camelizePlugin + 'Plugin';
+          var camelizedPlugin = SF.util.camelCase(plugin);
+          var isAppliedMethod = 'is' + camelizedPlugin + 'PluginApplied';
+          var applyMethod = 'apply' + camelizedPlugin + 'Plugin';
 
           if ('undefined' === typeof self[isAppliedMethod] || self[isAppliedMethod](element)) {
             return;

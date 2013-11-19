@@ -2,11 +2,9 @@
 
 namespace ITE\FormBundle\Twig\Extension;
 
-use ITE\JsBundle\SF\SFInterface;
-use Symfony\Component\Form\FormView;
+use ITE\JsBundle\SF\SFExtensionInterface;
 use Twig_Environment;
 use Twig_Extension;
-use Symfony\Component\Locale\Locale;
 
 /**
  * Class SFExtension
@@ -15,16 +13,16 @@ use Symfony\Component\Locale\Locale;
 class SFExtension extends Twig_Extension
 {
     /**
-     * @var SFInterface
+     * @var SFExtensionInterface
      */
-    protected $sf;
+    protected $sfForm;
 
     /**
-     * @param SFInterface $sf
+     * @param SFExtensionInterface $sfForm
      */
-    public function __construct(SFInterface $sf)
+    public function __construct(SFExtensionInterface $sfForm)
     {
-        $this->sf = $sf;
+        $this->sfForm = $sfForm;
     }
 
     /**
@@ -44,7 +42,7 @@ class SFExtension extends Twig_Extension
      */
     public function sfAddElement($plugin, $selector, $options)
     {
-        $this->sf->getExtension('form')->addElement($plugin, $selector, $options);
+        $this->sfForm->addElement($plugin, $selector, $options);
     }
 
     /**
