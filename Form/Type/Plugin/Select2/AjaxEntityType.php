@@ -64,8 +64,6 @@ class AjaxEntityType extends AbstractType
             return null;
         };
         $resolver->setDefaults(array(
-            'multiple' => false,
-            'expanded' => false,
             'plugin_options' => array(),
             'allow_create' => false,
             'create_url' => $createUrl,
