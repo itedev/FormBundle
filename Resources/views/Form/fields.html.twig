@@ -2,27 +2,27 @@
 
 {% block ite_select2_widget %}
     {{ block('choice_widget') }}
-    {{ ite_form_sf_add_element('select2', '#' ~ id, element_data) }}
+    {{ ite_form_sf_add_plugin_element('#' ~ id, 'select2', element_data) }}
 {% endblock ite_select2_widget %}
 
 {% block ite_select2_ajax_entity_widget %}
     {{ block('hidden_widget') }}
-    {{ ite_form_sf_add_element('select2', '#' ~ id, element_data) }}
+    {{ ite_form_sf_add_plugin_element('#' ~ id, 'select2', element_data) }}
 {% endblock ite_select2_ajax_entity_widget %}
 
 {% block ite_tinymce_textarea_widget %}
     {{ block('textarea_widget') }}
-    {{ ite_form_sf_add_element('tinymce', '#' ~ id, element_data) }}
+    {{ ite_form_sf_add_plugin_element('#' ~ id, 'tinymce', element_data) }}
 {% endblock ite_tinymce_textarea_widget %}
 
 {% block ite_bootstrap_colorpicker_text_widget %}
     {{ block('form_widget_simple') }}
-    {{ ite_form_sf_add_element('bootstrap_colorpicker', '#' ~ id, element_data) }}
+    {{ ite_form_sf_add_plugin_element('#' ~ id, 'bootstrap_colorpicker', element_data) }}
 {% endblock ite_bootstrap_colorpicker_text_widget %}
 
 {% block ite_bootstrap_datetimepicker_widget %}
     {{ block('form_widget_simple') }}
-    {{ ite_form_sf_add_element('bootstrap_datetimepicker', '#' ~ id, element_data) }}
+    {{ ite_form_sf_add_plugin_element('#' ~ id, 'bootstrap_datetimepicker', element_data) }}
 {% endblock ite_bootstrap_datetimepicker_widget %}
 
 {% block ite_bootstrap_datetimepicker2_widget %}
@@ -32,7 +32,7 @@
             <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
         </span>
     </div>
-    {{ ite_form_sf_add_element('bootstrap_datetimepicker2', '#' ~ id ~ '_bootstrap_datetimepicker2', element_data) }}
+    {{ ite_form_sf_add_plugin_element('#' ~ id ~ '_bootstrap_datetimepicker2', 'bootstrap_datetimepicker2', element_data) }}
 {% endblock ite_bootstrap_datetimepicker2_widget %}
 
 {% block ite_fileupload_file_widget %}
@@ -82,20 +82,20 @@
         </div>
         {% set selector = id ~ '_container' %}
     {% endif %}
-    {{ ite_form_sf_add_element('fileupload', '#' ~ selector, element_data) }}
+    {{ ite_form_sf_add_plugin_element('#' ~ selector, 'fileupload', element_data) }}
 {% endblock ite_fileupload_file_widget %}
 
 {% block ite_fineuploader_file_widget %}
     <div id="{{ id }}_fine_uploader" data-property-path="{{ full_name }}"></div>
     {{ block('form_widget_simple') }}
-    {{ ite_form_sf_add_element('fineuploader', '#' ~ id ~ '_fine_uploader', element_data) }}
+    {{ ite_form_sf_add_plugin_element('#' ~ id ~ '_fine_uploader', 'fineuploader', element_data) }}
 {% endblock ite_fineuploader_file_widget %}
 
 {% block form_start %}
     {% spaceless %}
         {{ parent() }}
         {% if ajax is defined %}
-            {{ ite_form_sf_add_element('form', '#' ~ id, element_data) }}
+            {{ ite_form_sf_add_plugin_element('#' ~ id, 'form', element_data) }}
         {% endif %}
     {% endspaceless %}
 {% endblock form_start %}

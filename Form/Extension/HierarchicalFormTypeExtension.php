@@ -14,10 +14,10 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Routing\RouterInterface;
 
 /**
- * Class HierarchicalChoiceTypeExtension
+ * Class HierarchicalFormTypeExtension
  * @package ITE\FormBundle\Form\Extension
  */
-class HierarchicalChoiceTypeExtension extends AbstractTypeExtension
+class HierarchicalFormTypeExtension extends AbstractTypeExtension
 {
     /**
      * @var SFExtensionInterface $sfForm
@@ -113,15 +113,14 @@ class HierarchicalChoiceTypeExtension extends AbstractTypeExtension
         }
 
         $dependsOn = $options['depends_on'];
-        $element = FormUtils::generateSelector($view);
+        $selector = FormUtils::generateSelector($view);
 
         $parentView = $view->parent;
-        $parents = array();
-        foreach ($dependsOn['fields'] as $field) {
-            $parents[] = FormUtils::generateSelector($parentView->children[$field]);
-        }
+        $parents = array_map(function($field) use ($parentView) {
+            return FormUtils::generateSelector($parentView->children[$field]);
+        }, $dependsOn['fields']);
 
-        $this->sfForm->addElementInTree($element, $parents, array(
+        $this->sfForm->getElementBag()->addHierarchicalElement($selector, $parents, array(
             'url' => $dependsOn['url'],
         ));
     }
@@ -131,6 +130,6 @@ class HierarchicalChoiceTypeExtension extends AbstractTypeExtension
      */
     public function getExtendedType()
     {
-        return 'choice';
+        return 'form';
     }
 } 

@@ -89,7 +89,6 @@ class AjaxEntityType extends AbstractType
     {
         if ($form->getData()) {
             $choices = $view->vars['choices'];
-            $value = $view->vars['value'];
             $defaultValue = array();
 
             if ($options['multiple']) {
@@ -97,24 +96,19 @@ class AjaxEntityType extends AbstractType
                 $defaultValue = array();
                 foreach ($choices as $choice) {
                     /** @var $choice ChoiceView */
-                    if ($value == $choice->value) {
-                        $defaultValue[] = array(
-                            'id' => $choice->value,
-                            'text' => $choice->label
-                        );
-                    }
+                    $defaultValue[] = array(
+                        'id' => $choice->value,
+                        'text' => $choice->label
+                    );
                 }
             } else {
                 // single
                 foreach ($choices as $choice) {
                     /** @var $choice ChoiceView */
-                    if ($value == $choice->value) {
-                        $defaultValue = array(
-                            'id' => $choice->value,
-                            'text' => $choice->label
-                        );
-                        break;
-                    }
+                    $defaultValue = array(
+                        'id' => $choice->value,
+                        'text' => $choice->label
+                    );
                 }
             }
             $view->vars['attr']['data-default-value'] = json_encode($defaultValue);
@@ -123,15 +117,10 @@ class AjaxEntityType extends AbstractType
         $view->vars['attr']['data-property'] = $options['property'];
 
         $view->vars['element_data'] = array(
-            'extras' => array_replace_recursive(
-                array(
-                    'ajax' => true
-                ),
-                $options['extras'],
-                array(
-                    'allow_create' => $options['allow_create'],
-                    'create_url' => $options['create_url'],
-                )
+            'extras' => array(
+                'ajax' => true,
+                'allow_create' => $options['allow_create'],
+                'create_url' => $options['create_url'],
             ),
             'options' => array_replace_recursive($this->options, $options['plugin_options'], array(
                 'ajax' => array(

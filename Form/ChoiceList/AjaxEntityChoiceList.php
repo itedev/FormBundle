@@ -29,16 +29,31 @@ class AjaxEntityChoiceList extends EntityChoiceList
 
     /**
      * @param array $entities
+     * @return array
      */
-    public function addEntities($entities)
+    public function getValuesForChoices(array $entities)
     {
-        if (empty($entities)) {
-            return;
-        }
-        if (!is_array($entities) && !$entities instanceof \Traversable) {
-            $entities = array($entities);
+        if (empty($entities) || (1 === count($entities) && !isset($entities[0]))) {
+            return array();
         }
 
         parent::initialize($entities, array(), array());
+
+        return parent::getValuesForChoices($entities);
     }
+
+//    /**
+//     * @param array $entities
+//     */
+//    public function addEntities($entities)
+//    {
+//        if (empty($entities)) {
+//            return;
+//        }
+//        if (!is_array($entities) && !$entities instanceof \Traversable) {
+//            $entities = array($entities);
+//        }
+//
+//        parent::initialize($entities, array(), array());
+//    }
 }

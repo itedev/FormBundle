@@ -31,18 +31,18 @@ class SFExtension extends Twig_Extension
     public function getFunctions()
     {
         return array(
-            new \Twig_SimpleFunction('ite_form_sf_add_element', array($this, 'sfAddElement')),
+            new \Twig_SimpleFunction('ite_form_sf_add_plugin_element', array($this, 'sfAddPluginElement')),
         );
     }
 
     /**
-     * @param $plugin
      * @param $selector
-     * @param $options
+     * @param $plugin
+     * @param $pluginData
      */
-    public function sfAddElement($plugin, $selector, $options)
+    public function sfAddPluginElement($selector, $plugin, $pluginData)
     {
-        $this->sfForm->addElement($plugin, $selector, $options);
+        $this->sfForm->getElementBag()->addPluginElement($selector, $plugin, $pluginData);
     }
 
     /**

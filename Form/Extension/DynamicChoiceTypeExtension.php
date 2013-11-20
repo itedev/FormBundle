@@ -83,8 +83,12 @@ class DynamicChoiceTypeExtension extends AbstractTypeExtension
             return $choiceListCache[$hash];
         };
 
+        $allowModify = function (Options $options) {
+            return isset($options['depends_on']) && !empty($options['depends_on']) ? true : false;
+        };
+
         $resolver->setDefaults(array(
-            'allow_modify' => false,
+            'allow_modify' => $allowModify,
             'choice_list' => $choiceList,
         ));
     }

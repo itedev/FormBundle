@@ -49,8 +49,10 @@ class FormUtils
     public static function generateSelector(FormView $view)
     {
         $selector = '#' . $view->vars['id'];
-        if ($view->vars['expanded']) {
-            $selector .= sprintf(' input[type="%s"]', $view->vars['multiple'] ? 'checkbox' : 'radio');
+        if (isset($view->vars['expanded']) && $view->vars['expanded']) {
+            $selector .= sprintf(' input[type="%s"]', isset($view->vars['multiple']) && $view->vars['multiple']
+                ? 'checkbox'
+                : 'radio');
         }
 
         return $selector;

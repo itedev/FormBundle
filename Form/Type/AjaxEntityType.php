@@ -74,16 +74,16 @@ class AjaxEntityType extends AbstractType
         ));
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function buildView(FormView $view, FormInterface $form, array $options)
-    {
-        $options['choice_list']->addEntities($form->getData());
-        $view->vars = array_replace($view->vars, array(
-            'choices' => $options['choice_list']->getRemainingViews(),
-        ));
-    }
+//    /**
+//     * {@inheritdoc}
+//     */
+//    public function buildView(FormView $view, FormInterface $form, array $options)
+//    {
+//        $options['choice_list']->addEntities($form->getData());
+//        $view->vars = array_replace($view->vars, array(
+//            'choices' => $options['choice_list']->getRemainingViews(),
+//        ));
+//    }
 
     /**
      * {@inheritdoc}

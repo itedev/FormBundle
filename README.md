@@ -96,10 +96,10 @@ When SF object will iterate through all its elements to apply plugins, it will r
 If you need to change plugin options, which you cannot change via 'plugin_options' in PHP (i.e. callbacks, regexps, dates, etc), you can add next event listener:
 
 ```js
-$('selector').on('apply.element.ite-form', function(e, elementData) {
+$('selector').on('apply.plugin.ite-form', function(e, data) {
   var $this = $(this);
 
-  elementData.options = $.extend(true, elementData.options, {
+  data.options = $.extend(true, data.options, {
     // extend plugin options
   });
 });

@@ -9,82 +9,76 @@ namespace ITE\FormBundle\SF;
 class ElementBag
 {
     /**
-     * @var array
-     */
-    protected $plugins = array();
-
-    /**
-     * @var array
+     * @var Element[] $elements
      */
     protected $elements = array();
-
-    /**
-     * @param $plugin
-     * @return bool
-     */
-    public function hasPlugin($plugin)
-    {
-        return array_key_exists($plugin, $this->plugins);
-    }
-
-    /**
-     * @return array
-     */
-    public function getPlugins()
-    {
-        return array_keys($this->plugins);
-    }
-
-    /**
-     * @param $plugin
-     * @return array
-     */
-    public function getPluginElements($plugin)
-    {
-        return $this->hasPlugin($plugin) ? $this->plugins[$plugin] : array();
-    }
 
     /**
      * @param $selector
      * @return bool
      */
-    public function hasElement($selector)
+    public function has($selector)
     {
         return array_key_exists($selector, $this->elements);
     }
 
     /**
-     * @return array
+     * @param $selector
+     * @param null $default
+     * @return Element|null
      */
-    public function getElements()
+    public function get($selector, $default = null)
     {
-        return array_keys($this->elements);
+        return $this->has($selector) ? $this->elements[$selector] : $default;
     }
 
     /**
+     * @param $selector
+     * @param array $options
+     * @return Element
+     */
+    public function add($selector, $options = array())
+    {
+        if (!$this->has($selector)) {
+            $this->elements[$selector] = new Element($selector, $options);
+        }
+
+        return $this->get($selector);
+    }
+
+    /**
+     * @param $selector
+     * @param $parents
+     * @param $options
+     */
+    public function addHierarchicalElement($selector, $parents, $options)
+    {
+        foreach ($parents as $i => $parentSelector) {
+            $this->processSelector($parentSelector, $parentOptions);
+            if (!$this->has($parentSelector)) {
+                $this->add($parentSelector, $parentOptions);
+            }
+            $parents[$i] = $parentSelector;
+        }
+
+        $this->processSelector($selector, $options);
+        if (null === $element = $this->get($selector)) {
+            $element = $this->add($selector, $options);
+        }
+        $element->setParents($parents);
+    }
+
+    /**
+     * @param $selector
      * @param $plugin
-     * @param $selector
-     * @param $data
+     * @param $pluginData
      */
-    public function addElement($plugin, $selector, $data)
+    public function addPluginElement($selector, $plugin, $pluginData)
     {
-        if (!$this->hasPlugin($plugin)) {
-            $this->plugins[$plugin] = array();
+        if (null === $element = $this->get($selector)) {
+            $element = $this->add($selector);
         }
-        $this->plugins[$plugin][$selector] = $data;
-        $this->elements[$selector] = $plugin;
-    }
-
-    /**
-     * @param $selector
-     * @return null
-     */
-    public function getElementOptions($selector)
-    {
-        if (!$this->hasElement($selector)) {
-            return null;
-        }
-        return $this->plugins[$this->elements[$selector]][$selector]['options'];
+        $element->addPlugin($plugin, $pluginData);
     }
 
     /**
@@ -92,7 +86,13 @@ class ElementBag
      */
     public function peekAll()
     {
-        return $this->plugins;
+        return array_map(function(Element $element) {
+            return array(
+                'plugins' => $element->getPlugins(),
+                'parents' => $element->getParents(),
+                'options' => $element->getOptions(),
+            );
+        }, $this->elements);
     }
 
     /**
@@ -100,7 +100,19 @@ class ElementBag
      */
     public function count()
     {
-        return count($this->plugins);
+        return count($this->elements);
     }
 
+    /**
+     * @param $selector
+     * @param array $options
+     */
+    protected function processSelector(&$selector, &$options = array())
+    {
+        if (false === strpos($selector, ' ')) {
+            return;
+        }
+        list($selector, $childrenSelector) = explode(' ', $selector, 2);
+        $options['children_selector'] = $childrenSelector;
+    }
 }

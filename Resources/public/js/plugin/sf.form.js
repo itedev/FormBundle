@@ -1,6 +1,6 @@
 (function($) {
   SF.elements.fn.isFormPluginApplied = function(element) {
-    return element.hasEvent('submit.form-plugin');
+    return SF.util.hasEvent(element, 'submit.form-plugin');
   };
 
   SF.elements.fn.applyFormPlugin = function(element, elementData) {
