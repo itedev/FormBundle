@@ -95,12 +95,14 @@
 
   SF.callbacks = $.extend(SF.callbacks, {
     hierarchicalChange: function(e) {
-      var eventData = e.data;
+      var selector = e.data.selector;
+      var context = e.data.context;
+      var replacementTokens = e.data.replacementTokens;
 
       // get data
       var data = {};
-      $.each(SF.elements.getAllParents(eventData.selector), function(index, parentSelector) {
-        var $parent = SF.elements.getJQueryElement(parentSelector, eventData.context, eventData.replacementTokens);
+      $.each(SF.elements.getAllParents(selector), function(index, parentSelector) {
+        var $parent = SF.elements.getJQueryElement(parentSelector, context, replacementTokens);
         if (!$parent.length) {
           return;
         }
@@ -110,8 +112,8 @@
       });
 
       // clear children value
-      $.each(SF.elements.getAllChildren(eventData.selector), function(index, childSelector) {
-        var $child = SF.elements.getJQueryElement(childSelector, eventData.context, eventData.replacementTokens);
+      $.each(SF.elements.getAllChildren(selector), function(index, childSelector) {
+        var $child = SF.elements.getJQueryElement(childSelector, context, replacementTokens);
         if (!$child.length) {
           return;
         }
@@ -119,9 +121,9 @@
         SF.elements.clearElementValue(SF.elements.get(childSelector), $child);
       });
 
-      // clear value
-      var element = SF.elements.get(eventData.selector);
-      var $element = SF.elements.getJQueryElement(eventData.selector, eventData.context, eventData.replacementTokens);
+      // clear element value
+      var element = SF.elements.get(selector);
+      var $element = SF.elements.getJQueryElement(selector, context, replacementTokens);
       SF.elements.clearElementValue(element, $element);
 
       $.ajax({
@@ -130,6 +132,7 @@
         data: data,
         dataType: 'html',
         success: function(data) {
+          // set element value
           SF.elements.setElementValue(element, $element, data);
         }
       });
