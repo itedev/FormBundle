@@ -44,14 +44,20 @@
       return array;
     },
 
-    getSimpleName: function(element) {
-      var name = element.attr('name');
-      var bracketIndex = name.lastIndexOf('[');
-      if (-1 !== bracketIndex) {
-        name = name.substr(bracketIndex + 1, name.lastIndexOf(']') - bracketIndex - 1);
+    getSimpleName: function(element, $element) {
+      var name;
+      if (element.hasChildrenSelector()) {
+        $element = $element.find(element.getChildrenSelector());
+      }
+      name = $element.attr('name');
+      var re = /\[([^\]]+)\](?:|\[\])$/i;
+      var matches = name.match(re);
+
+      if (null === matches) {
+        return null;
       }
 
-      return name;
+      return matches[1];
     },
 
     hasEvent: function(element, event) {
@@ -99,7 +105,7 @@
       var context = e.data.context;
       var replacementTokens = e.data.replacementTokens;
 
-      // get data
+      // get parents data
       var data = {};
       $.each(SF.elements.getAllParents(selector), function(index, parentSelector) {
         var $parent = SF.elements.getJQueryElement(parentSelector, context, replacementTokens);
@@ -107,8 +113,13 @@
           return;
         }
 
-        var name = SF.util.getSimpleName($parent);
-        data[name] = SF.elements.getElementValue(SF.elements.get(parentSelector), $parent);
+        var parent = SF.elements.get(parentSelector);
+        var name = SF.util.getSimpleName(parent, $parent);
+        if (null === name) {
+          return;
+        }
+
+        data[name] = SF.elements.getElementValue(parent, $parent);
       });
 
       // clear children value
@@ -126,16 +137,26 @@
       var $element = SF.elements.getJQueryElement(selector, context, replacementTokens);
       SF.elements.clearElementValue(element, $element);
 
-      $.ajax({
-        type: 'post',
-        url: element.getOptions()['url'],
-        data: data,
-        dataType: 'html',
-        success: function(data) {
-          // set element value
-          SF.elements.setElementValue(element, $element, data);
+      if (element.hasHierarchicalUrl()) {
+        // has url
+        $.ajax({
+          type: 'post',
+          url: element.getHierarchicalUrl(),
+          data: data,
+          dataType: 'html',
+          success: function(value) {
+            // set element value
+            SF.elements.setElementValue(element, $element, value);
+          }
+        });
+      } else {
+        // has callback
+        var callback = element.getHierarchicalCallback();
+        if ($.isFunction(window[callback])) {
+          var value = window[callback].apply($element, [$element, data]);
+          SF.elements.setElementValue(element, $element, value);
         }
-      });
+      }
     }
   });
 
@@ -231,6 +252,22 @@
       }
 
       return this.selector;
+    },
+
+    hasHierarchicalUrl: function() {
+      return this.hasOption('hierarchical_url');
+    },
+
+    getHierarchicalUrl: function() {
+      return this.getOption('hierarchical_url');
+    },
+
+    hasHierarchicalCallback: function() {
+      return this.hasOption('hierarchical_callback');
+    },
+
+    getHierarchicalCallback: function() {
+      return this.getOption('hierarchical_callback');
     }
   };
 
@@ -318,6 +355,8 @@
           }
         });
       }
+
+      $element.trigger('clear.hierarchical.ite-form');
     },
 
     getElementValue: function(element, $element) {
@@ -331,7 +370,7 @@
         }).each(function() {
             values.push($(this).val());
           });
-        if ('input[type="radio"]') {
+        if ('input[type="radio"]' === childrenSelector) {
           return values.length ? values[0] : null;
         }
         return values;
@@ -345,16 +384,16 @@
       return null;
     },
 
-    setElementValue: function(element, $element, data) {
+    setElementValue: function(element, $element, value) {
       var node;
       if (element.hasChildrenSelector()) {
-        $element.html(data);
+        $element.html(value);
       } else {
         node = $element.get(0);
         if (rxText.test(node.nodeName)) {
-          $element.val(data);
+          $element.val(value);
         } else if (rxSelect.test(node.nodeName)) {
-          $element.html(data);
+          $element.html(value);
           var firstOption = $element.children('option:first');
           if (firstOption.length) {
             $element.val(firstOption.attr('value'));
@@ -369,6 +408,8 @@
           }
         });
       }
+
+      $element.trigger('change.hierarchical.ite-form');
     },
 
     getJQueryElement: function(selector, context, replacementTokens) {

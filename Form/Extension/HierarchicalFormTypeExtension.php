@@ -51,39 +51,48 @@ class HierarchicalFormTypeExtension extends AbstractTypeExtension
     {
         $type = $this;
 
-        $dependsOnNormalizer = function (Options $options, $dependsOn) use ($type) {
-            if (empty($dependsOn)) {
+        $hierarchicalNormalizer = function (Options $options, $hierarchical) use ($type) {
+            if (empty($hierarchical)) {
                 return array();
             }
 
-            foreach (array('fields', 'route') as $option) {
-                if (!array_key_exists($option, $dependsOn)) {
-                    throw new RuntimeException(sprintf('Missing "%s" sub-option inside "depends_on" option.', $option));
-                }
-                if (empty($dependsOn[$option])) {
-                    throw new RuntimeException(sprintf('Empty "%s" sub-option inside "depends_on" option.', $option));
-                }
-            }
-            $fields = $dependsOn['fields'];
-            if (!is_array($fields) && !$fields instanceof \Traversable) {
-                $fields = array($fields);
+            if (!isset($hierarchical['parents']) || empty($hierarchical['parents'])) {
+                throw new RuntimeException(sprintf('Missing "%s" sub-option inside "%s" option.',
+                    'parents', 'hierarchical'));
             }
 
-            $routeParameters = isset($dependsOn['route_parameters'])
-                ? (array) $dependsOn['route_parameters']
-                : array();
+            if ((!isset($hierarchical['route']) || empty($hierarchical['route']))
+                && (!isset($hierarchical['callback']) || empty($hierarchical['callback']))) {
+                throw new RuntimeException(sprintf('You must specify either "%s" or "%s" sub-option inside ' .
+                    '"%s" option.', 'route', 'callback', 'hierarchical'));
+            }
 
-            return array(
-                'fields' => $fields,
-                'url' => $type->getRouter()->generate($dependsOn['route'], $routeParameters),
+            $parents = $hierarchical['parents'];
+            if (!is_array($parents) && !$parents instanceof \Traversable) {
+                $parents = array($parents);
+            }
+
+            $normalizedValue = array(
+                'parents' => $parents,
             );
+
+            if (isset($hierarchical['route'])) {
+                $routeParameters = isset($hierarchical['route_parameters']) && is_array($hierarchical['route_parameters'])
+                    ? $hierarchical['route_parameters']
+                    : array();
+                $normalizedValue['url'] = $type->getRouter()->generate($hierarchical['route'], $routeParameters);
+            } else {
+                $normalizedValue['callback'] = $hierarchical['callback'];
+            }
+
+            return $normalizedValue;
         };
 
         $resolver->setDefaults(array(
-            'depends_on' => array(),
+            'hierarchical' => array(),
         ));
         $resolver->setNormalizers(array(
-            'depends_on' => $dependsOnNormalizer,
+            'hierarchical' => $hierarchicalNormalizer,
         ));
     }
 
@@ -92,11 +101,11 @@ class HierarchicalFormTypeExtension extends AbstractTypeExtension
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        if (empty($options['depends_on'])) {
+        if (empty($options['hierarchical'])) {
             return;
         }
 
-        foreach ($options['depends_on']['fields'] as $name) {
+        foreach ($options['hierarchical']['parents'] as $name) {
             if (!isset($view->parent->children[$name])) {
                 throw new RuntimeException(sprintf('Child "%s" does not exist.', $name));
             }
@@ -108,21 +117,23 @@ class HierarchicalFormTypeExtension extends AbstractTypeExtension
      */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        if (empty($options['depends_on'])) {
+        if (empty($options['hierarchical'])) {
             return;
         }
 
-        $dependsOn = $options['depends_on'];
+        $hierarchical = $options['hierarchical'];
         $selector = FormUtils::generateSelector($view);
 
         $parentView = $view->parent;
         $parents = array_map(function($field) use ($parentView) {
             return FormUtils::generateSelector($parentView->children[$field]);
-        }, $dependsOn['fields']);
+        }, $hierarchical['parents']);
 
-        $this->sfForm->getElementBag()->addHierarchicalElement($selector, $parents, array(
-            'url' => $dependsOn['url'],
-        ));
+        $options = isset($hierarchical['url'])
+            ? array('hierarchical_url' => $hierarchical['url'])
+            : array('hierarchical_callback' => $hierarchical['callback']);
+
+        $this->sfForm->getElementBag()->addHierarchicalElement($selector, $parents, $options);
     }
 
     /**

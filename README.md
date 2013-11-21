@@ -323,6 +323,7 @@ There are list of supported components:
 This component allows to modify submitted options of `choice` (and all child field types including `entity`). It adds new option `allow_modify` to `choice` field type. If it is set to `true` - it means that you can change options in JavaScript (add new option and submit it, or completely replace list of options and submit one from new list) and submit it without errors. It works for all combinations of `multiple` and `expanded` options. You don't need to use `PRE_SUBMIT` event to re-add same field with submitted options (as you did before).
 
 **Note:** new options are not added to the option list, when form is rendered after submit (successful or not). It means that value from new option will be saved, but will not be added to the option list.
+
 **Note:** don't forget about validation when use `allow_modify` option!
 
 Usage:

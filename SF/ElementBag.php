@@ -54,6 +54,7 @@ class ElementBag
     public function addHierarchicalElement($selector, $parents, $options)
     {
         foreach ($parents as $i => $parentSelector) {
+            $parentOptions = array();
             $this->processSelector($parentSelector, $parentOptions);
             if (!$this->has($parentSelector)) {
                 $this->add($parentSelector, $parentOptions);
