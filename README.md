@@ -49,14 +49,16 @@ An example configuration is shown below:
 ite_form:
     components:
         component_name:         ~               # just enable component
-        another_component_name:                 # enabled component and set some options for it
+        another_component_name:                 # enabled component and set options for it
             enabled:            true
             option_name:        option_value
     plugins:
         plugin_name:            ~               # just enable plugin with empty options
         another_plugin_name:                    # enable plugin and set its global options
             enabled:            true
-            options:            {}              # global plugin options, which you can override in specific field
+            options:                            # global plugin options, which you can override in specific field
+                option_name:    option_value
+
 ```
 List of javascripts, that you need to include in your global template:
 
@@ -67,7 +69,6 @@ List of javascripts, that you need to include in your global template:
     {# javascript libraries  #}
     '@ITEJsBundle/Resources/public/js/sf.js' {# don't forget to include this js from ITEJsBundle! #}
     '@ITEFormBundle/Resources/public/js/sf.form.js'
-    '@ITEFormBundle/Resources/public/js/collection.js' {# optional, include it if you want to use improved form collections #}
 %}
 <script type="text/javascript" src="{{ asset_url }}"></script>
 {% endjavascripts %}
