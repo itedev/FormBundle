@@ -1,8 +1,4 @@
 (function($) {
-  var rxText = /^(?:input|textarea)/i;
-  var rxCheckable = /^(?:checkbox|radio)$/i;
-  var rxSelect = /^select$/i;
-
   SF.plugins = {};
 
   SF.util = $.extend(SF.util, {
@@ -44,22 +40,6 @@
       return array;
     },
 
-    getSimpleName: function(element, $element) {
-      var name;
-      if (element.hasChildrenSelector()) {
-        $element = $element.find(element.getChildrenSelector());
-      }
-      name = $element.attr('name');
-      var re = /\[([^\]]+)\](?:|\[\])$/i;
-      var matches = name.match(re);
-
-      if (null === matches) {
-        return null;
-      }
-
-      return matches[1];
-    },
-
     hasEvent: function(element, event) {
       var eventName, eventNamespace, i;
       if (-1 === event.indexOf('.')){
@@ -99,73 +79,9 @@
     }
   });
 
-  SF.callbacks = $.extend(SF.callbacks, {
-    hierarchicalChange: function(e) {
-      var selector = e.data.selector;
-      var context = e.data.context;
-      var replacementTokens = e.data.replacementTokens;
-
-      // get parents data
-      var data = {};
-      $.each(SF.elements.getAllParents(selector), function(index, parentSelector) {
-        var $parent = SF.elements.getJQueryElement(parentSelector, context, replacementTokens);
-        if (!$parent.length) {
-          return;
-        }
-
-        var parent = SF.elements.get(parentSelector);
-        var name = SF.util.getSimpleName(parent, $parent);
-        if (null === name) {
-          return;
-        }
-
-        data[name] = SF.elements.getElementValue(parent, $parent);
-      });
-
-      // clear children value
-      $.each(SF.elements.getAllChildren(selector), function(index, childSelector) {
-        var $child = SF.elements.getJQueryElement(childSelector, context, replacementTokens);
-        if (!$child.length) {
-          return;
-        }
-
-        SF.elements.clearElementValue(SF.elements.get(childSelector), $child);
-      });
-
-      // clear element value
-      var element = SF.elements.get(selector);
-      var $element = SF.elements.getJQueryElement(selector, context, replacementTokens);
-      SF.elements.clearElementValue(element, $element);
-
-      if (element.hasHierarchicalUrl()) {
-        // has url
-        $.ajax({
-          type: 'post',
-          url: element.getHierarchicalUrl(),
-          data: data,
-          dataType: 'html',
-          success: function(value) {
-            // set element value
-            SF.elements.setElementValue(element, $element, value);
-          }
-        });
-      } else {
-        // has callback
-        var callback = element.getHierarchicalCallback();
-        if ($.isFunction(window[callback])) {
-          var value = window[callback].apply($element, [$element, data]);
-          SF.elements.setElementValue(element, $element, value);
-        }
-      }
-    }
-  });
-
   // Element
-  var Element = function(selector, plugins, parents, options) {
+  var Element = function(selector, options) {
     this.selector = selector;
-    this.plugins = plugins || {};
-    this.parents = parents || [];
-    this.children = [];
     this.options = options || {};
   };
   Element.prototype = {
@@ -176,19 +92,21 @@
     getPlugins: function() {
       var plugins = [];
 
-      $.each(this.plugins, function(plugin, pluginData) {
-        plugins.push(plugin);
-      });
+      if (this.hasPlugins()) {
+        $.each(this.options['plugins'], function(plugin, pluginData) {
+          plugins.push(plugin);
+        });
+      }
 
       return plugins;
     },
 
     hasPlugins: function() {
-      return SF.util.objectLength(this.plugins) > 0;
+      return this.hasOption('plugins') && SF.util.objectLength(this.options['plugins']) > 0;
     },
 
     hasPlugin: function(plugin) {
-      return this.plugins.hasOwnProperty(plugin);
+      return this.hasOption('plugins') && this.options['plugins'].hasOwnProperty(plugin);
     },
 
     getPluginData: function(plugin) {
@@ -196,23 +114,7 @@
         return null;
       }
 
-      return this.plugins[plugin];
-    },
-
-    getParents: function() {
-      return this.parents;
-    },
-
-    hasParents: function() {
-      return this.parents.length > 0;
-    },
-
-    getChildren: function() {
-      return this.children;
-    },
-
-    hasChildren: function() {
-      return this.children.length > 0;
+      return this.options['plugins'][plugin];
     },
 
     getOptions: function() {
@@ -226,50 +128,10 @@
     getOption: function(option, defaultValue) {
       defaultValue = defaultValue || null;
       return this.hasOption(option) ? this.options[option] : defaultValue;
-    },
-
-    hasChild: function(child) {
-      return -1 !== $.inArray(child, this.children);
-    },
-
-    addChild: function(child) {
-      if (!this.hasChild(child)) {
-        this.children.push(child);
-      }
-    },
-
-    hasChildrenSelector: function() {
-      return this.hasOption('children_selector');
-    },
-
-    getChildrenSelector: function() {
-      return this.getOption('children_selector');
-    },
-
-    getFullSelector: function() {
-      if (this.hasChildrenSelector()) {
-        return this.selector + ' ' + this.getChildrenSelector();
-      }
-
-      return this.selector;
-    },
-
-    hasHierarchicalUrl: function() {
-      return this.hasOption('hierarchical_url');
-    },
-
-    getHierarchicalUrl: function() {
-      return this.getOption('hierarchical_url');
-    },
-
-    hasHierarchicalCallback: function() {
-      return this.hasOption('hierarchical_callback');
-    },
-
-    getHierarchicalCallback: function() {
-      return this.getOption('hierarchical_callback');
     }
   };
+
+  Element.prototype.fn = Element.prototype;
 
   // ElementBag
   var ElementBag = function() {
@@ -314,140 +176,30 @@
       return this.has(selector) ? this.elements[selector] : defaultValue;
     },
 
-    getAllParents: function(selector) {
-      var self = this;
-
-      var parents = this.get(selector).getParents();
-      $.each(parents, function(i, parent) {
-        parents = parents.concat(self.getAllParents(parent));
-      });
-
-      return parents;
-    },
-
-    getAllChildren: function(selector) {
-      var self = this;
-
-      var children = this.get(selector).getChildren();
-      $.each(children, function(i, child) {
-        children = children.concat(self.getAllChildren(child));
-      });
-
-      return children;
-    },
-
-    clearElementValue: function(element, $element) {
-      if (element.hasChildrenSelector()) {
-        $element.html('');
-      } else {
-        var node = $element.get(0);
-        if (rxText.test(node.nodeName) && !rxCheckable.test(node.type)) {
-          $element.val('');
-        } else if (rxSelect.test(node.nodeName)) {
-          $element.html('');
-        }
-      }
-
-      if (element.hasPlugins()) {
-        $.each(element.getPlugins(), function(i, plugin) {
-          if ('undefined' !== typeof SF.plugins[plugin].clearValue) {
-            SF.plugins[plugin].clearValue($element);
-          }
-        });
-      }
-
-      $element.trigger('clear.hierarchical.ite-form');
-    },
-
-    getElementValue: function(element, $element) {
-      var node;
-      if (element.hasChildrenSelector()) {
-        var childrenSelector = element.getChildrenSelector();
-
-        var values = [];
-        $element.find(childrenSelector).filter(function() {
-          return this.checked;
-        }).each(function() {
-            values.push($(this).val());
-          });
-        if ('input[type="radio"]' === childrenSelector) {
-          return values.length ? values[0] : null;
-        }
-        return values;
-      } else {
-        node = $element.get(0);
-        if (rxText.test(node.nodeName) || rxSelect.test(node.nodeName)) {
-          return $element.val();
-        }
-      }
-
-      return null;
-    },
-
-    setElementValue: function(element, $element, value) {
-      var node;
-      if (element.hasChildrenSelector()) {
-        $element.html(value);
-      } else {
-        node = $element.get(0);
-        if (rxText.test(node.nodeName)) {
-          $element.val(value);
-        } else if (rxSelect.test(node.nodeName)) {
-          $element.html(value);
-          var firstOption = $element.children('option:first');
-          if (firstOption.length) {
-            $element.val(firstOption.attr('value'));
-          }
-        }
-      }
-
-      if (element.hasPlugins()) {
-        $.each(element.getPlugins(), function(i, plugin) {
-          if ('undefined' !== typeof SF.plugins[plugin].setValue) {
-            SF.plugins[plugin].setValue($element);
-          }
-        });
-      }
-
-      $element.trigger('change.hierarchical.ite-form');
-    },
-
-    getJQueryElement: function(selector, context, replacementTokens) {
-      var elementSelector = SF.util.strtr(selector, replacementTokens);
-
-      return $(elementSelector, context);
-    },
-
-    add: function(selector, elementData) {
+    add: function(selector, options) {
       if (this.has(selector)) {
         return;
       }
 
-      var self = this;
-
-      // add plugins
-      $.each(elementData['plugins'], function(plugin, pluginData) {
-        if (!self.hasPlugin(plugin)) {
-          self.plugins[plugin] = [];
-        }
-        self.plugins[plugin].push(selector);
-      });
-
-      // add parent elements
-      $.each(elementData['parents'], function(index, parentSelector) {
-        if (!self.has(parentSelector)) {
-          self.elements[parentSelector] = new Element(parentSelector);
-        }
-        self.get(parentSelector).addChild(selector);
-      });
+      this.beforeAdd(selector, options);
 
       // add element
       this.elements[selector] = new Element(
         selector,
-        elementData['plugins'],
-        elementData['parents'],
-        elementData['options']
+        options
       );
+    },
+
+    beforeAdd: function(selector, options) {
+      var self = this;
+      if (options.hasOwnProperty('plugins')) {
+        $.each(options['plugins'], function(plugin, pluginData) {
+          if (!self.hasPlugin(plugin)) {
+            self.plugins[plugin] = [];
+          }
+          self.plugins[plugin].push(selector);
+        });
+      }
     },
 
     set: function(elements) {
@@ -458,7 +210,11 @@
       });
     },
 
-    applyPlugins: function(context, replacementTokens) {
+    getJQueryElement: function(selector, context, replacementTokens) {
+      return $(SF.util.strtr(selector, replacementTokens), context);
+    },
+
+    apply: function(context, replacementTokens) {
       var self = this;
       $.each(this.plugins, function(plugin, selectors) {
         if ('undefined' === typeof SF.plugins[plugin]) {
@@ -480,44 +236,16 @@
           }
         });
       });
-    },
-
-    applyHierarchical: function(context, replacementTokens) {
-      var self = this;
-      $.each(this.elements, function(selector, elementObject) {
-        if (!elementObject.hasParents()) {
-          return;
-        }
-
-        $.each(elementObject.getParents(), function(i, parentSelector) {
-          var $parent = self.getJQueryElement(parentSelector, context, replacementTokens);
-          if (!$parent.length || SF.util.hasEvent($parent, 'change.hierarchical.ite-form')) {
-            return;
-          }
-
-          var parentElement = self.get(parentSelector);
-          var data = {
-            selector: selector,
-            context: context,
-            replacementTokens: replacementTokens
-          };
-
-          if (parentElement.hasChildrenSelector()) {
-            $parent.on('change.hierarchical.ite-form', parentElement.getChildrenSelector(), data, SF.callbacks.hierarchicalChange);
-          } else {
-            $parent.on('change.hierarchical.ite-form', data, SF.callbacks.hierarchicalChange);
-          }
-        });
-      });
-    },
-
-    apply: function(context, replacementTokens) {
-      this.applyPlugins(context, replacementTokens);
-      this.applyHierarchical(context, replacementTokens);
     }
   };
 
   ElementBag.prototype.fn = ElementBag.prototype;
+
+  SF.classes = $.extend(SF.classes, {
+    Element: Element,
+    ElementBag: ElementBag
+  });
+
   SF.fn.elements = new ElementBag();
 
 // http://stackoverflow.com/questions/5202296/add-a-hook-to-all-ajax-requests-on-a-page/5202312#5202312

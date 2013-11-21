@@ -88,11 +88,7 @@ class ElementBag
     public function peekAll()
     {
         return array_map(function(Element $element) {
-            return array(
-                'plugins' => $element->getPlugins(),
-                'parents' => $element->getParents(),
-                'options' => $element->getOptions(),
-            );
+            return $element->getOptions();
         }, $this->elements);
     }
 

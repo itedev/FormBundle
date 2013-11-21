@@ -14,16 +14,6 @@ class Element
     protected $selector;
 
     /**
-     * @var array $plugins
-     */
-    protected $plugins = array();
-
-    /**
-     * @var array $parents
-     */
-    protected $parents = array();
-
-    /**
      * @var array $options
      */
     protected $options = array();
@@ -49,26 +39,6 @@ class Element
     }
 
     /**
-     * Get plugins
-     *
-     * @return array
-     */
-    public function getPlugins()
-    {
-        return $this->plugins;
-    }
-
-    /**
-     * Get parents
-     *
-     * @return array
-     */
-    public function getParents()
-    {
-        return $this->parents;
-    }
-
-    /**
      * Set parents
      *
      * @param array $parents
@@ -76,7 +46,7 @@ class Element
      */
     public function setParents(array $parents)
     {
-        $this->parents = $parents;
+        $this->options['parents'] = $parents;
 
         return $this;
     }
@@ -105,7 +75,7 @@ class Element
      */
     public function hasPlugin($plugin)
     {
-        return array_key_exists($plugin, $this->plugins);
+        return array_key_exists('plugins', $this->options) && array_key_exists($plugin, $this->options['plugins']);
     }
 
     /**
@@ -115,7 +85,10 @@ class Element
     public function addPlugin($plugin, $pluginData)
     {
         if (!$this->hasPlugin($plugin)) {
-            $this->plugins[$plugin] = $pluginData;
+            if (!array_key_exists('plugins', $this->options)) {
+                $this->options['plugins'] = array();
+            }
+            $this->options['plugins'][$plugin] = $pluginData;
         }
     }
 } 

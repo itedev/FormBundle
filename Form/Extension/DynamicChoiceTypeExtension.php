@@ -84,7 +84,7 @@ class DynamicChoiceTypeExtension extends AbstractTypeExtension
         };
 
         $allowModify = function (Options $options) {
-            return isset($options['depends_on']) && !empty($options['depends_on']) ? true : false;
+            return isset($options['hierarchical']) && !empty($options['hierarchical']) ? true : false;
         };
 
         $resolver->setDefaults(array(
