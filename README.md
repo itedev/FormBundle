@@ -679,7 +679,7 @@ If you need to change plugin options, which you cannot change via 'plugin_option
 
 ```js
 $('selector').on('ite-before-apply.plugin', function(e, data, plugin) {
-  var $this = $(this);
+  var $this = $(this);Array
 
   data.options = $.extend(true, data.options, {
     // extend plugin options
