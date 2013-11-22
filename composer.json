@@ -1,24 +1,29 @@
 {
-    "name": "ite/form-bundle",
-    "type": "symfony-bundle",
-    "description": "ITEFormBundle",
-    "keywords": ["form"],
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "c1tru55",
-            "email": "mr.c1tru55@gmail.com"
-        }
-    ],
-    "minimum-stability": "dev",
-    "require": {
-        "php": ">=5.3.2",
-        "symfony/framework-bundle": "~2.3"
-    },
-    "autoload": {
-        "psr-0": {
-            "ITE\\FormBundle": ""
-        }
-    },
-    "target-dir": "ITE/FormBundle"
+  "name": "ite/form-bundle",
+  "type": "symfony-bundle",
+  "description": "Improve Symfony 2 forms by adding new features and integration with popular JavaScript libraries and jQuery plugins.",
+  "keywords": ["form", "extra form", "collection", "dynamic choice", "hierarchical", "ajax file upload", "javascript", "jquery", "plugin"],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "c1tru55",
+      "email": "mr.c1tru55@gmail.com"
+    }
+  ],
+  "minimum-stability": "dev",
+  "require": {
+    "php": ">=5.3.2",
+    "symfony/symfony": "~2.3-dev",
+    "ite/js-bundle": "dev-master"
+  },
+  "suggest": {
+    "mopa/bootstrap-bundle": "dev-master",
+    "vich/uploader-bundle": "dev-master"
+  },
+  "autoload": {
+    "psr-0": {
+      "ITE\\FormBundle": ""
+    }
+  },
+  "target-dir": "ITE/FormBundle"
 }

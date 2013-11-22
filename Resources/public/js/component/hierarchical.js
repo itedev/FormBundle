@@ -61,7 +61,11 @@
 
       if (element.hasHierarchicalUrl()) {
         // has url
-        $.ajax({
+        var jqxhr = $element.data('hierarchicalJqxhr');
+        if (jqxhr) {
+          jqxhr.abort();
+        }
+        jqxhr = $.ajax({
           type: 'post',
           url: element.getHierarchicalUrl(),
           data: data,
@@ -71,6 +75,7 @@
             SF.elements.setElementValue(element, $element, value);
           }
         });
+        $element.data('hierarchicalJqxhr', jqxhr);
       } else {
         // has callback
         var callback = element.getHierarchicalCallback();
