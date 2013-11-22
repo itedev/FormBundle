@@ -1,7 +1,7 @@
 parameters:
     ite_form.sf.extension.form.class:                       ITE\FormBundle\SF\SFFormExtension
     ite_form.twig.sf_extension.class:                       ITE\FormBundle\Twig\Extension\SFExtension
-    assetic.asset_factory.class:                            ITE\FormBundle\Factory\AssetFactory
+#    assetic.asset_factory.class:                            ITE\FormBundle\Factory\AssetFactory
 
 services:
     ite_form.sf.extension.form:
