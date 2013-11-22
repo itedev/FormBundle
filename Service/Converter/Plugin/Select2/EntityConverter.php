@@ -23,7 +23,7 @@ class EntityConverter extends BaseEntityConverter
         $option = parent::convertEntityToOption($entity, $labelPath);
 
         return array(
-            'id' => $option['id'],
+            'id' => $option['value'],
             'text' => $option['label'],
         );
     }
@@ -39,7 +39,7 @@ class EntityConverter extends BaseEntityConverter
 
         return array_map(function($option) {
             return array(
-                'id' => $option['id'],
+                'id' => $option['value'],
                 'text' => $option['label'],
             );
         }, $options);

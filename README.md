@@ -1,7 +1,7 @@
 ITEFormBundle
 =============
 
-ITEFormBundle adds a lot of cool features to Symfony 2 forms, such as: new field types and extensions, integration with popular JavaScript libraries and jQuery plugins, improved collection field, automatic AJAX file upload handling, dynamic choice fields, etc.
+ITEFormBundle adds a lot of cool features to Symfony 2 forms, such as: new field types and extensions, integration with popular JavaScript libraries and jQuery plugins, improved collection field, hierarchical selects (and other fields!), automatic AJAX file upload handling, dynamic choice fields, etc.
 
 Installation
 ------------
@@ -40,7 +40,7 @@ Installation
 Configuration
 -------------
 
-This bundle has modular structure, it means that most services are disabled (not loaded) by default and you can choose - what features you need and enable only it. There are two important items in the config: components and plugins. **Component** is a set of services that implements specific feature. **Plugin** is a set of new form field types that use specific JavaScript library or jQuery plugin. Some plugins require enable specific component.
+This bundle has modular structure, it means that most services (and javascript files required for it) are disabled (not loaded) by default and you can choose - what features you need and enable only it. There are two important items in the config: components and plugins. **Component** is a set of services that implements specific feature. **Plugin** is a set of new form field types that use specific JavaScript library or jQuery plugin. Some plugins require enable specific component. JavaScript files required for specific enabled component or plugin will be automatically added into your assets list, you don't need to add it manually when you enabled or disable some feature (just don't forget to clear the cache after that).
 
 An example configuration is shown below:
 
@@ -60,7 +60,7 @@ ite_form:
                 option_name:    option_value
 
 ```
-List of javascripts, that you need to include in your global template:
+List of JavaScript files, that you need to include in your global template:
 
 ```twig
 {# app/Resources/views/base.html.twig #}
@@ -75,59 +75,32 @@ List of javascripts, that you need to include in your global template:
 {{ ite_js_sf_dump() }} {# this function dumps all needed data for SF object in ONE inline js #}
 ```
 
-Internally some more javascripts are appended automatically in `javascripts` tag for each enabled plugin, it looks like this: '@ITEFormBundle/Resources/public/js/plugins/sf.plugin_name.js'.
+Components
+----------
 
-SF object extension
--------------------
-This bundle add new field to SF object: SF.elements. To apply plugins on all elements on the page you need to call `SF.elements.apply()` function. 
+There are list of supported components:
+ * collection
+ * dynamic_choice
+ * hierarchical
+ * ajax_file_upload
 
-**Note:** this method is automatically called inside `ite_js_sf_dump()` function.
+### Collections
 
-You can pass context (http://api.jquery.com/jQuery/#jQuery-selector-context) as first argument, for applying plugins only inside specific element (i.e. content that was retrieved through AJAX). Also you can pass object as a second parameter, that looks like this:
-
-```js
-{
-  '__name__': 1,
-  '__another_name__': 2
-}
-```
-
-When SF object will iterate through all its elements to apply plugins, it will replace keys from this object to corresponding values in element selectors. It is used internally in `@ITEFormBundle/Resources/public/js/collection.js` for replacing collection's *prototype_name* to collection item indexes.
-
-If you need to change plugin options, which you cannot change via 'plugin_options' in PHP (i.e. callbacks, regexps, dates, etc), you can add next event listener:
-
-```js
-$('selector').on('apply.plugin.ite-form', function(e, data) {
-  var $this = $(this);
-
-  data.options = $.extend(true, data.options, {
-    // extend plugin options
-  });
-});
-```
-
-It will be called right before plugin will be applied.
-
-Collections
------------
-
-This bundle greatly improves Symfony 2 collections (and collections from MopaBootstrapBundle):
+This component greatly improves Symfony 2 collections (and collections from MopaBootstrapBundle):
  * all field plugins **automatically** applied when new collection item is added **(and it works even for collections inside collection, collection inside collection inside collection, and so on)**
  * new options, callbacks and events are added to form collections, that make work with it much easier
  * you can set global or per collection options
  * theming of collections become more flexible, you can render it as a table, list or anything you want
 
-For using it, you need to add additional js in your template:
+Example configuration:
 
-```twig
-{# app/Resources/views/base.html.twig #}
-{% javascripts
-    '@ITEFormBundle/Resources/public/js/collection.js'
-    {# and remove '@MopaBootstrapBundle/Resources/public/js/mopabootstrap-collection.js' if you have it #}
-%}
-<script type="text/javascript" src="{{ asset_url }}"></script>
-{% endjavascripts %}
+```yml
+ite_form:
+    components:
+        collection: ~
 ```
+
+For using it, don't forget to remove `@MopaBootstrapBundle/Resources/public/js/mopabootstrap-collection.js` line from your `javascripts` tag.
 
 Several new options are added to the collection field:
 
@@ -173,21 +146,23 @@ $.fn.collection.collections.%collection_id% = {
 ```
 
 Also plugin trigger two events:
- * add.collection.ite-form - triggered after new collection item was added
- * remove.collection.ite-form - triggered after collection item was removed
+ * ite-before-add.collection - triggered before new collection item will be added. If return `false` item will not be added.
+ * ite-add.collection - triggered after new collection item was added
+ * ite-before-remove.collection - triggered before collection item will be removed. If return `false` item will not be removed.
+ * ite-remove.collection - triggered after collection item was removed
 
 Example of usage:
 
 ```js
 // for root collections
-$('collection_selector').on('add.ite-collection remove.collection.ite-form', function(e, item) {
+$('collection_selector').on('ite-add.collection ite-remove.collection', function(e, item) {
   var collection = $(this);
 
   $('#collection_count').html(collection.collection('itemsCount'));
 });
 
 // for children collections
-$('root_collection_selector').on('add.ite-collection remove.collection.ite-form', 'child_collection_selector', function(e, item) {
+$('root_collection_selector').on('ite-add.collection ite-remove.collection', 'child_collection_selector', function(e, item) {
   var collection = $(this);
 
   $('#child_collection_count').html(collection.collection('itemsCount'));
@@ -196,7 +171,7 @@ $('root_collection_selector').on('add.ite-collection remove.collection.ite-form'
 });
 ```
 
-**Note**: for root collection selector you can anything you like: `#id`, `.class` or `[data-collection-id="..."]`. For children collections it is easier to use `[data-collection-id="..."]` selector (or class if you added it).
+**Note**: for root collection selector you can use anything you like: `#id`, `.class` or `[data-collection-id="..."]`. For children collections it is easier to use `[data-collection-id="..."]` selector (or class if you added it).
 
 Collection plugin methods:
 
@@ -252,7 +227,7 @@ Example of using usual collection:
 {% endblock _foo_bars_entry_widget %}
 ```
 
-Example of using collection that looks like tables:
+Example of using collection with table template:
 
 ```php
 // FooType.php
@@ -312,12 +287,6 @@ You can render add and remove button manually, if you will follow next instructi
  * add button: add `data-collection-add-btn` attribute and place it inside collection element (element with 'data-collection-id' attribute).
  * remove button: add `data-collection-remove-btn` attribute and place it inside collection item element (element with '.collection-item' class).
 
-Components
-----------
-
-There are list of supported components:
- * dynamic_choice
- * ajax_file_upload
 
 ### Dynamic choice
 
@@ -327,26 +296,142 @@ This component allows to modify submitted options of `choice` (and all child fie
 
 **Note:** don't forget about validation when use `allow_modify` option!
 
+Example configuration:
+
+```yml
+ite_form:
+    components:
+        dynamic_choice: ~
+```
+
 Usage:
 
 ```php
 // src/Acme/DemoBundle/Form/Type/FooType.php
 
-public function buildForm(FormBuilderInterface $builder, array $options)
+class FooType extends AbstractType
 {
-    $builder
-        ->add('bar', 'choice', array(
-            'allow_modify' => true,
-        ))
-        // ...
-    ;
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder
+            ->add('bar', 'choice', array(
+                'allow_modify' => true,
+            ))
+            // ...
+        ;
+    }
 }
 ```
+
+### Hierarchical
+
+This component allows you easily build hierarchical fields (it means that available options or value of some field(s) depends on selected value of another field(s)) with a couple of lines in FormType. It provides next features:
+ * works not only for select, but for checkboxes, radios, inputs, textareas and supported plugins.
+ * each element may have several parents (upon which it depends) and several children (on which it affects)
+ * size of hierarchy is not limited
+ * it works for fields inside newly created collection items (of course if you enable **collection** component)
+
+How it works:
+
+It bind listener on `change` event for each object in hierarchy, that have children. When element value is changed - it gather data from all element parents (not only direct), clear element and its children (not only direct) current values and load new options/value via AJAX call or JavaScript callback.
+
+Example configuration:
+
+```yml
+ite_form:
+    components:
+        hierarchical: ~
+```
+
+Usage:
+
+```php
+// src/Acme/DemoBundle/Form/Type/FooType.php
+
+class FooType extends AbstractType
+{
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder
+            ->add('bar', 'entity', array(
+                // ...
+            ))
+            ->add('baz', 'entity', array(
+                // ...
+                'hierarchical' => array(
+                    'parents' => 'bar', // name of parent field inside same form
+                    'route' => 'acme_demo_foo_baz', // you can set a route for retrieving new values
+                    'route_parameters' => array(), // optional
+                ),
+            ))
+            ->add('qux', 'entity', array(
+                // ...
+                'hierarchical' => array(
+                    'parents' => array('baz'), // array of parent field names inside same form
+                    'callback' => 'getQuxValues', // or you can set JavaScript global function for it
+                ),
+            ))
+        ;
+    }
+}
+```
+
+```php
+// src/Acme/DemoBundle/Controller/FooController.php
+
+namespace Acme\DemoBundle\Controller;
+
+use FOS\RestBundle\Controller\Annotations\View;
+use JMS\DiExtraBundle\Annotation as DI;
+
+class FooController extends Controller
+{
+    /**
+     * @var EntityConverter
+     *
+     * @DI\Inject("ite_form.entity_converter")
+     */
+    protected $entityConverter;
+
+    /**
+     * @Route("/baz", name="acme_demo_foo_baz")
+     * @View("ITEFormBundle:Form:Component/hierarchical/options.html.twig")
+     */
+    public function bazAction(Request $request)
+    {
+        $barId = $request->request->get('bar');
+
+        $bazes = $this->em->getRepository('AcmeDemoBundle:Baz')->findByBar($barId);
+        $property = ...;
+
+        return array(
+            'options' => $this->entityConverter->convertEntitiesToOptions($bazes, $property)
+        );
+    }
+}
+```
+
+```js
+// src/Acme/DemoBundle/Resources/public/js/foo.js
+
+function getQuxValues(element, data) {
+    var bar = data['bar']; // yes, you have a values of all parents, not only direct
+    var baz = data['baz'];
+
+    var options = ...;
+
+    return options;
+}
+```
+
+Events:
+ * ite-before-clear.hierarchical - triggers before element value will be cleared. If return `false` default function will not be executed.
+ * ite-clear.hierarchical - triggers after element value was cleared.
 
 ### AJAX file upload
 
 This component allows to automate process of AJAX file uploading. This component use in combination with AJAX file upload field types. Key features:
- * AJAX file upload field types works as **usual `file` field type**. It means that you can upload file via AJAX and it will be mapped in the corresponding field of form data as an `UploadedFile` object.
+ * AJAX file upload field types works as **usual `file` field type**. It means that you can upload file via AJAX and it will be mapped in the corresponding field of form data at form submit as an `UploadedFile` object.
  * it works for create forms (when `id` for entity is not generated yet)
  * it saves uploaded files when you submit form several times (for example if previous submit contains errors)
  * it works for dynamically created collection items
@@ -367,11 +452,14 @@ All files uploaded via AJAX will be saved in tmp_prefix directory (relative to y
 ```php
 // src/Acme/DemoBundle/Form/Type/FooType.php
 
-public function setDefaultOptions(OptionsResolverInterface $resolver)
+class FooType extends AbstractType
 {
-    $resolver->setDefaults(array(
-        'ajax_token' => true,
-    ));
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        $resolver->setDefaults(array(
+            'ajax_token' => true,
+        ));
+    }
 }
 ```
 
@@ -402,7 +490,6 @@ There are list of supported plugins:
 Homepage: http://ivaynberg.github.io/select2/
 
 Provided field types:
-
  * ite_select2_choice (inherits choice type)
  * ite_select2_language (inherits language type)
  * ite_select2_country (inherits country type)
@@ -569,6 +656,46 @@ public function replaceOptions($name, $options); // change options for existing 
 ```
 Field order
 -----------
+
+
+SF object extension
+-------------------
+This bundle add new field to SF object: SF.elements. To apply plugins on all elements on the page you need to call `SF.elements.apply()` function.
+
+**Note:** this method is automatically called inside `ite_js_sf_dump()` function.
+
+You can pass context (http://api.jquery.com/jQuery/#jQuery-selector-context) as first argument, for applying plugins only inside specific element (i.e. content that was retrieved through AJAX). Also you can pass object as a second parameter, that looks like this:
+
+```js
+{
+  '__name__': 1,
+  '__another_name__': 2
+}
+```
+
+When SF object will iterate through all its elements to apply plugins, it will replace keys from this object to corresponding values in element selectors. It is used internally in `@ITEFormBundle/Resources/public/js/collection.js` for replacing collection's *prototype_name* to collection item indexes.
+
+If you need to change plugin options, which you cannot change via 'plugin_options' in PHP (i.e. callbacks, regexps, dates, etc), you can add next event listener:
+
+```js
+$('selector').on('ite-before-apply.plugin', function(e, data, plugin) {
+  var $this = $(this);
+
+  data.options = $.extend(true, data.options, {
+    // extend plugin options
+  });
+
+  // return false; // if you return false - plugin will not be applied
+});
+
+$('selector').on('ite-apply.plugin', function(e, data, plugin) {
+  var $this = $(this);
+
+  // some actions after plugin is applied
+});
+```
+
+It will be called right before plugin will be applied.
 
 Debug
 -----

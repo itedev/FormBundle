@@ -18,7 +18,9 @@ class FormPass implements CompilerPassInterface
     {
         $resources = $container->getParameter('twig.form.resources');
         $resources[] = 'ITEFormBundle:Form:fields.html.twig';
-        $resources[] = 'ITEFormBundle:Form:collection.html.twig';
+        if ($container->getParameter('ite_form.component.collection.enabled')) {
+            $resources[] = 'ITEFormBundle:Form:Component/collection/fields.html.twig';
+        }
         $container->setParameter('twig.form.resources', $resources);
     }
 }

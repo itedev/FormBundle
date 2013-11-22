@@ -166,6 +166,8 @@
         parents = parents.concat(self.getAllParents(parent));
       });
 
+      // @todo: add unique constraint
+
       return parents;
     },
 
@@ -177,10 +179,18 @@
         children = children.concat(self.getAllChildren(child));
       });
 
+      // @todo: add unique constraint
+
       return children;
     },
 
     clearElementValue: function(element, $element) {
+      var event = $.Event('ite-before-clear.hierarchical');
+      $element.trigger(event);
+      if (false !== event.result) {
+        return;
+      }
+
       if (element.hasChildrenSelector()) {
         $element.html('');
       } else {
@@ -200,7 +210,7 @@
         });
       }
 
-      $element.trigger('clear.hierarchical.ite-form');
+      $element.trigger('ite-clear.hierarchical');
     },
 
     getElementValue: function(element, $element) {
@@ -253,7 +263,7 @@
         });
       }
 
-      $element.trigger('change.hierarchical.ite-form');
+      $element.trigger('change.hierarchical');
     },
 
     apply: function(context, replacementTokens) {
@@ -267,7 +277,7 @@
 
         $.each(elementObject.getParents(), function(i, parentSelector) {
           var $parent = self.getJQueryElement(parentSelector, context, replacementTokens);
-          if (!$parent.length || SF.util.hasEvent($parent, 'change.hierarchical.ite-form')) {
+          if (!$parent.length || SF.util.hasEvent($parent, 'change.hierarchical')) {
             return;
           }
 
@@ -279,9 +289,9 @@
           };
 
           if (parentElement.hasChildrenSelector()) {
-            $parent.on('change.hierarchical.ite-form', parentElement.getChildrenSelector(), data, SF.callbacks.hierarchicalChange);
+            $parent.on('change.hierarchical', parentElement.getChildrenSelector(), data, SF.callbacks.hierarchicalChange);
           } else {
-            $parent.on('change.hierarchical.ite-form', data, SF.callbacks.hierarchicalChange);
+            $parent.on('change.hierarchical', data, SF.callbacks.hierarchicalChange);
           }
         });
       });

@@ -107,7 +107,7 @@ class EntityConverter implements EntityConverterInterface
         }
 
         return array(
-            'id' => $this->propertyAccessor->getValue($entity, $idPath),
+            'value' => $this->propertyAccessor->getValue($entity, $idPath),
             'label' => $label
         );
     }

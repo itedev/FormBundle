@@ -34,7 +34,7 @@
         SF.elements.apply($item, replacementTokens);
 
         self.onAdd.apply($collection, [$item, $collection]);
-        $collection.trigger('add.collection.ite-form', [$item]);
+        $collection.trigger('ite-add.collection', [$item]);
       }
 
       this.index++;
@@ -51,6 +51,11 @@
 
       var result = this.beforeAdd.apply($collection, [$item, $collection]);
       if (false === result) {
+        return;
+      }
+      var event = $.Event('ite-before-add.collection');
+      $collection.trigger(event, [$item]);
+      if (false === event.result) {
         return;
       }
 
@@ -78,7 +83,7 @@
         $item.remove();
 
         self.onRemove.apply($collection, [$item, $collection]);
-        $collection.trigger('remove.collection.ite-form', [$item]);
+        $collection.trigger('ite-remove.collection', [$item]);
       }
 
       if (0 !== $btn.parents('.collection-item').length) {
@@ -87,6 +92,11 @@
 
         var result = this.beforeRemove.apply($collection, [$item, $collection]);
         if (false === result) {
+          return;
+        }
+        var event = $.Event('ite-before-remove.collection');
+        $collection.trigger(event, [$item]);
+        if (false === event.result) {
           return;
         }
 
@@ -172,14 +182,14 @@
 
   $(function () {
     // add
-    $('body').on('click.collection.data-api', '[data-collection-add-btn]', function (e) {
+    $('body').on('click.collection', '[data-collection-add-btn]', function (e) {
       var $btn = $(e.target);
       $btn.closest('[data-collection-id]').collection('add');
       e.preventDefault();
     });
 
     // remove
-    $('body').on('click.collection.data-api', '[data-collection-remove-btn]', function (e) {
+    $('body').on('click.collection', '[data-collection-remove-btn]', function (e) {
       var $btn = $(e.target);
       $btn.closest('[data-collection-id]').collection('remove', $btn);
       e.preventDefault();

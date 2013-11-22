@@ -231,8 +231,13 @@
           }
           if ('undefined' !== typeof SF.plugins[plugin].apply) {
             var pluginData = self.get(selector).getPluginData(plugin);
-            $element.trigger('apply.plugin.ite-form', [pluginData]);
+            var event = $.Event('ite-before-apply.plugin');
+            $element.trigger(event, [pluginData, plugin]);
+            if (false === event.result) {
+              return;
+            }
             SF.plugins[plugin].apply($element, pluginData);
+            $element.trigger('ite-apply.plugin', [pluginData, plugin]);
           }
         });
       });
