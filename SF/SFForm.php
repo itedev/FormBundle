@@ -1,0 +1,55 @@
+<?php
+
+namespace ITE\FormBundle\SF;
+
+/**
+ * Class SFForm
+ * @package ITE\FormBundle\SF
+ */
+final class SFForm
+{
+    /**
+     * Components
+     */
+    const COMPONENT_COLLECTION = 'collection';
+    const COMPONENT_DYNAMIC_CHOICE = 'dynamic_choice';
+    const COMPONENT_AJAX_FILE_UPLOAD = 'ajax_file_upload';
+    const COMPONENT_HIERARCHICAL = 'hierarchical';
+
+    /**
+     * @var array
+     */
+    public static $components = array(
+        self::COMPONENT_COLLECTION,
+        self::COMPONENT_DYNAMIC_CHOICE,
+        self::COMPONENT_AJAX_FILE_UPLOAD,
+        self::COMPONENT_HIERARCHICAL,
+    );
+
+    /**
+     * Plugins
+     */
+    const PLUGIN_SELECT2 = 'select2';
+    const PLUGIN_TINYMCE = 'tinymce';
+    const PLUGIN_BOOTSTRAP_COLORPICKER = 'bootstrap_colorpicker';
+    const PLUGIN_BOOTSTRAP_DATETIMEPICKER = 'bootstrap_datetimepicker';
+    const PLUGIN_BOOTSTRAP_DATETIMEPICKER2 = 'bootstrap_datetimepicker2';
+    const PLUGIN_FILEUPLOAD = 'fileupload';
+    const PLUGIN_FINEUPLOADER = 'fineuploader';
+    const PLUGIN_FORM = 'form';
+
+    /**
+     * @var array
+     */
+    public static $plugins = array(
+        self::PLUGIN_SELECT2,
+        self::PLUGIN_TINYMCE,
+        self::PLUGIN_BOOTSTRAP_COLORPICKER,
+        self::PLUGIN_BOOTSTRAP_DATETIMEPICKER,
+        self::PLUGIN_BOOTSTRAP_DATETIMEPICKER2,
+        self::PLUGIN_FILEUPLOAD,
+        self::PLUGIN_FINEUPLOADER,
+        self::PLUGIN_FORM,
+    );
+
+}

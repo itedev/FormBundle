@@ -3,8 +3,7 @@
 namespace ITE\FormBundle\DependencyInjection;
 
 use Doctrine\Common\Inflector\Inflector;
-use ITE\FormBundle\Components;
-use ITE\FormBundle\SF\SFFormExtension;
+use ITE\FormBundle\SF\SFForm;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\DefinitionDecorator;
@@ -39,7 +38,7 @@ class ITEFormExtension extends Extension
         }
 
         // load components configuration
-        foreach (Components::$components as $component) {
+        foreach (SFForm::$components as $component) {
             $enabled = isset($config['components'][$component]) && !empty($config['components'][$component]['enabled']);
             $container->setParameter(sprintf('ite_form.component.%s.enabled', $component), $enabled);
 
@@ -56,7 +55,7 @@ class ITEFormExtension extends Extension
         }
 
         // load plugins configuration
-        foreach (SFFormExtension::getPlugins() as $plugin) {
+        foreach (SFForm::$plugins as $plugin) {
             $enabled = isset($config['plugins'][$plugin]) && !empty($config['plugins'][$plugin]['enabled']);
             $container->setParameter(sprintf('ite_form.plugin.%s.enabled', $plugin), $enabled);
 

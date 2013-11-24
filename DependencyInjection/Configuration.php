@@ -3,8 +3,7 @@
 namespace ITE\FormBundle\DependencyInjection;
 
 use Doctrine\Common\Inflector\Inflector;
-use ITE\FormBundle\Components;
-use ITE\FormBundle\SF\SFFormExtension;
+use ITE\FormBundle\SF\SFForm;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeBuilder;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
@@ -51,7 +50,7 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('components')
                     ->canBeUnset();
 
-        foreach (Components::$components as $component) {
+        foreach (SFForm::$components as $component) {
             // add common component configuration
             $componentNode = $this->addComponentConfiguration($component, $componentsNode);
 
@@ -113,7 +112,7 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('plugins')
                     ->canBeUnset();
 
-        foreach (SFFormExtension::getPlugins() as $plugin) {
+        foreach (SFForm::$plugins as $plugin) {
             // add common plugin configuration
             $pluginNode = $this->addPluginConfiguration($plugin, $pluginsNode);
 

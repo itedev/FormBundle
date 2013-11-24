@@ -1,11 +1,11 @@
 parameters:
     ite_form.sf.extension.form.class:                       ITE\FormBundle\SF\SFFormExtension
     ite_form.twig.sf_extension.class:                       ITE\FormBundle\Twig\Extension\SFExtension
-#    assetic.asset_factory.class:                            ITE\FormBundle\Factory\AssetFactory
 
 services:
     ite_form.sf.extension.form:
         class:                                              %ite_form.sf.extension.form.class%
+        arguments: [ @service_container ]
         tags:
             - { name: ite_js.sf.extension, alias: form }
 

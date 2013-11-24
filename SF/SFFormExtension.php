@@ -2,7 +2,8 @@
 
 namespace ITE\FormBundle\SF;
 
-use ITE\JsBundle\SF\SFExtensionInterface;
+use ITE\JsBundle\SF\SFExtension;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
@@ -12,33 +13,12 @@ use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
  * Class SFFormExtension
  * @package ITE\FormBundle\SF
  */
-class SFFormExtension implements SFExtensionInterface
+class SFFormExtension extends SFExtension
 {
     /**
-     * Plugins
+     * @var ContainerInterface
      */
-    const PLUGIN_SELECT2 = 'select2';
-    const PLUGIN_TINYMCE = 'tinymce';
-    const PLUGIN_BOOTSTRAP_COLORPICKER = 'bootstrap_colorpicker';
-    const PLUGIN_BOOTSTRAP_DATETIMEPICKER = 'bootstrap_datetimepicker';
-    const PLUGIN_BOOTSTRAP_DATETIMEPICKER2 = 'bootstrap_datetimepicker2';
-    const PLUGIN_FILEUPLOAD = 'fileupload';
-    const PLUGIN_FINEUPLOADER = 'fineuploader';
-    const PLUGIN_FORM = 'form';
-
-    /**
-     * @var array $plugins
-     */
-    protected static $plugins = array(
-        self::PLUGIN_SELECT2,
-        self::PLUGIN_TINYMCE,
-        self::PLUGIN_BOOTSTRAP_COLORPICKER,
-        self::PLUGIN_BOOTSTRAP_DATETIMEPICKER,
-        self::PLUGIN_BOOTSTRAP_DATETIMEPICKER2,
-        self::PLUGIN_FILEUPLOAD,
-        self::PLUGIN_FINEUPLOADER,
-        self::PLUGIN_FORM,
-    );
+    protected $container;
 
     /**
      * @var ElementBag $elementBag
@@ -51,21 +31,38 @@ class SFFormExtension implements SFExtensionInterface
     protected $formErrors = array();
 
     /**
-     *
+     * @param ContainerInterface $container
      */
-    public function __construct()
+    public function __construct(ContainerInterface $container)
     {
+        $this->container = $container;
         $this->elementBag = new ElementBag();
     }
 
     /**
-     * Get elementBag
-     *
-     * @return ElementBag
+     * @param array $inputs
+     * @return array
      */
-    public function getElementBag()
+    public function modifyJavascripts(array &$inputs)
     {
-        return $this->elementBag;
+        $bundlePath = $this->container->get('kernel')->getBundle('ITEFormBundle')->getPath();
+
+        // add component js
+        foreach (SFForm::$components as $component) {
+            $enabled = $this->container->getParameter(sprintf('ite_form.component.%s.enabled', $component));
+            if ($enabled && file_exists(sprintf('%s/Resources/public/js/component/%s.js',
+                      $bundlePath,  $component))) {
+                $inputs[] = sprintf('@ITEFormBundle/Resources/public/js/component/%s.js', $component);
+            }
+        }
+
+        // add plugin js
+        foreach (SFForm::$plugins as $plugin) {
+            $enabled = $this->container->getParameter(sprintf('ite_form.plugin.%s.enabled', $plugin));
+            if ($enabled) {
+                $inputs[] = sprintf('@ITEFormBundle/Resources/public/js/plugin/%s.js', $plugin);
+            }
+        }
     }
 
     /**
@@ -120,6 +117,16 @@ class SFFormExtension implements SFExtensionInterface
     }
 
     /**
+     * Get elementBag
+     *
+     * @return ElementBag
+     */
+    public function getElementBag()
+    {
+        return $this->elementBag;
+    }
+
+    /**
      * @param FormView $form
      */
     protected function collectFormErrors(FormView $form)
@@ -157,13 +164,5 @@ class SFFormExtension implements SFExtensionInterface
         foreach ($element->children as $child) {
             $this->processChildrenRecursive($formErrors, $child);
         }
-    }
-
-    /**
-     * @return array
-     */
-    public static function getPlugins()
-    {
-        return self::$plugins;
     }
 }
