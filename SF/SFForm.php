@@ -36,6 +36,8 @@ final class SFForm
     const PLUGIN_BOOTSTRAP_DATETIMEPICKER2 = 'bootstrap_datetimepicker2';
     const PLUGIN_FILEUPLOAD = 'fileupload';
     const PLUGIN_FINEUPLOADER = 'fineuploader';
+    const PLUGIN_MINICOLORS = 'minicolors';
+    const PLUGIN_KNOB = 'knob';
     const PLUGIN_FORM = 'form';
 
     /**
@@ -49,7 +51,9 @@ final class SFForm
         self::PLUGIN_BOOTSTRAP_DATETIMEPICKER2,
         self::PLUGIN_FILEUPLOAD,
         self::PLUGIN_FINEUPLOADER,
-        self::PLUGIN_FORM,
+        self::PLUGIN_MINICOLORS,
+        self::PLUGIN_KNOB,
+//        self::PLUGIN_FORM,
     );
 
 }

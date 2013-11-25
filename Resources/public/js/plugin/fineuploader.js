@@ -1,5 +1,5 @@
 (function($) {
-  SF.plugins['fineuploader'] = {
+  SF.fn.plugins['fineuploader'] = {
     isApplied: function(element) {
       return 'undefined' !== typeof element.data('fineuploader');
     },

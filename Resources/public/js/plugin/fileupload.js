@@ -1,5 +1,5 @@
 (function($) {
-  SF.plugins['fileupload'] = {
+  SF.fn.plugins['fileupload'] = {
     isApplied: function(element) {
       return element.data('blueimp-fileupload');
     },

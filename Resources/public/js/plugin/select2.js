@@ -1,5 +1,5 @@
 (function($) {
-  SF.plugins['select2'] = {
+  SF.fn.plugins['select2'] = {
     isApplied: function(element) {
       return 'undefined' !== typeof element.data('select2');
     },

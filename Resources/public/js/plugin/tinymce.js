@@ -1,5 +1,5 @@
 (function($) {
-  SF.plugins['tinymce'] = {
+  SF.fn.plugins['tinymce'] = {
     isApplied: function(element) {
       return 'undefined' !== typeof window.tinyMCE
         && 'undefined' !== typeof window.tinyMCE.get(element.attr('id'));

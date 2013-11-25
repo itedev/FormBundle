@@ -1,0 +1,9 @@
+parameters:
+    ite_form.form.type.plugin.knob.number.class:        ITE\FormBundle\Form\Type\Plugin\Knob\NumberType
+
+services:
+    ite_form.form.type.plugin.knob.number:
+        class:                                          %ite_form.form.type.plugin.knob.number.class%
+        arguments: [ %ite_form.plugin.knob.options% ]
+        tags:
+            - { name: form.type, alias: ite_knob_number }

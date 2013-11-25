@@ -516,6 +516,8 @@ There are list of supported plugins:
  * bootstrap_datetimepicker2
  * fileupload
  * fineuploader
+ * minicolors
+ * knob
  * form (WIP)
 
 You can change options for specific plugin field in several ways:
@@ -743,6 +745,26 @@ Provided field types:
 | Type                  | Parent type   | Required components |
 |-----------------------|---------------|---------------------|
 | ite_fineuploader_file | ite_ajax_file | ite_ajax_file       |
+
+### MiniColors
+
+Homepage: http://labs.abeautifulsite.net/jquery-minicolors/
+
+Provided field types:
+
+| Type                | Parent type | Required components |
+|---------------------|-------------|---------------------|
+| ite_minicolors_text | text        | none                |
+
+### Knob
+
+Homepage: http://anthonyterrien.com/knob/
+
+Provided field types:
+
+| Type            | Parent type | Required components |
+|-----------------|-------------|---------------------|
+| ite_knob_number | number      | none                |
 
 FormBuilder
 -----------

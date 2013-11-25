@@ -91,6 +91,16 @@
     {{ ite_form_sf_add_plugin_element('#' ~ id ~ '_fine_uploader', 'fineuploader', element_data) }}
 {% endblock ite_fineuploader_file_widget %}
 
+{% block ite_minicolors_text_widget %}
+    {{ block('form_widget_simple') }}
+    {{ ite_form_sf_add_plugin_element('#' ~ id, 'minicolors', element_data) }}
+{% endblock ite_minicolors_text_widget %}
+
+{% block ite_knob_number_widget %}
+    {{ block('form_widget_simple') }}
+    {{ ite_form_sf_add_plugin_element('#' ~ id, 'knob', element_data) }}
+{% endblock ite_knob_number_widget %}
+
 {% block form_start %}
     {% spaceless %}
         {{ parent() }}

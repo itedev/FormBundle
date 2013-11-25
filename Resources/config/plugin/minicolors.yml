@@ -1,0 +1,9 @@
+parameters:
+    ite_form.form.type.plugin.minicolors.text.class:    ITE\FormBundle\Form\Type\Plugin\Minicolors\TextType
+
+services:
+    ite_form.form.type.plugin.minicolors.text:
+        class:                                           %ite_form.form.type.plugin.minicolors.text.class%
+        arguments: [ %ite_form.plugin.minicolors.options% ]
+        tags:
+            - { name: form.type, alias: ite_minicolors_text }

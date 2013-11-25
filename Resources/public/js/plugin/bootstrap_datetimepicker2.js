@@ -1,5 +1,5 @@
 (function($) {
-  SF.plugins['bootstrap_datetimepicker2'] = {
+  SF.fn.plugins['bootstrap_datetimepicker2'] = {
     isApplied: function(element) {
       return 'undefined' !== typeof element.data('datetimepicker');
     },
