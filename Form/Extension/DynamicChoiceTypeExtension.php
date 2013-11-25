@@ -3,12 +3,10 @@
 namespace ITE\FormBundle\Form\Extension;
 
 use ITE\FormBundle\Form\ChoiceList\SimpleChoiceList;
-use ITE\FormBundle\Form\EventListener\FixCheckboxInputListener;
-use ITE\FormBundle\Form\EventListener\FixRadioInputListener;
 use ITE\FormBundle\Form\EventListener\ModifyChoiceListListener;
 use Symfony\Component\Form\AbstractTypeExtension;
-use Symfony\Component\Form\Extension\Core\EventListener\FixCheckboxInputListener as BaseFixCheckboxInputListener;
-use Symfony\Component\Form\Extension\Core\EventListener\FixRadioInputListener as BaseFixRadioInputListener;
+use Symfony\Component\Form\Extension\Core\EventListener\FixCheckboxInputListener;
+use Symfony\Component\Form\Extension\Core\EventListener\FixRadioInputListener;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\Options;
@@ -41,7 +39,7 @@ class DynamicChoiceTypeExtension extends AbstractTypeExtension
             $listeners = $ed->getListeners(FormEvents::PRE_SUBMIT);
             if ($options['multiple']) {
                 foreach ($listeners as $listener) {
-                    if ($listener[0] instanceof BaseFixCheckboxInputListener) {
+                    if ($listener[0] instanceof FixCheckboxInputListener) {
                         $ed->removeSubscriber($listener[0]);
                         break;
                     }
@@ -49,7 +47,7 @@ class DynamicChoiceTypeExtension extends AbstractTypeExtension
                 $builder->addEventSubscriber(new FixCheckboxInputListener($options['choice_list']), 10);
             } else {
                 foreach ($listeners as $listener) {
-                    if ($listener[0] instanceof BaseFixRadioInputListener) {
+                    if ($listener[0] instanceof FixRadioInputListener) {
                         $ed->removeSubscriber($listener[0]);
                         break;
                     }

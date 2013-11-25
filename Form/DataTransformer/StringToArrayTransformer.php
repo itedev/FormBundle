@@ -2,9 +2,7 @@
 
 namespace ITE\FormBundle\Form\DataTransformer;
 
-use Symfony\Component\Form\Exception\TransformationFailedException;
 use Symfony\Component\Form\DataTransformerInterface;
-use Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceListInterface;
 
 /**
  * Class StringToArrayTransformer
@@ -12,32 +10,26 @@ use Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceListInterface;
  */
 class StringToArrayTransformer implements DataTransformerInterface
 {
-//    private $choiceList;
-//
-//    /**
-//     * @param ChoiceListInterface $choiceList
-//     */
-//    public function __construct(ChoiceListInterface $choiceList)
-//    {
-//        $this->choiceList = $choiceList;
-//    }
+    /**
+     * @var string $separator
+     */
+    private $separator;
+
+    /**
+     * @param string $separator
+     */
+    public function __construct($separator = ',')
+    {
+        $this->separator = $separator;
+    }
 
     /**
      * @param mixed $values
-     * @return mixed|string
-     * @throws \Symfony\Component\Form\Exception\TransformationFailedException
+     * @return string
      */
     public function transform($values)
     {
-        if (null === $values) {
-            return '';
-        }
-
-        if (!is_array($values)) {
-            throw new TransformationFailedException('Expected an array.');
-        }
-
-        return implode(',', $values);
+        return implode($this->separator, $values);
     }
 
     /**
@@ -46,10 +38,6 @@ class StringToArrayTransformer implements DataTransformerInterface
      */
     public function reverseTransform($values)
     {
-        if (null === $values) {
-            return array();
-        }
-
-        return explode(',', $values[0]);
+        return $values;
     }
 }

@@ -42,10 +42,16 @@ Configuration
 
 This bundle has modular structure, it means that most services (and javascript files required for it) are disabled (not loaded) by default and you can choose - what features you need and enable only it. There are two important items in the config: components and plugins. **Component** is a set of services that implements specific feature. **Plugin** is a set of new form field types that use specific JavaScript library or jQuery plugin. Some plugins require enable specific component. JavaScript files required for specific enabled component or plugin will be automatically added into your assets list, you don't need to add it manually when you enabled or disable some feature (just don't forget to clear the cache after that).
 
+**Note**: check ITEJsBundle documentation for JavaScript file autoload.
+
 An example configuration is shown below:
 
 ```yml
 # app/config/config.yml
+
+ite_js:
+    templates: [ '::base.html.twig' ]           # for autoloading js files
+
 ite_form:
     components:
         component_name:         ~               # just enable component
@@ -95,6 +101,8 @@ This component greatly improves Symfony 2 collections (and collections from Mopa
 Example configuration:
 
 ```yml
+# app/config/config.yml
+
 ite_form:
     components:
         collection: ~
@@ -175,16 +183,16 @@ $('root_collection_selector').on('ite-add.collection ite-remove.collection', 'ch
 
 Collection plugin methods:
 
-Method | Arguments | Description
---- | --- | ---
-add | None | Add new collection item. It is automatically called when you click on element with `data-collection-add-btn` attribute.
-remove | Any $(element) inside collection item | Remove corresponding collection item.
-items | None | Return jQuery collection of all collection items.
-itemsCount | None | Return number of collection items.
-parents | None | Return all parent collection (if exist) (parent elements with `data-collection-id` attribute).
-parentsCount | None | Return number of parent collections.
-hasParent | None | Return `true` if collection has parent collection, `false` otherwise.
-itemsWrapper | None | Return collection items wrapper jQuery object (with class `collection-items`).
+| Method       | Arguments                             | Description                                                                                                            |
+|--------------|---------------------------------------|------------------------------------------------------------------------------------------------------------------------|
+| add          | None                                  | Add new collection item. It is automatically called when you click on element with `data-collection-add-btn` attribute.|
+| remove       | Any $(element) inside collection item | Remove corresponding collection item.                                                                                  |
+| items        | None                                  | Return jQuery collection of all collection items.                                                                      |
+| itemsCount   | None                                  | Return number of collection items.                                                                                     |
+| parents      | None                                  | Return all parent collection (if exist) (parent elements with `data-collection-id` attribute).                         |
+| parentsCount | None                                  | Return number of parent collections.                                                                                   |
+| hasParent    | None                                  | Return `true` if collection has parent collection, false otherwise.                                                    |
+| itemsWrapper | None                                  | Return collection items wrapper jQuery object (with class `collection-items`).                                         |
 
 Example of using usual collection:
 
@@ -287,7 +295,6 @@ You can render add and remove button manually, if you will follow next instructi
  * add button: add `data-collection-add-btn` attribute and place it inside collection element (element with 'data-collection-id' attribute).
  * remove button: add `data-collection-remove-btn` attribute and place it inside collection item element (element with '.collection-item' class).
 
-
 ### Dynamic choice
 
 This component allows to modify submitted options of `choice` (and all child field types including `entity`). It adds new option `allow_modify` to `choice` field type. If it is set to `true` - it means that you can change options in JavaScript (add new option and submit it, or completely replace list of options and submit one from new list) and submit it without errors. It works for all combinations of `multiple` and `expanded` options. You don't need to use `PRE_SUBMIT` event to re-add same field with submitted options (as you did before).
@@ -299,6 +306,8 @@ This component allows to modify submitted options of `choice` (and all child fie
 Example configuration:
 
 ```yml
+# app/config/config.yml
+
 ite_form:
     components:
         dynamic_choice: ~
@@ -338,6 +347,8 @@ It bind listener on `change` event for each object in hierarchy, that have child
 Example configuration:
 
 ```yml
+# app/config/config.yml
+
 ite_form:
     components:
         hierarchical: ~
@@ -441,6 +452,8 @@ This component add new option to form type called `ajax_token`. When you want to
 Example configuration:
 
 ```yml
+# app/config/config.yml
+
 ite_form:
     components:
         ajax_file_upload:
@@ -485,43 +498,93 @@ There are list of supported plugins:
  * fineuploader
  * form (WIP)
 
+You can change options for specific plugin field in several ways:
+
+First of all, you can change global options for specific plugin in your app/config/config.yml:
+
+```yml
+# app/config/config.yml
+
+ite_form:
+    plugins:
+        plugin_name:
+            enabled:            true
+            options:
+                option_name:    option_value
+```
+
+Secondly, you can override global options in specific field in `plugin_options` option:
+
+```php
+// src/Acme/DemoBundle/Form/Type/FooType.php
+
+class FooType extends AbstractType
+{
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder
+            ->add('bar', null, array(
+                'plugin_options' => array(
+                    'option_name' => 'option_value',
+                ),
+            ))
+        ;
+    }
+}
+```
+
+Thirdly, you can change plugin options in JavaScript using `ite-before-apply.plugin` event listener. It will be also helpful, if you need to change plugin options, that you cannot change via 'plugin_options' in PHP (i.e. callbacks, regexps, dates, etc):
+
+```js
+$('selector').on('ite-before-apply.plugin', function(e, data, plugin) {
+  var $this = $(this);Array
+
+  data.options = $.extend(true, data.options, {
+    // extend plugin options
+  });
+
+  // return false; // if you return false - plugin will not be applied
+});
+```
+
+Also there are `ite-apply.plugin` event, that will be called right after plugin will be applied:
+
+```js
+$('selector').on('ite-apply.plugin', function(e, data, plugin) {
+  var $this = $(this);
+
+  // some actions after plugin is applied
+});
+```
+
 ### Select2
 
 Homepage: http://ivaynberg.github.io/select2/
 
 Provided field types:
- * ite_select2_choice (inherits choice type)
- * ite_select2_language (inherits language type)
- * ite_select2_country (inherits country type)
- * ite_select2_timezone (inherits timezone type)
- * ite_select2_locale (inherits locale type)
- * ite_select2_currency (inherits currency type)
- * ite_select2_entity (inherits entity type)
- * ite_select2_document (inherits document type)
- * ite_select2_model (inherits model type)
- * ite_select2_ajax_entity (inherits ite_ajax_entity type)
- * ite_select2_google_font (inherits choice type) - test
+
+| Type                    | Parent type     | Required components |
+|-------------------------|-----------------|---------------------|
+| ite_select2_choice      | choice          | none                |
+| ite_select2_language    | language        | none                |
+| ite_select2_country     | country         | none                |
+| ite_select2_timezone    | timezone        | none                |
+| ite_select2_locale      | locale          | none                |
+| ite_select2_currency    | currency        | none                |
+| ite_select2_entity      | entity          | none                |
+| ite_select2_document    | document        | none                |
+| ite_select2_model       | model           | none                |
+| ite_select2_ajax_entity | ite_ajax_entity | dynamic_choice      |
+| ite_select2_google_font | ite_google_font | none                |
 
 Example configuration:
 
 ```yml
 # app/config/config.yml
+
 ite_form:
     plugins:
         select2:    ~
-```
-
-Usage:
-
-```php
-->add('entity', 'ite_select2_entity', array(
-    'class' => 'AcmeDemoBundle:Foo',
-    'property' => 'bar',
-    'plugin_options' => array( // these options go directly javascript when plugin will be initialized
-        'placeholder' => 'Type smth...',
-        'minimumInputLength' => 2,
-    )
-))
 ```
 
 Few words about `ite_select2_ajax_entity`. This type does not load all entities at once and use AJAX autocomplete instead of it.
@@ -529,18 +592,28 @@ Few words about `ite_select2_ajax_entity`. This type does not load all entities 
 Usage:
 
 ```php
-->add('entity', 'ite_select2_ajax_entity', array(
-    'class' => 'AcmeDemoBundle:Foo',
-    'property' => 'bar',
-    'route' => 'acme_demo_foo_search', // route for searching Foo records by given query
-    'route_parameters' => array(), // optional
-    // 'allow_create' => true,
-    // 'create_route' => 'acme_demo_ajax_foo_create', // route for creating Foo entity using given query
-    'plugin_options' => array(
-        'placeholder' => 'Type smth...',
-        'minimumInputLength' => 2,
-    ),
-))
+// src/Acme/DemoBundle/Form/Type/FooType.php
+
+class FooType extends AbstractType
+{
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder
+            ->add('bar', 'ite_select2_ajax_entity', array(
+                'class' => 'AcmeDemoBundle:Bar',
+                'property' => 'baz',
+                'route' => 'acme_demo_foo_search_bar', // route for searching Bar records by given query
+                'route_parameters' => array(), // optional
+                // 'allow_create' => true,
+                // 'create_route' => 'acme_demo_foo_create_bar', // route for creating Bar entity using given query
+                'plugin_options' => array(
+                    'placeholder' => 'Search bars',
+                    'minimumInputLength' => 2,
+                ),
+            ))
+        ;
+    }
+}
 ```
 
 ```php
@@ -551,19 +624,19 @@ use FOS\RestBundle\Controller\Annotations\View;
 class FooController extends Controller
 {
     /**
-     * @Route("/search", name="acme_demo_foo_search")
+     * @Route("/search", name="acme_demo_foo_search_bar")
      * @View()
      */
-    public function searchAction(Request $request)
+    public function searchBarAction(Request $request)
     {
         $term = $request->query->get('term');
 
         // get an array of entities
-        $result = $this->em->getRepository('AcmeDemoBundle:Foo')->yourSearchMethod($term);
+        $entities = $this->em->getRepository('AcmeDemoBundle:Bar')->yourSearchMethod($term);
 
-        // 'property' value will be taken from corresponding value of field definition,
-        // but you can set it obviously via second parameter of convertEntitiesToOptions()
-        return $this->get('ite_form.select2.entity_converter')->convertEntitiesToOptions($result);
+        $property = $request->request->get('property');
+
+        return $this->get('ite_form.select2.entity_converter')->convertEntitiesToOptions($entities, $property);
     }
 }
 ```
@@ -576,11 +649,15 @@ Homepage: http://www.tinymce.com/
 
 Provided field types:
 
-* ite_tinymce_textarea (inherits textarea type)
+| Type                 | Parent type | Required components |
+|----------------------|-------------|---------------------|
+| ite_tinymce_textarea | textarea    | none                |
 
 Example configuration:
 
 ```yml
+# app/config/config.yml
+
 ite_form:
     plugins:
         tinymce:
@@ -591,24 +668,18 @@ ite_form:
                 plugins: [ advlist, anchor, autolink, autoresize, autosave, charmap, code, contextmenu, directionality, emoticons, example, example_dependency, fullscreen, hr, image, insertdatetime, layer, legacyoutput, link, lists, media, nonbreaking, noneditable, pagebreak, paste, preview, print, save, searchreplace, spellchecker, tabfocus, table, template, textcolor, visualblocks, visualchars, wordcount ] # bbcode and fullpage are skipped
 ```
 
-Usage:
-
-```php
-->add('textarea', 'ite_tinymce_textarea', array(
-    'plugin_options' => array()
-))
-```
-
 ### Bootstrap DateTimePicker (by smalot)
 
 Homepage: http://www.malot.fr/bootstrap-datetimepicker/
 
 Provided field types:
 
-* ite_bootstrap_datetimepicker_datetime (inherits datetime type)
-* ite_bootstrap_datetimepicker_date (inherits date type)
-* ite_bootstrap_datetimepicker_time (inherits time type)
-* ite_bootstrap_datetimepicker_birthday (inherits ite_bootstrap_datetimepicker_date type)
+| Type                                  | Parent type                       | Required components |
+|---------------------------------------|-----------------------------------|---------------------|
+| ite_bootstrap_datetimepicker_datetime | datetime                          | none                |
+| ite_bootstrap_datetimepicker_date     | date                              | none                |
+| ite_bootstrap_datetimepicker_time     | time                              | none                |
+| ite_bootstrap_datetimepicker_birthday | ite_bootstrap_datetimepicker_date | none                |
 
 ### Bootstrap DateTimePicker2 (by tarruda)
 
@@ -616,10 +687,12 @@ Homepage: http://tarruda.github.io/bootstrap-datetimepicker/
 
 Provided field types:
 
-* ite_bootstrap_datetimepicker2_datetime (inherits datetime type)
-* ite_bootstrap_datetimepicker2_date (inherits date type)
-* ite_bootstrap_datetimepicker2_time (inherits time type)
-* ite_bootstrap_datetimepicker2_birthday (inherits ite_bootstrap_datetimepicker2_date type)
+| Type                                   | Parent type                        | Required components |
+|----------------------------------------|------------------------------------|---------------------|
+| ite_bootstrap_datetimepicker2_datetime | datetime                           | none                |
+| ite_bootstrap_datetimepicker2_date     | date                               | none                |
+| ite_bootstrap_datetimepicker2_time     | time                               | none                |
+| ite_bootstrap_datetimepicker2_birthday | ite_bootstrap_datetimepicker2_date | none                |
 
 ### Bootstrap ColorPicker
 
@@ -627,7 +700,9 @@ Homepage: http://www.eyecon.ro/bootstrap-colorpicker/
 
 Provided field types:
 
-* ite_bootstrap_colorpicker (inherits text type)
+| Type                      | Parent type | Required components |
+|---------------------------|-------------|---------------------|
+| ite_bootstrap_colorpicker | text        | none                |
 
 ### File Upload
 
@@ -635,7 +710,9 @@ Homepage: http://blueimp.github.io/jQuery-File-Upload/
 
 Provided field types:
 
-* ite_fileupload_file (inherits ite_ajax_file type)
+| Type                | Parent type   | Required components |
+|---------------------|---------------|---------------------|
+| ite_fileupload_file | ite_ajax_file | ite_ajax_file       |
 
 ### Fine Uploader
 
@@ -643,10 +720,13 @@ Homepage: http://fineuploader.com/
 
 Provided field types:
 
-* ite_fineuploader_file (inherits ite_ajax_file type)
+| Type                  | Parent type   | Required components |
+|-----------------------|---------------|---------------------|
+| ite_fineuploader_file | ite_ajax_file | ite_ajax_file       |
 
 FormBuilder
 -----------
+
 Two new methods are added to FormBuilder:
 
 ```php
@@ -654,12 +734,10 @@ public function replaceType($name, $type); // change type for existing field
 
 public function replaceOptions($name, $options); // change options for existing field
 ```
-Field order
------------
-
 
 SF object extension
 -------------------
+
 This bundle add new field to SF object: SF.elements. To apply plugins on all elements on the page you need to call `SF.elements.apply()` function.
 
 **Note:** this method is automatically called inside `ite_js_sf_dump()` function.
@@ -675,30 +753,9 @@ You can pass context (http://api.jquery.com/jQuery/#jQuery-selector-context) as 
 
 When SF object will iterate through all its elements to apply plugins, it will replace keys from this object to corresponding values in element selectors. It is used internally in `@ITEFormBundle/Resources/public/js/collection.js` for replacing collection's *prototype_name* to collection item indexes.
 
-If you need to change plugin options, which you cannot change via 'plugin_options' in PHP (i.e. callbacks, regexps, dates, etc), you can add next event listener:
-
-```js
-$('selector').on('ite-before-apply.plugin', function(e, data, plugin) {
-  var $this = $(this);Array
-
-  data.options = $.extend(true, data.options, {
-    // extend plugin options
-  });
-
-  // return false; // if you return false - plugin will not be applied
-});
-
-$('selector').on('ite-apply.plugin', function(e, data, plugin) {
-  var $this = $(this);
-
-  // some actions after plugin is applied
-});
-```
-
-It will be called right before plugin will be applied.
-
 Debug
 -----
+
 If you want to dump huge objects in twig, and you cannot do it with default `dump()` function, you can use next way. Start listen for xDebug connections and add next construction to your twig template:
 
 ```twig
@@ -710,3 +767,6 @@ or
 {% do ite_debug(form, entity) %} {# for specific variables #}
 ```
 xDebug will automatically emits a breakpoint to the debug client on the specific line, and you can check your variable values in `$variables` var.
+
+Field order
+-----------

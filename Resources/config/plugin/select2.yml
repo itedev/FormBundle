@@ -18,7 +18,7 @@ services:
 
     ite_form.form.type.plugin.select2.ajax_entity:
         class:                                          %ite_form.form.type.plugin.select2.ajax_entity.class%
-        arguments: [ %ite_form.plugin.select2.options%, @router ]
+        arguments: [ %ite_form.plugin.select2.options%, @router, @ite_form.select2.entity_converter ]
         tags:
             - { name: form.type, alias: ite_select2_ajax_entity }
 

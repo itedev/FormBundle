@@ -3,7 +3,7 @@
   var rxCheckable = /^(?:checkbox|radio)$/i;
   var rxSelect = /^select$/i;
 
-  SF.util = $.extend(SF.util, {
+  SF.fn.util = $.extend(SF.fn.util, {
     getSimpleName: function(element, $element) {
       var name;
       if (element.hasChildrenSelector()) {
@@ -21,7 +21,7 @@
     }
   });
 
-  SF.callbacks = $.extend(SF.callbacks, {
+  SF.fn.callbacks = $.extend(SF.fn.callbacks, {
     hierarchicalChange: function(e) {
       var selector = e.data.selector;
       var context = e.data.context;
@@ -87,7 +87,7 @@
     }
   });
 
-  SF.classes.Element.prototype = $.extend(SF.classes.Element.prototype, {
+  SF.fn.classes.Element.prototype = $.extend(SF.fn.classes.Element.prototype, {
 
     getParents: function() {
       return this.getOption('parents', []);
@@ -143,9 +143,9 @@
     }
   });
 
-  var baseApply = SF.classes.ElementBag.prototype.apply;
-  var baseBeforeAdd = SF.classes.ElementBag.prototype.beforeAdd;
-  SF.classes.ElementBag.prototype = $.extend(SF.classes.ElementBag.prototype, {
+  var baseApply = SF.fn.classes.ElementBag.prototype.apply;
+  var baseBeforeAdd = SF.fn.classes.ElementBag.prototype.beforeAdd;
+  SF.fn.classes.ElementBag.prototype = $.extend(SF.fn.classes.ElementBag.prototype, {
 
     beforeAdd: function(selector, options) {
       baseBeforeAdd.apply(this, [selector, options]);

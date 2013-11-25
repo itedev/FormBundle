@@ -114,6 +114,10 @@ class SFFormExtension extends SFExtension
         if (count($this->formErrors)) {
             $response->headers->set('X-SF-FormErrors', json_encode($this->formErrors));
         }
+
+        if ($this->elementBag->count()) {
+            $response->headers->set('X-SF-Elements', json_encode($this->elementBag->peekAll()));
+        }
     }
 
     /**

@@ -3,15 +3,12 @@
 namespace ITE\FormBundle\Service\Converter\Plugin\Select2;
 
 use ITE\FormBundle\Service\Converter\EntityConverter as BaseEntityConverter;
-use Symfony\Component\Form\Exception\StringCastException;
-use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 /**
  * Class EntityConverter
  * @package ITE\FormBundle\Service\Converter\Plugin\Select2
  */
-class EntityConverter extends BaseEntityConverter
+class EntityConverter extends BaseEntityConverter implements EntityConverterInterface
 {
     /**
      * @param $entity
@@ -43,5 +40,26 @@ class EntityConverter extends BaseEntityConverter
                 'text' => $option['label'],
             );
         }, $options);
+    }
+
+    /**
+     * @param $choices
+     * @return array
+     */
+    public function convertChoicesToOptions($choices)
+    {
+        return array_map(array($this, 'convertChoiceToOption'), array_values($choices));
+    }
+
+    /**
+     * @param $choice
+     * @return array
+     */
+    public function convertChoiceToOption($choice)
+    {
+        return array(
+            'id' => $choice->value,
+            'text' => $choice->label
+        );
     }
 }

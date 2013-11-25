@@ -1,7 +1,19 @@
 (function($) {
-  SF.plugins = {};
+  SF.fn.plugins = {};
 
-  SF.util = $.extend(SF.util, {
+  var baseProcessXhr = SF.fn.util.processXhr;
+
+  SF.fn.util = $.extend(SF.fn.util, {
+    processXhr: function(xhr, settings) {
+      baseProcessXhr.apply(SF, [xhr, settings]);
+
+      var elementsHeader = xhr.getResponseHeader('X-SF-Elements');
+      if (elementsHeader) {
+        var elements = $.parseJSON(elementsHeader);
+        SF.elements.set(elements);
+      }
+    },
+
     addGetParameter: function(url, paramName, paramValue) {
       var urlParts = url.split('?', 2);
       var baseURL = urlParts[0];
@@ -246,7 +258,7 @@
 
   ElementBag.prototype.fn = ElementBag.prototype;
 
-  SF.classes = $.extend(SF.classes, {
+  SF.fn.classes = $.extend(SF.fn.classes, {
     Element: Element,
     ElementBag: ElementBag
   });

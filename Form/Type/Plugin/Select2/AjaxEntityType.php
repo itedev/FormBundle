@@ -3,6 +3,8 @@
 namespace ITE\FormBundle\Form\Type\Plugin\Select2;
 
 use ITE\FormBundle\Form\DataTransformer\StringToArrayTransformer;
+use ITE\FormBundle\Form\EventListener\ExplodeCollectionListener;
+use ITE\FormBundle\Service\Converter\Plugin\Select2\EntityConverterInterface;
 use RuntimeException;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\View\ChoiceView;
@@ -30,13 +32,20 @@ class AjaxEntityType extends AbstractType
     protected $router;
 
     /**
+     * @var EntityConverterInterface $entityConverter
+     */
+    protected $entityConverter;
+
+    /**
      * @param $options
      * @param RouterInterface $router
+     * @param EntityConverterInterface $entityConverter
      */
-    public function __construct($options, RouterInterface $router)
+    public function __construct($options, RouterInterface $router, EntityConverterInterface $entityConverter)
     {
         $this->options = $options;
         $this->router = $router;
+        $this->entityConverter = $entityConverter;
     }
 
     /**
@@ -78,7 +87,6 @@ class AjaxEntityType extends AbstractType
             'create_route',
         ));
         $resolver->setAllowedValues(array(
-//            'multiple' => array(false),
             'expanded' => array(false),
         ));
     }
@@ -88,7 +96,11 @@ class AjaxEntityType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-//        $builder->addViewTransformer(new StringToArrayTransformer());
+        if (!$options['multiple']) {
+            return;
+        }
+        $builder->addEventSubscriber(new ExplodeCollectionListener());
+        $builder->addViewTransformer(new StringToArrayTransformer());
     }
 
     /**
@@ -98,28 +110,11 @@ class AjaxEntityType extends AbstractType
     {
         if ($form->getData()) {
             $choices = $view->vars['choices'];
-            $defaultValue = array();
 
-            if ($options['multiple']) {
-                // multiple
-                $defaultValue = array();
-                foreach ($choices as $choice) {
-                    /** @var $choice ChoiceView */
-                    $defaultValue[] = array(
-                        'id' => $choice->value,
-                        'text' => $choice->label
-                    );
-                }
-            } else {
-                // single
-                foreach ($choices as $choice) {
-                    /** @var $choice ChoiceView */
-                    $defaultValue = array(
-                        'id' => $choice->value,
-                        'text' => $choice->label
-                    );
-                }
-            }
+            $defaultValue = $options['multiple']
+                ? $this->entityConverter->convertChoicesToOptions($choices)
+                : $this->entityConverter->convertChoiceToOption(current($choices));
+
             $view->vars['attr']['data-default-value'] = json_encode($defaultValue);
         }
 
