@@ -197,26 +197,36 @@ Collection plugin methods:
 Example of using usual collection:
 
 ```php
-// FooType.php
-->add('bars', 'collection', array(
-    'type' => new BarType(),
-    'allow_add' => true,
-    'allow_delete' => true,
-    'prototype' => true,
-    'by_reference' => false,
-    'widget_add_btn' => array(
-        'label' => 'Add bar',
-        'icon' => 'plus-sign'
-    ),
-    'options' => array(
-        'label' => false,
-        'widget_control_group' => false,
-    ),
-))
+// src/Acme/DemoBundle/Form/Type/FooType.php
+
+class FooType extends AbstractType
+{
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder
+            ->add('bars', 'collection', array(
+                'type' => new BarType(),
+                'allow_add' => true,
+                'allow_delete' => true,
+                'prototype' => true,
+                'by_reference' => false,
+                'widget_add_btn' => array(
+                    'label' => 'Add bar',
+                    'icon' => 'plus-sign'
+                ),
+                'options' => array(
+                    'label' => false,
+                    'widget_control_group' => false,
+                ),
+            ))
+        ;
+    }
+}
 ```
 
 ```twig
-{# foo.html.twig #}
+{# src/Acme/DemoBundle/Resources/views/foo.html.twig #}
+
 {% block _foo_bars_entry_widget %}
     <div class="row-fluid">
         <div class="span4">
@@ -238,27 +248,37 @@ Example of using usual collection:
 Example of using collection with table template:
 
 ```php
-// FooType.php
-->add('bars', 'collection', array(
-    'type' => new BarType(),
-    'allow_add' => true,
-    'allow_delete' => true,
-    'prototype' => true,
-    'by_reference' => false,
-    'collection_item_tag' => 'tr', // Note: 'tr', not 'div'
-    'widget_add_btn' => array(
-        'label' => 'Add bar',
-        'icon' => 'plus-sign'
-    ),
-    'options' => array(
-        'label' => false,
-        'widget_control_group' => false,
-    ),
-))
+// src/Acme/DemoBundle/Form/Type/FooType.php
+
+class FooType extends AbstractType
+{
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder
+            ->add('bars', 'collection', array(
+                'type' => new BarType(),
+                'allow_add' => true,
+                'allow_delete' => true,
+                'prototype' => true,
+                'by_reference' => false,
+                'collection_item_tag' => 'tr', // Note: 'tr', not 'div'
+                'widget_add_btn' => array(
+                    'label' => 'Add bar',
+                    'icon' => 'plus-sign'
+                ),
+                'options' => array(
+                    'label' => false,
+                    'widget_control_group' => false,
+                ),
+            ))
+        ;
+    }
+}
 ```
 
 ```twig
-{# foo.html.twig #}
+{# src/Acme/DemoBundle/Resources/views/foo.html.twig #}
+
 {% block _foo_bars_widget %}
     <table class="table table-striped table-bordered table-hover table-condensed">
         <thead>
@@ -537,7 +557,7 @@ Thirdly, you can change plugin options in JavaScript using `ite-before-apply.plu
 
 ```js
 $('selector').on('ite-before-apply.plugin', function(e, data, plugin) {
-  var $this = $(this);Array
+  var $this = $(this);
 
   data.options = $.extend(true, data.options, {
     // extend plugin options
