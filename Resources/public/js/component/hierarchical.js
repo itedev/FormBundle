@@ -187,7 +187,7 @@
     clearElementValue: function(element, $element) {
       var event = $.Event('ite-before-clear.hierarchical');
       $element.trigger(event);
-      if (false !== event.result) {
+      if (false === event.result) {
         return;
       }
 

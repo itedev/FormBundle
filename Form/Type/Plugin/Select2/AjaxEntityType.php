@@ -2,6 +2,7 @@
 
 namespace ITE\FormBundle\Form\Type\Plugin\Select2;
 
+use ITE\FormBundle\Form\DataTransformer\StringToArrayTransformer;
 use RuntimeException;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\View\ChoiceView;
@@ -71,15 +72,23 @@ class AjaxEntityType extends AbstractType
         ));
         $resolver->setAllowedTypes(array(
             'plugin_options' => array('array'),
-            'allow_create' => array('bool')
+            'allow_create' => array('bool'),
         ));
         $resolver->setOptional(array(
             'create_route',
         ));
         $resolver->setAllowedValues(array(
-            'multiple' => array(false),
+//            'multiple' => array(false),
             'expanded' => array(false),
         ));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+//        $builder->addViewTransformer(new StringToArrayTransformer());
     }
 
     /**
@@ -125,7 +134,8 @@ class AjaxEntityType extends AbstractType
             'options' => array_replace_recursive($this->options, $options['plugin_options'], array(
                 'ajax' => array(
                     'url' => $options['url'],
-                )
+                ),
+                'multiple' => $options['multiple'],
             ))
         );
     }
