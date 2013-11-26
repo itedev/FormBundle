@@ -78,9 +78,9 @@
         $element.data('hierarchicalJqxhr', jqxhr);
       } else {
         // has callback
-        var callback = element.getHierarchicalCallback();
-        if ($.isFunction(window[callback])) {
-          var value = window[callback].apply($element, [$element, data]);
+        var callback = eval('(function(){return ' + element.getHierarchicalCallback() + ';}())');
+        if ($.isFunction(callback)) {
+          var value = callback.apply($element, [$element, data]);
           SF.elements.setElementValue(element, $element, value);
         }
       }
