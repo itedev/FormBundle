@@ -1,0 +1,9 @@
+parameters:
+    ite_form.twig.editable_extension.class:                 ITE\FormBundle\Twig\Extension\EditableExtension
+
+services:
+    ite_form.twig.editable_extension:
+        class:                                              %ite_form.twig.editable_extension.class%
+        arguments: [ @doctrine.orm.entity_manager ]
+        tags:
+            - { name: twig.extension }
