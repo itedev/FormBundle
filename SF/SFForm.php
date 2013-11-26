@@ -38,7 +38,7 @@ final class SFForm
     const PLUGIN_FINEUPLOADER = 'fineuploader';
     const PLUGIN_MINICOLORS = 'minicolors';
     const PLUGIN_KNOB = 'knob';
-//    const PLUGIN_STAR_RATING = 'star_rating';
+    const PLUGIN_STARRATING = 'starrating';
 //    const PLUGIN_FORM = 'form';
 
     /**
@@ -54,7 +54,7 @@ final class SFForm
         self::PLUGIN_FINEUPLOADER,
         self::PLUGIN_MINICOLORS,
         self::PLUGIN_KNOB,
-//        self::PLUGIN_STAR_RATING,
+        self::PLUGIN_STARRATING,
 //        self::PLUGIN_FORM,
     );
 

@@ -101,6 +101,18 @@
     {{ ite_form_sf_add_plugin_element('#' ~ id, 'knob', element_data) }}
 {% endblock ite_knob_number_widget %}
 
+{% block ite_starrating_rating_widget %}
+    <div {{ block('widget_container_attributes') }}>
+        {% for child in form %}
+            {{ form_widget(child, {'attr': {
+            'class': attr.widget_class|default(''),
+            'title': child.vars.label|trans({}, translation_domain)
+            } }) }}
+        {% endfor %}
+    </div>
+    {{ ite_form_sf_add_plugin_element('#' ~ id ~ ' input[type="radio"]', 'starrating', element_data) }}
+{% endblock ite_starrating_rating_widget %}
+
 {% block form_start %}
     {% spaceless %}
         {{ parent() }}

@@ -518,6 +518,7 @@ There are list of supported plugins:
  * fineuploader
  * minicolors
  * knob
+ * starrating
  * form (WIP)
 
 You can change options for specific plugin field in several ways:
@@ -765,6 +766,16 @@ Provided field types:
 | Type            | Parent type | Required components |
 |-----------------|-------------|---------------------|
 | ite_knob_number | number      | none                |
+
+### Star Rating
+
+Homepage: http://www.fyneworks.com/jquery/star-rating/
+
+Provided field types:
+
+| Type                  | Parent type | Required components |
+|-----------------------|-------------|---------------------|
+| ite_starrating_rating | choice      | none                |
 
 FormBuilder
 -----------
