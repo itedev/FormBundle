@@ -4,6 +4,8 @@ parameters:
 
     ite_form.entity_converter.class:                        ITE\FormBundle\Service\Converter\EntityConverter
 
+    ite_form.widget_generator.class:                        ITE\FormBundle\Service\Widget\WidgetGenerator
+
     ite_form.form.ajax_entity_type.class:                   ITE\FormBundle\Form\Type\AjaxEntityType
 
 services:
@@ -20,6 +22,10 @@ services:
     ite_form.entity_converter:
         class:                                              %ite_form.entity_converter.class%
         arguments: [ @doctrine.orm.entity_manager, @request= ]
+
+    ite_form.widget_generator:
+        class:                                              %ite_form.widget_generator.class%
+        arguments: [ @form.factory ]
 
     ite_form.form.ajax_entity_type:
         class:                                              %ite_form.form.ajax_entity_type.class%

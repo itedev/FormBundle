@@ -45,14 +45,15 @@ class SFFormExtension extends SFExtension
      */
     public function modifyJavascripts(array &$inputs)
     {
-        $bundlePath = $this->container->get('kernel')->getBundle('ITEFormBundle')->getPath();
+        $newInputs = array();
 
         // add component js
+        $bundlePath = $this->container->get('kernel')->getBundle('ITEFormBundle')->getPath();
         foreach (SFForm::$components as $component) {
             $enabled = $this->container->getParameter(sprintf('ite_form.component.%s.enabled', $component));
             if ($enabled && file_exists(sprintf('%s/Resources/public/js/component/%s.js',
                       $bundlePath,  $component))) {
-                $inputs[] = sprintf('@ITEFormBundle/Resources/public/js/component/%s.js', $component);
+                $newInputs[] = sprintf('@ITEFormBundle/Resources/public/js/component/%s.js', $component);
             }
         }
 
@@ -60,8 +61,19 @@ class SFFormExtension extends SFExtension
         foreach (SFForm::$plugins as $plugin) {
             $enabled = $this->container->getParameter(sprintf('ite_form.plugin.%s.enabled', $plugin));
             if ($enabled) {
-                $inputs[] = sprintf('@ITEFormBundle/Resources/public/js/plugin/%s.js', $plugin);
+                $newInputs[] = sprintf('@ITEFormBundle/Resources/public/js/plugin/%s.js', $plugin);
             }
+        }
+
+        if (false !== $index = array_search('@ITEFormBundle/Resources/public/js/sf.form.js', $inputs)) {
+            array_splice(
+                $inputs,
+                $index + 1,
+                0,
+                $newInputs
+            );
+        } else {
+            $inputs = array_merge($inputs, $newInputs);
         }
     }
 

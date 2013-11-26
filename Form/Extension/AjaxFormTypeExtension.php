@@ -41,11 +41,9 @@ class AjaxFormTypeExtension extends AbstractTypeExtension
         ));
         $resolver->setDefaults(array(
             'plugin_options' => array(),
-            'extras' => array(),
         ));
         $resolver->setAllowedTypes(array(
             'plugin_options' => array('array'),
-            'extras' => array('array'),
         ));
     }
 

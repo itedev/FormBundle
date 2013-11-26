@@ -18,6 +18,13 @@
       }
 
       return matches[1];
+    },
+
+    getFullName: function(element, $element) {
+      if (element.hasChildrenSelector()) {
+        $element = $element.find(element.getChildrenSelector());
+      }
+      return $element.attr('name');
     }
   });
 
@@ -68,7 +75,10 @@
         jqxhr = $.ajax({
           type: 'post',
           url: element.getHierarchicalUrl(),
-          data: data,
+          data: {
+            propertyPath: SF.util.getFullName(element, $element),
+            data: data
+          },
           dataType: 'html',
           success: function(value) {
             // set element value

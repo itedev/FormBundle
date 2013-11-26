@@ -399,7 +399,7 @@ class FooType extends AbstractType
                 // ...
                 'hierarchical' => array(
                     'parents' => array('baz'), // array of parent field names inside same form
-                    'callback' => 'getQuxValues', // or you can set JavaScript global function for it
+                    'callback' => 'myApp.getQuxValues', // or you can set JavaScript callback for it
                 ),
             ))
         ;
@@ -425,18 +425,43 @@ class FooController extends Controller
     protected $entityConverter;
 
     /**
+     * Method for rendering select options
+     *
      * @Route("/baz", name="acme_demo_foo_baz")
-     * @View("ITEFormBundle:Form:Component/hierarchical/options.html.twig")
+     * @View("ITEFormBundle:Form/Component/dynamic_choice:choices.html.twig")
      */
     public function bazAction(Request $request)
     {
-        $barId = $request->request->get('bar');
+        $data = $request->request->get('data');
+        $barId = $data['bar'];
 
         $bazes = $this->em->getRepository('AcmeDemoBundle:Baz')->findByBar($barId);
-        $property = ...;
+        $property = 'qux';
 
         return array(
             'options' => $this->entityConverter->convertEntitiesToOptions($bazes, $property)
+        );
+    }
+
+    /**
+     * Method for rendering checkboxes or radios
+     *
+     * @Route("/expanded-baz", name="acme_demo_foo_expanded_baz")
+     * @View("ITEFormBundle:Form/Component/dynamic_choice:expanded_choices.html.twig")
+     */
+    public function expandedBazAction(Request $request)
+    {
+        $data = $request->request->get('data');
+        $propertyPath = $request->request->get('propertyPath'); // property_path (or full_name) of the field is needed for rendering expanded choices
+
+        $barId = $data['bar'];
+
+        $bazes = $this->em->getRepository('AcmeDemoBundle:Baz')->findByBar($barId);
+        $property = 'qux';
+        $choices = $this->entityConverter->convertEntitiesToChoices($bazes, $property);
+
+        return array(
+            'form' => $this->get('ite_form.widget_generator')->createChoiceView($propertyPath, $choices);
         );
     }
 }

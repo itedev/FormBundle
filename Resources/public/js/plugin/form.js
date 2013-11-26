@@ -1,53 +1,61 @@
 (function($) {
-  SF.elements.fn.isFormPluginApplied = function(element) {
-    return SF.util.hasEvent(element, 'submit.form-plugin');
-  };
+  SF.fn.plugins['form'] = {
+    isApplied: function(element) {
+      return SF.util.hasEvent(element, 'submit.form-plugin');
+    },
 
-  SF.elements.fn.applyFormPlugin = function(element, elementData) {
-    var extras = elementData.extras;
-    var options = elementData.options;
+    apply: function(element, elementData) {
+      var extras = elementData.extras;
+      var options = elementData.options;
 
-    var successCallback = options.hasOwnProperty('success') ? options['success'] : null;
+      if (extras.hasOwnProperty('')) {
 
-    options = $.extend(true, options, {
-      success: function(responseText, statusText, xhr, form) {
-        if (SF.parameters.has('flashes_selector')) {
-          SF.clearFlashes(SF.parameters.get('flashes_selector'));
-        }
-        clearFormErrors(form);
+      } else {
 
-        var formErrorsHeader = xhr.getResponseHeader('X-SF-FormErrors');
-        if (formErrorsHeader) {
-          var formErrors = $.parseJSON(formErrorsHeader);
+      }
+
+      var successCallback = options.hasOwnProperty('success') ? options['success'] : null;
+
+      options = $.extend(true, options, {
+        success: function(responseText, statusText, xhr, form) {
+          if (SF.parameters.has('flashes_selector')) {
+            SF.ui.clearFlashes(SF.parameters.get('flashes_selector'));
+          }
+          SF.plugins['form'].clearFormErrors(form);
+
+          var formErrorsHeader = xhr.getResponseHeader('X-SF-FormErrors');
+          if (formErrorsHeader) {
+            var formErrors = $.parseJSON(formErrorsHeader);
 
 //          var globalErrors = formErrors['errors'];
 
-          _.each(formErrors['children'], function(childData, childName) {
-            var field = form.find('[name="' + childName + '"]');
+            $.each(formErrors['children'], function(childName, childData) {
+              var field = form.find('[name="' + childName + '"]');
 
-            var controlGroup = field.closest('.control-group');
-            controlGroup.addClass('error');
+              var controlGroup = field.closest('.control-group');
+              controlGroup.addClass('error');
 
-            var errorTemplate = '<span class="help-<%= error_type %> sf-error"><% _.each(errors, function(error) { %><%= error %><br /><% }); %></span>';
-            field.after(_.template(errorTemplate, childData));
-          });
+              var errorTemplate = '<span class="help-<%= error_type %> sf-error"><% _.each(errors, function(error) { %><%= error %><br /><% }); %></span>';
+              field.after(_.template(errorTemplate, childData));
+            });
+          }
+
+          // call success callback - if set
+          if (successCallback) {
+            successCallback.call(element, responseText, statusText, xhr, form);
+          }
         }
+      });
 
-        // call success callback - if set
-        if (successCallback) {
-          successCallback.call(element, responseText, statusText, xhr, form);
-        }
-      }
-    });
+      element.ajaxForm(options);
+    },
 
-    element.ajaxForm(options);
+    clearFormErrors: function(form) {
+      form.find('.control-group.error').each(function() {
+        $(this).removeClass('error');
+      });
+
+      form.find('.sf-error').remove();
+    }
   };
-
-  function clearFormErrors(form) {
-    form.find('.control-group.error').each(function() {
-      $(this).removeClass('error');
-    });
-
-    form.find('.sf-error').remove();
-  }
 })(jQuery);

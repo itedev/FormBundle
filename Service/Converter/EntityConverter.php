@@ -77,6 +77,37 @@ class EntityConverter implements EntityConverterInterface
     }
 
     /**
+     * @param $entity
+     * @param null $labelPath
+     * @return array
+     */
+    public function convertEntityToChoice($entity, $labelPath = null)
+    {
+        $option = $this->convertEntityToOption($entity, $labelPath);
+
+        return array(
+            $option['value'] => $option['label']
+        );
+    }
+
+    /**
+     * @param $entities
+     * @param null $labelPath
+     * @return array
+     */
+    public function convertEntitiesToChoices($entities, $labelPath = null)
+    {
+        $options = $this->convertEntitiesToOptions($entities, $labelPath);
+
+        $choices = array();
+        foreach ($options as $option) {
+            $choices[$option['value']] = $option['label'];
+        }
+
+        return $choices;
+    }
+
+    /**
      * @param null $labelPath
      * @return string|null
      */
