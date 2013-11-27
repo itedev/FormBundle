@@ -15,6 +15,7 @@ final class SFForm
     const COMPONENT_DYNAMIC_CHOICE = 'dynamic_choice';
     const COMPONENT_AJAX_FILE_UPLOAD = 'ajax_file_upload';
     const COMPONENT_HIERARCHICAL = 'hierarchical';
+    const COMPONENT_EDITABLE = 'editable';
 
     /**
      * @var array
@@ -24,6 +25,7 @@ final class SFForm
         self::COMPONENT_DYNAMIC_CHOICE,
         self::COMPONENT_AJAX_FILE_UPLOAD,
         self::COMPONENT_HIERARCHICAL,
+        self::COMPONENT_EDITABLE,
     );
 
     /**
@@ -39,6 +41,7 @@ final class SFForm
     const PLUGIN_MINICOLORS = 'minicolors';
     const PLUGIN_KNOB = 'knob';
     const PLUGIN_STARRATING = 'starrating';
+    const PLUGIN_X_EDITABLE = 'x_editable';
 //    const PLUGIN_FORM = 'form';
 
     /**
@@ -55,6 +58,7 @@ final class SFForm
         self::PLUGIN_MINICOLORS,
         self::PLUGIN_KNOB,
         self::PLUGIN_STARRATING,
+        self::PLUGIN_X_EDITABLE,
 //        self::PLUGIN_FORM,
     );
 

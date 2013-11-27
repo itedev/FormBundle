@@ -32,6 +32,7 @@ class SFExtension extends Twig_Extension
     {
         return array(
             new \Twig_SimpleFunction('ite_form_sf_add_plugin_element', array($this, 'sfAddPluginElement')),
+            new \Twig_SimpleFunction('ite_uniqid', array($this, 'uniqId')),
         );
     }
 
@@ -43,6 +44,15 @@ class SFExtension extends Twig_Extension
     public function sfAddPluginElement($selector, $plugin, $pluginData)
     {
         $this->sfForm->getElementBag()->addPluginElement($selector, $plugin, $pluginData);
+    }
+
+    /**
+     * @param string $prefix
+     * @return string
+     */
+    public function uniqId($prefix = '')
+    {
+        return uniqid($prefix);
     }
 
     /**

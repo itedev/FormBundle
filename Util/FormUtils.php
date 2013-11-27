@@ -4,6 +4,7 @@ namespace ITE\FormBundle\Util;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\Form\ResolvedFormTypeInterface;
 
 /**
  * Class FormUtils
@@ -57,4 +58,23 @@ class FormUtils
 
         return $selector;
     }
+
+    /**
+     * @param ResolvedFormTypeInterface $resolvedFormType
+     * @param $type
+     * @return bool
+     */
+    public static function isResolvedFormTypeChildOf(ResolvedFormTypeInterface $resolvedFormType, $type)
+    {
+        $root = $resolvedFormType;
+        while (null !== $root->getParent()) {
+            if ($type === $root->getName()) {
+                return true;
+            }
+            $root = $root->getParent();
+        }
+
+        return false;
+    }
+
 } 

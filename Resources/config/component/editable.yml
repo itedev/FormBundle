@@ -1,9 +1,7 @@
 parameters:
-    ite_form.twig.editable_extension.class:                 ITE\FormBundle\Twig\Extension\EditableExtension
+    ite_form.editable_manager.class:                        ITE\FormBundle\Service\Editable\EditableManager
 
 services:
-    ite_form.twig.editable_extension:
-        class:                                              %ite_form.twig.editable_extension.class%
-        arguments: [ @doctrine.orm.entity_manager ]
-        tags:
-            - { name: twig.extension }
+    ite_form.editable_manager:
+        class:                                              %ite_form.editable_manager.class%
+        arguments: [ @annotation_reader, @doctrine.orm.entity_manager, @form.factory ]
