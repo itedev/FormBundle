@@ -5,7 +5,7 @@ parameters:
 services:
     ite_form.x_editable.fieldmapper:
         class:                                              %ite_form.x_editable.fieldmapper.class%
-        arguments: [ @ite_form.editable_manager, @router ]
+        arguments: [ @ite_form.editable_manager, @router, @service_container ]
 
     ite_form.twig.x_editable_extension:
         class:                                              %ite_form.twig.x_editable_extension.class%

@@ -50,20 +50,20 @@ class XEditableExtension extends Twig_Extension
      * @param Twig_Environment $env
      * @param $entity
      * @param $field
-     * @param null $value
+     * @param null $text
      * @param array $options
      * @param array $attr
      * @return string
      */
-    public function xEditable(Twig_Environment $env, $entity, $field, $value = null, $options = array(), $attr = array())
+    public function xEditable(Twig_Environment $env, $entity, $field, $text = null, $options = array(), $attr = array())
     {
-        $parameters = $this->fieldMapper->resolveParameters($entity, $field, array_replace_recursive(
+        if (isset($text) && is_object($text)) {
+            $text = (string) $text;
+        }
+
+        $parameters = $this->fieldMapper->resolveParameters($entity, $field, $text, array_replace_recursive(
             $this->options, $options
         ));
-
-        if (isset($value)) {
-            $parameters['value'] = $value;
-        }
 
         if (!isset($attr['id'])) {
             $attr['id'] = uniqid('x_editable_');

@@ -3,7 +3,9 @@
 namespace ITE\FormBundle\Service\Editable\Plugin\XEditable;
 
 use ITE\FormBundle\Service\Editable\EditableManagerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceListInterface;
+use Symfony\Component\Form\Extension\Core\View\ChoiceView;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Routing\Router;
@@ -26,6 +28,11 @@ class FieldMapper
     protected $router;
 
     /**
+     * @var ContainerInterface $container
+     */
+    protected $container;
+
+    /**
      * @var array $guessOrder
      */
     protected $guessOrder = array(
@@ -40,20 +47,23 @@ class FieldMapper
     /**
      * @param EditableManagerInterface $editableManager
      * @param Router $router
+     * @param ContainerInterface $container
      */
-    public function __construct(EditableManagerInterface $editableManager, Router $router)
+    public function __construct(EditableManagerInterface $editableManager, Router $router, ContainerInterface $container)
     {
         $this->editableManager = $editableManager;
         $this->router = $router;
+        $this->container = $container;
     }
 
     /**
      * @param $entity
      * @param $field
+     * @param null $text
      * @param array $options
      * @return array
      */
-    public function resolveParameters($entity, $field, $options = array())
+    public function resolveParameters($entity, $field, &$text = null, $options = array())
     {
         $class = get_class($entity);
 
@@ -63,9 +73,8 @@ class FieldMapper
         $childForm = $form->get($field);
         $childView = $childForm->createView();
 
-        $builtOptions = $this->buildOptions($childView, $childForm);
-
-        $options = array_replace_recursive($builtOptions, $options, array(
+        $elementData = $this->buildElementData($childView, $childForm, $text);
+        $elementData['options'] = array_replace_recursive($elementData['options'], $options, array(
             'pk' => $classMetadata->getIdentifierValues($entity),
             'params' => array(
                 'class' => $class,
@@ -73,25 +82,27 @@ class FieldMapper
         ));
 
         return array(
-            'value' => $options['value'],
+            'text' => $text,
             'element_data' => array(
-                'extras' => (object) array(),
-                'options' => $options,
-            ),
+                'extras' => (object) $elementData['extras'],
+                'options' => $elementData['options']
+            )
         );
     }
 
     /**
      * @param FormView $view
      * @param FormInterface $form
-     * @return string
+     * @param null $text
+     * @return array
      */
-    public function buildOptions(FormView $view, FormInterface $form)
+    public function buildElementData(FormView $view, FormInterface $form, &$text = null)
     {
         $config = $form->getConfig();
-        $type = $config->getType();
+        $resolvedFormType = $config->getType();
         $formOptions = $config->getOptions();
 
+        $extras = array();
         $options = array(
             'type' => $this->guessType($view, $form),
             'url' => $this->router->generate('ite_form_plugin_x_editable_edit'),
@@ -104,40 +115,60 @@ class FieldMapper
         switch ($options['type']) {
             case 'textarea':
                 $options['value'] = $view->vars['value'];
+                if (!isset($text)) {
+                    $text = $view->vars['value'];
+                }
                 break;
             case 'email':
             case 'password':
             case 'url':
                 $options['value'] = $view->vars['value'];
+                if (!isset($text)) {
+                    $text = $view->vars['value'];
+                }
                 break;
             case 'date':
                 break;
             case 'datetime':
+                $options['value'] = $view->vars['value'];
+                if (!isset($text)) {
+                    $text = $view->vars['value'];
+                }
                 break;
             case 'checklist':
-                $options['source'] = array_map(function($choice) {
-                    return array(
-                        'value' => $choice->value,
-                        'text' => $choice->text
+                if (FormUtils::isResolvedFormTypeChildOf($resolvedFormType, 'checkbox')) {
+                    $options['source'] = array(
+                        1 => $options['title']
                     );
-                }, $view->vars['choices']);
-                $options['value'] = $view->vars['value'];
+                    $options['value'] = !empty($view->vars['checked']) ? array(1) : array();
+                    $extras['boolean'] = true;
+                } else {
+                    $options = array_replace($options, $this->processChoices($view, $text));
+                }
                 break;
             case 'select':
-                $options['source'] = array_map(function($choice) {
-                    return array(
-                        'value' => $choice->value,
-                        'text' => $choice->label
-                    );
-                }, $view->vars['choices']);
-                $options['value'] = $view->vars['value'];
+                $options = array_replace($options, $this->processChoices($view, $text));
+                break;
+            case 'select2':
+                $options = array_replace($options, $this->processChoices($view, $text));
+                $options['select2'] = array_replace_recursive(
+                    $this->container->getParameter('ite_form.plugin.select2.options'),
+                    $formOptions['plugin_options']
+                );
+                $extras['plugin'] = 'select2';
                 break;
             case 'text':
                 $options['value'] = $view->vars['value'];
+                if (!isset($text)) {
+                    $text = $view->vars['value'];
+                }
                 break;
         }
 
-        return $options;
+        return array(
+            'extras' => $extras,
+            'options' => $options,
+        );
     }
 
     /**
@@ -150,6 +181,11 @@ class FieldMapper
         $config = $form->getConfig();
         $resolvedFormType = $config->getType();
         $formOptions = $config->getOptions();
+
+        $typeName = $resolvedFormType->getName();
+        if (preg_match('/^ite_select2_/', $typeName)) {
+            return 'select2';
+        }
 
         $type = null;
         foreach ($this->guessOrder as $fieldType) {
@@ -169,5 +205,53 @@ class FieldMapper
         }
 
         return 'text';
+    }
+
+    /**
+     * @param FormView $view
+     * @param null $text
+     * @return array
+     */
+    protected function processChoices(FormView $view, &$text = null)
+    {
+        $isTextSet = isset($text);
+        if (!$isTextSet) {
+            $text = array();
+        }
+
+        $source = array();
+        foreach ($view->vars['choices'] as $choice) {
+            /** @var $choice ChoiceView */
+            $source[] = array(
+                'value' => $choice->value,
+                'text' => $choice->label
+            );
+
+            if ($isTextSet) {
+                continue;
+            }
+            if (is_array($view->vars['value'])) {
+                if (false !== array_search($choice->value, $view->vars['value'], true)) {
+                    $text[] = $choice->label;
+                }
+            } else {
+                if ($choice->value === $view->vars['value']) {
+                    $text[] = $choice->label;
+                }
+            }
+        }
+
+        if (!$isTextSet) {
+            $text = implode('<br />', $text);
+        }
+
+        $value = is_array($view->vars['value'])
+            ? implode(',', $view->vars['value'])
+            : $view->vars['value'];
+
+        return array(
+            'source' => $source,
+            'value' => $value,
+        );
     }
 } 

@@ -1,2 +1,8 @@
-<a {{ block('widget_container_attributes') }} href="#">{{ value }}</a>
-{{ ite_form_sf_add_plugin_element('#' ~ id, 'x_editable', element_data) }}
+<a {{ _self.widget_attributes(attr) }} href="#">{{ text|raw }}</a>
+{{ ite_form_sf_add_plugin_element('#' ~ attr.id, 'x_editable', element_data) }}
+
+{% macro widget_attributes(attr) %}
+    {% spaceless %}
+        {% for attrname, attrvalue in attr %}{{ attrname }}="{{ attrvalue }}" {% endfor %}
+    {% endspaceless %}
+{% endmacro %}
