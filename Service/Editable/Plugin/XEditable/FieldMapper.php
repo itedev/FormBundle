@@ -2,13 +2,12 @@
 
 namespace ITE\FormBundle\Service\Editable\Plugin\XEditable;
 
-use Doctrine\Common\Inflector\Inflector;
 use ITE\FormBundle\Service\Editable\EditableManagerInterface;
-use ITE\FormBundle\Util\FormUtils;
 use Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceListInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Routing\Router;
+use ITE\FormBundle\Util\FormUtils;
 
 /**
  * Class FieldMapper
@@ -60,16 +59,13 @@ class FieldMapper
 
         $classMetadata = $this->editableManager->getClassMetadata($class);
 
-        $form = $this->editableManager->getForm($entity, $field);
+        $form = $this->editableManager->createForm($entity, $field);
         $childForm = $form->get($field);
-
         $childView = $childForm->createView();
 
         $builtOptions = $this->buildOptions($childView, $childForm);
 
-        $options = array_replace_recursive(array(
-            'url' => $this->router->generate('ite_form_plugin_x_editable_edit'),
-        ), $builtOptions, $options, array(
+        $options = array_replace_recursive($builtOptions, $options, array(
             'pk' => $classMetadata->getIdentifierValues($entity),
             'params' => array(
                 'class' => $class,
@@ -96,10 +92,14 @@ class FieldMapper
         $type = $config->getType();
         $formOptions = $config->getOptions();
 
-        $options = array();
-        $options['type'] = $this->guessType($view, $form);
-        $options['title'] = isset($formOptions['label']) ? $formOptions['label'] : $this->humanize($view->vars['name']);
-        $options['name'] = $view->vars['name'];
+        $options = array(
+            'type' => $this->guessType($view, $form),
+            'url' => $this->router->generate('ite_form_plugin_x_editable_edit'),
+            'title' => isset($formOptions['label'])
+                    ? $formOptions['label']
+                    : FormUtils::humanize($view->vars['name']),
+            'name' => $view->vars['name'],
+        );
 
         switch ($options['type']) {
             case 'textarea':
@@ -169,13 +169,5 @@ class FieldMapper
         }
 
         return 'text';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function humanize($text)
-    {
-        return ucfirst(trim(strtolower(preg_replace(array('/([A-Z])/', '/[_\s]+/'), array('_$1', ' '), $text))));
     }
 } 

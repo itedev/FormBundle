@@ -77,4 +77,32 @@ class FormUtils
         return false;
     }
 
+    /**
+     * @param FormInterface $form
+     * @return string
+     */
+    public static function getErrorsAsString(FormInterface $form)
+    {
+        $errors = '';
+        foreach ($form->getErrors() as $error) {
+            $errors .= $error->getMessage() . "\n";
+        }
+
+        foreach ($form as $child) {
+            if ($child instanceof FormInterface && $error = self::getErrorsAsString($child)) {
+                $errors .= $error;
+            }
+        }
+
+        return $errors;
+    }
+
+    /**
+     * @param $text
+     * @return string
+     */
+    public static function humanize($text)
+    {
+        return ucfirst(trim(strtolower(preg_replace(array('/([A-Z])/', '/[_\s]+/'), array('_$1', ' '), $text))));
+    }
 } 

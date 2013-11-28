@@ -15,16 +15,7 @@ interface EditableManagerInterface
      * @param $field
      * @return Form
      */
-    public function getForm($entity, $field);
-
-    /**
-     * @param $entity
-     * @param $field
-     * @param null $type
-     * @param array $options
-     * @return Form
-     */
-    public function createForm($entity, $field, $type = null, $options = array());
+    public function createForm($entity, $field);
 
     /**
      * @param $class

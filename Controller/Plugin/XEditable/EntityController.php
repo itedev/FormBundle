@@ -2,6 +2,7 @@
 
 namespace ITE\FormBundle\Controller\Plugin\XEditable;
 
+use ITE\FormBundle\Util\FormUtils;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -33,10 +34,7 @@ class EntityController extends Controller
         $field = $request->request->get('name');
         $value = $request->request->get('value');
 
-        $form = $this->get('ite_form.editable_manager')->getForm($entity, $field);
-        $form->submit(array(
-            $field => $value
-        ));
+        $form = $this->get('ite_form.editable_manager')->createAndSubmitForm($entity, $field, $value);
         if ($form->isValid()) {
             $em->persist($entity);
             $em->flush();
@@ -44,8 +42,6 @@ class EntityController extends Controller
             return new Response();
         }
 
-        $errors = $form->getErrorsAsString();
-
-        return new Response($errors, empty($errors) ? 200 : 400);
+        return new Response(FormUtils::getErrorsAsString($form), 400);
     }
 }

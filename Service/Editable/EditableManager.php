@@ -59,7 +59,7 @@ class EditableManager implements EditableManagerInterface
      * @param $field
      * @return Form
      */
-    public function getForm($entity, $field)
+    public function createForm($entity, $field)
     {
         /** @var $classMetadata ClassMetadataInfo */
         $classMetadata = $this->getClassMetadata(get_class($entity));
@@ -68,10 +68,26 @@ class EditableManager implements EditableManagerInterface
         $editableAnnotation = $this->reader->getPropertyAnnotation($property, self::EDITABLE_ANNOTATION);
         /** @var $editableAnnotation Editable */
         if (!$editableAnnotation) {
-            return $this->createForm($entity, $field);
+            return $this->getForm($entity, $field);
         }
 
-        return $this->createForm($entity, $field, $editableAnnotation->getType(), $editableAnnotation->getOptions());
+        return $this->getForm($entity, $field, $editableAnnotation->getType(), $editableAnnotation->getOptions());
+    }
+
+    /**
+     * @param $entity
+     * @param $field
+     * @param $value
+     * @return Form
+     */
+    public function createAndSubmitForm($entity, $field, $value)
+    {
+        $form = $this->createForm($entity, $field);
+        $form->submit(array(
+            $field => $value
+        ));
+
+        return $form;
     }
 
     /**
@@ -81,7 +97,7 @@ class EditableManager implements EditableManagerInterface
      * @param array $options
      * @return Form
      */
-    public function createForm($entity, $field, $type = null, $options = array())
+    protected function getForm($entity, $field, $type = null, $options = array())
     {
         return $this->formFactory->createBuilder('form', $entity, array(
             'data_class' => get_class($entity),

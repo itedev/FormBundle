@@ -14,15 +14,22 @@ use Twig_Template;
 class XEditableExtension extends Twig_Extension
 {
     /**
+     * @var array $options
+     */
+    protected $options;
+
+    /**
      * @var FieldMapper $fieldMapper
      */
     protected $fieldMapper;
 
     /**
+     * @param $options
      * @param FieldMapper $fieldMapper
      */
-    public function __construct(FieldMapper $fieldMapper)
+    public function __construct($options, FieldMapper $fieldMapper)
     {
+        $this->options = $options;
         $this->fieldMapper = $fieldMapper;
     }
 
@@ -32,7 +39,10 @@ class XEditableExtension extends Twig_Extension
     public function getFilters()
     {
         return array(
-            new \Twig_SimpleFilter('ite_x_editable', array($this, 'xEditable'), array('is_safe' => array('html'), 'needs_environment' => true)),
+            new \Twig_SimpleFilter('ite_x_editable', array($this, 'xEditable'), array(
+                'is_safe' => array('html'),
+                'needs_environment' => true
+            )),
         );
     }
 
@@ -40,12 +50,25 @@ class XEditableExtension extends Twig_Extension
      * @param Twig_Environment $env
      * @param $entity
      * @param $field
-     * @param $options
+     * @param null $value
+     * @param array $options
+     * @param array $attr
      * @return string
      */
-    public function xEditable(Twig_Environment $env, $entity, $field, $options = array())
+    public function xEditable(Twig_Environment $env, $entity, $field, $value = null, $options = array(), $attr = array())
     {
-        $parameters = $this->fieldMapper->resolveParameters($entity, $field, $options);
+        $parameters = $this->fieldMapper->resolveParameters($entity, $field, array_replace_recursive(
+            $this->options, $options
+        ));
+
+        if (isset($value)) {
+            $parameters['value'] = $value;
+        }
+
+        if (!isset($attr['id'])) {
+            $attr['id'] = uniqid('x_editable_');
+        }
+        $parameters['attr'] = $attr;
 
         return $env->render('ITEFormBundle:Form/Plugin/x_editable:field.html.twig', $parameters);
     }

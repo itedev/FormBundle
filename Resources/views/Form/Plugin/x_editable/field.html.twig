@@ -1,3 +1,2 @@
-{% set id = ite_uniqid('xeditable_') %}
-<a id="{{ id }}" href="#">{{ value }}</a>
+<a {{ block('widget_container_attributes') }} href="#">{{ value }}</a>
 {{ ite_form_sf_add_plugin_element('#' ~ id, 'x_editable', element_data) }}
