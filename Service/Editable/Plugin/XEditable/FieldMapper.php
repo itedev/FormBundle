@@ -18,14 +18,9 @@ use ITE\FormBundle\Util\FormUtils;
 class FieldMapper
 {
     /**
-     * @var EditableManagerInterface $editableManager
+     * @var array $options
      */
-    protected $editableManager;
-
-    /**
-     * @var Router $router
-     */
-    protected $router;
+    protected $options;
 
     /**
      * @var ContainerInterface $container
@@ -33,26 +28,12 @@ class FieldMapper
     protected $container;
 
     /**
-     * @var array $guessOrder
-     */
-    protected $guessOrder = array(
-        'textarea',
-        'email',
-        'password',
-        'url',
-        'date',
-        'datetime',
-    );
-
-    /**
-     * @param EditableManagerInterface $editableManager
-     * @param Router $router
+     * @param $options
      * @param ContainerInterface $container
      */
-    public function __construct(EditableManagerInterface $editableManager, Router $router, ContainerInterface $container)
+    public function __construct($options, ContainerInterface $container)
     {
-        $this->editableManager = $editableManager;
-        $this->router = $router;
+        $this->options = $options;
         $this->container = $container;
     }
 
@@ -67,14 +48,17 @@ class FieldMapper
     {
         $class = get_class($entity);
 
-        $classMetadata = $this->editableManager->getClassMetadata($class);
+        $editableManager = $this->container->get('ite_form.editable_manager');
+        $classMetadata = $editableManager->getClassMetadata($class);
 
-        $form = $this->editableManager->createForm($entity, $field);
+        $form = $editableManager->createForm($entity, $field);
         $childForm = $form->get($field);
         $childView = $childForm->createView();
 
-        $elementData = $this->buildElementData($childView, $childForm, $text);
-        $elementData['options'] = array_replace_recursive($elementData['options'], $options, array(
+        $elementData = $this->buildElementData($childView, $childForm, $text, array_replace_recursive(
+            $this->options, $options
+        ));
+        $elementData['options'] = array_replace_recursive($elementData['options'], array(
             'pk' => $classMetadata->getIdentifierValues($entity),
             'params' => array(
                 'class' => $class,
@@ -94,71 +78,119 @@ class FieldMapper
      * @param FormView $view
      * @param FormInterface $form
      * @param null $text
+     * @param array $options
      * @return array
      */
-    public function buildElementData(FormView $view, FormInterface $form, &$text = null)
+    public function buildElementData(FormView $view, FormInterface $form, &$text = null, $options = array())
     {
-        $config = $form->getConfig();
-        $resolvedFormType = $config->getType();
-        $formOptions = $config->getOptions();
+        $formOptions = $form->getConfig()->getOptions();
+
+//        $xEditableResolvedType = isset($options['type']) ? $options['type'] : $this->guessType($view, $form);
+        $xEditableResolvedType = $this->guessType($view, $form);
 
         $extras = array();
-        $options = array(
-            'type' => $this->guessType($view, $form),
-            'url' => $this->router->generate('ite_form_plugin_x_editable_edit'),
+        $builtOptions = array(
+            'type' => $xEditableResolvedType->getXEditableType(),
+            'url' => $this->container->get('router')->generate('ite_form_plugin_x_editable_edit'),
             'title' => isset($formOptions['label'])
                     ? $formOptions['label']
                     : FormUtils::humanize($view->vars['name']),
             'name' => $view->vars['name'],
         );
 
-        switch ($options['type']) {
+        switch ($xEditableResolvedType->getXEditableType()) {
+            case 'text':
             case 'textarea':
-                $options['value'] = $view->vars['value'];
-                if (!isset($text)) {
-                    $text = $view->vars['value'];
-                }
-                break;
             case 'email':
             case 'password':
             case 'url':
-                $options['value'] = $view->vars['value'];
+                $builtOptions['value'] = $view->vars['value'];
                 if (!isset($text)) {
                     $text = $view->vars['value'];
                 }
                 break;
-            case 'date':
-                break;
-            case 'datetime':
-                $options['value'] = $view->vars['value'];
-                if (!isset($text)) {
-                    $text = $view->vars['value'];
+            case 'combodate':
+                switch ($xEditableResolvedType->getSfBaseType()) {
+                    case 'datetime':
+                        $withSeconds = $formOptions['with_seconds'];
+
+                        $builtOptions = array_replace($builtOptions, $this->processDate(
+                            $view->children['date'], $form->get('date')
+                        ));
+
+                        $builtOptions['format'] .= ',H,m' . ($withSeconds ? ',s' : '');
+                        $builtOptions['template'] .= ' HH:mm' . ($withSeconds ? ':ss' : '');
+                        $builtOptions['viewformat'] = 'YYYY-MM-DD HH:mm' . ($withSeconds ? ':ss' : '');
+
+                        $builtOptions['value'] = implode('-', $view->vars['value']['date'])
+                            . ' ' . implode(':', $view->vars['value']['time']);
+
+                        if (!isset($text)) {
+                            $text = $builtOptions['value'];
+                        }
+                        
+                        $extras['view_transformer'] = 'datetime';
+                        break;
+                    case 'date':
+                    case 'birthday':
+                        $builtOptions = array_replace($builtOptions, $this->processDate($view, $form));
+                        $builtOptions['viewformat'] = 'YYYY-MM-DD';
+
+                        $builtOptions['value'] = implode('-', $view->vars['value']);
+                        if (!isset($text)) {
+                            $text = $builtOptions['value'];
+                        }
+
+                        $extras['view_transformer'] = 'date';
+                        break;
+                    case 'time':
+                        $withSeconds = $formOptions['with_seconds'];
+
+                        $builtOptions['format'] = 'H,m' . ($withSeconds ? ',s' : '');
+                        $builtOptions['template'] = 'HH:mm' . ($withSeconds ? ':ss' : '');
+                        $builtOptions['viewformat'] = 'HH:mm' . ($withSeconds ? ':ss' : '');
+
+                        $builtOptions['value'] = implode(':', $view->vars['value']);
+                        if (!isset($text)) {
+                            $text = $builtOptions['value'];
+                        }
+
+                        $extras['view_transformer'] = 'time';
+                        break;
                 }
                 break;
             case 'checklist':
-                if (FormUtils::isResolvedFormTypeChildOf($resolvedFormType, 'checkbox')) {
-                    $options['source'] = array(
+                if ('checkbox' === $xEditableResolvedType->getSfBaseType()) {
+                    $builtOptions['source'] = array(
                         1 => $options['title']
                     );
-                    $options['value'] = !empty($view->vars['checked']) ? array(1) : array();
-                    $extras['boolean'] = true;
+                    $builtOptions['value'] = !empty($view->vars['checked']) ? array(1) : array();
+
+                    $extras['view_transformer'] = 'boolean';
                 } else {
-                    $options = array_replace($options, $this->processChoices($view, $text));
+                    $builtOptions = array_replace($builtOptions, $this->processChoices($view, $text));
                 }
                 break;
             case 'select':
-                $options = array_replace($options, $this->processChoices($view, $text));
+                $builtOptions = array_replace($builtOptions, $this->processChoices($view, $text));
                 break;
             case 'select2':
-                $options = array_replace($options, $this->processChoices($view, $text));
-                $options['select2'] = array_replace_recursive(
+                $builtOptions = array_replace($builtOptions, $this->processChoices($view, $text));
+                $builtOptions['select2'] = array_replace_recursive(
                     $this->container->getParameter('ite_form.plugin.select2.options'),
-                    $formOptions['plugin_options']
+                    (array) $view->vars['element_data']['options']
                 );
                 $extras['plugin'] = 'select2';
                 break;
-            case 'text':
-                $options['value'] = $view->vars['value'];
+            case 'datetime':
+                $builtOptions['datetimepicker'] = array_replace_recursive(
+                    $this->container->getParameter('ite_form.plugin.bootstrap_datetimepicker.options'),
+                    (array) $view->vars['element_data']['options']
+                );
+                $builtOptions['format'] = $builtOptions['datetimepicker']['format'];
+                $builtOptions['viewformat'] = $builtOptions['datetimepicker']['format'];
+                $builtOptions['value'] = $view->vars['value'];
+
                 if (!isset($text)) {
                     $text = $view->vars['value'];
                 }
@@ -167,44 +199,58 @@ class FieldMapper
 
         return array(
             'extras' => $extras,
-            'options' => $options,
+            'options' => array_replace_recursive($builtOptions, $options)
         );
     }
 
     /**
      * @param FormView $view
      * @param FormInterface $form
-     * @return string
+     * @return XEditableResolvedType
      */
     public function guessType(FormView $view, FormInterface $form)
     {
         $config = $form->getConfig();
         $resolvedFormType = $config->getType();
         $formOptions = $config->getOptions();
-
         $typeName = $resolvedFormType->getName();
+
+        // firstly, try to guess plugin type
         if (preg_match('/^ite_select2_/', $typeName)) {
-            return 'select2';
+            // ite_select2_*
+            return XEditableResolvedType::create('select2', $typeName, 'choice');
+        } elseif (preg_match('/^ite_bootstrap_datetimepicker_/', $typeName)) {
+            // ite_bootstrap_datetimepicker_*
+            foreach (array('birthday', 'datetime', 'date', 'time') as $sfBaseType) {
+                if (FormUtils::isResolvedFormTypeChildOf($resolvedFormType, $sfBaseType)) {
+                    return XEditableResolvedType::create('datetime', $typeName, $sfBaseType);
+                }
+            }
         }
 
+        // secondly, try to guess base types
         $type = null;
-        foreach ($this->guessOrder as $fieldType) {
-            if (FormUtils::isResolvedFormTypeChildOf($resolvedFormType, $fieldType)) {
-                return $fieldType;
+        foreach (array('textarea', 'email', 'password', 'url') as $sfBaseType) {
+            if (FormUtils::isResolvedFormTypeChildOf($resolvedFormType, $sfBaseType)) {
+                return XEditableResolvedType::create($sfBaseType, $typeName, $sfBaseType);
+            }
+        }
+        foreach (array('birthday', 'datetime', 'date', 'time') as $sfBaseType) {
+            if (FormUtils::isResolvedFormTypeChildOf($resolvedFormType, $sfBaseType)) {
+                return XEditableResolvedType::create('combodate', $typeName, $sfBaseType);
             }
         }
         if (FormUtils::isResolvedFormTypeChildOf($resolvedFormType, 'choice')) {
             if ($formOptions['multiple']) {
-                return 'checklist';
+                return XEditableResolvedType::create('checklist', $typeName, 'choice');
             } else {
-                return 'select';
+                return XEditableResolvedType::create('select', $typeName, 'choice');
             }
-        }
-        if (FormUtils::isResolvedFormTypeChildOf($resolvedFormType, 'checkbox')) {
-            return 'checklist';
+        } elseif (FormUtils::isResolvedFormTypeChildOf($resolvedFormType, 'checkbox')) {
+            return XEditableResolvedType::create('checklist', $typeName, 'checkbox');
         }
 
-        return 'text';
+        return XEditableResolvedType::create('text', $typeName, 'text');
     }
 
     /**
@@ -252,6 +298,37 @@ class FieldMapper
         return array(
             'source' => $source,
             'value' => $value,
+        );
+    }
+
+    /**
+     * @param FormView $view
+     * @param FormInterface $form
+     * @return array
+     */
+    public function processDate(FormView $view, FormInterface $form)
+    {
+        $datePattern = $view->vars['date_pattern'];
+        $pattern = $form->getConfig()->getAttribute('formatter')->getPattern();
+
+        $dayCount = preg_match_all('/d/', $pattern, $matches);
+        $monthCount = preg_match_all('/[M|L]/', $pattern, $matches);
+        $yearCount = preg_match_all('/y/', $pattern, $matches);
+        $yearCount = 1 !== $yearCount ? $yearCount : 4;
+
+        $day = str_repeat('D', $dayCount);
+        $month = str_repeat('M', $monthCount);
+        $year = str_repeat('Y', $yearCount);
+
+        $template = strtr($datePattern, array(
+            '{{ year }}' => $year . ' ',
+            '{{ month }}' => $month . ' ',
+            '{{ day }}' => $day . ' ',
+        ));
+
+        return array(
+            'format' => 'YYYY,M,D',
+            'template' => $template,
         );
     }
 } 

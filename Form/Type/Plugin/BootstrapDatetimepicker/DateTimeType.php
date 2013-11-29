@@ -5,6 +5,7 @@ namespace ITE\FormBundle\Form\Type\Plugin\BootstrapDatetimepicker;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
@@ -31,9 +32,13 @@ class DateTimeType extends AbstractType
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
+        $format = function(Options $options) {
+            return 'yyyy-MM-dd HH:mm' . ($options['with_seconds'] ? ':ss' : '');
+        };
+
         $resolver->setDefaults(array(
             'widget' => 'single_text',
-            'format' => 'yyyy-MM-dd HH:mm:ss',
+            'format' => $format,
             'plugin_options' => array(),
         ));
         $resolver->setAllowedTypes(array(

@@ -14,11 +14,6 @@ use Twig_Template;
 class XEditableExtension extends Twig_Extension
 {
     /**
-     * @var array $options
-     */
-    protected $options;
-
-    /**
      * @var FieldMapper $fieldMapper
      */
     protected $fieldMapper;
@@ -27,9 +22,8 @@ class XEditableExtension extends Twig_Extension
      * @param $options
      * @param FieldMapper $fieldMapper
      */
-    public function __construct($options, FieldMapper $fieldMapper)
+    public function __construct(FieldMapper $fieldMapper)
     {
-        $this->options = $options;
         $this->fieldMapper = $fieldMapper;
     }
 
@@ -61,9 +55,7 @@ class XEditableExtension extends Twig_Extension
             $text = (string) $text;
         }
 
-        $parameters = $this->fieldMapper->resolveParameters($entity, $field, $text, array_replace_recursive(
-            $this->options, $options
-        ));
+        $parameters = $this->fieldMapper->resolveParameters($entity, $field, $text, $options);
 
         if (!isset($attr['id'])) {
             $attr['id'] = uniqid('x_editable_');
