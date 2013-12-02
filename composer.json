@@ -18,7 +18,8 @@
   },
   "suggest": {
     "mopa/bootstrap-bundle": "dev-master",
-    "vich/uploader-bundle": "dev-master"
+    "vich/uploader-bundle": "dev-master",
+    "zendframework/zend-crypt": "dev-master"
   },
   "autoload": {
     "psr-0": {

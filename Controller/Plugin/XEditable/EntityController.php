@@ -25,7 +25,7 @@ class EntityController extends Controller
      */
     public function editAction(Request $request)
     {
-        $class = $request->request->get('class');
+        $class = $this->get('ite_form.param_protector')->decrypt($request->request->get('class'));
         $identifier = $request->request->get('pk');
 
         $em = $this->getDoctrine()->getManager();

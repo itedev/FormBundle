@@ -58,10 +58,11 @@ class FieldMapper
         $elementData = $this->buildElementData($childView, $childForm, $text, array_replace_recursive(
             $this->options, $options
         ));
+
         $elementData['options'] = array_replace_recursive($elementData['options'], array(
             'pk' => $classMetadata->getIdentifierValues($entity),
             'params' => array(
-                'class' => $class,
+                'class' => $this->container->get('ite_form.param_protector')->encrypt($class),
             ),
         ));
 

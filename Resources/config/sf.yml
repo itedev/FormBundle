@@ -1,6 +1,7 @@
 parameters:
     ite_form.sf.extension.form.class:                       ITE\FormBundle\SF\SFFormExtension
     ite_form.twig.sf_extension.class:                       ITE\FormBundle\Twig\Extension\SFExtension
+    ite_form.param_protector.class:                         ITE\FormBundle\Service\Security\ParamProtector
 
 services:
     ite_form.sf.extension.form:
@@ -14,3 +15,7 @@ services:
         arguments: [ @ite_form.sf.extension.form ]
         tags:
             - { name: twig.extension }
+
+    ite_form.param_protector:
+        class:                                              %ite_form.param_protector.class%
+        arguments: [ @session, %kernel.secret% ]

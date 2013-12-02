@@ -533,6 +533,8 @@ This command will remove files and files created more than 60 minutes ago (by de
 
 ### Editable
 
+This component provides ability to dynamically create and submit form for specific entity field(s).
+
 Example configuration:
 
 ```yml
@@ -543,7 +545,9 @@ ite_form:
         editable: ~
 ```
 
-Example of annotation:
+Also this component include new `Editable` annotation. It can take 2 arguments: type and options (both are optional). These arguments can take the same values as corresponding arguments in `add` method of `FormBuilder`. You can omit annotation at all, and standard form guessers will be used instead.
+
+Example usage:
 
 ```php
 // src/Acme/DemoBundle/Entity/Foo.php
@@ -823,7 +827,7 @@ Provided field types:
 
 | Type                | Parent type   | Required components |
 |---------------------|---------------|---------------------|
-| ite_fileupload_file | ite_ajax_file | ite_ajax_file       |
+| ite_fileupload_file | ite_ajax_file | ajax_file_upload    |
 
 Example configuration:
 
@@ -843,7 +847,7 @@ Provided field types:
 
 | Type                  | Parent type   | Required components |
 |-----------------------|---------------|---------------------|
-| ite_fineuploader_file | ite_ajax_file | ite_ajax_file       |
+| ite_fineuploader_file | ite_ajax_file | ajax_file_upload    |
 
 Example configuration:
 
