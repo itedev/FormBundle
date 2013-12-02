@@ -195,6 +195,29 @@ class FieldMapper
                     $text = $view->vars['value'];
                 }
                 break;
+            case 'tinymce':
+                $builtOptions['tinymce'] = array_replace_recursive(
+                    $this->container->getParameter('ite_form.plugin.tinymce.options'),
+                    (array) $view->vars['element_data']['options']
+                );
+                $builtOptions['onblur'] = 'ignore';
+                $extras['plugin'] = 'tinymce';
+
+                if (!isset($text)) {
+                    $text = $view->vars['value'];
+                }
+                break;
+            case 'knob':
+                $builtOptions['knob'] = array_replace_recursive(
+                    $this->container->getParameter('ite_form.plugin.knob.options'),
+                    (array) $view->vars['element_data']['options']
+                );
+                $extras['plugin'] = 'knob';
+
+                if (!isset($text)) {
+                    $text = $view->vars['value'];
+                }
+                break;
         }
 
         return array(
@@ -226,6 +249,10 @@ class FieldMapper
                     return XEditableResolvedType::create('datetime', $typeName, $sfBaseType);
                 }
             }
+        } elseif ('ite_tinymce_textarea' === $typeName) {
+            return XEditableResolvedType::create('tinymce', $typeName, 'textarea');
+        } elseif ('ite_knob_number' === $typeName) {
+            return XEditableResolvedType::create('knob', $typeName, 'number');
         }
 
         // secondly, try to guess base types

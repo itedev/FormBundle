@@ -89,6 +89,7 @@ There are list of supported components:
  * dynamic_choice
  * hierarchical
  * ajax_file_upload
+ * editable
 
 ### Collections
 
@@ -530,6 +531,37 @@ This command will remove files and files created more than 60 minutes ago (by de
 
 **Note:** use must run this command on behalf of the user which has permission to delete files created by Apache (or another web server user).
 
+### Editable
+
+Example configuration:
+
+```yml
+# app/config/config.yml
+
+ite_form:
+    components:
+        editable: ~
+```
+
+Example of annotation:
+
+```php
+// src/Acme/DemoBundle/Entity/Foo.php
+
+use ITE\FormBundle\Annotation as ITEForm;
+
+class Foo
+{
+    /**
+     * @ORM\Column(name="bar", type="string", length=255)
+     * @ITEForm\Editable(type="textarea", options={
+     *      "label": "Enter bar"
+     * })
+     */
+    private $bar;
+}
+```
+
 Plugins
 -------
 
@@ -544,6 +576,7 @@ There are list of supported plugins:
  * minicolors
  * knob
  * starrating
+ * x_editable
  * form (WIP)
 
 You can change options for specific plugin field in several ways:
@@ -729,6 +762,16 @@ Provided field types:
 | ite_bootstrap_datetimepicker_time     | time                              | none                |
 | ite_bootstrap_datetimepicker_birthday | ite_bootstrap_datetimepicker_date | none                |
 
+Example configuration:
+
+```yml
+# app/config/config.yml
+
+ite_form:
+    plugins:
+        bootstrap_datetimepicker: ~
+```
+
 ### Bootstrap DateTimePicker2 (by tarruda)
 
 Homepage: http://tarruda.github.io/bootstrap-datetimepicker/
@@ -742,6 +785,16 @@ Provided field types:
 | ite_bootstrap_datetimepicker2_time     | time                               | none                |
 | ite_bootstrap_datetimepicker2_birthday | ite_bootstrap_datetimepicker2_date | none                |
 
+Example configuration:
+
+```yml
+# app/config/config.yml
+
+ite_form:
+    plugins:
+        bootstrap_datetimepicker2: ~
+```
+
 ### Bootstrap ColorPicker
 
 Homepage: http://www.eyecon.ro/bootstrap-colorpicker/
@@ -751,6 +804,16 @@ Provided field types:
 | Type                      | Parent type | Required components |
 |---------------------------|-------------|---------------------|
 | ite_bootstrap_colorpicker | text        | none                |
+
+Example configuration:
+
+```yml
+# app/config/config.yml
+
+ite_form:
+    plugins:
+        bootstrap_colorpicker: ~
+```
 
 ### File Upload
 
@@ -762,6 +825,16 @@ Provided field types:
 |---------------------|---------------|---------------------|
 | ite_fileupload_file | ite_ajax_file | ite_ajax_file       |
 
+Example configuration:
+
+```yml
+# app/config/config.yml
+
+ite_form:
+    plugins:
+        fileupload: ~
+```
+
 ### Fine Uploader
 
 Homepage: http://fineuploader.com/
@@ -771,6 +844,16 @@ Provided field types:
 | Type                  | Parent type   | Required components |
 |-----------------------|---------------|---------------------|
 | ite_fineuploader_file | ite_ajax_file | ite_ajax_file       |
+
+Example configuration:
+
+```yml
+# app/config/config.yml
+
+ite_form:
+    plugins:
+        fineuploader: ~
+```
 
 ### MiniColors
 
@@ -782,6 +865,16 @@ Provided field types:
 |---------------------|-------------|---------------------|
 | ite_minicolors_text | text        | none                |
 
+Example configuration:
+
+```yml
+# app/config/config.yml
+
+ite_form:
+    plugins:
+        minicolors: ~
+```
+
 ### Knob
 
 Homepage: http://anthonyterrien.com/knob/
@@ -792,6 +885,16 @@ Provided field types:
 |-----------------|-------------|---------------------|
 | ite_knob_number | number      | none                |
 
+Example configuration:
+
+```yml
+# app/config/config.yml
+
+ite_form:
+    plugins:
+        knob: ~
+```
+
 ### Star Rating
 
 Homepage: http://www.fyneworks.com/jquery/star-rating/
@@ -801,6 +904,47 @@ Provided field types:
 | Type                  | Parent type | Required components |
 |-----------------------|-------------|---------------------|
 | ite_starrating_rating | choice      | none                |
+
+Example configuration:
+
+```yml
+# app/config/config.yml
+
+ite_form:
+    plugins:
+        starrating: ~
+```
+
+### X-Editable
+
+Homepage: http://vitalets.github.io/x-editable/
+
+Example configuration:
+
+```yml
+# app/config/config.yml
+
+ite_form:
+    components:
+        editable:   ~
+    plugins:
+        x_editable: ~
+```
+
+Provided twig filters:
+
+```twig
+{# src/Acme/DemoBundle/Resources/views/foo.html.twig #}
+
+{{ foo|ite_x_editable('bar') }} {# available arguments: field, text, options, attr #}
+```
+
+| Argument | Type        | Default | Description                                                                                                      |
+|----------|-------------|---------|------------------------------------------------------------------------------------------------------------------|
+| field    | string      |         | Field or association name inside entity                                                                          |
+| text     | string/null | null    | Initial text for link, if not set - taken from corresponding entity field value                                  |
+| options  | object      | {}      | Options for X-Editable plugin, that overrides global options in config (same as `plugin_options` for form field) |
+| attr     | object      | {}      | Attributes for link                                                                                              |                                                                                                               |
 
 FormBuilder
 -----------
