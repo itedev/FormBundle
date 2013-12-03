@@ -271,16 +271,16 @@ class ExecutionContext implements ExecutionContextInterface
     {
         foreach ($constraints as $constraint) {
             $validator = $this->globalContext->getValidatorFactory()->getInstance($constraint);
-//            if ($validator instanceof FormValidator) {
+            if ($validator instanceof FormValidator) {
                 $validator->initialize($this);
                 $validator->validate($value, $constraint);
-//                continue;
-//            }
-//            $constraintClass = get_class($constraint);
-//            if (0 === strpos($constraintClass, 'Symfony\Component\Validator\Constraints')) {
-//                $propertyPath = $this->getPropertyPath();
-//                $this->globalContext->addConstraint($propertyPath, $constraint);
-//            }
+                continue;
+            }
+            $constraintClass = get_class($constraint);
+            if (0 === strpos($constraintClass, 'Symfony\Component\Validator\Constraints')) {
+                $propertyPath = $this->getPropertyPath();
+                $this->globalContext->addConstraint($propertyPath, $constraint);
+            }
         }
     }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace ITE\FormBundle\Service\Validator\PropertyPathMapper;
+namespace ITE\FormBundle\Service\Validator\FormAccessor;
 
 use Symfony\Component\Form\Extension\Validator\ViolationMapper\MappingRule;
 use Symfony\Component\Form\Extension\Validator\ViolationMapper\RelativePath;
@@ -14,20 +14,23 @@ use Symfony\Component\PropertyAccess\PropertyPathIteratorInterface;
 use Symfony\Component\Form\Extension\Validator\ViolationMapper\ViolationPathIterator;
 
 /**
- * Class PropertyPathMapper
- * @package ITE\FormBundle\Service\Validator\PropertyPathMapper
+ * Class FormAccessor
+ * @package ITE\FormBundle\Service\Validator\FormAccessor
  */
-class PropertyPathMapper
+class FormAccessor
 {
     /**
-     * @var Boolean
+     * @var boolean
      */
     protected $allowNonSynchronized;
 
     /**
-     * {@inheritdoc}
+     * @param FormInterface $form
+     * @param $propertyPath
+     * @param bool $allowNonSynchronized
+     * @return null|FormInterface
      */
-    public function get($propertyPath, FormInterface $form, $allowNonSynchronized = false)
+    public function get(FormInterface $form, $propertyPath, $allowNonSynchronized = false)
     {
         $this->allowNonSynchronized = $allowNonSynchronized;
 

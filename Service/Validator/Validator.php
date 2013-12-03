@@ -81,7 +81,7 @@ class Validator
     /**
      * {@inheritDoc}
      */
-    public function validate($value, $groups = null, $traverse = false, $deep = false)
+    public function getConstraints($value, $groups = null, $traverse = false, $deep = false)
     {
         $visitor = $this->createVisitor($value);
 
