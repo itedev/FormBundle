@@ -1,9 +1,9 @@
 parameters:
-    ite_form.form.hierarchical_form_type_extension.class:   ITE\FormBundle\Form\Extension\HierarchicalFormTypeExtension
+    ite_form.form.type_extension.component.hierarchical.form.class: ITE\FormBundle\Form\Extension\Component\Hierarchical\FormTypeHierarchicalExtension
 
 services:
-    ite_form.form.hierarchical_form_type_extension:
-        class:                                              %ite_form.form.hierarchical_form_type_extension.class%
+    ite_form.form.type_extension.component.hierarchical.form:
+        class:                                                      %ite_form.form.type_extension.component.hierarchical.form.class%
         arguments: [ @ite_form.sf.extension.form, @router ]
         tags:
             - { name: form.type_extension, alias: form }

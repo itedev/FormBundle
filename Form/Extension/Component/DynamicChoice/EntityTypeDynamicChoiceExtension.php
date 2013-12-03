@@ -1,6 +1,6 @@
 <?php
 
-namespace ITE\FormBundle\Form\Extension;
+namespace ITE\FormBundle\Form\Extension\Component\DynamicChoice;
 
 use ITE\FormBundle\Form\ChoiceList\EntityChoiceList;
 use Symfony\Component\Form\AbstractTypeExtension;
@@ -13,10 +13,10 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 /**
- * Class DynamicEntityTypeExtension
- * @package ITE\FormBundle\Form\Extension
+ * Class EntityTypeDynamicChoiceExtension
+ * @package ITE\FormBundle\Form\Extension\Component\DynamicChoice
  */
-class DynamicEntityTypeExtension extends AbstractTypeExtension
+class EntityTypeDynamicChoiceExtension extends AbstractTypeExtension
 {
     /**
      * Caches created choice lists.

@@ -29,13 +29,9 @@ class ITEFormExtension extends Extension
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('sf.yml');
         $loader->load('services.yml');
+        $loader->load('component/validator.yml');
 
         $container->setParameter('ite_form.timezone', $config['timezone']);
-
-        // load ajax file upload configuration
-        if (isset($config['ajax_file_upload'])) {
-            $this->loadAjaxFileUploadConfiguration($loader, $config['ajax_file_upload'], $container);
-        }
 
         // load components configuration
         foreach (SFForm::$components as $component) {

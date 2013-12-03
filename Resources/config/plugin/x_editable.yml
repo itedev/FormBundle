@@ -1,6 +1,6 @@
 parameters:
     ite_form.x_editable.fieldmapper.class:                  ITE\FormBundle\Service\Editable\Plugin\XEditable\FieldMapper
-    ite_form.twig.x_editable_extension.class:               ITE\FormBundle\Twig\Extension\XEditableExtension
+    ite_form.twig.x_editable_extension.class:               ITE\FormBundle\Twig\Extension\Plugin\XEditable\XEditableExtension
 
 services:
     ite_form.x_editable.fieldmapper:

@@ -1,8 +1,8 @@
 parameters:
-    ite_form.form.collection_type_extension.class:          ITE\FormBundle\Form\Extension\CollectionTypeExtension
+    ite_form.form.type_extension.component.collection.collection.class: ITE\FormBundle\Form\Extension\Component\Collection\CollectionTypeCollectionExtension
 
 services:
-    ite_form.form.collection_type_extension:
-        class:                                              %ite_form.form.collection_type_extension.class%
+    ite_form.form.type_extension.component.collection.collection:
+        class:                                                          %ite_form.form.type_extension.component.collection.collection.class%
         tags:
             - { name: form.type_extension, alias: collection }

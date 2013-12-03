@@ -1,6 +1,6 @@
 <?php
 
-namespace ITE\FormBundle\Twig\Extension;
+namespace ITE\FormBundle\Twig\Extension\Component\Debug;
 
 use Twig_Environment;
 use Twig_Extension;
@@ -8,7 +8,7 @@ use Twig_Template;
 
 /**
  * Class DebugExtension
- * @package ITE\FormBundle\Twig\Extension
+ * @package ITE\FormBundle\Twig\Extension\Component\Debug
  */
 class DebugExtension extends Twig_Extension
 {

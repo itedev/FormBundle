@@ -1,15 +1,15 @@
 <?php
 
-namespace ITE\FormBundle\Form\Extension;
+namespace ITE\FormBundle\Form\Extension\Component\Ordered;
 
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * Class ButtonTypeExtension
- * @package ITE\FormBundle\Form\Extension
+ * Class ButtonTypeOrderedExtension
+ * @package ITE\FormBundle\Form\Extension\Component\Ordered
  */
-class ButtonTypeExtension extends AbstractTypeExtension
+class ButtonTypeOrderedExtension extends AbstractTypeExtension
 {
     /**
      * {@inheritdoc}
@@ -18,6 +18,9 @@ class ButtonTypeExtension extends AbstractTypeExtension
     {
         $resolver->setDefaults(array(
             'position' => null,
+        ));
+        $resolver->setAllowedTypes(array(
+            'position' => array('null', 'string', 'array')
         ));
     }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace ITE\FormBundle\Form\Extension;
+namespace ITE\FormBundle\Form\Extension\Component\AjaxFileUpload;
 
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormInterface;
@@ -8,10 +8,10 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * Class MultipleFileTypeExtension
- * @package ITE\FormBundle\Form\Extension
+ * Class FileTypeMultipleExtension
+ * @package ITE\FormBundle\Form\Extension\Component\AjaxFileUpload
  */
-class MultipleFileTypeExtension extends AbstractTypeExtension
+class FileTypeMultipleExtension extends AbstractTypeExtension
 {
     /**
      * {@inheritdoc}

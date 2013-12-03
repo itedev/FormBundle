@@ -1,6 +1,6 @@
 <?php
 
-namespace ITE\FormBundle\Twig\Extension;
+namespace ITE\FormBundle\Twig\Extension\Plugin\XEditable;
 
 use ITE\FormBundle\Service\Editable\Plugin\XEditable\FieldMapper;
 use Twig_Environment;
@@ -19,7 +19,6 @@ class XEditableExtension extends Twig_Extension
     protected $fieldMapper;
 
     /**
-     * @param $options
      * @param FieldMapper $fieldMapper
      */
     public function __construct(FieldMapper $fieldMapper)
@@ -51,9 +50,7 @@ class XEditableExtension extends Twig_Extension
      */
     public function xEditable(Twig_Environment $env, $entity, $field, $text = null, $options = array(), $attr = array())
     {
-        if (isset($text) && is_object($text)) {
-            $text = (string) $text;
-        }
+        $text = isset($text) ? (string) $text : null;
 
         $parameters = $this->fieldMapper->resolveParameters($entity, $field, $text, $options);
 

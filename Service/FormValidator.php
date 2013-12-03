@@ -12,6 +12,10 @@ use Symfony\Component\Validator\Mapping\PropertyMetadata;
 use Symfony\Component\Validator\MetadataFactoryInterface;
 use Symfony\Component\Validator\ValidationVisitor;
 
+/**
+ * Class FormValidator
+ * @package ITE\FormBundle\Service
+ */
 class FormValidator
 {
     /**

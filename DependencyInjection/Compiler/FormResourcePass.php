@@ -6,10 +6,10 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
- * Class FormPass
+ * Class FormResourcePass
  * @package ITE\FormBundle\DependencyInjection\Compiler
  */
-class FormPass implements CompilerPassInterface
+class FormResourcePass implements CompilerPassInterface
 {
     /**
      * {@inheritdoc}
@@ -19,7 +19,7 @@ class FormPass implements CompilerPassInterface
         $resources = $container->getParameter('twig.form.resources');
         $resources[] = 'ITEFormBundle:Form:fields.html.twig';
         if ($container->getParameter('ite_form.component.collection.enabled')) {
-            $resources[] = 'ITEFormBundle:Form:Component/collection/fields.html.twig';
+            $resources[] = 'ITEFormBundle:Form/Component/collection:fields.html.twig';
         }
         $container->setParameter('twig.form.resources', $resources);
     }

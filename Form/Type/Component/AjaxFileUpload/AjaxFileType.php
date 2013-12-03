@@ -1,6 +1,6 @@
 <?php
 
-namespace ITE\FormBundle\Form\Type;
+namespace ITE\FormBundle\Form\Type\Component\AjaxFileUpload;
 
 use ITE\FormBundle\Form\EventListener\FileuploadSubscriber;
 use ITE\FormBundle\Service\File\FileManagerInterface;
@@ -19,7 +19,7 @@ use Vich\UploaderBundle\Storage\StorageInterface;
 
 /**
  * Class AjaxFileType
- * @package ITE\FormBundle\Form\Type
+ * @package ITE\FormBundle\Form\Type\Component\AjaxFileUpload
  */
 class AjaxFileType extends AbstractType
 {

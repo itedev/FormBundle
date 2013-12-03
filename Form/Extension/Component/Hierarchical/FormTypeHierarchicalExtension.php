@@ -1,6 +1,6 @@
 <?php
 
-namespace ITE\FormBundle\Form\Extension;
+namespace ITE\FormBundle\Form\Extension\Component\Hierarchical;
 
 use ITE\FormBundle\Util\FormUtils;
 use ITE\JsBundle\SF\SFExtensionInterface;
@@ -14,10 +14,10 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Routing\RouterInterface;
 
 /**
- * Class HierarchicalFormTypeExtension
- * @package ITE\FormBundle\Form\Extension
+ * Class FormTypeHierarchicalExtension
+ * @package ITE\FormBundle\Form\Extension\Component\Hierarchical
  */
-class HierarchicalFormTypeExtension extends AbstractTypeExtension
+class FormTypeHierarchicalExtension extends AbstractTypeExtension
 {
     /**
      * @var SFExtensionInterface $sfForm

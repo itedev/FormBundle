@@ -1,0 +1,8 @@
+parameters:
+    ite_form.twig.extension.component.debug.class:          ITE\FormBundle\Twig\Extension\Component\Debug\DebugExtension
+
+services:
+    ite_form.twig.extension.component.debug:
+        class:                                              %ite_form.twig.extension.component.debug.class%
+        tags:
+            - { name: twig.extension }

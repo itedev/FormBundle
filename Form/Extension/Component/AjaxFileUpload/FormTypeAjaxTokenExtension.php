@@ -1,6 +1,6 @@
 <?php
 
-namespace ITE\FormBundle\Form\Extension;
+namespace ITE\FormBundle\Form\Extension\Component\AjaxFileUpload;
 
 use ITE\FormBundle\Form\Extension\AjaxToken\AjaxTokenProviderInterface;
 use ITE\FormBundle\Form\Extension\AjaxToken\EventListener\AjaxTokenSubscriber;
@@ -11,10 +11,10 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * Class AjaxTokenFormTypeExtension
- * @package ITE\FormBundle\Form\Extension
+ * Class FormTypeAjaxTokenExtension
+ * @package ITE\FormBundle\Form\Extension\Component\AjaxFileUpload
  */
-class AjaxTokenFormTypeExtension extends AbstractTypeExtension
+class FormTypeAjaxTokenExtension extends AbstractTypeExtension
 {
     const DEFAULT_AJAX_TOKEN_FIELD_NAME = '_ajax_token';
 

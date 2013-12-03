@@ -1,6 +1,6 @@
 <?php
 
-namespace ITE\FormBundle\Form\Extension;
+namespace ITE\FormBundle\Form\Extension\Component\DynamicChoice;
 
 use ITE\FormBundle\Form\ChoiceList\SimpleChoiceList;
 use ITE\FormBundle\Form\EventListener\ModifyChoiceListListener;
@@ -13,10 +13,10 @@ use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * Class DynamicChoiceTypeExtension.php
- * @package ITE\FormBundle\Form\Extension
+ * Class ChoiceTypeDynamicChoiceExtension
+ * @package ITE\FormBundle\Form\Extension\Component\DynamicChoice
  */
-class DynamicChoiceTypeExtension extends AbstractTypeExtension
+class ChoiceTypeDynamicChoiceExtension extends AbstractTypeExtension
 {
     /**
      * Caches created choice lists.

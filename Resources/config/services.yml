@@ -1,40 +1,20 @@
 parameters:
-    ite_form.twig.debug_extension.class:                 ITE\FormBundle\Twig\Extension\DebugExtension
-
     ite_form.form.form_type_extension.class:             ITE\FormBundle\Form\Extension\FormTypeExtension
-    ite_form.form.button_type_extension.class:           ITE\FormBundle\Form\Extension\ButtonTypeExtension
 
     ite_form.form.google_font_type.class:                ITE\FormBundle\Form\Type\GoogleFontType
 
     ite_form.form.input_entity_type.class:               ITE\FormBundle\Form\Type\InputEntityType
     ite_form.form.markup_type.class:                     ITE\FormBundle\Form\Type\MarkupType
 
-    form.resolved_type_factory.class:                    ITE\FormBundle\Form\ResolvedFormTypeFactory
-
-#    refactor below
-    ite_form.form_validator.class:                       ITE\FormBundle\Service\FormValidator
-#    ite_form.form.daterange_type.class:                  ITE\FormBundle\Form\Core\Type\DateRangeType
-
 services:
-    ite_form.twig.debug_extension:
-        class:                                              %ite_form.twig.debug_extension.class%
-        tags:
-            - { name: twig.extension }
-
     ite_form.form.form_type_extension:
         class:                                              %ite_form.form.form_type_extension.class%
         arguments: [ @session, %ite_form.timezone% ]
         tags:
             - { name: form.type_extension, alias: form }
 
-    ite_form.form.button_type_extension:
-        class:                                              %ite_form.form.button_type_extension.class%
-        tags:
-            - { name: form.type_extension, alias: button }
-
     ite_form.form.google_font_type:
         class:                                              %ite_form.form.google_font_type.class%
-        arguments: [ @router ]
         tags:
             - { name: form.type, alias: ite_google_font }
 
@@ -48,13 +28,3 @@ services:
         class:                                              %ite_form.form.markup_type.class%
         tags:
             - { name: form.type, alias: ite_markup }
-
-#    refactor below
-    ite_form.form_validator:
-        class:                                              %ite_form.form_validator.class%
-        arguments: [ @validator.mapping.class_metadata_factory, @validator.validator_factory, @translator.default, %validator.translation_domain%, [] ]
-
-#    ite_form.form.daterange_type:
-#        class:                                              %ite_form.form.daterange_type.class%
-#        tags:
-#            - { name: form.type, alias: daterange }

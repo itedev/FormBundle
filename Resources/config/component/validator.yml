@@ -1,0 +1,7 @@
+parameters:
+    ite_form.validator.class:                               ITE\FormBundle\Service\Validator\Validator
+
+services:
+    ite_form.validator:
+        class:                                              %ite_form.validator.class%
+        arguments: [ @validator.mapping.class_metadata_factory, @validator.validator_factory, @translator.default, %validator.translation_domain%, [] ]

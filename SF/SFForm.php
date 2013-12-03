@@ -16,6 +16,8 @@ final class SFForm
     const COMPONENT_AJAX_FILE_UPLOAD = 'ajax_file_upload';
     const COMPONENT_HIERARCHICAL = 'hierarchical';
     const COMPONENT_EDITABLE = 'editable';
+    const COMPONENT_ORDERED = 'ordered';
+    const COMPONENT_DEBUG = 'debug';
 
     /**
      * @var array
@@ -26,6 +28,8 @@ final class SFForm
         self::COMPONENT_AJAX_FILE_UPLOAD,
         self::COMPONENT_HIERARCHICAL,
         self::COMPONENT_EDITABLE,
+        self::COMPONENT_ORDERED,
+        self::COMPONENT_DEBUG,
     );
 
     /**

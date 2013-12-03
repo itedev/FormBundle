@@ -1,6 +1,6 @@
 <?php
 
-namespace ITE\FormBundle\Form\Extension;
+namespace ITE\FormBundle\Form\Extension\Component\Collection;
 
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormInterface;
@@ -9,10 +9,10 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * Class CollectionTypeExtension
- * @package ITE\FormBundle\Form\Extension
+ * Class CollectionTypeCollectionExtension
+ * @package ITE\FormBundle\Form\Extension\Component\Collection
  */
-class CollectionTypeExtension extends AbstractTypeExtension
+class CollectionTypeCollectionExtension extends AbstractTypeExtension
 {
     /**
      * {@inheritdoc}

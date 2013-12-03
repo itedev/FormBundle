@@ -1,6 +1,6 @@
 <?php
 
-namespace ITE\FormBundle\Form\Type;
+namespace ITE\FormBundle\Form\Type\Component\DynamicChoice;
 
 use ITE\FormBundle\Form\ChoiceList\AjaxEntityChoiceList;
 use Symfony\Component\Form\AbstractType;
@@ -14,7 +14,7 @@ use Symfony\Component\Routing\RouterInterface;
 
 /**
  * Class AjaxEntityType
- * @package ITE\FormBundle\Form\Type
+ * @package ITE\FormBundle\Form\Type\Component\DynamicChoice
  */
 class AjaxEntityType extends AbstractType
 {
