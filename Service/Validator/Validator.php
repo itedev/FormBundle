@@ -13,7 +13,7 @@ use Symfony\Component\Validator\MetadataFactoryInterface;
  * Class Validator
  * @package ITE\FormBundle\Service\Validator
  */
-class Validator
+class Validator implements ValidatorInterface
 {
     /**
      * @var MetadataFactoryInterface
@@ -63,30 +63,15 @@ class Validator
     }
 
     /**
-     * {@inheritdoc}
+     * @param $form
+     * @return array
      */
-    public function getMetadataFactory()
+    public function getConstraints($form)
     {
-        return $this->metadataFactory;
-    }
+        $visitor = $this->createVisitor($form);
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getMetadataFor($value)
-    {
-        return $this->metadataFactory->getMetadataFor($value);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getConstraints($value, $groups = null, $traverse = false, $deep = false)
-    {
-        $visitor = $this->createVisitor($value);
-
-        foreach ($this->resolveGroups($groups) as $group) {
-            $visitor->validate($value, $group, '', $traverse, $deep);
+        foreach ($this->resolveGroups(null) as $group) {
+            $visitor->validate($form, $group, '', false, false);
         }
 
         return $visitor->getConstraints();

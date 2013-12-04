@@ -7,7 +7,6 @@ use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Exception\NoSuchMetadataException;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Translation\TranslatorInterface;
-use Symfony\Component\Validator\GlobalExecutionContextInterface;
 use Symfony\Component\Validator\MetadataFactoryInterface;
 use Symfony\Component\Validator\MetadataInterface;
 use Symfony\Component\Validator\ObjectInitializerInterface;
@@ -59,19 +58,24 @@ class ValidationVisitor implements ValidationVisitorInterface, GlobalExecutionCo
      */
     protected $validatedObjects = array();
 
+    /**
+     * @var ConstraintMetadataFactory $constraintMetadataFactory
+     */
+    protected $constraintMetadataFactory;
+
+    /**
+     * @var array $constraints
+     */
     protected $constraints = array();
 
     /**
-     * Creates a new validation visitor.
-     *
-     * @param mixed                               $root               The value passed to the validator.
-     * @param MetadataFactoryInterface            $metadataFactory    The factory for obtaining metadata instances.
-     * @param ConstraintValidatorFactoryInterface $validatorFactory   The factory for creating constraint validators.
-     * @param TranslatorInterface                 $translator         The translator for translating violation messages.
-     * @param string|null                         $translationDomain  The domain of the translation messages.
-     * @param ObjectInitializerInterface[]        $objectInitializers The initializers for preparing objects before validation.
-     *
-     * @throws UnexpectedTypeException If any of the object initializers is not an instance of ObjectInitializerInterface
+     * @param $root
+     * @param MetadataFactoryInterface $metadataFactory
+     * @param ConstraintValidatorFactoryInterface $validatorFactory
+     * @param TranslatorInterface $translator
+     * @param null $translationDomain
+     * @param array $objectInitializers
+     * @throws UnexpectedTypeException
      */
     public function __construct($root, MetadataFactoryInterface $metadataFactory, ConstraintValidatorFactoryInterface $validatorFactory, TranslatorInterface $translator, $translationDomain = null, array $objectInitializers = array())
     {
@@ -88,6 +92,7 @@ class ValidationVisitor implements ValidationVisitorInterface, GlobalExecutionCo
         $this->translationDomain = $translationDomain;
         $this->objectInitializers = $objectInitializers;
         $this->violations = new ConstraintViolationList();
+        $this->constraintMetadataFactory = new ConstraintMetadataFactory($this->translator, $this->translationDomain);
     }
 
     /**
@@ -202,9 +207,15 @@ class ValidationVisitor implements ValidationVisitorInterface, GlobalExecutionCo
     }
 
     /**
-     * Get constraints
-     *
-     * @return array
+     * {@inheritdoc}
+     */
+    public function getConstraintMetadataFactory()
+    {
+        return $this->constraintMetadataFactory;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function getConstraints()
     {
@@ -212,15 +223,10 @@ class ValidationVisitor implements ValidationVisitorInterface, GlobalExecutionCo
     }
 
     /**
-     * @param $propertyPath
-     * @param $constraint
+     * {@inheritdoc}
      */
-    public function addConstraint($propertyPath, $constraint)
+    public function addConstraint(FieldConstraint $constraint)
     {
-        if (!isset($this->constraints[$propertyPath])) {
-            $this->constraints[$propertyPath] = array();
-        }
-        $constraintName = substr(get_class($constraint), 40);
-        $this->constraints[$propertyPath][$constraintName] = $constraint;
+        $this->constraints[] = $constraint;
     }
 } 

@@ -6,9 +6,7 @@ use Symfony\Component\Form\Extension\Validator\Constraints\FormValidator;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\ClassBasedInterface;
 use Symfony\Component\Validator\Constraint;
-use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ExecutionContextInterface;
-use Symfony\Component\Validator\GlobalExecutionContextInterface;
 use Symfony\Component\Validator\MetadataInterface;
 use Symfony\Component\Validator\PropertyMetadataInterface;
 
@@ -88,27 +86,6 @@ class ExecutionContext implements ExecutionContextInterface
      */
     public function addViolation($message, array $params = array(), $invalidValue = null, $pluralization = null, $code = null)
     {
-        if (null === $pluralization) {
-            $translatedMessage = $this->translator->trans($message, $params, $this->translationDomain);
-        } else {
-            try {
-                $translatedMessage = $this->translator->transChoice($message, $pluralization, $params, $this->translationDomain);
-            } catch (\InvalidArgumentException $e) {
-                $translatedMessage = $this->translator->trans($message, $params, $this->translationDomain);
-            }
-        }
-
-        $this->globalContext->getViolations()->add(new ConstraintViolation(
-            $translatedMessage,
-            $message,
-            $params,
-            $this->globalContext->getRoot(),
-            $this->propertyPath,
-            // check using func_num_args() to allow passing null values
-            func_num_args() >= 3 ? $invalidValue : $this->value,
-            $pluralization,
-            $code
-        ));
     }
 
     /**
@@ -116,19 +93,6 @@ class ExecutionContext implements ExecutionContextInterface
      */
     public function addViolationAt($subPath, $message, array $params = array(), $invalidValue = null, $pluralization = null, $code = null)
     {
-        $this->globalContext->getViolations()->add(new ConstraintViolation(
-            null === $pluralization
-                ? $this->translator->trans($message, $params, $this->translationDomain)
-                : $this->translator->transChoice($message, $pluralization, $params, $this->translationDomain),
-            $message,
-            $params,
-            $this->globalContext->getRoot(),
-            $this->getPropertyPath($subPath),
-            // check using func_num_args() to allow passing null values
-            func_num_args() >= 4 ? $invalidValue : $this->value,
-            $pluralization,
-            $code
-        ));
     }
 
     /**
@@ -276,10 +240,11 @@ class ExecutionContext implements ExecutionContextInterface
                 $validator->validate($value, $constraint);
                 continue;
             }
-            $constraintClass = get_class($constraint);
-            if (0 === strpos($constraintClass, 'Symfony\Component\Validator\Constraints')) {
-                $propertyPath = $this->getPropertyPath();
-                $this->globalContext->addConstraint($propertyPath, $constraint);
+
+            $constraintMetadata = $this->globalContext->getConstraintMetadataFactory()->getMetadataFor($constraint);
+            if ($constraintMetadata) {
+                $fieldConstraint = new FieldConstraint($constraintMetadata, $this->getPropertyPath());
+                $this->globalContext->addConstraint($fieldConstraint);
             }
         }
     }
