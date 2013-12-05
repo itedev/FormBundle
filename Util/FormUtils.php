@@ -44,6 +44,29 @@ class FormUtils
     }
 
     /**
+     * @param FormView $rootView
+     * @param $propertyPath
+     * @return null|FormView
+     */
+    public static function getViewByFullName(FormView $rootView, $propertyPath)
+    {
+        $propertyPathElements = array_map(function($value) {
+            return trim($value, '[]');
+        }, explode('[', $propertyPath));
+        array_shift($propertyPathElements);
+
+        $view = $rootView;
+        foreach ($propertyPathElements as $propertyPathElement) {
+            if (!isset($view->children[$propertyPathElement])) {
+                return null;
+            }
+            $view = $view->children[$propertyPathElement];
+        }
+
+        return $view;
+    }
+
+    /**
      * @param FormView $view
      * @return string
      */

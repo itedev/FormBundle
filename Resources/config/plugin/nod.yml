@@ -1,0 +1,15 @@
+parameters:
+    ite_form.nod.constraint_mapper.class:                   ITE\FormBundle\Service\Validation\Plugin\Nod\ConstraintMapper
+
+    ite_form.form.type_extension.plugin.nod.form.class:     ITE\FormBundle\Form\Extension\Plugin\Nod\FormTypeExtension
+
+services:
+    ite_form.nod.constraint_mapper:
+        class:                                              %ite_form.nod.constraint_mapper.class%
+        arguments: [ @ite_form.constraint_extractor ]
+
+    ite_form.form.type_extension.plugin.nod.form:
+        class:                                              %ite_form.form.type_extension.plugin.nod.form.class%
+        arguments: [ %ite_form.plugin.nod.options%, @ite_form.nod.constraint_mapper ]
+        tags:
+            - { name: form.type_extension, alias: form }

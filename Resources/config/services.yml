@@ -1,4 +1,5 @@
 parameters:
+    ite_form.form.type_extension.plugin.form.class:      ITE\FormBundle\Form\Extension\Plugin\FormTypeExtension
     ite_form.form.form_type_extension.class:             ITE\FormBundle\Form\Extension\FormTypeExtension
 
     ite_form.form.google_font_type.class:                ITE\FormBundle\Form\Type\GoogleFontType
@@ -7,6 +8,11 @@ parameters:
     ite_form.form.markup_type.class:                     ITE\FormBundle\Form\Type\MarkupType
 
 services:
+    ite_form.form.type_extension.plugin.form:
+        class:                                              %ite_form.form.type_extension.plugin.form.class%
+        tags:
+            - { name: form.type_extension, alias: form }
+
     ite_form.form.form_type_extension:
         class:                                              %ite_form.form.form_type_extension.class%
         arguments: [ @session, %ite_form.timezone% ]

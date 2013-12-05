@@ -17,6 +17,7 @@ final class SFForm
     const COMPONENT_HIERARCHICAL = 'hierarchical';
     const COMPONENT_EDITABLE = 'editable';
     const COMPONENT_ORDERED = 'ordered';
+    const COMPONENT_VALIDATION = 'validation';
     const COMPONENT_DEBUG = 'debug';
 
     /**
@@ -29,6 +30,7 @@ final class SFForm
         self::COMPONENT_HIERARCHICAL,
         self::COMPONENT_EDITABLE,
         self::COMPONENT_ORDERED,
+        self::COMPONENT_VALIDATION,
         self::COMPONENT_DEBUG,
     );
 
@@ -46,6 +48,7 @@ final class SFForm
     const PLUGIN_KNOB = 'knob';
     const PLUGIN_STARRATING = 'starrating';
     const PLUGIN_X_EDITABLE = 'x_editable';
+    const PLUGIN_NOD = 'nod';
 //    const PLUGIN_FORM = 'form';
 
     /**
@@ -63,6 +66,7 @@ final class SFForm
         self::PLUGIN_KNOB,
         self::PLUGIN_STARRATING,
         self::PLUGIN_X_EDITABLE,
+        self::PLUGIN_NOD,
 //        self::PLUGIN_FORM,
     );
 

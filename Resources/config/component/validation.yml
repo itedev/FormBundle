@@ -1,0 +1,7 @@
+parameters:
+    ite_form.constraint_extractor.class:                    ITE\FormBundle\Service\Validation\ConstraintExtractor
+
+services:
+    ite_form.constraint_extractor:
+        class:                                              %ite_form.constraint_extractor.class%
+        arguments: [ @validator.mapping.class_metadata_factory, @validator.validator_factory, @translator.default, %validator.translation_domain%, [] ]

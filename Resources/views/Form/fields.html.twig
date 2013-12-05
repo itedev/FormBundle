@@ -115,9 +115,12 @@
 
 {% block form_start %}
     {% spaceless %}
+        {% do ite_debug() %}
         {{ parent() }}
-        {% if ajax is defined %}
-            {{ ite_form_sf_add_plugin_element('#' ~ id, 'form', element_data) }}
+        {% if plugins is defined %}
+            {% for plugin, element_data in plugins %}
+                {{ ite_form_sf_add_plugin_element('#' ~ id, plugin, element_data) }}
+            {% endfor %}
         {% endif %}
     {% endspaceless %}
 {% endblock form_start %}

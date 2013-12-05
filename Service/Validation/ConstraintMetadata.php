@@ -1,12 +1,12 @@
 <?php
 
-namespace ITE\FormBundle\Service\Validator;
+namespace ITE\FormBundle\Service\Validation;
 
 /**
  * Class ConstraintMetadata
- * @package ITE\FormBundle\Service\Validator
+ * @package ITE\FormBundle\Service\Validation
  */
-class ConstraintMetadata
+class ConstraintMetadata implements ConstraintMetadataInterface
 {
     /**
      * @var string $type
@@ -36,9 +36,7 @@ class ConstraintMetadata
     }
 
     /**
-     * Get message
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getMessage()
     {
@@ -46,9 +44,7 @@ class ConstraintMetadata
     }
 
     /**
-     * Get options
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getOptions()
     {
@@ -56,9 +52,15 @@ class ConstraintMetadata
     }
 
     /**
-     * Get type
-     *
-     * @return string
+     * {@inheritdoc}
+     */
+    public function getOption($name, $default = null)
+    {
+        return isset($this->options[$name]) ? $this->options[$name] : $default;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function getType()
     {

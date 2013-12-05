@@ -29,7 +29,7 @@ class ITEFormExtension extends Extension
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('sf.yml');
         $loader->load('services.yml');
-        $loader->load('component/validator.yml');
+        $loader->load('component/validation.yml');
 
         $container->setParameter('ite_form.timezone', $config['timezone']);
 

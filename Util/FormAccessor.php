@@ -1,6 +1,6 @@
 <?php
 
-namespace ITE\FormBundle\Service\Validator\FormAccessor;
+namespace ITE\FormBundle\Util;
 
 use Symfony\Component\Form\Extension\Validator\ViolationMapper\MappingRule;
 use Symfony\Component\Form\Extension\Validator\ViolationMapper\RelativePath;
@@ -15,25 +15,18 @@ use Symfony\Component\Form\Extension\Validator\ViolationMapper\ViolationPathIter
 
 /**
  * Class FormAccessor
- * @package ITE\FormBundle\Service\Validator\FormAccessor
+ * @package ITE\FormBundle\Util
  */
 class FormAccessor
 {
-    /**
-     * @var boolean
-     */
-    protected $allowNonSynchronized;
-
     /**
      * @param FormInterface $form
      * @param $propertyPath
      * @param bool $allowNonSynchronized
      * @return null|FormInterface
      */
-    public function get(FormInterface $form, $propertyPath, $allowNonSynchronized = false)
+    public static function get(FormInterface $form, $propertyPath, $allowNonSynchronized = false)
     {
-        $this->allowNonSynchronized = $allowNonSynchronized;
-
         // The scope is the currently found most specific form that
         // an error should be mapped to. After setting the scope, the
         // mapper will try to continue to find more specific matches in
@@ -48,7 +41,7 @@ class FormAccessor
         // Don't create a ViolationPath instance for empty property paths
         if (strlen($propertyPath) > 0) {
             $violationPath = new ViolationPath($propertyPath);
-            $relativePath = $this->reconstructPath($violationPath, $form);
+            $relativePath = self::reconstructPath($violationPath, $form);
         }
 
         // This case happens if the violation path is empty and thus
@@ -77,7 +70,7 @@ class FormAccessor
             $scope = $relativePath->getRoot();
             $it = new PropertyPathIterator($relativePath);
 
-            while ($this->acceptsErrors($scope) && null !== ($child = $this->matchChild($scope, $it))) {
+            while (self::acceptsErrors($scope, $allowNonSynchronized) && null !== ($child = self::matchChild($scope, $it))) {
                 $scope = $child;
                 $it->next();
                 $match = true;
@@ -100,7 +93,7 @@ class FormAccessor
             // Note: acceptsErrors() will always return true for forms inheriting
             // their parent data, because these forms can never be non-synchronized
             // (they don't do any data transformation on their own)
-            while ($this->acceptsErrors($scope) && $it->valid() && $it->mapsForm()) {
+            while (self::acceptsErrors($scope, $allowNonSynchronized) && $it->valid() && $it->mapsForm()) {
                 if (!$scope->has($it->current())) {
                     // Break if we find a reference to a non-existing child
                     break;
@@ -114,15 +107,15 @@ class FormAccessor
         // Follow dot rules until we have the final target
         $mapping = $scope->getConfig()->getOption('error_mapping');
 
-        while ($this->acceptsErrors($scope) && isset($mapping['.'])) {
+        while (self::acceptsErrors($scope, $allowNonSynchronized) && isset($mapping['.'])) {
             $dotRule = new MappingRule($scope, '.', $mapping['.']);
             $scope = $dotRule->getTarget();
             $mapping = $scope->getConfig()->getOption('error_mapping');
         }
 
         // Only add the error if the form is synchronized
-        if ($this->acceptsErrors($scope)) {
-            return $scope;
+        if (self::acceptsErrors($scope, $allowNonSynchronized)) {
+            return $form !== $scope ? $scope : null;
         }
 
         return null;
@@ -140,7 +133,7 @@ class FormAccessor
      *
      * @return null|FormInterface The found match or null.
      */
-    protected function matchChild(FormInterface $form, PropertyPathIteratorInterface $it)
+    protected static function matchChild(FormInterface $form, PropertyPathIteratorInterface $it)
     {
         // Remember at what property path underneath "data"
         // we are looking. Check if there is a child with that
@@ -230,7 +223,7 @@ class FormAccessor
      *
      * @return RelativePath The reconstructed path.
      */
-    protected function reconstructPath(ViolationPath $violationPath, FormInterface $origin)
+    protected static function reconstructPath(ViolationPath $violationPath, FormInterface $origin)
     {
         $propertyPathBuilder = new PropertyPathBuilder($violationPath);
         $it = $violationPath->getIterator();
@@ -283,11 +276,11 @@ class FormAccessor
 
     /**
      * @param FormInterface $form
-     *
-     * @return Boolean
+     * @param $allowNonSynchronized
+     * @return bool
      */
-    protected function acceptsErrors(FormInterface $form)
+    protected static function acceptsErrors(FormInterface $form, $allowNonSynchronized)
     {
-        return $this->allowNonSynchronized || $form->isSynchronized();
+        return $allowNonSynchronized || $form->isSynchronized();
     }
 }

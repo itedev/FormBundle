@@ -1,14 +1,26 @@
 <?php
 
-namespace ITE\FormBundle\Service\Validator;
+namespace ITE\FormBundle\Service\Validation;
 
 use Doctrine\Common\Inflector\Inflector;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Constraints\AbstractComparison;
+use Symfony\Component\Validator\Constraints\CardScheme;
+use Symfony\Component\Validator\Constraints\Choice;
+use Symfony\Component\Validator\Constraints\Count;
+use Symfony\Component\Validator\Constraints\Email;
+use Symfony\Component\Validator\Constraints\Ip;
+use Symfony\Component\Validator\Constraints\Issn;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\Range;
+use Symfony\Component\Validator\Constraints\Regex;
+use Symfony\Component\Validator\Constraints\Type;
+use Symfony\Component\Validator\Constraints\Url;
 
 /**
  * Class ConstraintMetadataFactory
- * @package ITE\FormBundle\Service\Validator
+ * @package ITE\FormBundle\Service\Validation
  */
 class ConstraintMetadataFactory
 {
@@ -199,6 +211,7 @@ class ConstraintMetadataFactory
      */
     protected function processTypeConstraint(Constraint $constraint)
     {
+        /** @var $constraint Type */
         return array(
             'message' => $this->translate($constraint->message, array(
                     '{{ type }}'  => $constraint->type,
@@ -215,6 +228,7 @@ class ConstraintMetadataFactory
      */
     protected function processEmailConstraint(Constraint $constraint)
     {
+        /** @var $constraint Email */
         return array(
             'message' => $this->translate($constraint->message),
             'options' => array(
@@ -230,6 +244,7 @@ class ConstraintMetadataFactory
      */
     protected function processUrlConstraint(Constraint $constraint)
     {
+        /** @var $constraint Url */
         return array(
             'message' => $this->translate($constraint->message),
             'options' => array(
@@ -244,6 +259,7 @@ class ConstraintMetadataFactory
      */
     protected function processRegexConstraint(Constraint $constraint)
     {
+        /** @var $constraint Regex */
         return array(
             'message' => $this->translate($constraint->message),
             'options' => array(
@@ -260,6 +276,7 @@ class ConstraintMetadataFactory
      */
     protected function processIpConstraint(Constraint $constraint)
     {
+        /** @var $constraint Ip */
         return array(
             'message' => $this->translate($constraint->message),
             'options' => array(
@@ -274,6 +291,7 @@ class ConstraintMetadataFactory
      */
     protected function processAbstractComparisonConstraint(Constraint $constraint)
     {
+        /** @var $constraint AbstractComparison */
         return array(
             'message' => $this->translate($constraint->message, array(
                     '{{ value }}' => $this->valueToString($constraint->value),
@@ -292,6 +310,7 @@ class ConstraintMetadataFactory
      */
     protected function processCardSchemeConstraint(Constraint $constraint)
     {
+        /** @var $constraint CardScheme */
         return array(
             'message' => $this->translate($constraint->message),
             'options' => array(
@@ -306,6 +325,7 @@ class ConstraintMetadataFactory
      */
     protected function processIssnConstraint(Constraint $constraint)
     {
+        /** @var $constraint Issn */
         return array(
             'message' => $this->translate($constraint->message),
             'options' => array(
@@ -321,24 +341,25 @@ class ConstraintMetadataFactory
      */
     protected function processLengthConstraint(Constraint $constraint)
     {
+        /** @var $constraint Length */
         if ($constraint->min == $constraint->max) {
-            $type = 'lengthEqualTo';
+            $type = ConstraintMetadataInterface::TYPE_LENGTH_EQUAL_TO;
             $message = $this->translate($constraint->exactMessage, array(
                 '{{ limit }}' => $constraint->min,
             ), (int) $constraint->min);
         } elseif (null !== $constraint->max && null !== $constraint->min) {
-            $type = 'lengthRange';
+            $type = ConstraintMetadataInterface::TYPE_LENGTH_RANGE;
             $message = $this->translate('This value should be between {{ min }} and {{ max }} characters long.', array(
                 '{{ min }}' => $constraint->min,
                 '{{ max }}' => $constraint->max,
             ));
         } elseif (null !== $constraint->max) {
-            $type = 'lengthLessThanOrEqual';
+            $type = ConstraintMetadataInterface::TYPE_LENGTH_LESS_THAN_OR_EQUAL;
             $message = $this->translate($constraint->maxMessage, array(
                 '{{ limit }}' => $constraint->max,
             ), (int) $constraint->max);
         } else {
-            $type = 'lengthGreaterThanOrEqual';
+            $type = ConstraintMetadataInterface::TYPE_LENGTH_GREATER_THAN_OR_EQUAL;
             $message = $this->translate($constraint->minMessage, array(
                 '{{ limit }}' => $constraint->min,
             ), (int) $constraint->min);
@@ -360,19 +381,20 @@ class ConstraintMetadataFactory
      */
     protected function processRangeConstraint(Constraint $constraint)
     {
+        /** @var $constraint Range */
         if (null !== $constraint->max && null !== $constraint->min) {
-            $type = 'range';
+            $type = ConstraintMetadataInterface::TYPE_RANGE;
             $message = $this->translate('This value should be between {{ min }} and {{ max }}.', array(
                 '{{ min }}' => $constraint->min,
                 '{{ max }}' => $constraint->max,
             ));
         } elseif (null !== $constraint->max) {
-            $type = 'rangeLessThanOrEqual';
+            $type = ConstraintMetadataInterface::TYPE_RANGE_LESS_THAN_OR_EQUAL;
             $message = $this->translate($constraint->maxMessage, array(
                 '{{ limit }}' => $constraint->max,
             ));
         } else {
-            $type = 'rangeGreaterThanOrEqual';
+            $type = ConstraintMetadataInterface::TYPE_RANGE_GREATER_THAN_OR_EQUAL;
             $message = $this->translate($constraint->minMessage, array(
                 '{{ limit }}' => $constraint->min,
             ));
@@ -394,8 +416,9 @@ class ConstraintMetadataFactory
      */
     protected function processChoiceConstraint(Constraint $constraint)
     {
+        /** @var $constraint Choice */
         if ($constraint->multiple) {
-            $type = 'choiceMultiple';
+            $type = ConstraintMetadataInterface::TYPE_CHOICE_MULTIPLE;
             $message = $this->translate($constraint->multipleMessage);
 
 //            if ($constraint->min !== null && $constraint->max !== null) {
@@ -413,7 +436,7 @@ class ConstraintMetadataFactory
 //                ), (int) $constraint->max);
 //            }
         } else {
-            $type = 'choiceSingle';
+            $type = ConstraintMetadataInterface::TYPE_CHOICE_SINGLE;
             $message = $this->translate($constraint->message);
         }
 
@@ -436,24 +459,25 @@ class ConstraintMetadataFactory
      */
     protected function processCountConstraint(Constraint $constraint)
     {
+        /** @var $constraint Count */
         if ($constraint->min == $constraint->max) {
-            $type = 'countEqualTo';
+            $type = ConstraintMetadataInterface::TYPE_COUNT_EQUAL_TO;
             $message = $this->translate($constraint->exactMessage, array(
                 '{{ limit }}' => $constraint->min,
             ), (int) $constraint->min);
         } elseif (null !== $constraint->max && null !== $constraint->min) {
-            $type = 'countRange';
+            $type = ConstraintMetadataInterface::TYPE_COUNT_RANGE;
             $message = $this->translate('This collection should contain between {{ min }} and {{ max }} elements.', array(
                 '{{ min }}' => $constraint->min,
                 '{{ max }}' => $constraint->min,
             ), (int) $constraint->min);
         } elseif (null !== $constraint->max) {
-            $type = 'lengthLessThanOrEqual';
+            $type = ConstraintMetadataInterface::TYPE_COUNT_LESS_THAN_OR_EQUAL;
             $message = $this->translate($constraint->maxMessage, array(
                 '{{ limit }}' => $constraint->max,
             ), (int) $constraint->max);
         } else {
-            $type = 'lengthGreaterThanOrEqual';
+            $type = ConstraintMetadataInterface::TYPE_COUNT_GREATER_THAN_OR_EQUAL;
             $message = $this->translate($constraint->minMessage, array(
                 '{{ limit }}' => $constraint->min,
             ), (int) $constraint->min);

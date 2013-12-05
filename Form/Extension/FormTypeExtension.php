@@ -42,6 +42,10 @@ class FormTypeExtension extends AbstractTypeExtension
         $resolver->setDefaults(array(
             'model_timezone' => $this->modelTimezone,
             'view_timezone' => $this->viewTimezone,
+            'plugins' => array()
+        ));
+        $resolver->setAllowedTypes(array(
+            'plugins' => array('array'),
         ));
     }
 

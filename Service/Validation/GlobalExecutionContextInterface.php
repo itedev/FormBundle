@@ -1,12 +1,12 @@
 <?php
 
-namespace ITE\FormBundle\Service\Validator;
+namespace ITE\FormBundle\Service\Validation;
 
 use Symfony\Component\Validator\GlobalExecutionContextInterface as BaseGlobalExecutionContextInterface;
 
 /**
  * Interface GlobalExecutionContextInterface
- * @package ITE\FormBundle\Service\Validator
+ * @package ITE\FormBundle\Service\Validation
  */
 interface GlobalExecutionContextInterface extends BaseGlobalExecutionContextInterface
 {
@@ -18,12 +18,12 @@ interface GlobalExecutionContextInterface extends BaseGlobalExecutionContextInte
     /**
      * Get constraints
      *
-     * @return array
+     * @return FormConstraint[]
      */
     public function getConstraints();
 
     /**
-     * @param FieldConstraint $constraint
+     * @param FormConstraint $constraint
      */
-    public function addConstraint(FieldConstraint $constraint);
+    public function addConstraint(FormConstraint $constraint);
 } 

@@ -1,7 +1,8 @@
 <?php
 
-namespace ITE\FormBundle\Service\Validator;
+namespace ITE\FormBundle\Service\Validation;
 
+use ITE\FormBundle\Util\FormAccessor;
 use Symfony\Component\Form\Extension\Validator\Constraints\FormValidator;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\ClassBasedInterface;
@@ -11,12 +12,8 @@ use Symfony\Component\Validator\MetadataInterface;
 use Symfony\Component\Validator\PropertyMetadataInterface;
 
 /**
- * Default implementation of {@link ExecutionContextInterface}.
- *
- * This class is immutable by design.
- *
- * @author Fabien Potencier <fabien@symfony.com>
- * @author Bernhard Schussek <bschussek@gmail.com>
+ * Class ExecutionContext
+ * @package ITE\FormBundle\Service\Validation
  */
 class ExecutionContext implements ExecutionContextInterface
 {
@@ -241,10 +238,11 @@ class ExecutionContext implements ExecutionContextInterface
                 continue;
             }
 
-            $constraintMetadata = $this->globalContext->getConstraintMetadataFactory()->getMetadataFor($constraint);
-            if ($constraintMetadata) {
-                $fieldConstraint = new FieldConstraint($constraintMetadata, $this->getPropertyPath());
-                $this->globalContext->addConstraint($fieldConstraint);
+            if (null !== $form = FormAccessor::get($this->globalContext->getRoot(), $this->getPropertyPath())) {
+                if (null !== $constraintMetadata = $this->globalContext->getConstraintMetadataFactory()->getMetadataFor($constraint)) {
+                    $formConstraint = new FormConstraint($form, $constraintMetadata);
+                    $this->globalContext->addConstraint($formConstraint);
+                }
             }
         }
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace ITE\FormBundle\Service\Validator;
+namespace ITE\FormBundle\Service\Validation;
 
 use Symfony\Component\Validator\ConstraintValidatorFactoryInterface;
 use Symfony\Component\Validator\ConstraintViolationList;
@@ -14,7 +14,7 @@ use Symfony\Component\Validator\ValidationVisitorInterface;
 
 /**
  * Class ValidationVisitor
- * @package ITE\FormBundle\Service\Validator
+ * @package ITE\FormBundle\Service\Validation
  */
 class ValidationVisitor implements ValidationVisitorInterface, GlobalExecutionContextInterface
 {
@@ -225,7 +225,7 @@ class ValidationVisitor implements ValidationVisitorInterface, GlobalExecutionCo
     /**
      * {@inheritdoc}
      */
-    public function addConstraint(FieldConstraint $constraint)
+    public function addConstraint(FormConstraint $constraint)
     {
         $this->constraints[] = $constraint;
     }

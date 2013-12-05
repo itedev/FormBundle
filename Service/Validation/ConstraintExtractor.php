@@ -1,19 +1,19 @@
 <?php
 
-namespace ITE\FormBundle\Service\Validator;
+namespace ITE\FormBundle\Service\Validation;
 
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\Validator\Constraint;
-use Symfony\Component\Validator\Constraints\Valid;
 use Symfony\Component\Validator\ConstraintValidatorFactoryInterface;
-use Symfony\Component\Validator\Exception\ValidatorException;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\MetadataFactoryInterface;
 
 /**
- * Class Validator
- * @package ITE\FormBundle\Service\Validator
+ * Class ConstraintExtractor
+ * @package ITE\FormBundle\Service\Validation
  */
-class Validator implements ValidatorInterface
+class ConstraintExtractor implements ConstraintExtractorInterface
 {
     /**
      * @var MetadataFactoryInterface
@@ -63,15 +63,14 @@ class Validator implements ValidatorInterface
     }
 
     /**
-     * @param $form
-     * @return array
+     * {@inheritdoc}
      */
-    public function getConstraints($form)
+    public function getConstraints($value)
     {
-        $visitor = $this->createVisitor($form);
+        $visitor = $this->createVisitor($value);
 
         foreach ($this->resolveGroups(null) as $group) {
-            $visitor->validate($form, $group, '', false, false);
+            $visitor->validate($value, $group, '', false, false);
         }
 
         return $visitor->getConstraints();
