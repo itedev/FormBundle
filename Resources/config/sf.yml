@@ -15,7 +15,7 @@ services:
 
     ite_form.twig.extension.sf:
         class:                                              %ite_form.twig.extension.sf.class%
-        arguments: [ @ite_form.sf.extension.form ]
+        arguments: [ @ite_form.sf.extension.form, %twig.form.resources% ]
         tags:
             - { name: twig.extension }
 

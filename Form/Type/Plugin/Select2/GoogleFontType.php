@@ -3,6 +3,7 @@
 namespace ITE\FormBundle\Form\Type\Plugin\Select2;
 
 use ITE\FormBundle\Form\ChoiceList\GoogleFontChoiceBuilder;
+use ITE\FormBundle\SF\SFForm;
 use Symfony\Component\Form\AbstractType as BaseAbstractType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -45,7 +46,10 @@ class GoogleFontType extends BaseAbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $view->vars['element_data'] = array(
+        if (!isset($view->vars['plugins'])) {
+            $view->vars['plugins'] = array();
+        }
+        $view->vars['plugins'][SFForm::PLUGIN_SELECT2] = array(
             'extras' => array(
                 'google_fonts' => true
             ),

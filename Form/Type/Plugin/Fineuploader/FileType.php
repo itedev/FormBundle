@@ -2,6 +2,7 @@
 
 namespace ITE\FormBundle\Form\Type\Plugin\Fineuploader;
 
+use ITE\FormBundle\SF\SFForm;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -42,7 +43,10 @@ class FileType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $view->vars['element_data'] = array(
+        if (!isset($view->vars['plugins'])) {
+            $view->vars['plugins'] = array();
+        }
+        $view->vars['plugins'][SFForm::PLUGIN_FINEUPLOADER] = array(
             'extras' => (object) array(),
             'options' => array_replace_recursive(
                 $this->options,

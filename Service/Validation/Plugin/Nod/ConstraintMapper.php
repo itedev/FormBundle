@@ -108,6 +108,7 @@ class ConstraintMapper implements ConstraintMapperInterface
                     switch ($constraintMetadata->getOption('type')) {
                         case 'int':
                         case 'integer':
+                        case 'long':
                             $result[] = array(
                                 $selector,
                                 'integer',
@@ -117,6 +118,7 @@ class ConstraintMapper implements ConstraintMapperInterface
                         case 'float':
                         case 'double':
                         case 'real':
+                        case 'numeric':
                             $result[] = array(
                                 $selector,
                                 'float',

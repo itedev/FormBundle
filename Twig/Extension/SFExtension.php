@@ -3,8 +3,10 @@
 namespace ITE\FormBundle\Twig\Extension;
 
 use ITE\JsBundle\SF\SFExtensionInterface;
+use ReflectionObject;
 use Twig_Environment;
 use Twig_Extension;
+use Twig_Template;
 
 /**
  * Class SFExtension
@@ -18,11 +20,18 @@ class SFExtension extends Twig_Extension
     protected $sfForm;
 
     /**
-     * @param SFExtensionInterface $sfForm
+     * @var array $formResources
      */
-    public function __construct(SFExtensionInterface $sfForm)
+    protected $formResources;
+
+    /**
+     * @param SFExtensionInterface $sfForm
+     * @param $formResources
+     */
+    public function __construct(SFExtensionInterface $sfForm, $formResources)
     {
         $this->sfForm = $sfForm;
+        $this->formResources = $formResources;
     }
 
     /**
@@ -33,6 +42,7 @@ class SFExtension extends Twig_Extension
         return array(
             new \Twig_SimpleFunction('ite_form_sf_add_plugin_element', array($this, 'sfAddPluginElement')),
             new \Twig_SimpleFunction('ite_uniqid', array($this, 'uniqId')),
+            new \Twig_SimpleFunction('ite_parent_form_resource', array($this, 'parentFormResource'))
         );
     }
 
@@ -53,6 +63,17 @@ class SFExtension extends Twig_Extension
     public function uniqId($prefix = '')
     {
         return uniqid($prefix);
+    }
+
+    /**
+     * @param $filename
+     * @return mixed
+     */
+    public function parentFormResource($filename)
+    {
+        $index = array_search($filename, $this->formResources);
+
+        return $this->formResources[--$index];
     }
 
     /**

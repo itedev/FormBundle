@@ -1,23 +1,31 @@
-{% extends 'form_div_layout.html.twig' %}
+{% extends ite_parent_form_resource('ITEFormBundle:Form:fields.html.twig') %}
 
 {% block ite_select2_widget %}
     {{ block('choice_widget') }}
-    {{ ite_form_sf_add_plugin_element('#' ~ id, 'select2', element_data) }}
+    {% for plugin, element_data in plugins %}
+        {{ ite_form_sf_add_plugin_element('#' ~ id, plugin, element_data) }}
+    {% endfor %}
 {% endblock ite_select2_widget %}
 
 {% block ite_select2_ajax_entity_widget %}
     {{ block('hidden_widget') }}
-    {{ ite_form_sf_add_plugin_element('#' ~ id, 'select2', element_data) }}
+    {% for plugin, element_data in plugins %}
+        {{ ite_form_sf_add_plugin_element('#' ~ id, plugin, element_data) }}
+    {% endfor %}
 {% endblock ite_select2_ajax_entity_widget %}
 
 {% block ite_tinymce_textarea_widget %}
     {{ block('textarea_widget') }}
-    {{ ite_form_sf_add_plugin_element('#' ~ id, 'tinymce', element_data) }}
+    {% for plugin, element_data in plugins %}
+        {{ ite_form_sf_add_plugin_element('#' ~ id, plugin, element_data) }}
+    {% endfor %}
 {% endblock ite_tinymce_textarea_widget %}
 
 {% block ite_bootstrap_colorpicker_text_widget %}
     {{ block('form_widget_simple') }}
-    {{ ite_form_sf_add_plugin_element('#' ~ id, 'bootstrap_colorpicker', element_data) }}
+    {% for plugin, element_data in plugins %}
+        {{ ite_form_sf_add_plugin_element('#' ~ id, plugin, element_data) }}
+    {% endfor %}
 {% endblock ite_bootstrap_colorpicker_text_widget %}
 
 {% block ite_bootstrap_datetimepicker_widget %}
@@ -82,23 +90,31 @@
         </div>
         {% set selector = id ~ '_container' %}
     {% endif %}
-    {{ ite_form_sf_add_plugin_element('#' ~ selector, 'fileupload', element_data) }}
+    {% for plugin, element_data in plugins %}
+        {{ ite_form_sf_add_plugin_element('#' ~ selector, plugin, element_data) }}
+    {% endfor %}
 {% endblock ite_fileupload_file_widget %}
 
 {% block ite_fineuploader_file_widget %}
     <div id="{{ id }}_fine_uploader" data-property-path="{{ full_name }}"></div>
     {{ block('form_widget_simple') }}
-    {{ ite_form_sf_add_plugin_element('#' ~ id ~ '_fine_uploader', 'fineuploader', element_data) }}
+    {% for plugin, element_data in plugins %}
+        {{ ite_form_sf_add_plugin_element('#' ~ id ~ '_fine_uploader', plugin, element_data) }}
+    {% endfor %}
 {% endblock ite_fineuploader_file_widget %}
 
 {% block ite_minicolors_text_widget %}
     {{ block('form_widget_simple') }}
-    {{ ite_form_sf_add_plugin_element('#' ~ id, 'minicolors', element_data) }}
+    {% for plugin, element_data in plugins %}
+        {{ ite_form_sf_add_plugin_element('#' ~ id, plugin, element_data) }}
+    {% endfor %}
 {% endblock ite_minicolors_text_widget %}
 
 {% block ite_knob_number_widget %}
     {{ block('form_widget_simple') }}
-    {{ ite_form_sf_add_plugin_element('#' ~ id, 'knob', element_data) }}
+    {% for plugin, element_data in plugins %}
+        {{ ite_form_sf_add_plugin_element('#' ~ id, plugin, element_data) }}
+    {% endfor %}
 {% endblock ite_knob_number_widget %}
 
 {% block ite_starrating_rating_widget %}
@@ -110,16 +126,17 @@
             } }) }}
         {% endfor %}
     </div>
-    {{ ite_form_sf_add_plugin_element('#' ~ id ~ ' input[type="radio"]', 'starrating', element_data) }}
+    {% for plugin, element_data in plugins %}
+        {{ ite_form_sf_add_plugin_element('#' ~ id ~ ' input[type="radio"]', plugin, element_data) }}
+    {% endfor %}
 {% endblock ite_starrating_rating_widget %}
 
 {% block form_start %}
     {% spaceless %}
-        {% do ite_debug() %}
         {{ parent() }}
         {% if plugins is defined %}
             {% for plugin, element_data in plugins %}
-                {{ ite_form_sf_add_plugin_element('#' ~ id, plugin, element_data) }}
+                {{ ite_form_sf_add_plugin_element('#' ~ attr.id, plugin, element_data) }}
             {% endfor %}
         {% endif %}
     {% endspaceless %}

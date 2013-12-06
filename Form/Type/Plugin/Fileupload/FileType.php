@@ -2,6 +2,7 @@
 
 namespace ITE\FormBundle\Form\Type\Plugin\Fileupload;
 
+use ITE\FormBundle\SF\SFForm;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -67,7 +68,10 @@ class FileType extends AbstractType
             $pluginOptions['maxNumberOfFiles'] = 1;
         }
 
-        $view->vars['element_data'] = array(
+        if (!isset($view->vars['plugins'])) {
+            $view->vars['plugins'] = array();
+        }
+        $view->vars['plugins'][SFForm::PLUGIN_FILEUPLOAD] = array(
             'extras' => (object) array(),
             'options' => $pluginOptions,
         );

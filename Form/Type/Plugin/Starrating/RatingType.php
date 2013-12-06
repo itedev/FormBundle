@@ -2,6 +2,7 @@
 
 namespace ITE\FormBundle\Form\Type\Plugin\StarRating;
 
+use ITE\FormBundle\SF\SFForm;
 use Symfony\Component\Form\AbstractType as BaseAbstractType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -48,7 +49,10 @@ class RatingType extends BaseAbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $view->vars['element_data'] = array(
+        if (!isset($view->vars['plugins'])) {
+            $view->vars['plugins'] = array();
+        }
+        $view->vars['plugins'][SFForm::PLUGIN_STARRATING] = array(
             'extras' => (object) array(),
             'options' => (object) array_replace_recursive($this->options, $options['plugin_options'])
         );

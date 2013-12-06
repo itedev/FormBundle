@@ -90,7 +90,8 @@ There are list of supported components:
  * hierarchical
  * ajax_file_upload
  * editable
- * field_order
+ * ordered
+ * validation
  * debug
 
 ### Collections
@@ -568,6 +569,14 @@ class Foo
 }
 ```
 
+### Ordered
+
+...
+
+### Validation
+
+This component is used for conversion most standard form constraints (from http://symfony.com/doc/master/reference/constraints.html) for using it on client-side.
+
 ### Debug
 
 If you want to dump huge objects in twig, and you cannot do it with default `dump()` function, you can use next way. Start listen for xDebug connections and add next construction to your twig template:
@@ -599,6 +608,8 @@ There are list of supported plugins:
  * knob
  * starrating
  * x_editable
+ * nod
+ * parsley
  * form (WIP)
 
 You can change options for specific plugin field in several ways:
@@ -967,6 +978,89 @@ Provided twig filters:
 | text     | string/null | null    | Initial text for link, if not set - taken from corresponding entity field value                                  |
 | options  | object      | {}      | Options for X-Editable plugin, that overrides global options in config (same as `plugin_options` for form field) |
 | attr     | object      | {}      | Attributes for link                                                                                              |                                                                                                               |
+
+### Nod
+
+Homepage: http://casperin.github.io/nod/
+
+Example configuration:
+
+```yml
+# app/config/config.yml
+
+ite_form:
+    components:
+        validation: ~
+    plugins:
+        nod:        ~
+```
+
+Usage:
+
+```php
+// src/Acme/DemoBundle/Form/Type/FooType.php
+
+class FooType extends AbstractType
+{
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        $resolver->setDefaults(array(
+            'plugins' => 'nod',
+            // or
+            // 'plugins' => array('nod'),
+            // or
+            // 'plugins' => array(
+            //     'nod' => array(
+            //         'option_name' => 'option_value',
+            //     )
+            // ),
+        ));
+    }
+}
+```
+
+### Parsley
+
+Homepage: http://parsleyjs.org/
+
+Example configuration:
+
+```yml
+# app/config/config.yml
+
+ite_form:
+    components:
+        validation:         ~
+    plugins:
+        parsley:
+            enabled:        true
+            options:
+                trigger:    change
+```
+
+Usage:
+
+```php
+// src/Acme/DemoBundle/Form/Type/FooType.php
+
+class FooType extends AbstractType
+{
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        $resolver->setDefaults(array(
+            'plugins' => 'parsley',
+            // or
+            // 'plugins' => array('parsley'),
+            // or
+            // 'plugins' => array(
+            //     'parsley' => array(
+            //         'option_name' => 'option_value',
+            //     )
+            // ),
+        ));
+    }
+}
+```
 
 FormBuilder
 -----------

@@ -1,7 +1,7 @@
 (function($) {
   SF.fn.plugins['nod'] = {
     isApplied: function(element) {
-      return false;
+      return element.get(0).hasOwnProperty('__nod');
     },
 
     apply: function(element, elementData) {

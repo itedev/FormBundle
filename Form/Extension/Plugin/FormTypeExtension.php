@@ -3,6 +3,8 @@
 namespace ITE\FormBundle\Form\Extension\Plugin;
 
 use Symfony\Component\Form\AbstractTypeExtension;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
@@ -18,15 +20,23 @@ class FormTypeExtension extends AbstractTypeExtension
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $pluginsNormalizer = function (Options $options, $plugins) {
+            if (!isset($plugins)) {
+                return array();
+            }
+
             $normalizedPlugins = array();
-            foreach ($plugins as $plugin => $pluginOptions) {
-                if (is_int($plugin)) {
-                    if (is_string($pluginOptions)) {
-                        $normalizedPlugins[$pluginOptions] = array();
+            if (is_array($plugins)) {
+                foreach ($plugins as $plugin => $pluginOptions) {
+                    if (is_int($plugin)) {
+                        if (is_string($pluginOptions)) {
+                            $normalizedPlugins[$pluginOptions] = array();
+                        }
+                    } else {
+                        $normalizedPlugins[$plugin] = is_array($pluginOptions) ? $pluginOptions : array();
                     }
-                } else {
-                    $normalizedPlugins[$plugin] = is_array($pluginOptions) ? $pluginOptions : array();
                 }
+            } else {
+                $normalizedPlugins[$plugins] = array();
             }
 
             return $normalizedPlugins;
@@ -44,6 +54,19 @@ class FormTypeExtension extends AbstractTypeExtension
         $resolver->setNormalizers(array(
             'plugins' => $pluginsNormalizer,
         ));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildView(FormView $view, FormInterface $form, array $options)
+    {
+        if (!$form->isRoot()) {
+            return;
+        }
+        if (!isset($view->vars['attr']['id'])) {
+            $view->vars['attr']['id'] = $view->vars['id'] . '_form';
+        }
     }
 
     /**

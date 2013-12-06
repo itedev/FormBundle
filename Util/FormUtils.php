@@ -121,6 +121,21 @@ class FormUtils
     }
 
     /**
+     * @param FormInterface $form
+     * @param $plugin
+     * @return bool
+     */
+    public static function isFormHasPlugin(FormInterface $form, $plugin)
+    {
+        $options = $form->getConfig()->getOptions();
+        if (!isset($options['plugins']) || !isset($options['plugins'][$plugin])) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * @param $text
      * @return string
      */

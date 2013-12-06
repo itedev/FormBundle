@@ -1,6 +1,6 @@
 <?php
 
-namespace ITE\FormBundle\Form\Extension\Plugin\Nod;
+namespace ITE\FormBundle\Form\Extension\Plugin\Parsley;
 
 use ITE\FormBundle\Service\Validation\ConstraintMapperInterface;
 use ITE\FormBundle\SF\SFForm;
@@ -14,7 +14,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
  * Class FormTypeExtension
- * @package ITE\FormBundle\Form\Extension\Plugin\Nod
+ * @package ITE\FormBundle\Form\Extension\Plugin\Parsley
  */
 class FormTypeExtension extends AbstractTypeExtension
 {
@@ -43,7 +43,7 @@ class FormTypeExtension extends AbstractTypeExtension
      */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        if (!$form->isRoot() || !FormUtils::isFormHasPlugin($form, SFForm::PLUGIN_NOD)) {
+        if (!$form->isRoot() || !FormUtils::isFormHasPlugin($form, SFForm::PLUGIN_PARSLEY)) {
             return;
         }
 
@@ -52,13 +52,13 @@ class FormTypeExtension extends AbstractTypeExtension
         if (!isset($view->vars['plugins'])) {
             $view->vars['plugins'] = array();
         }
-        $view->vars['plugins'][SFForm::PLUGIN_NOD] = array(
-            'extras' => (object) array(),
-            'options' => array(
-                    'metrics' => $constraints,
-                    'options' => (object) array_replace_recursive($this->options, $options['plugins'][SFForm::PLUGIN_NOD]),
-                )
+        $view->vars['plugins'][SFForm::PLUGIN_PARSLEY] = array(
+            'extras' => array(
+                'constraints' => $constraints
+            ),
+            'options' => (object) array_replace_recursive($this->options, $options['plugins'][SFForm::PLUGIN_PARSLEY]),
         );
+        $view->vars['attr']['parsley-validate'] = '';
     }
 
     /**

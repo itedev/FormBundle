@@ -42,10 +42,6 @@ class FormTypeExtension extends AbstractTypeExtension
         $resolver->setDefaults(array(
             'model_timezone' => $this->modelTimezone,
             'view_timezone' => $this->viewTimezone,
-            'plugins' => array()
-        ));
-        $resolver->setAllowedTypes(array(
-            'plugins' => array('array'),
         ));
     }
 
@@ -54,13 +50,10 @@ class FormTypeExtension extends AbstractTypeExtension
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        if ($form->isRoot()) {
-            $view->vars['submitted'] = $form->isSubmitted();
-
-            if (!isset($view->vars['attr']['id'])) {
-                $view->vars['attr']['id'] = $view->vars['id'] . '_form';
-            }
+        if (!$form->isRoot()) {
+            return;
         }
+        $view->vars['submitted'] = $form->isSubmitted();
     }
 
     /**

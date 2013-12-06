@@ -49,6 +49,7 @@ final class SFForm
     const PLUGIN_STARRATING = 'starrating';
     const PLUGIN_X_EDITABLE = 'x_editable';
     const PLUGIN_NOD = 'nod';
+    const PLUGIN_PARSLEY = 'parsley';
 //    const PLUGIN_FORM = 'form';
 
     /**
@@ -67,6 +68,7 @@ final class SFForm
         self::PLUGIN_STARRATING,
         self::PLUGIN_X_EDITABLE,
         self::PLUGIN_NOD,
+        self::PLUGIN_PARSLEY,
 //        self::PLUGIN_FORM,
     );
 

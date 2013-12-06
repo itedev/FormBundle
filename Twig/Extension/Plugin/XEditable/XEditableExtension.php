@@ -67,7 +67,7 @@ class XEditableExtension extends Twig_Extension
      */
     public function getName()
     {
-        return 'ite_form.twig.x_editable_extension';
+        return 'ite_form.twig.extension.plugin.x_editable';
     }
 
 }

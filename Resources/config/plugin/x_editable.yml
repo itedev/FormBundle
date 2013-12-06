@@ -1,14 +1,14 @@
 parameters:
-    ite_form.x_editable.fieldmapper.class:                  ITE\FormBundle\Service\Editable\Plugin\XEditable\FieldMapper
-    ite_form.twig.x_editable_extension.class:               ITE\FormBundle\Twig\Extension\Plugin\XEditable\XEditableExtension
+    ite_form.x_editable.field_mapper.class:                 ITE\FormBundle\Service\Editable\Plugin\XEditable\FieldMapper
+    ite_form.twig.extension.plugin.x_editable.class:        ITE\FormBundle\Twig\Extension\Plugin\XEditable\XEditableExtension
 
 services:
-    ite_form.x_editable.fieldmapper:
-        class:                                              %ite_form.x_editable.fieldmapper.class%
+    ite_form.x_editable.field_mapper:
+        class:                                              %ite_form.x_editable.field_mapper.class%
         arguments: [ %ite_form.plugin.x_editable.options%, @service_container ]
 
-    ite_form.twig.x_editable_extension:
-        class:                                              %ite_form.twig.x_editable_extension.class%
-        arguments: [ @ite_form.x_editable.fieldmapper ]
+    ite_form.twig.extension.plugin.x_editable:
+        class:                                              %ite_form.twig.extension.plugin.x_editable.class%
+        arguments: [ @ite_form.x_editable.field_mapper ]
         tags:
             - { name: twig.extension }
