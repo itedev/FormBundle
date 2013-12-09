@@ -2,6 +2,7 @@
 
 namespace ITE\FormBundle\Form\Type\Plugin\BootstrapDatetimepicker2;
 
+use ITE\FormBundle\SF\Plugin\BootstrapDatetimepicker2Plugin;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\DataTransformer\DateTimeToLocalizedStringTransformer;
 use Symfony\Component\Form\FormInterface;
@@ -20,8 +21,8 @@ class BirthdayType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'years' => range(date('Y') - 120, date('Y')),
-        ));
+                'years' => range(date('Y') - 120, date('Y')),
+            ));
     }
 
     /**
@@ -36,11 +37,13 @@ class BirthdayType extends AbstractType
         /** @var $dateTimeToLocalizedStringTransformer DateTimeToLocalizedStringTransformer */
         $dateTimeToLocalizedStringTransformer = $viewTransformers[0];
 
-        $view->vars['element_data']['options'] = array_replace_recursive($view->vars['element_data']['options'], array(
-            'viewMode' => 2, //years
-            'startDate' => $dateTimeToLocalizedStringTransformer->transform($startDate),
-            'endDate' => $dateTimeToLocalizedStringTransformer->transform($endDate),
-        ));
+        $view->vars['plugins'][BootstrapDatetimepicker2Plugin::NAME]['options'] = array_replace_recursive(
+            $view->vars['plugins'][BootstrapDatetimepicker2Plugin::NAME]['options'], array(
+                'viewMode' => 2, //years
+                'startDate' => $dateTimeToLocalizedStringTransformer->transform($startDate),
+                'endDate' => $dateTimeToLocalizedStringTransformer->transform($endDate),
+            )
+        );
     }
 
     /**

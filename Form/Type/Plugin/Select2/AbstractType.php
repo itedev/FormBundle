@@ -2,7 +2,7 @@
 
 namespace ITE\FormBundle\Form\Type\Plugin\Select2;
 
-use ITE\FormBundle\SF\SFForm;
+use ITE\FormBundle\SF\Plugin\Select2Plugin;
 use Symfony\Component\Form\AbstractType as BaseAbstractType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -65,7 +65,7 @@ class AbstractType extends BaseAbstractType
         if (!isset($view->vars['plugins'])) {
             $view->vars['plugins'] = array();
         }
-        $view->vars['plugins'][SFForm::PLUGIN_SELECT2] = array(
+        $view->vars['plugins'][Select2Plugin::NAME] = array(
             'extras' => (object) array(),
             'options' => (object) array_replace_recursive($this->options, $options['plugin_options'])
         );

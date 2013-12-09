@@ -30,7 +30,9 @@
 
 {% block ite_bootstrap_datetimepicker_widget %}
     {{ block('form_widget_simple') }}
-    {{ ite_form_sf_add_plugin_element('#' ~ id, 'bootstrap_datetimepicker', element_data) }}
+    {% for plugin, element_data in plugins %}
+        {{ ite_form_sf_add_plugin_element('#' ~ id, plugin, element_data) }}
+    {% endfor %}
 {% endblock ite_bootstrap_datetimepicker_widget %}
 
 {% block ite_bootstrap_datetimepicker2_widget %}
@@ -40,7 +42,9 @@
             <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
         </span>
     </div>
-    {{ ite_form_sf_add_plugin_element('#' ~ id ~ '_bootstrap_datetimepicker2', 'bootstrap_datetimepicker2', element_data) }}
+    {% for plugin, element_data in plugins %}
+        {{ ite_form_sf_add_plugin_element('#' ~ id ~ '_bootstrap_datetimepicker2', plugin, element_data) }}
+    {% endfor %}
 {% endblock ite_bootstrap_datetimepicker2_widget %}
 
 {% block ite_fileupload_file_widget %}

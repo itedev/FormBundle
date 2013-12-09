@@ -2,7 +2,7 @@
 
 namespace ITE\FormBundle\Form\Type\Plugin\Fileupload;
 
-use ITE\FormBundle\SF\SFForm;
+use ITE\FormBundle\SF\Plugin\FileuploadPlugin;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -71,7 +71,7 @@ class FileType extends AbstractType
         if (!isset($view->vars['plugins'])) {
             $view->vars['plugins'] = array();
         }
-        $view->vars['plugins'][SFForm::PLUGIN_FILEUPLOAD] = array(
+        $view->vars['plugins'][FileuploadPlugin::NAME] = array(
             'extras' => (object) array(),
             'options' => $pluginOptions,
         );

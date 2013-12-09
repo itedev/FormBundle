@@ -5,10 +5,9 @@ namespace ITE\FormBundle\Form\Type\Plugin\Select2;
 use ITE\FormBundle\Form\DataTransformer\StringToArrayTransformer;
 use ITE\FormBundle\Form\EventListener\ExplodeCollectionListener;
 use ITE\FormBundle\Service\Converter\Plugin\Select2\EntityConverterInterface;
-use ITE\FormBundle\SF\SFForm;
+use ITE\FormBundle\SF\Plugin\Select2Plugin;
 use RuntimeException;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\View\ChoiceView;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -124,7 +123,7 @@ class AjaxEntityType extends AbstractType
         if (!isset($view->vars['plugins'])) {
             $view->vars['plugins'] = array();
         }
-        $view->vars['plugins'][SFForm::PLUGIN_SELECT2] = array(
+        $view->vars['plugins'][Select2Plugin::NAME] = array(
             'extras' => array(
                 'ajax' => true,
                 'allow_create' => $options['allow_create'],

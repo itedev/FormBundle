@@ -13,12 +13,22 @@ use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
  * Class SFFormExtension
  * @package ITE\FormBundle\SF
  */
-class SFFormExtension extends SFExtension
+class SFFormExtension extends SFExtension implements SFFormExtensionInterface
 {
     /**
      * @var ContainerInterface
      */
     protected $container;
+
+    /**
+     * @var array
+     */
+    protected $components = array();
+
+    /**
+     * @var array
+     */
+    protected $plugins = array();
 
     /**
      * @var ElementBag $elementBag
@@ -48,20 +58,18 @@ class SFFormExtension extends SFExtension
         $newInputs = array();
 
         // add component js
-        $bundlePath = $this->container->get('kernel')->getBundle('ITEFormBundle')->getPath();
-        foreach (SFForm::$components as $component) {
-            $enabled = $this->container->getParameter(sprintf('ite_form.component.%s.enabled', $component));
-            if ($enabled && file_exists(sprintf('%s/Resources/public/js/component/%s.js',
-                      $bundlePath,  $component))) {
-                $newInputs[] = sprintf('@ITEFormBundle/Resources/public/js/component/%s.js', $component);
+        foreach ($this->getComponents() as $component) {
+            /** @var $component ExtensionInterface */
+            if ($component->isEnabled($this->container)) {
+                $newInputs = array_merge($newInputs, $component->addJavascripts($this->container));
             }
         }
 
         // add plugin js
-        foreach (SFForm::$plugins as $plugin) {
-            $enabled = $this->container->getParameter(sprintf('ite_form.plugin.%s.enabled', $plugin));
-            if ($enabled) {
-                $newInputs[] = sprintf('@ITEFormBundle/Resources/public/js/plugin/%s.js', $plugin);
+        foreach ($this->getPlugins() as $plugin) {
+            /** @var $plugin ExtensionInterface */
+            if ($plugin->isEnabled($this->container)) {
+                $newInputs = array_merge($newInputs, $plugin->addJavascripts($this->container));
             }
         }
 
@@ -130,6 +138,42 @@ class SFFormExtension extends SFExtension
         if ($this->elementBag->count()) {
             $response->headers->set('X-SF-Elements', json_encode($this->elementBag->peekAll()));
         }
+    }
+
+    /**
+     * @param ExtensionInterface $component
+     */
+    public function addComponent(ExtensionInterface $component)
+    {
+        $this->components[] = $component;
+    }
+
+    /**
+     * Get components
+     *
+     * @return array
+     */
+    public function getComponents()
+    {
+        return $this->components;
+    }
+
+    /**
+     * @param ExtensionInterface $plugin
+     */
+    public function addPlugin(ExtensionInterface $plugin)
+    {
+        $this->plugins[] = $plugin;
+    }
+
+    /**
+     * Get plugins
+     *
+     * @return array
+     */
+    public function getPlugins()
+    {
+        return $this->plugins;
     }
 
     /**

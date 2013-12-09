@@ -2,13 +2,11 @@
 
 namespace ITE\FormBundle\DependencyInjection;
 
-use Doctrine\Common\Inflector\Inflector;
-use ITE\FormBundle\SF\SFForm;
+use ITE\FormBundle\SF\ExtensionInterface;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
-use Symfony\Component\Config\Definition\Builder\NodeBuilder;
-use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
  * This is the class that validates and merges configuration from your app/config files
@@ -18,6 +16,19 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 class Configuration implements ConfigurationInterface
 {
     /**
+     * @var ContainerBuilder
+     */
+    protected $container;
+
+    /**
+     * @param ContainerBuilder $container
+     */
+    public function __construct(ContainerBuilder $container)
+    {
+        $this->container = $container;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function getConfigTreeBuilder()
@@ -25,10 +36,7 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('ite_form');
 
-        // add components configuration
         $this->addComponentsConfiguration($rootNode);
-
-        // add plugins configuration
         $this->addPluginsConfiguration($rootNode);
 
         $rootNode
@@ -50,56 +58,12 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('components')
                     ->canBeUnset();
 
-        foreach (SFForm::$components as $component) {
-            // add common component configuration
-            $componentNode = $this->addComponentConfiguration($component, $componentsNode);
-
-            // load specific component configuration
-            $method = 'add' . Inflector::classify($component) . 'ComponentConfiguration';
-            if (method_exists($this, $method)) {
-                $this->$method($componentNode);
-            }
+        $serviceIds = $this->container->findTaggedServiceIds('ite_form.component');
+        foreach ($serviceIds as $serviceId => $attributes) {
+            /** @var $component ExtensionInterface */
+            $component = $this->container->get($serviceId);
+            $component->addConfiguration($componentsNode);
         }
-    }
-
-    /**
-     * @param $component
-     * @param ArrayNodeDefinition $componentsNode
-     * @return NodeBuilder
-     */
-    private function addComponentConfiguration($component, ArrayNodeDefinition $componentsNode)
-    {
-        /** @var $componentNode NodeBuilder */
-        $componentNode = $componentsNode
-            ->children()
-                ->arrayNode($component)
-                    ->canBeUnset()
-                    ->addDefaultsIfNotSet()
-                    ->treatNullLike(array('enabled' => true))
-                    ->treatTrueLike(array('enabled' => true))
-                    ->children();
-
-        $componentNode
-          ->booleanNode('enabled')->defaultFalse()->end();
-
-//        $componentNode
-//                    ->end()
-//                ->end()
-//            ->end()
-//        ;
-
-        return $componentNode;
-    }
-
-    /**
-     * @param NodeBuilder $componentNode
-     */
-    private function addAjaxFileUploadComponentConfiguration(NodeBuilder $componentNode)
-    {
-        $componentNode
-            ->scalarNode('web_root')->defaultValue('%kernel.root_dir%/../web')->end()
-            ->scalarNode('tmp_prefix')->cannotBeEmpty()->isRequired()->end()
-        ;
     }
 
     /**
@@ -112,55 +76,12 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('plugins')
                     ->canBeUnset();
 
-        foreach (SFForm::$plugins as $plugin) {
-            // add common plugin configuration
-            $pluginNode = $this->addPluginConfiguration($plugin, $pluginsNode);
-
-            // load specific plugin configuration
-            $method = 'add' . Inflector::classify($plugin) . 'PluginConfiguration';
-            if (method_exists($this, $method)) {
-                $this->$method($pluginNode);
-            }
+        $serviceIds = $this->container->findTaggedServiceIds('ite_form.plugin');
+        foreach ($serviceIds as $serviceId => $attributes) {
+            /** @var $plugin ExtensionInterface */
+            $plugin = $this->container->get($serviceId);
+            $plugin->addConfiguration($pluginsNode);
         }
     }
 
-    /**
-     * @param $plugin
-     * @param ArrayNodeDefinition $pluginsNode
-     * @return NodeBuilder
-     */
-    private function addPluginConfiguration($plugin, ArrayNodeDefinition $pluginsNode)
-    {
-        /** @var $pluginNode NodeBuilder */
-        $pluginNode = $pluginsNode
-            ->children()
-                ->arrayNode($plugin)
-                    ->canBeUnset()
-                    ->addDefaultsIfNotSet()
-                    ->treatNullLike(array('enabled' => true))
-                    ->treatTrueLike(array('enabled' => true))
-                    ->children();
-
-        $pluginNode
-            ->booleanNode('enabled')->defaultFalse()->end()
-            ->variableNode('options')->defaultValue(array())->end();
-
-//        $pluginNode
-//                    ->end()
-//                ->end()
-//            ->end()
-//        ;
-
-        return $pluginNode;
-    }
-
-    /**
-     * @param NodeBuilder $pluginNode
-     */
-    private function addFileuploadPluginConfiguration(NodeBuilder $pluginNode)
-    {
-        $pluginNode
-            ->variableNode('file_manager')->defaultValue(array())->end();
-        ;
-    }
 }

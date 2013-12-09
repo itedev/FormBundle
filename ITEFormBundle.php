@@ -2,8 +2,9 @@
 
 namespace ITE\FormBundle;
 
-use ITE\FormBundle\DependencyInjection\Compiler\FormResourcePass;
-use ITE\FormBundle\DependencyInjection\Compiler\RouterResourcePass;
+use ITE\FormBundle\DependencyInjection\Compiler\ExtensionCompilerPass;
+use ITE\FormBundle\DependencyInjection\Compiler\FormResourceCompilerPass;
+use ITE\FormBundle\DependencyInjection\Compiler\RouterResourceCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
@@ -14,12 +15,13 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 class ITEFormBundle extends Bundle
 {
     /**
-     * @param ContainerBuilder $container
+     * {@inheritdoc}
      */
     public function build(ContainerBuilder $container)
     {
-        $container->addCompilerPass(new FormResourcePass());
-        $container->addCompilerPass(new RouterResourcePass());
+        $container->addCompilerPass(new ExtensionCompilerPass());
+        $container->addCompilerPass(new FormResourceCompilerPass());
+        $container->addCompilerPass(new RouterResourceCompilerPass());
 
         parent::build($container);
     }

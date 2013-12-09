@@ -2,7 +2,7 @@
 
 namespace ITE\FormBundle\Form\Type\Plugin\BootstrapColorpicker;
 
-use ITE\FormBundle\SF\SFForm;
+use ITE\FormBundle\SF\Plugin\BootstrapColorpickerPlugin;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -48,7 +48,7 @@ class TextType extends AbstractType
         if (!isset($view->vars['plugins'])) {
             $view->vars['plugins'] = array();
         }
-        $view->vars['plugins'][SFForm::PLUGIN_BOOTSTRAP_COLORPICKER] = array(
+        $view->vars['plugins'][BootstrapColorpickerPlugin::NAME] = array(
             'extras' => (object) array(),
             'options' => (object) array_replace_recursive($this->options, $options['plugin_options'])
         );

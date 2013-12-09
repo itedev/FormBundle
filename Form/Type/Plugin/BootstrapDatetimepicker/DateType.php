@@ -2,6 +2,7 @@
 
 namespace ITE\FormBundle\Form\Type\Plugin\BootstrapDatetimepicker;
 
+use ITE\FormBundle\SF\Plugin\BootstrapDatetimepickerPlugin;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -48,7 +49,10 @@ class DateType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $view->vars['element_data'] = array(
+        if (!isset($view->vars['plugins'])) {
+            $view->vars['plugins'] = array();
+        }
+        $view->vars['plugins'][BootstrapDatetimepickerPlugin::NAME] = array(
             'extras' => (object) array(),
             'options' => array_replace_recursive($this->options, $options['plugin_options'], array(
                 'format' => strtr($options['format'], array(

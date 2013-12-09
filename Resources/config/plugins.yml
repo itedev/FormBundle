@@ -1,0 +1,86 @@
+parameters:
+    ite_form.plugin.select2.class:                              ITE\FormBundle\SF\Plugin\Select2Plugin
+    ite_form.plugin.tinymce.class:                              ITE\FormBundle\SF\Plugin\TinymcePlugin
+    ite_form.plugin.bootstrap_colorpicker.class:                ITE\FormBundle\SF\Plugin\BootstrapColorpickerPlugin
+    ite_form.plugin.bootstrap_datetimepicker.class:             ITE\FormBundle\SF\Plugin\BootstrapDatetimepickerPlugin
+    ite_form.plugin.bootstrap_datetimepicker2.class:            ITE\FormBundle\SF\Plugin\BootstrapDatetimepicker2Plugin
+    ite_form.plugin.fileupload.class:                           ITE\FormBundle\SF\Plugin\FileuploadPlugin
+    ite_form.plugin.fineuploader.class:                         ITE\FormBundle\SF\Plugin\FineuploaderPlugin
+    ite_form.plugin.minicolors.class:                           ITE\FormBundle\SF\Plugin\MinicolorsPlugin
+    ite_form.plugin.knob.class:                                 ITE\FormBundle\SF\Plugin\KnobPlugin
+    ite_form.plugin.starrating.class:                           ITE\FormBundle\SF\Plugin\StarratingPlugin
+    ite_form.plugin.x_editable.class:                           ITE\FormBundle\SF\Plugin\XEditablePlugin
+    ite_form.plugin.nod.class:                                  ITE\FormBundle\SF\Plugin\NodPlugin
+    ite_form.plugin.parsley.class:                              ITE\FormBundle\SF\Plugin\ParsleyPlugin
+    ite_form.plugin.form.class:                                 ITE\FormBundle\SF\Plugin\FormPlugin
+
+services:
+    ite_form.plugin.select2:
+        class:                                                  %ite_form.plugin.select2.class%
+        tags:
+            - { name: ite_form.plugin }
+
+    ite_form.plugin.tinymce:
+        class:                                                  %ite_form.plugin.tinymce.class%
+        tags:
+            - { name: ite_form.plugin }
+
+    ite_form.plugin.bootstrap_colorpicker:
+        class:                                                  %ite_form.plugin.bootstrap_colorpicker.class%
+        tags:
+            - { name: ite_form.plugin }
+
+    ite_form.plugin.bootstrap_datetimepicker:
+        class:                                                  %ite_form.plugin.bootstrap_datetimepicker.class%
+        tags:
+            - { name: ite_form.plugin }
+
+    ite_form.plugin.bootstrap_datetimepicker2:
+        class:                                                  %ite_form.plugin.bootstrap_datetimepicker2.class%
+        tags:
+            - { name: ite_form.plugin }
+
+    ite_form.plugin.fileupload:
+        class:                                                  %ite_form.plugin.fileupload.class%
+        tags:
+            - { name: ite_form.plugin }
+
+    ite_form.plugin.fineuploader:
+        class:                                                  %ite_form.plugin.fineuploader.class%
+        tags:
+            - { name: ite_form.plugin }
+
+    ite_form.plugin.minicolors:
+        class:                                                  %ite_form.plugin.minicolors.class%
+        tags:
+            - { name: ite_form.plugin }
+
+    ite_form.plugin.knob:
+        class:                                                  %ite_form.plugin.knob.class%
+        tags:
+            - { name: ite_form.plugin }
+
+    ite_form.plugin.starrating:
+        class:                                                  %ite_form.plugin.starrating.class%
+        tags:
+            - { name: ite_form.plugin }
+
+    ite_form.plugin.x_editable:
+        class:                                                  %ite_form.plugin.x_editable.class%
+        tags:
+            - { name: ite_form.plugin }
+
+    ite_form.plugin.nod:
+        class:                                                  %ite_form.plugin.nod.class%
+        tags:
+            - { name: ite_form.plugin }
+
+    ite_form.plugin.parsley:
+        class:                                                  %ite_form.plugin.parsley.class%
+        tags:
+            - { name: ite_form.plugin }
+
+    ite_form.plugin.form:
+        class:                                                  %ite_form.plugin.form.class%
+        tags:
+            - { name: ite_form.plugin }

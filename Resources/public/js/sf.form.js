@@ -195,7 +195,6 @@
 
       this.beforeAdd(selector, options);
 
-      // add element
       this.elements[selector] = new Element(
         selector,
         options

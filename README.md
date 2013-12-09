@@ -94,7 +94,7 @@ There are list of supported components:
  * validation
  * debug
 
-### Collections
+### Collection
 
 This component greatly improves Symfony 2 collections (and collections from MopaBootstrapBundle):
  * all field plugins **automatically** applied when new collection item is added **(and it works even for collections inside collection, collection inside collection inside collection, and so on)**
@@ -610,7 +610,7 @@ There are list of supported plugins:
  * x_editable
  * nod
  * parsley
- * form (WIP)
+ * form
 
 You can change options for specific plugin field in several ways:
 
@@ -1062,15 +1062,42 @@ class FooType extends AbstractType
 }
 ```
 
-FormBuilder
------------
+### jQuery Form Plugin
 
-Two new methods are added to FormBuilder:
+Homepage: http://malsup.com/jquery/form/
+
+Example configuration:
+
+```yml
+# app/config/config.yml
+
+ite_form:
+    plugins:
+        form:   ~
+```
+
+Usage:
 
 ```php
-public function replaceType($name, $type); // change type for existing field
+// src/Acme/DemoBundle/Form/Type/FooType.php
 
-public function replaceOptions($name, $options); // change options for existing field
+class FooType extends AbstractType
+{
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        $resolver->setDefaults(array(
+            'plugins' => 'form',
+            // or
+            // 'plugins' => array('form'),
+            // or
+            // 'plugins' => array(
+            //     'form' => array(
+            //         'option_name' => 'option_value',
+            //     )
+            // ),
+        ));
+    }
+}
 ```
 
 SF object extension
@@ -1090,6 +1117,3 @@ You can pass context (http://api.jquery.com/jQuery/#jQuery-selector-context) as 
 ```
 
 When SF object will iterate through all its elements to apply plugins, it will replace keys from this object to corresponding values in element selectors. It is used internally in `@ITEFormBundle/Resources/public/js/collection.js` for replacing collection's *prototype_name* to collection item indexes.
-
-Field order
------------
