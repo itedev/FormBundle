@@ -2,8 +2,8 @@
 
 namespace ITE\FormBundle\Service\Validation;
 
+use ITE\FormBundle\Util\FormUtils;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidatorFactoryInterface;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -69,11 +69,35 @@ class ConstraintExtractor implements ConstraintExtractorInterface
     {
         $visitor = $this->createVisitor($value);
 
-        foreach ($this->resolveGroups(null) as $group) {
-            $visitor->validate($value, $group, '', false, false);
-        }
+        $this->getConstraintsFromData($visitor, $value);
+        $this->getConstraintsFromForm($visitor, $value);
 
         return $visitor->getConstraints();
+    }
+
+    /**
+     * @param GlobalExecutionContextInterface $visitor
+     * @param FormInterface $form
+     */
+    protected function getConstraintsFromData(GlobalExecutionContextInterface $visitor, FormInterface $form)
+    {
+        foreach ($this->resolveGroups(null) as $group) {
+            $visitor->validate($form, $group, '', false, false);
+        }
+    }
+
+    /**
+     * @param GlobalExecutionContextInterface $visitor
+     * @param FormInterface $form
+     */
+    protected function getConstraintsFromForm(GlobalExecutionContextInterface $visitor, FormInterface $form)
+    {
+        FormUtils::formWalkRecursive($form, function(FormInterface $child) use ($visitor) {
+            if (null !== $constraintMetadata = $visitor->getConstraintMetadataFactory()->getMetadataForForm($child)) {
+                $formConstraint = new FormConstraint($child, $constraintMetadata);
+                $visitor->addConstraint($formConstraint);
+            }
+        });
     }
 
     /**

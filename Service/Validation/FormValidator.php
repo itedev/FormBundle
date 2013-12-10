@@ -1,6 +1,6 @@
 <?php
 
-namespace ITE\FormBundle\Service\Validator\Constraints;
+namespace ITE\FormBundle\Service\Validator;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Validator\Constraint;

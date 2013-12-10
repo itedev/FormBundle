@@ -238,10 +238,12 @@ class ExecutionContext implements ExecutionContextInterface
                 continue;
             }
 
-            if (null !== $form = FormAccessor::get($this->globalContext->getRoot(), $this->getPropertyPath())) {
-                if (null !== $constraintMetadata = $this->globalContext->getConstraintMetadataFactory()->getMetadataFor($constraint)) {
+            $globalContext = $this->globalContext;
+            if (null !== $form = FormAccessor::get($globalContext->getRoot(), $this->getPropertyPath())) {
+                if (null !== $constraintMetadata = $globalContext->getConstraintMetadataFactory()
+                        ->getMetadataForConstraint($constraint)) {
                     $formConstraint = new FormConstraint($form, $constraintMetadata);
-                    $this->globalContext->addConstraint($formConstraint);
+                    $globalContext->addConstraint($formConstraint);
                 }
             }
         }

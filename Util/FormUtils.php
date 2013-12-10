@@ -77,6 +77,9 @@ class FormUtils
             $selector .= sprintf(' input[type="%s"]', isset($view->vars['multiple']) && $view->vars['multiple']
                 ? 'checkbox'
                 : 'radio');
+        } elseif (in_array('repeated', $view->vars['block_prefixes']) && 0 !== count($view->children)) {
+            $firstChild = reset($view->children);
+            $selector = '#' . $firstChild->vars['id'];
         }
 
         return $selector;
@@ -142,5 +145,24 @@ class FormUtils
     public static function humanize($text)
     {
         return ucfirst(trim(strtolower(preg_replace(array('/([A-Z])/', '/[_\s]+/'), array('_$1', ' '), $text))));
+    }
+
+    /**
+     * @param FormInterface $form
+     * @param $callback
+     * @throws \InvalidArgumentException
+     */
+    public static function formWalkRecursive(FormInterface $form, $callback)
+    {
+        if (!is_callable($callback)) {
+            throw new \InvalidArgumentException();
+        }
+        foreach ($form as $child) {
+            /** @var $child FormInterface */
+            call_user_func($callback, $child);
+            if ($child->count()) {
+                self::formWalkRecursive($child, $callback);
+            }
+        }
     }
 } 

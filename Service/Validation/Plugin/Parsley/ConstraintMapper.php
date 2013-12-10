@@ -85,6 +85,7 @@ class ConstraintMapper implements ConstraintMapperInterface
                     );
                     break;
                 case ConstraintMetadataInterface::TYPE_RANGE_GREATER_THAN_OR_EQUAL:
+                case ConstraintMetadataInterface::TYPE_GREATER_THAN_OR_EQUAL:
                     $result[] = array(
                         'selector' => $selector,
                         'attr' => array(
@@ -94,6 +95,7 @@ class ConstraintMapper implements ConstraintMapperInterface
                     );
                     break;
                 case ConstraintMetadataInterface::TYPE_RANGE_LESS_THAN_OR_EQUAL:
+                case ConstraintMetadataInterface::TYPE_LESS_THAN_OR_EQUAL:
                     $result[] = array(
                         'selector' => $selector,
                         'attr' => array(
@@ -203,6 +205,23 @@ class ConstraintMapper implements ConstraintMapperInterface
                         'attr' => array(
                             'parsley-luhn' => 'true',
                             'parsley-luhn-message' => $constraintMetadata->getMessage(),
+                        ),
+                    );
+                    break;
+                case ConstraintMetadataInterface::TYPE_REPEATED:
+                    $firstName = $form->getConfig()->getOption('first_name');
+                    $firstView = $view->children[$firstName];
+                    $firstSelector = FormUtils::generateSelector($firstView);
+
+                    $secondName = $form->getConfig()->getOption('second_name');
+                    $secondView = $view->children[$secondName];
+                    $secondSelector = FormUtils::generateSelector($secondView);
+
+                    $result[] = array(
+                        'selector' => $secondSelector,
+                        'attr' => array(
+                            'parsley-equalto' => $firstSelector,
+                            'parsley-equalto-message' => $constraintMetadata->getMessage(),
                         ),
                     );
                     break;

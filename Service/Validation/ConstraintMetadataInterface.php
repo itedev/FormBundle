@@ -58,8 +58,10 @@ interface ConstraintMetadataInterface
     const TYPE_COUNT_GREATER_THAN_OR_EQUAL = 'countGreaterThanOrEqual';
 //        const TYPE_ISBN = 'isbn';
 //        const TYPE_CALLBACK = 'callback';
+//        const TYPE_EXPRESSION = 'expression';
 //        const TYPE_ALL = 'all';
 //        const TYPE_VALID = 'valid';
+    const TYPE_REPEATED = 'repeated';
 
     /**
      * Get type

@@ -37,6 +37,7 @@ class ConstraintMapper implements ConstraintMapperInterface
     public function map(FormView $rootView, FormInterface $rootForm)
     {
         $constraints = $this->constraintExtractor->getConstraints($rootForm);
+
         $result = array();
         foreach ($constraints as $constraint) {
             /** @var $constraint FormConstraint */
@@ -52,6 +53,22 @@ class ConstraintMapper implements ConstraintMapperInterface
                     $result[] = array(
                         $selector,
                         'presence',
+                        $constraintMetadata->getMessage()
+                    );
+                    break;
+                case ConstraintMetadataInterface::TYPE_EQUAL_TO:
+                case ConstraintMetadataInterface::TYPE_IDENTICAL_TO:
+                    $result[] = array(
+                        $selector,
+                        'exact:' . $constraintMetadata->getOption('value'),
+                        $constraintMetadata->getMessage()
+                    );
+                    break;
+                case ConstraintMetadataInterface::TYPE_NOT_EQUAL_TO:
+                case ConstraintMetadataInterface::TYPE_NOT_IDENTICAL_TO:
+                    $result[] = array(
+                        $selector,
+                        'not:' . $constraintMetadata->getOption('value'),
                         $constraintMetadata->getMessage()
                     );
                     break;
@@ -84,6 +101,7 @@ class ConstraintMapper implements ConstraintMapperInterface
                     );
                     break;
                 case ConstraintMetadataInterface::TYPE_RANGE_LESS_THAN_OR_EQUAL:
+                case ConstraintMetadataInterface::TYPE_LESS_THAN_OR_EQUAL:
                     $result[] = array(
                         $selector,
                         'max-num:' . $constraintMetadata->getOption('max'),
@@ -91,6 +109,7 @@ class ConstraintMapper implements ConstraintMapperInterface
                     );
                     break;
                 case ConstraintMetadataInterface::TYPE_RANGE_GREATER_THAN_OR_EQUAL:
+                case ConstraintMetadataInterface::TYPE_GREATER_THAN_OR_EQUAL:
                     $result[] = array(
                         $selector,
                         'min-num:' . $constraintMetadata->getOption('min'),
@@ -127,6 +146,27 @@ class ConstraintMapper implements ConstraintMapperInterface
                             break;
                     }
 
+                    break;
+                case ConstraintMetadataInterface::TYPE_REPEATED:
+                    $firstName = $form->getConfig()->getOption('first_name');
+                    $firstView = $view->children[$firstName];
+                    $firstSelector = FormUtils::generateSelector($firstView);
+
+                    $secondName = $form->getConfig()->getOption('second_name');
+                    $secondView = $view->children[$secondName];
+                    $secondSelector = FormUtils::generateSelector($secondView);
+
+//                    $result[] = array(
+//                        $firstSelector,
+//                        'same-as:' . $secondSelector,
+//                        $constraintMetadata->getMessage()
+//                    );
+
+                    $result[] = array(
+                        $secondSelector,
+                        'same-as:' . $firstSelector,
+                        $constraintMetadata->getMessage()
+                    );
                     break;
                 default:
 
