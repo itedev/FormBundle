@@ -56,7 +56,8 @@ class Configuration implements ConfigurationInterface
         $componentsNode = $rootNode
             ->children()
                 ->arrayNode('components')
-                    ->canBeUnset();
+                    ->canBeUnset()
+                    ->addDefaultsIfNotSet();
 
         $serviceIds = $this->container->findTaggedServiceIds('ite_form.component');
         foreach ($serviceIds as $serviceId => $attributes) {
@@ -74,7 +75,8 @@ class Configuration implements ConfigurationInterface
         $pluginsNode = $rootNode
             ->children()
                 ->arrayNode('plugins')
-                    ->canBeUnset();
+                    ->canBeUnset()
+                    ->addDefaultsIfNotSet();
 
         $serviceIds = $this->container->findTaggedServiceIds('ite_form.plugin');
         foreach ($serviceIds as $serviceId => $attributes) {
