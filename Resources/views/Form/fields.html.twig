@@ -28,6 +28,20 @@
     {% endfor %}
 {% endblock ite_bootstrap_colorpicker_text_widget %}
 
+{% block ite_bootstrap_spinedit_number_widget %}
+    {{ block('number_widget') }}
+    {% for plugin, element_data in plugins %}
+        {{ ite_form_sf_add_plugin_element('#' ~ id, plugin, element_data) }}
+    {% endfor %}
+{% endblock ite_bootstrap_spinedit_number_widget %}
+
+{% block ite_bootstrap_spinedit_integer_widget %}
+    {{ block('integer_widget') }}
+    {% for plugin, element_data in plugins %}
+        {{ ite_form_sf_add_plugin_element('#' ~ id, plugin, element_data) }}
+    {% endfor %}
+{% endblock ite_bootstrap_spinedit_integer_widget %}
+
 {% block ite_bootstrap_datetimepicker_widget %}
     {{ block('form_widget_simple') }}
     {% for plugin, element_data in plugins %}

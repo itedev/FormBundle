@@ -1,0 +1,16 @@
+parameters:
+    ite_form.form.type.plugin.bootstrap_spinedit.integer.class: ITE\FormBundle\Form\Type\Plugin\BootstrapSpinedit\IntegerType
+    ite_form.form.type.plugin.bootstrap_spinedit.number.class:  ITE\FormBundle\Form\Type\Plugin\BootstrapSpinedit\NumberType
+
+services:
+    ite_form.form.type.plugin.bootstrap_spinedit.integer:
+        class:                                           %ite_form.form.type.plugin.bootstrap_spinedit.integer.class%
+        arguments: [ %ite_form.plugin.bootstrap_spinedit.options% ]
+        tags:
+            - { name: form.type, alias: ite_bootstrap_spinedit_integer }
+
+    ite_form.form.type.plugin.bootstrap_spinedit.number:
+        class:                                           %ite_form.form.type.plugin.bootstrap_spinedit.number.class%
+        arguments: [ %ite_form.plugin.bootstrap_spinedit.options% ]
+        tags:
+            - { name: form.type, alias: ite_bootstrap_spinedit_number }
