@@ -30,7 +30,6 @@ Installation
         $bundles = array(
             // ...
             new ITE\JsBundle\ITEJsBundle(), // don't forget to enable ITEJsBundle!
-            // ...
             new ITE\FormBundle\ITEFormBundle(),
             // ...
         );
@@ -42,15 +41,10 @@ Configuration
 
 This bundle has modular structure, it means that most services (and javascript files required for it) are disabled (not loaded) by default and you can choose - what features you need and enable only it. There are two important items in the config: components and plugins. **Component** is a set of services that implements specific feature. **Plugin** is a set of new form field types that use specific JavaScript library or jQuery plugin. Some plugins require enable specific component. JavaScript files required for specific enabled component or plugin will be automatically added into your assets list, you don't need to add it manually when you enabled or disable some feature (just don't forget to clear the cache after that).
 
-**Note**: check ITEJsBundle documentation for JavaScript file autoload.
-
 An example configuration is shown below:
 
 ```yml
 # app/config/config.yml
-
-ite_js:
-    templates: [ '::base.html.twig' ]           # for autoloading js files
 
 ite_form:
     components:
@@ -70,14 +64,24 @@ List of JavaScript files, that you need to include in your global template:
 
 ```twig
 {# app/Resources/views/base.html.twig #}
+
+{% stylesheets
+    {# ... #}
+    ite_js_sf_assets()
+%}
+<link href="{{ asset_url }}" type="text/css" rel="stylesheet" media="screen" />
+{% endstylesheets %}
+
 {% javascripts
     '@AcmeDemoBundle/Resources/public/js/jquery.js'
-    {# javascript libraries  #}
+    {# ... #}
     '@ITEJsBundle/Resources/public/js/sf.js' {# don't forget to include this js from ITEJsBundle! #}
     '@ITEFormBundle/Resources/public/js/sf.form.js'
+    ite_js_sf_assets()
 %}
 <script type="text/javascript" src="{{ asset_url }}"></script>
 {% endjavascripts %}
+
 {{ ite_js_sf_dump() }} {# this function dumps all needed data for SF object in ONE inline js #}
 ```
 
