@@ -1,15 +1,15 @@
-{% extends ite_parent_form_resource('ITEFormBundle:Form/Component/collection:fields.html.twig') %}
+{% extends ite_parent_form_resource('ITEFormBundle:Form/Component/collection:bs2.html.twig') %}
 
 {% block form_rows_visible %}
     {% spaceless %}
         {% for index, child in form %} {# add index #}
             {% if 'hidden' not in child.vars.block_prefixes %}
                 {% if 'collection' in form.vars.block_prefixes and not omit_collection_item %}
-                    <{{ collection_item_tag|default('div') }} class="collection-item {{ widget_items_attr.class|default()|join(' ') }}" id="{{ child.vars.id }}_control_group" data-index={{ index }}> {# add collection_item_tag and 'data-index' #}
+                    <{{ collection_item_tag }} class="collection-item {{ widget_items_attr.class|default()|join(' ') }}" id="{{ child.vars.id }}_control_group" data-index={{ index }}> {# add collection_item_tag and 'data-index' #}
                 {% endif %}
                 {{ form_row(child) }}
                 {% if 'collection' in form.vars.block_prefixes and not omit_collection_item %}
-                    </{{ collection_item_tag|default('div') }}> {# add collection_item_tag #}
+                    </{{ collection_item_tag }}> {# add collection_item_tag #}
                 {% endif %}
             {% endif %}
         {% endfor %}
@@ -20,9 +20,9 @@
     {% spaceless %}
         {% if widget_control_group|default(false) or form.parent == null %}
             {% if prototype is defined %}
-                {% set data_prototype = 'collection' in form.vars.block_prefixes and not omit_collection_item ? '<' ~ collection_item_tag|default('div') ~ ' class="collection-item ' ~ widget_items_attr.class|default()|join(' ') ~ '" id="' ~ prototype.vars.id ~ '_control_group">' ~ form_row(prototype) ~ '</' ~ collection_item_tag|default('div') ~ '>' : form_row(prototype) %} {# add collection_item_tag #}
+                {% set data_prototype = 'collection' in form.vars.block_prefixes and not omit_collection_item ? '<' ~ collection_item_tag ~ ' class="collection-item ' ~ widget_items_attr.class|default()|join(' ') ~ '" id="' ~ prototype.vars.id ~ '_control_group">' ~ form_row(prototype) ~ '</' ~ collection_item_tag ~ '>' : form_row(prototype) %} {# add collection_item_tag #}
                 {% set data_prototype_name = form.vars.form.vars.prototype.vars.name|default('__name__') %}
-                {% set widget_control_group_attr = widget_control_group_attr|merge({'data-prototype': data_prototype, 'data-prototype-name': data_prototype_name, 'data-widget-controls': widget_controls|default(false) ? 'true' : 'false', 'data-collection-id': collection_id|default(unique_block_prefix)})|merge(attr) %} {# add 'data-collection-id' #}
+                {% set widget_control_group_attr = widget_control_group_attr|merge({'data-prototype': data_prototype, 'data-prototype-name': data_prototype_name, 'data-widget-controls': widget_controls|default(false) ? 'true' : 'false', 'data-collection-id': collection_id})|merge(attr) %} {# add 'data-collection-id' #}
             {% endif %}
             {% set widget_control_group_attr = widget_control_group_attr|merge({'id': id ~ '_control_group', 'class': widget_control_group_attr.class|default('') ~ ' control-group'}) %}
             {% if errors|length > 0 %}

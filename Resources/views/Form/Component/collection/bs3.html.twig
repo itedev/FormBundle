@@ -1,0 +1,101 @@
+{% extends ite_parent_form_resource('ITEFormBundle:Form/Component/collection:bs3.html.twig') %}
+
+{#{% block form_rows_visible %}#}
+    {#{% spaceless %}#}
+        {#{% for index, child in form %} &#123;&#35; add index &#35;&#125;#}
+            {#{% if 'hidden' not in child.vars.block_prefixes %}#}
+                {#{% if 'collection' in form.vars.block_prefixes and not omit_collection_item %}#}
+                    {#<{{ collection_item_tag|default('div') }} class="collection-item {{ widget_items_attr.class|default()|join(' ') }}" id="{{ child.vars.id }}_control_group" data-index={{ index }}> &#123;&#35; add collection_item_tag and 'data-index' &#35;&#125;#}
+                {#{% endif %}#}
+                {#{{ form_row(child) }}#}
+                {#{% if 'collection' in form.vars.block_prefixes and not omit_collection_item %}#}
+                    {#</{{ collection_item_tag|default('div') }}> &#123;&#35; add collection_item_tag &#35;&#125;#}
+                {#{% endif %}#}
+            {#{% endif %}#}
+        {#{% endfor %}#}
+    {#{% endspaceless %}#}
+{#{% endblock form_rows_visible %}#}
+
+{% block widget_form_group_start %}
+    {% if widget_form_group|default(false) or form.parent == null %}
+        {% if 'collection'in form.parent.vars.block_prefixes %} {# i am a collection child #}
+            {% set widget_form_group_attr = widget_form_group_attr|merge({class: widget_form_group_attr.class ~ ' collection-item'}) %}
+        {% endif %}
+        {% if prototype is defined %}
+            {% set data_prototype = 'collection' in form.vars.block_prefixes and not omit_collection_item ? '<' ~ collection_item_tag ~ ' class="collection-item ' ~ widget_items_attr.class|default()|join(' ') ~ '" id="' ~ prototype.vars.id ~ '_control_group">' ~ form_row(prototype) ~ '</' ~ collection_item_tag ~ '>' : form_row(prototype) %} {# add collection_item_tag #}
+            {% set data_prototype_name = form.vars.form.vars.prototype.vars.name|default('__name__') %}
+            {% set widget_form_group_attr = widget_form_group_attr|merge({'data-prototype': data_prototype, 'data-prototype-name': data_prototype_name, 'data-collection-id': collection_id})|merge(attr) %} {# add 'data-collection-id' #}
+        {% endif %}
+        {# collection item adds class to form-group #}
+        {% set widget_form_group_attr = widget_form_group_attr|merge({'id': id ~ '_control_group', 'class': widget_form_group_attr.class}) %}
+        {% if errors|length > 0 %}
+            {% set widget_form_group_attr = widget_form_group_attr|merge({'class': widget_form_group_attr.class|default('') ~ ' has-error'}) %}
+        {% endif %}
+        {% if 'collection' in form.vars.block_prefixes and attr.class is defined %}
+            {% set widget_form_group_attr = widget_form_group_attr|merge({'class': widget_form_group_attr.class|default('row') ~ ' ' ~ attr.class}) %}
+        {% endif %}
+        <div{% if help_widget_popover %}{{ block('help_widget_popover') }}{% endif %} {% for attrname,attrvalue in widget_form_group_attr %} {{attrname}}="{{attrvalue}}"{% endfor %}>
+        {# a form item containing the field in block_prefixes is a near subform or a field directly #}
+        {% if (form|length > 0 and form.parent != null)
+        and 'field' not in form.vars.block_prefixes %}
+            {% if show_child_legend%}
+                {{ block('form_legend') }}
+            {% elseif label_render %}
+                {{ form_label(form, label|default(null)) }}
+            {% endif %}
+        {% else %}
+            {% if label_render %}
+                {{ form_label(form, label|default(null)) }}
+            {% endif %}
+        {% endif %}
+    {% else %}
+        {% if label_render %}
+            {{ form_label(form, label|default(null)) }}
+        {% endif %}
+    {% endif %}
+{% endblock widget_form_group_start %}
+
+{% block form_label %}
+    {% if 'checkbox' not in block_prefixes or widget_checkbox_label in ['label', 'both'] %}
+        {% spaceless %}
+            {% if label is not sameas(false) %}
+                {% if label is empty %}
+                    {% set label = name|humanize %}
+                {% endif %}
+                {% if not compound %}
+                    {% set label_attr = label_attr|merge({'for': id}) %}
+                {% endif %}
+                {% set label_attr_class = ' control-label ' %}
+                {% if horizontal %}
+                    {% set label_attr_class = label_attr_class ~ horizontal_label_class %}
+                {% endif %}
+                {% set label_attr = label_attr|merge({'class': label_attr.class|default('') ~ label_attr_class ~ (required ? ' required' : ' optional') }) %}
+                <label{% for attrname,attrvalue in label_attr %} {{attrname}}="{{attrvalue}}"{% endfor %}>
+                {{ label|trans({}, translation_domain) }}
+                {{- block('label_asterisk') }}
+                {# remove 'form_widget_add_btn' #}
+                {% if help_label %}
+                    {{ block('help_label') }}
+                {% endif %}
+                {% if help_label_tooltip.title %}
+                    {{ block('help_label_tooltip') }}
+                {% endif %}
+                {% if help_label_popover.title %}
+                    {{ block('help_label_popover') }}
+                {% endif %}
+                </label>
+            {% endif %}
+        {% endspaceless %}
+    {% endif %}
+{% endblock form_label %}
+
+{% block collection_widget %}
+    {% spaceless %}
+        <div class="collection-items col-lg-9">
+            {{ block('form_widget') }}
+        </div>
+        {% if widget_add_btn %}
+            {{ block('form_widget_add_btn') }}
+        {% endif %}
+    {% endspaceless %}
+{% endblock collection_widget %}

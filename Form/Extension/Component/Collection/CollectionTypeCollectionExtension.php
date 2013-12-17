@@ -30,7 +30,9 @@ class CollectionTypeCollectionExtension extends AbstractTypeExtension
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $view->vars['collection_id'] = $options['collection_id'];
+        $view->vars['collection_id'] = isset($options['collection_id'])
+            ? $options['collection_id']
+            : $view->vars['unique_block_prefix'];
         $view->vars['collection_item_tag'] = $options['collection_item_tag'];
     }
 
