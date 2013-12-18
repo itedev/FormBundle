@@ -51,7 +51,7 @@ class FormTypeHierarchicalExtension extends AbstractTypeExtension
     {
         $type = $this;
 
-        $hierarchicalNormalizer = function (Options $options, $hierarchical) use ($type) {
+        $hierarchicalNormalizer = function(Options $options, $hierarchical) use ($type) {
             if (empty($hierarchical)) {
                 return array();
             }

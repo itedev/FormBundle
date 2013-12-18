@@ -28,6 +28,30 @@ class CollectionComponent extends Component
             ->enumNode('type')
                 ->values(array('bs2', 'bs3'))
             ->end()
+            ->arrayNode('widget_show_animation')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->scalarNode('type')
+                        ->defaultValue('show')
+                    ->end()
+                    ->integerNode('length')
+                        ->defaultValue(0)
+                        ->min(0)
+                    ->end()
+                ->end()
+            ->end()
+            ->arrayNode('widget_hide_animation')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->scalarNode('type')
+                        ->defaultValue('hide')
+                    ->end()
+                    ->integerNode('length')
+                        ->defaultValue(0)
+                        ->min(0)
+                    ->end()
+                ->end()
+            ->end()
         ;
     }
 
@@ -36,7 +60,10 @@ class CollectionComponent extends Component
      */
     public function loadConfiguration(FileLoader $loader, array $config, ContainerBuilder $container)
     {
-        $container->setParameter('ite_form.collection.type', $config['type']);
+        $container->setParameter('ite_form.component.collection.type', $config['type']);
+        $container->setParameter('ite_form.component.collection.widget_show_animation', $config['widget_show_animation']);
+        $container->setParameter('ite_form.component.collection.widget_hide_animation', $config['widget_hide_animation']);
+
         parent::loadConfiguration($loader, $config, $container);
     }
 
@@ -45,7 +72,7 @@ class CollectionComponent extends Component
      */
     public function addFormResources(ContainerInterface $container)
     {
-        switch ($container->getParameter('ite_form.collection.type')) {
+        switch ($container->getParameter('ite_form.component.collection.type')) {
             case 'bs2':
                 $template = 'ITEFormBundle:Form/Component/collection:bs2.html.twig';
                 break;

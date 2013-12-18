@@ -13,8 +13,8 @@
     this.collectionItemsSelector = this.collectionSelector + ' .collection-items:first';
     this.collectionItemSelector = this.collectionItemsSelector + ' > .collection-item';
     this.index = $(this.collectionItemSelector).length - 1;
-
-    $.extend(true, this, $.fn.collection.defaults, $.fn.collection.collections[this.collectionId]);
+    this.show = $collection.data('show-animation');
+    this.hide = $collection.data('hide-animation');
   };
 
   Collection.prototype = {
@@ -33,7 +33,6 @@
         replacementTokens[prototypeName] = self.index;
         SF.elements.apply($item, replacementTokens);
 
-        self.onAdd.apply($collection, [$item, $collection]);
         $collection.trigger('ite-add.collection', [$item]);
       }
 
@@ -49,10 +48,6 @@
       var itemHtml = $collection.data('prototype').replace(re, this.index);
       var $item = $(itemHtml).attr('data-index', this.index);
 
-      var result = this.beforeAdd.apply($collection, [$item, $collection]);
-      if (false === result) {
-        return;
-      }
       var event = $.Event('ite-before-add.collection');
       $collection.trigger(event, [$item]);
       if (false === event.result) {
@@ -82,7 +77,6 @@
       function afterHide() {
         $item.remove();
 
-        self.onRemove.apply($collection, [$item, $collection]);
         $collection.trigger('ite-remove.collection', [$item]);
       }
 
@@ -90,10 +84,6 @@
         var $item = $btn.closest('.collection-item');
         var $collection = $(this.collectionSelector);
 
-        var result = this.beforeRemove.apply($collection, [$item, $collection]);
-        if (false === result) {
-          return;
-        }
         var event = $.Event('ite-before-remove.collection');
         $collection.trigger(event, [$item]);
         if (false === event.result) {
@@ -157,22 +147,6 @@
     });
     return ('undefined' === typeof value) ? this : value;
   };
-
-  $.fn.collection.defaults = {
-    beforeAdd: function(item, collection) {},
-    onAdd: function(item, collection) {},
-    beforeRemove: function(item, collection) {},
-    onRemove: function(item, collection) {},
-    show: {
-      type: 'show',
-      length: 0
-    },
-    hide: {
-      type: 'hide',
-      length: 0
-    }
-  };
-  $.fn.collection.collections = {};
 
   $.fn.collection.Constructor = Collection;
 
