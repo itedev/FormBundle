@@ -20,9 +20,10 @@ interface ExtensionInterface
 
     /**
      * @param ArrayNodeDefinition $pluginsNode
+     * @param ContainerBuilder $container
      * @return NodeBuilder
      */
-    public function addConfiguration(ArrayNodeDefinition $pluginsNode);
+    public function addConfiguration(ArrayNodeDefinition $pluginsNode, ContainerBuilder $container);
 
     /**
      * @param FileLoader $loader

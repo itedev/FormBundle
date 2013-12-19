@@ -20,35 +20,42 @@ class CollectionComponent extends Component
     /**
      * {@inheritdoc}
      */
-    public function addConfiguration(ArrayNodeDefinition $rootNode)
+    public function addConfiguration(ArrayNodeDefinition $rootNode, ContainerBuilder $container)
     {
         /** @var $node NodeBuilder */
-        $node = parent::addConfiguration($rootNode);
+        $node = parent::addConfiguration($rootNode, $container);
         $node
             ->enumNode('type')
                 ->values(array('bs2', 'bs3'))
+                ->isRequired()
             ->end()
             ->arrayNode('widget_show_animation')
                 ->addDefaultsIfNotSet()
+                ->info('animation for showing new collection items')
                 ->children()
-                    ->scalarNode('type')
+                    ->enumNode('type')
                         ->defaultValue('show')
+                        ->values(array('show', 'slide', 'fade'))
                     ->end()
                     ->integerNode('length')
                         ->defaultValue(0)
                         ->min(0)
+                        ->info('time in ms')
                     ->end()
                 ->end()
             ->end()
             ->arrayNode('widget_hide_animation')
                 ->addDefaultsIfNotSet()
+            ->info('animation for hiding collection items')
                 ->children()
-                    ->scalarNode('type')
+                    ->enumNode('type')
+                        ->values(array('hide', 'slide', 'fade'))
                         ->defaultValue('hide')
                     ->end()
                     ->integerNode('length')
                         ->defaultValue(0)
                         ->min(0)
+                        ->info('time in ms')
                     ->end()
                 ->end()
             ->end()
