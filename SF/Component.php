@@ -90,13 +90,11 @@ class Component implements ExtensionInterface
     public function addJavascripts(ContainerInterface $container)
     {
         $bundlePath = $container->get('kernel')->getBundle('ITEFormBundle')->getPath();
-        if (!file_exists(sprintf('%s/Resources/public/js/component/%s.js', $bundlePath, static::NAME))) {
-            return array();
+        if (file_exists(sprintf('%s/Resources/public/js/component/%s.js', $bundlePath, static::NAME))) {
+            return array(sprintf('@ITEFormBundle/Resources/public/js/component/%s.js', static::NAME));
         }
 
-        return array(
-            sprintf('@ITEFormBundle/Resources/public/js/component/%s.js', static::NAME)
-        );
+        return array();
     }
 
     /**
