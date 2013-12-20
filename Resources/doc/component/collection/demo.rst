@@ -1,0 +1,2 @@
+Collection component demo
+=========================

@@ -1,6 +1,8 @@
-Dynamic choice
-~~~~~~~~~~~~~~
+Dynamic choice component
+========================
 
+Overview
+--------
 This component allows to modify submitted options of ``choice`` (and all child field types including ``entity``). It
 adds new option ``allow_modify`` to ``choice`` field type. If it is set to ``true`` - it means that you can change
 options in JavaScript (add new option and submit it, or completely replace list of options and submit one from new
@@ -14,6 +16,8 @@ need to use ``PRE_SUBMIT`` event to re-add same field with submitted options (as
 .. note ::
     don't forget about validation when use ``allow_modify`` option!
 
+Configuration
+-------------
 Example configuration:
 
 .. code-block:: yaml

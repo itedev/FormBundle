@@ -1,19 +1,16 @@
-Collection
-~~~~~~~~~~
+Collection component
+====================
 
-.. toctree::
-    :hidden:
-
-    component/collection/demo
-
-This component greatly improves Symfony 2 collection field type (specifically collection from MopaBootstrapBundle):
-
+Overview
+--------
 - all field plugins **automatically** applied when new collection item is added **(and it works even for
   collections inside collection, collection inside collection inside collection, and so on)**
 - new options and events are added to form collections, that make work with it much easier
 - you can set global or per collection options
 - theming of collections become more flexible, you can render it as a table, list or anything you want
 
+Configuration
+-------------
 Simple configuration:
 
 .. code-block:: yaml
@@ -60,7 +57,7 @@ Several new options are added to the collection field:
 +---------------------------+---------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | Option                    | Default                                                 | Description                                                                                                                                                                                                                                                                                                                                    |
 +===========================+=========================================================+================================================================================================================================================================================================================================================================================================================================================+
-| collection\_item\_tag     | ``div``                                                 | Root tag for collection item.                                                                                                                                                                                                                                                                                                                  |
+| collection\_item\_tag     | div                                                     | Root tag for collection item.                                                                                                                                                                                                                                                                                                                  |
 +---------------------------+---------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | collection\_id            | By default it equals to field ``unique_block_prefix``   | Value of attribute ``data-collection-id`` that will be added to all collection instances of specific type. If you are using collection inside collection, it will be the same for all children collections. Also you can always get collection element for any inner element, by calling: ``$('selector').closest('[data-collection-id]')``.   |
 +---------------------------+---------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+

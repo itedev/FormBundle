@@ -1,5 +1,8 @@
 Plugins
--------
+=======
+
+Available plugins
+-----------------
 
 .. toctree::
     :hidden:
@@ -35,3 +38,24 @@ Plugins
 - :doc:`Nod! <plugin/nod>`
 - :doc:`Parsley <plugin/parsley>`
 - :doc:`Form <plugin/form>`
+
+Add new plugin
+--------------
+Create new class that extends ``ITE\FormBundle\SF\Plugin`` class or implements
+``ITE\FormBundle\SF\ExtensionInterface``.
+
+.. code-block:: php
+
+    namespace Acme\DemoBundle\SF\Plugin;
+
+    use ITE\FormBundle\SF\Plugin;
+
+    class FooPlugin extends Plugin
+    {
+        const NAME = 'foo'; // define id for your plugin
+
+        public function loadConfiguration(FileLoader $loader, array $config, ContainerBuilder $container)
+        {
+            // ...
+        }
+    }

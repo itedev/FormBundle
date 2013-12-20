@@ -1,6 +1,8 @@
-Hierarchical
-~~~~~~~~~~~~
+Hierarchical component
+======================
 
+Overview
+--------
 This component allows you easily build hierarchical fields (it means that available options or value of some field(s)
 depends on selected value of another field(s)) with a couple of lines in FormType. It provides next features:
 
@@ -15,6 +17,8 @@ It bind listener on ``change`` event for each object in hierarchy, that have chi
 it gather data from all element parents (not only direct), clear element and its children (not only direct) current
 values and load new options/value via AJAX call or JavaScript callback.
 
+Configuration
+-------------
 Example configuration:
 
 .. code-block:: yaml
