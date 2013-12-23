@@ -12,6 +12,11 @@
     this.collectionId = $collection.data('collection-id');
     this.collectionItemsSelector = this.collectionSelector + ' .collection-items:first';
     this.collectionItemSelector = this.collectionItemsSelector + ' > .collection-item';
+
+//    $(this.collectionItemSelector).each(function(index) {
+//      $(this).attr('data-index', index);
+//    });
+
     this.index = $(this.collectionItemSelector).length - 1;
     this.show = $collection.data('show-animation');
     this.hide = $collection.data('hide-animation');

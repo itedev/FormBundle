@@ -92,6 +92,7 @@ class CollectionTypeCollectionExtension extends AbstractTypeExtension
             : $view->vars['unique_block_prefix'];
         $view->vars['collection_item_tag'] = $options['collection_item_tag'];
 
+        $view->vars['attr']['data-collection-id'] = $view->vars['collection_id'];
         $view->vars['attr']['data-show-animation'] = json_encode($options['widget_show_animation']);
         $view->vars['attr']['data-hide-animation'] = json_encode($options['widget_hide_animation']);
     }
