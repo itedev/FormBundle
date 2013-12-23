@@ -18,8 +18,6 @@ need to use ``PRE_SUBMIT`` event to re-add same field with submitted options (as
 
 Configuration
 -------------
-Example configuration:
-
 .. code-block:: yaml
 
     # app/config/config.yml
@@ -28,8 +26,8 @@ Example configuration:
         components:
             dynamic_choice: ~
 
-Usage:
-
+Usage
+-----
 .. code-block:: php
 
     // src/Acme/DemoBundle/Form/Type/FooType.php

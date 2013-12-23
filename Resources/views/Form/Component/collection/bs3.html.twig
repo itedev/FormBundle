@@ -35,6 +35,8 @@
         {% set widget_form_group_attr = widget_form_group_attr|merge({'id': id ~ '_control_group', 'class': widget_form_group_attr.class}) %}
         {% if 'collection' in form.vars.block_prefixes and attr.class is defined %}
             {% set widget_form_group_attr = widget_form_group_attr|merge({'class': widget_form_group_attr.class ~ ' ' ~ attr.class}) %}
+        {% elseif errors|length > 0 %}
+            {% set widget_form_group_attr = widget_form_group_attr|merge({'class': widget_form_group_attr.class|default('') ~ ' has-error'}) %}
         {% endif %}
         <div{% if help_widget_popover %}{{ block('help_widget_popover') }}{% endif %} {% for attrname,attrvalue in widget_form_group_attr %} {{attrname}}="{{attrvalue}}"{% endfor %}>
         {# a form item containing the field in block_prefixes is a near subform or a field directly #}
