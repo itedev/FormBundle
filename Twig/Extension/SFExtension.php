@@ -59,11 +59,15 @@ class SFExtension extends Twig_Extension
      * @param $filename
      * @return mixed
      */
-    public function parentFormResource($filename)
+    public function parentFormResource($filename = null)
     {
-        $index = array_search($filename, $this->formResources);
+        if (isset($filename)) {
+            $index = array_search($filename, $this->formResources);
 
-        return $this->formResources[--$index];
+            return $this->formResources[--$index];
+        }
+
+        return end($this->formResources);
     }
 
     /**

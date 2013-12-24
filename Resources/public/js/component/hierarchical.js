@@ -76,7 +76,7 @@
           type: 'post',
           url: element.getHierarchicalUrl(),
           data: {
-            propertyPath: SF.util.getFullName(element, $element),
+            propertyPath: $element.data('property-path') || SF.util.getFullName(element, $element),
             data: data
           },
           dataType: 'html',
@@ -251,6 +251,9 @@
     setElementValue: function(element, $element, value) {
       var node;
       if (element.hasChildrenSelector()) {
+        if ($(value).is('div')) {
+          value = $(value).html();
+        }
         $element.html(value);
       } else {
         node = $element.get(0);
@@ -280,6 +283,7 @@
       baseApply.apply(this, [context, replacementTokens]);
 
       var self = this;
+      var $initializedParents = [];
       $.each(this.elements, function(selector, elementObject) {
         if (!elementObject.hasParents()) {
           return;
@@ -287,7 +291,7 @@
 
         $.each(elementObject.getParents(), function(i, parentSelector) {
           var $parent = self.getJQueryElement(parentSelector, context, replacementTokens);
-          if (!$parent.length || SF.util.hasEvent($parent, 'change.hierarchical')) {
+          if (!$parent.length || 'undefined' !== typeof $parent.data('hierarchical')) {
             return;
           }
 
@@ -303,7 +307,11 @@
           } else {
             $parent.on('change.hierarchical', data, SF.callbacks.hierarchicalChange);
           }
+          $initializedParents.push($parent);
         });
+      });
+      $.each($initializedParents, function(i, $initializedParent) {
+        $initializedParent.data('hierarchical', true);
       });
     }
   });

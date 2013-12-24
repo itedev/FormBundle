@@ -19,8 +19,6 @@ values and load new options/value via AJAX call or JavaScript callback.
 
 Configuration
 -------------
-Example configuration:
-
 .. code-block:: yaml
 
     # app/config/config.yml
@@ -29,8 +27,8 @@ Example configuration:
         components:
             hierarchical: ~
 
-Usage:
-
+Usage
+-----
 .. code-block:: php
 
     // src/Acme/DemoBundle/Form/Type/FooType.php
@@ -135,8 +133,10 @@ Usage:
         return options;
     }
 
-Events:
+Events
+------
+This component provides several events in JavaScript:
 
-- ite-before-clear.hierarchical - triggers before element value will be cleared. If return ``false`` default function
-  will not be executed.
-- ite-clear.hierarchical - triggers after element value was cleared.
+- ``ite-before-clear.hierarchical`` - triggers before element value will be cleared. If return ``false`` default
+  function will not be executed.
+- ``ite-clear.hierarchical`` - triggers after element value was cleared.

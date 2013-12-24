@@ -38,6 +38,11 @@ Usage
         {
             $builder
                 ->add('bar', 'choice', array(
+                    // ...
+                    'allow_modify' => true,
+                ))
+                ->add('baz', 'entity', array(
+                    // ...
                     'allow_modify' => true,
                 ))
             ;

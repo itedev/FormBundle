@@ -41,7 +41,7 @@ class WidgetGenerator implements WidgetGeneratorInterface
         $name = array_pop($names);
         $parentView = null;
         foreach ($names as $parentName) {
-            $parentView = $this->formFactory->createNamed($parentName, 'hidden', null, array(
+            $parentView = $this->formFactory->createNamed($parentName, 'form', null, array(
                 'mapped' => false,
                 'csrf_protection' => false,
             ))->createView($parentView);
