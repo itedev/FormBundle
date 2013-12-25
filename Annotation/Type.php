@@ -6,7 +6,7 @@ namespace ITE\FormBundle\Annotation;
  * @Annotation
  * @Target("PROPERTY")
  */
-class Editable
+class Type
 {
     /**
      * @var string|null $type
