@@ -30,12 +30,14 @@
                   day: parts[2]
                 },
                 time: {
-                  hour: parts[3],
-                  minute: parts[4]
+                  hour: parts[3]
                 }
               };
-              if (6 === parts.length) {
-                params['value']['time']['second'] = parts[5];
+              if (parts.length >= 5) {
+                params['value']['time']['minute'] = parts[4];
+                if (6 === parts.length) {
+                  params['value']['time']['second'] = parts[5];
+                }
               }
             } else if ('date' === viewTransformer) {
               params['value'] = {
@@ -45,11 +47,13 @@
               };
             } else if ('time' === viewTransformer) {
               params['value'] = {
-                hour: parts[0],
-                minute: parts[1]
+                hour: parts[0]
               };
-              if (3 === parts.length) {
-                params['value']['second'] = parts[2];
+              if (parts.length >= 2) {
+                params['value']['minute'] = parts[1];
+                if (3 === parts.length) {
+                  params['value']['second'] = parts[2];
+                }
               }
             }
           }

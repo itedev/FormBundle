@@ -16,10 +16,4 @@ interface EditableManagerInterface
      * @return Form
      */
     public function createForm($entity, $field);
-
-    /**
-     * @param $class
-     * @return ClassMetadata
-     */
-    public function getClassMetadata($class);
 } 
