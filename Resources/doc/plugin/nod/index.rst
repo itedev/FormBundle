@@ -1,25 +1,24 @@
-Parsley
-~~~~~~~
+Nod plugin
+==========
 
-Homepage: http://parsleyjs.org/
+Homepage
+--------
+http://casperin.github.io/nod/
 
-Example configuration:
-
+Configuration
+-------------
 .. code-block:: yaml
 
     # app/config/config.yml
 
     ite_form:
         components:
-            validation:         ~
+            validation: ~
         plugins:
-            parsley:
-                enabled:        true
-                options:
-                    trigger:    change
+            nod:        ~
 
-Usage:
-
+Usage
+-----
 .. code-block:: php
 
     // src/Acme/DemoBundle/Form/Type/FooType.php
@@ -29,12 +28,12 @@ Usage:
         public function setDefaultOptions(OptionsResolverInterface $resolver)
         {
             $resolver->setDefaults(array(
-                'plugins' => 'parsley',
+                'plugins' => 'nod',
                 // or
-                // 'plugins' => array('parsley'),
+                // 'plugins' => array('nod'),
                 // or
                 // 'plugins' => array(
-                //     'parsley' => array(
+                //     'nod' => array(
                 //         'option_name' => 'option_value',
                 //     )
                 // ),

@@ -1,18 +1,20 @@
-File Upload
-~~~~~~~~~~~
+File Upload plugin
+==================
 
-Homepage: http://blueimp.github.io/jQuery-File-Upload/
+Homepage
+--------
+http://blueimp.github.io/jQuery-File-Upload/
 
-Provided field types:
-
+Provided field types
+--------------------
 +-------------------------+-------------------+-----------------------+
 | Type                    | Parent type       | Required components   |
 +=========================+===================+=======================+
 | ite\_fileupload\_file   | ite\_ajax\_file   | ajax\_file\_upload    |
 +-------------------------+-------------------+-----------------------+
 
-Example configuration:
-
+Configuration
+-------------
 .. code-block:: yaml
 
     # app/config/config.yml

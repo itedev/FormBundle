@@ -1,18 +1,20 @@
-Tinymce
-~~~~~~~
+Tinymce plugin
+==============
 
-Homepage: http://www.tinymce.com/
+Homepage
+--------
+http://www.tinymce.com/
 
-Provided field types:
-
+Provided field types
+--------------------
 +--------------------------+---------------+-----------------------+
 | Type                     | Parent type   | Required components   |
 +==========================+===============+=======================+
 | ite\_tinymce\_textarea   | textarea      | none                  |
 +--------------------------+---------------+-----------------------+
 
-Example configuration:
-
+Configuration
+-------------
 .. code-block:: yaml
 
     # app/config/config.yml

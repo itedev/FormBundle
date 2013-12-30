@@ -1,18 +1,20 @@
-Star Rating
-~~~~~~~~~~~
+Star Rating plugin
+==================
 
-Homepage: http://www.fyneworks.com/jquery/star-rating/
+Homepage
+--------
+http://www.fyneworks.com/jquery/star-rating/
 
-Provided field types:
-
+Provided field types
+--------------------
 +---------------------------+---------------+-----------------------+
 | Type                      | Parent type   | Required components   |
 +===========================+===============+=======================+
 | ite\_starrating\_rating   | choice        | none                  |
 +---------------------------+---------------+-----------------------+
 
-Example configuration:
-
+Configuration
+-------------
 .. code-block:: yaml
 
     # app/config/config.yml

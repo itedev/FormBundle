@@ -1,10 +1,12 @@
-X-Editable
-~~~~~~~~~~
+X-Editable plugin
+=================
 
-Homepage: http://vitalets.github.io/x-editable/
+Homepage
+--------
+http://vitalets.github.io/x-editable/
 
-Example configuration:
-
+Configuration
+-------------
 .. code-block:: yaml
 
     # app/config/config.yml
@@ -15,7 +17,8 @@ Example configuration:
         plugins:
             x_editable: ~
 
-Provided twig filters:
+Provided twig filters
+---------------------
 
 .. code-block:: html+jinja
 

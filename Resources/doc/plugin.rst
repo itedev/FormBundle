@@ -19,8 +19,10 @@ Available plugins
     plugin/knob
     plugin/starrating
     plugin/x_editable
-    plugin/nod
-    plugin/parsley
+    plugin/nod/index
+    plugin/nod/demo
+    plugin/parsley/index
+    plugin/parsley/demo
     plugin/form
 
 - :doc:`Select2 <plugin/select2>`

@@ -1,10 +1,12 @@
-jQuery Form Plugin
-~~~~~~~~~~~~~~~~~~
+jQuery Form plugin
+==================
 
-Homepage: http://malsup.com/jquery/form/
+Homepage
+--------
+http://malsup.com/jquery/form/
 
-Example configuration:
-
+Configuration
+-------------
 .. code-block:: yaml
 
     # app/config/config.yml
@@ -13,8 +15,8 @@ Example configuration:
         plugins:
             form:   ~
 
-Usage:
-
+Usage
+-----
 .. code-block:: php
 
     // src/Acme/DemoBundle/Form/Type/FooType.php

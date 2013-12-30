@@ -1,18 +1,20 @@
-Knob
-~~~~
+Knob plugin
+===========
 
-Homepage: http://anthonyterrien.com/knob/
+Homepage
+--------
+http://anthonyterrien.com/knob/
 
-Provided field types:
-
+Provided field types
+--------------------
 +---------------------+---------------+-----------------------+
 | Type                | Parent type   | Required components   |
 +=====================+===============+=======================+
 | ite\_knob\_number   | number        | none                  |
 +---------------------+---------------+-----------------------+
 
-Example configuration:
-
+Configuration
+-------------
 .. code-block:: yaml
 
     # app/config/config.yml

@@ -1,18 +1,20 @@
-MiniColors
-~~~~~~~~~~
+MiniColors plugin
+=================
 
-Homepage: http://labs.abeautifulsite.net/jquery-minicolors/
+Homepage
+--------
+http://labs.abeautifulsite.net/jquery-minicolors/
 
-Provided field types:
-
+Provided field types
+--------------------
 +-------------------------+---------------+-----------------------+
 | Type                    | Parent type   | Required components   |
 +=========================+===============+=======================+
 | ite\_minicolors\_text   | text          | none                  |
 +-------------------------+---------------+-----------------------+
 
-Example configuration:
-
+Configuration
+-------------
 .. code-block:: yaml
 
     # app/config/config.yml

@@ -1,10 +1,12 @@
-Bootstrap Spinedit
-~~~~~~~~~~~~~~~~~~
+Bootstrap Spinedit plugin
+=========================
 
-Homepage: http://geersch.github.com/bootstrap-spinedit/
+Homepage
+--------
+http://geersch.github.com/bootstrap-spinedit/
 
-Provided field types:
-
+Provided field types
+--------------------
 +-------------------------------------+---------------+-----------------------+
 | Type                                | Parent type   | Required components   |
 +=====================================+===============+=======================+
@@ -13,8 +15,8 @@ Provided field types:
 | ite\_bootstrap\_spinedit\_number    | number        | none                  |
 +-------------------------------------+---------------+-----------------------+
 
-Example configuration:
-
+Configuration
+-------------
 .. code-block:: yaml
 
     # app/config/config.yml

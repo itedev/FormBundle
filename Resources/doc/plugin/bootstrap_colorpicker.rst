@@ -1,18 +1,20 @@
-Bootstrap ColorPicker
-~~~~~~~~~~~~~~~~~~~~~
+Bootstrap ColorPicker plugin
+============================
 
-Homepage: http://www.eyecon.ro/bootstrap-colorpicker/
+Homepage
+--------
+http://www.eyecon.ro/bootstrap-colorpicker/
 
-Provided field types:
-
+Provided field types
+--------------------
 +-------------------------------+---------------+-----------------------+
 | Type                          | Parent type   | Required components   |
 +===============================+===============+=======================+
 | ite\_bootstrap\_colorpicker   | text          | none                  |
 +-------------------------------+---------------+-----------------------+
 
-Example configuration:
-
+Configuration
+-------------
 .. code-block:: yaml
 
     # app/config/config.yml

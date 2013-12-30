@@ -1,10 +1,12 @@
-Bootstrap DateTimePicker (by smalot)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Bootstrap DateTimePicker (by smalot) plugin
+===========================================
 
-Homepage: http://www.malot.fr/bootstrap-datetimepicker/
+Homepage
+--------
+http://www.malot.fr/bootstrap-datetimepicker/
 
-Provided field types:
-
+Provided field types
+--------------------
 +--------------------------------------------+----------------------------------------+-----------------------+
 | Type                                       | Parent type                            | Required components   |
 +============================================+========================================+=======================+
@@ -17,8 +19,8 @@ Provided field types:
 | ite\_bootstrap\_datetimepicker\_birthday   | ite\_bootstrap\_datetimepicker\_date   | none                  |
 +--------------------------------------------+----------------------------------------+-----------------------+
 
-Example configuration:
-
+Configuration
+-------------
 .. code-block:: yaml
 
     # app/config/config.yml

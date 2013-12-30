@@ -1,10 +1,12 @@
-Select2
-~~~~~~~
+Select2 plugin
+==============
 
-Homepage: http://ivaynberg.github.io/select2/
+Homepage
+--------
+http://ivaynberg.github.io/select2/
 
-Provided field types:
-
+Provided field types
+--------------------
 +------------------------------+---------------------+-----------------------+
 | Type                         | Parent type         | Required components   |
 +==============================+=====================+=======================+
@@ -31,8 +33,8 @@ Provided field types:
 | ite\_select2\_google\_font   | ite\_google\_font   | none                  |
 +------------------------------+---------------------+-----------------------+
 
-Example configuration:
-
+Configuration
+-------------
 .. code-block:: yaml
 
     # app/config/config.yml
@@ -44,8 +46,8 @@ Example configuration:
 Few words about ``ite_select2_ajax_entity``. This type does not load all entities at once and use AJAX autocomplete
 instead of it.
 
-Usage:
-
+Usage
+-----
 .. code-block:: php
 
     // src/Acme/DemoBundle/Form/Type/FooType.php
