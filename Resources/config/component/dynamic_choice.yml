@@ -4,6 +4,7 @@ parameters:
     ite_form.form.type.component.dynamic_choice.ajax_entity.class:      ITE\FormBundle\Form\Type\Component\DynamicChoice\AjaxEntityType
 
     ite_form.entity_converter.class:                                    ITE\FormBundle\Service\Converter\EntityConverter
+    ite_form.choice_converter.class:                                    ITE\FormBundle\Service\Converter\ChoiceConverter
     ite_form.widget_generator.class:                                    ITE\FormBundle\Service\Widget\WidgetGenerator
 
 services:
@@ -22,6 +23,9 @@ services:
         arguments: [ @router ]
         tags:
             - { name: form.type, alias: ite_ajax_entity }
+
+    ite_form.choice_converter:
+        class:                                                          %ite_form.choice_converter.class%
 
     ite_form.entity_converter:
         class:                                                          %ite_form.entity_converter.class%
