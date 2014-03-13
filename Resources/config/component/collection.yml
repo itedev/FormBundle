@@ -4,5 +4,6 @@ parameters:
 services:
     ite_form.form.type_extension.component.collection.collection:
         class:                                                          %ite_form.form.type_extension.component.collection.collection.class%
+        arguments: [ %ite_form.component.collection.widget_show_animation%, %ite_form.component.collection.widget_hide_animation% ]
         tags:
             - { name: form.type_extension, alias: collection }

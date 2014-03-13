@@ -56,6 +56,13 @@ class ConstraintMapper implements ConstraintMapperInterface
                         $constraintMetadata->getMessage()
                     );
                     break;
+                case ConstraintMetadataInterface::TYPE_EMAIL:
+                    $result[] = array(
+                        $selector,
+                        'email',
+                        $constraintMetadata->getMessage()
+                    );
+                    break;
                 case ConstraintMetadataInterface::TYPE_EQUAL_TO:
                 case ConstraintMetadataInterface::TYPE_IDENTICAL_TO:
                     $result[] = array(

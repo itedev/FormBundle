@@ -38,6 +38,14 @@ class ITEFormExtension extends Extension
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function getConfiguration(array $config, ContainerBuilder $container)
+    {
+        return new Configuration($container);
+    }
+
+    /**
      * @param FileLoader $loader
      * @param array $config
      * @param ContainerBuilder $container

@@ -8,6 +8,10 @@
       var options = elementData.options;
 
       element.knob(options);
+    },
+
+    setValue: function(element) {
+      element.trigger('change');
     }
   };
 })(jQuery);

@@ -50,18 +50,17 @@ class SFFormExtension extends SFExtension implements SFFormExtensionInterface
     }
 
     /**
-     * @param array $inputs
      * @return array
      */
-    public function modifyJavascripts(array &$inputs)
+    public function addJavascripts()
     {
-        $newInputs = array();
+        $inputs = array();
 
         // add component js
         foreach ($this->getComponents() as $component) {
             /** @var $component ExtensionInterface */
             if ($component->isEnabled($this->container)) {
-                $newInputs = array_merge($newInputs, $component->addJavascripts($this->container));
+                $inputs = array_merge($inputs, $component->addJavascripts($this->container));
             }
         }
 
@@ -69,20 +68,11 @@ class SFFormExtension extends SFExtension implements SFFormExtensionInterface
         foreach ($this->getPlugins() as $plugin) {
             /** @var $plugin ExtensionInterface */
             if ($plugin->isEnabled($this->container)) {
-                $newInputs = array_merge($newInputs, $plugin->addJavascripts($this->container));
+                $inputs = array_merge($inputs, $plugin->addJavascripts($this->container));
             }
         }
 
-        if (false !== $index = array_search('@ITEFormBundle/Resources/public/js/sf.form.js', $inputs)) {
-            array_splice(
-                $inputs,
-                $index + 1,
-                0,
-                $newInputs
-            );
-        } else {
-            $inputs = array_merge($inputs, $newInputs);
-        }
+        return $inputs;
     }
 
     /**

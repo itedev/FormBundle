@@ -18,9 +18,9 @@ class AjaxFileUploadComponent extends Component
     /**
      * {@inheritdoc}
      */
-    public function addConfiguration(ArrayNodeDefinition $rootNode)
+    public function addConfiguration(ArrayNodeDefinition $rootNode, ContainerBuilder $container)
     {
-        $node = parent::addConfiguration($rootNode);
+        $node = parent::addConfiguration($rootNode, $container);
 
         return $node
             ->scalarNode('web_root')->defaultValue('%kernel.root_dir%/../web')->end()

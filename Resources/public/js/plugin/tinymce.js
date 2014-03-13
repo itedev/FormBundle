@@ -9,13 +9,13 @@
     apply: function(element, elementData) {
       var options = elementData.options;
 
-      if (element.is('[required]')) {
-        options.oninit = function(editor) {
-          editor.onChange.add(function(ed, l) {
-            ed.save();
-          });
-        };
-      }
+//      if (element.is('[required]')) {
+//        options.oninit = function(editor) {
+//          editor.onChange.add(function(ed, l) {
+//            ed.save();
+//          });
+//        };
+//      }
 
       element.tinymce(options);
     }

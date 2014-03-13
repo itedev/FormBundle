@@ -2,11 +2,6 @@
 
 namespace ITE\FormBundle\Service\Editable;
 
-use Doctrine\Common\Annotations\Reader;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Mapping\ClassMetadata;
-use Doctrine\ORM\Mapping\ClassMetadataInfo;
-use ITE\FormBundle\Annotation\Editable;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactoryInterface;
 
@@ -16,42 +11,17 @@ use Symfony\Component\Form\FormFactoryInterface;
  */
 class EditableManager implements EditableManagerInterface
 {
-    const EDITABLE_ANNOTATION = '\ITE\FormBundle\Annotation\Editable';
-
-    /**
-     * @var Reader $reader
-     */
-    protected $reader;
-
-    /**
-     * @var EntityManager $em
-     */
-    protected $em;
-
     /**
      * @var FormFactoryInterface $formFactory
      */
     protected $formFactory;
 
     /**
-     * @param Reader $reader
-     * @param EntityManager $em
      * @param FormFactoryInterface $formFactory
      */
-    public function __construct(Reader $reader, EntityManager $em, FormFactoryInterface $formFactory)
+    public function __construct(FormFactoryInterface $formFactory)
     {
-        $this->reader = $reader;
-        $this->em = $em;
         $this->formFactory = $formFactory;
-    }
-
-    /**
-     * @param $class
-     * @return ClassMetadata
-     */
-    public function getClassMetadata($class)
-    {
-        return $this->em->getClassMetadata($class);
     }
 
     /**
@@ -61,17 +31,7 @@ class EditableManager implements EditableManagerInterface
      */
     public function createForm($entity, $field)
     {
-        /** @var $classMetadata ClassMetadataInfo */
-        $classMetadata = $this->getClassMetadata(get_class($entity));
-        $property = $classMetadata->getReflectionProperty($field);
-
-        $editableAnnotation = $this->reader->getPropertyAnnotation($property, self::EDITABLE_ANNOTATION);
-        /** @var $editableAnnotation Editable */
-        if (!$editableAnnotation) {
-            return $this->getForm($entity, $field);
-        }
-
-        return $this->getForm($entity, $field, $editableAnnotation->getType(), $editableAnnotation->getOptions());
+        return $this->getForm($entity, $field);
     }
 
     /**

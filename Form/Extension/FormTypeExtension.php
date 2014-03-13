@@ -50,9 +50,6 @@ class FormTypeExtension extends AbstractTypeExtension
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        if (!$form->isRoot()) {
-            return;
-        }
         $view->vars['submitted'] = $form->isSubmitted();
     }
 

@@ -18,9 +18,9 @@ class FileuploadPlugin extends Plugin
     /**
      * {@inheritdoc}
      */
-    public function addConfiguration(ArrayNodeDefinition $rootNode)
+    public function addConfiguration(ArrayNodeDefinition $rootNode, ContainerBuilder $container)
     {
-        $node = parent::addConfiguration($rootNode);
+        $node = parent::addConfiguration($rootNode, $container);
 
         return $node
             ->variableNode('file_manager')->defaultValue(array())->end()

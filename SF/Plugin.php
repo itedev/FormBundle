@@ -20,7 +20,7 @@ class Plugin implements ExtensionInterface
     /**
      * {@inheritdoc}
      */
-    public function addConfiguration(ArrayNodeDefinition $rootNode)
+    public function addConfiguration(ArrayNodeDefinition $rootNode, ContainerBuilder $container)
     {
         /** @var $node NodeBuilder */
         $node = $rootNode
@@ -28,8 +28,9 @@ class Plugin implements ExtensionInterface
                 ->arrayNode(static::NAME)
                     ->canBeUnset()
                     ->addDefaultsIfNotSet()
-                    ->treatNullLike(array('enabled' => true))
+                    ->treatFalseLike(array('enabled' => false))
                     ->treatTrueLike(array('enabled' => true))
+                    ->treatNullLike(array('enabled' => true))
                     ->children()
         ;
 

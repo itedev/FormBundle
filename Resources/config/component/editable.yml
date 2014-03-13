@@ -1,7 +1,14 @@
 parameters:
     ite_form.editable_manager.class:                        ITE\FormBundle\Service\Editable\EditableManager
+    ite_form.form.type_guesser.class:                       ITE\FormBundle\Form\TypeGuesser
 
 services:
     ite_form.editable_manager:
         class:                                              %ite_form.editable_manager.class%
-        arguments: [ @annotation_reader, @doctrine.orm.entity_manager, @form.factory ]
+        arguments: [ @form.factory ]
+
+    ite_form.form.type_guesser:
+        class:                                              %ite_form.form.type_guesser.class%
+        arguments: [ @annotation_reader, @doctrine.orm.entity_manager ]
+        tags:
+            - { name: form.type_guesser }

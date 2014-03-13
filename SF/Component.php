@@ -20,7 +20,7 @@ class Component implements ExtensionInterface
     /**
      * {@inheritdoc}
      */
-    public function addConfiguration(ArrayNodeDefinition $rootNode)
+    public function addConfiguration(ArrayNodeDefinition $rootNode, ContainerBuilder $container)
     {
         /** @var $node NodeBuilder */
         $node = $rootNode
@@ -28,13 +28,14 @@ class Component implements ExtensionInterface
                 ->arrayNode(static::NAME)
                     ->canBeUnset()
                     ->addDefaultsIfNotSet()
-                    ->treatNullLike(array('enabled' => true))
+                    ->treatFalseLike(array('enabled' => false))
                     ->treatTrueLike(array('enabled' => true))
+                    ->treatNullLike(array('enabled' => true))
                     ->children()
         ;
 
         $node
-            ->booleanNode('enabled')->defaultFalse()->end()
+            ->booleanNode('enabled')->defaultFalse()
         ;
 
         return $node;
@@ -89,13 +90,11 @@ class Component implements ExtensionInterface
     public function addJavascripts(ContainerInterface $container)
     {
         $bundlePath = $container->get('kernel')->getBundle('ITEFormBundle')->getPath();
-        if (!file_exists(sprintf('%s/Resources/public/js/component/%s.js', $bundlePath, static::NAME))) {
-            return array();
+        if (file_exists(sprintf('%s/Resources/public/js/component/%s.js', $bundlePath, static::NAME))) {
+            return array(sprintf('@ITEFormBundle/Resources/public/js/component/%s.js', static::NAME));
         }
 
-        return array(
-            sprintf('@ITEFormBundle/Resources/public/js/component/%s.js', static::NAME)
-        );
+        return array();
     }
 
     /**

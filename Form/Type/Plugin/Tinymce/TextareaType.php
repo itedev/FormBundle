@@ -3,6 +3,7 @@
 namespace ITE\FormBundle\Form\Type\Plugin\Tinymce;
 
 use ITE\FormBundle\SF\Plugin\TinymcePlugin;
+use ITE\FormBundle\Util\ArrayUtils;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -50,7 +51,7 @@ class TextareaType extends AbstractType
         }
         $view->vars['plugins'][TinymcePlugin::NAME] = array(
             'extras' => (object) array(),
-            'options' => (object) array_replace_recursive($this->options, $options['plugin_options'])
+            'options' => (object) ArrayUtils::replaceRecursive($this->options, $options['plugin_options']),
         );
     }
 

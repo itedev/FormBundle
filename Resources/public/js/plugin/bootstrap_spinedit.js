@@ -8,6 +8,10 @@
       var options = elementData.options;
 
       element.spinedit(options);
+    },
+
+    setValue: function(element) {
+      element.spinedit('setValue', element.val());
     }
   };
 })(jQuery);
