@@ -9,10 +9,10 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * Class AbstractType
+ * Class AbstractChoiceType
  * @package ITE\FormBundle\Form\Type\Plugin\Select2
  */
-class AbstractType extends BaseAbstractType
+class AbstractChoiceType extends BaseAbstractType
 {
     /**
      * @var array $options
