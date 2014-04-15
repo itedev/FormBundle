@@ -134,7 +134,7 @@ class AjaxEntityType extends AbstractType
                     'url' => $options['url'],
                 ),
                 'multiple' => $options['multiple'],
-                'allowClear' => false !== $options['empty_value'],
+                'allowClear' => false !== $options['empty_value'] && null !== $options['empty_value'],
             ))
         );
     }
