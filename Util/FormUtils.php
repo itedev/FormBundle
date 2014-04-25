@@ -105,6 +105,26 @@ class FormUtils
 
     /**
      * @param FormInterface $form
+     * @param $type
+     * @return bool
+     */
+    public static function isFormTypeChildOf(FormInterface $form, $type)
+    {
+        return self::isResolvedFormTypeChildOf($form->getConfig()->getType(), $type);
+    }
+
+    /**
+     * @param FormView $view
+     * @param $type
+     * @return bool
+     */
+    public static function isFormViewContainBlockPrefix(FormView $view, $type)
+    {
+        return in_array($type, $view->vars['block_prefixes']);
+    }
+
+    /**
+     * @param FormInterface $form
      * @return string
      */
     public static function getErrorsAsString(FormInterface $form)

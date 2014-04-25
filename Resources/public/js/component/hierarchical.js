@@ -128,6 +128,10 @@
       }
     },
 
+    childrenCount: function() {
+      return this.getChildren().length;
+    },
+
     hasChildrenSelector: function() {
       return this.hasOption('children_selector');
     },
@@ -150,6 +154,10 @@
 
     getHierarchicalCallback: function() {
       return this.getOption('hierarchical_callback');
+    },
+
+    hasHierarchicalAutoInitialize: function() {
+      return this.hasOption('hierarchical_auto_initialize');
     }
   });
 
@@ -284,6 +292,7 @@
 
       var self = this;
       var $initializedParents = [];
+      var $parentsToChange = [];
       $.each(this.elements, function(selector, elementObject) {
         if (!elementObject.hasParents()) {
           return;
@@ -307,11 +316,24 @@
           } else {
             $parent.on('change.hierarchical', data, SF.callbacks.hierarchicalChange);
           }
+
+          $.each(parentElement.getChildren(), function(j, childSelector) {
+            var childElement = self.get(childSelector);
+            if (childElement.hasHierarchicalAutoInitialize()) {
+              if (-1 === $.inArray($parent, $parentsToChange)) {
+                $parentsToChange.push($parent);
+              }
+            }
+          });
+
           $initializedParents.push($parent);
         });
       });
       $.each($initializedParents, function(i, $initializedParent) {
         $initializedParent.data('hierarchical', true);
+      });
+      $.each($parentsToChange, function(i, $parentToChange) {
+        $parentToChange.trigger('change.hierarchical');
       });
     }
   });

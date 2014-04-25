@@ -126,8 +126,11 @@ class FormTypeHierarchicalExtension extends AbstractTypeExtension
 
         $parentView = $view->parent;
         $parents = array_map(function($field) use ($parentView) {
-            return FormUtils::generateSelector($parentView->children[$field]);
+            return $parentView->children[$field];
         }, $hierarchical['parents']);
+        $parentSelectors = array_map(function(FormView $parent) {
+            return FormUtils::generateSelector($parent);
+        }, $parents);
 
         if (isset($view->vars['expanded']) && $view->vars['expanded']) {
             $view->vars['attr']['data-property-path'] = $view->vars['full_name']
@@ -138,7 +141,18 @@ class FormTypeHierarchicalExtension extends AbstractTypeExtension
             ? array('hierarchical_url' => $hierarchical['url'])
             : array('hierarchical_callback' => $hierarchical['callback']);
 
-        $this->sfForm->getElementBag()->addHierarchicalElement($selector, $parents, $elementOptions);
+        if (1 === count($parents)
+            && FormUtils::isFormTypeChildOf($form, 'choice')
+            && isset($options['choices'])
+            && empty($options['choices'])) {
+            /** @var $firstParent FormView */
+            $firstParent = reset($parents);
+            if (FormUtils::isFormViewContainBlockPrefix($firstParent, 'choice')) {
+                $elementOptions['hierarchical_auto_initialize'] = true;
+            }
+        }
+
+        $this->sfForm->getElementBag()->addHierarchicalElement($selector, $parentSelectors, $elementOptions);
     }
 
     /**
