@@ -14,6 +14,13 @@
     {% endfor %}
 {% endblock ite_select2_ajax_entity_widget %}
 
+{% block ite_select2_ajax_choice_widget %}
+    {{ block('hidden_widget') }}
+    {% for plugin, element_data in plugins %}
+        {{ ite_form_sf_add_plugin_element('#' ~ id, plugin, element_data) }}
+    {% endfor %}
+{% endblock ite_select2_ajax_choice_widget %}
+
 {% block ite_tinymce_textarea_widget %}
     {{ block('textarea_widget') }}
     {% for plugin, element_data in plugins %}

@@ -2,6 +2,7 @@ parameters:
     ite_form.form.type.plugin.select2.abstract.class:   ITE\FormBundle\Form\Type\Plugin\Select2\AbstractChoiceType
     ite_form.form.type.plugin.select2.google_font.class:       ITE\FormBundle\Form\Type\Plugin\Select2\GoogleFontType
     ite_form.form.type.plugin.select2.ajax_entity.class:       ITE\FormBundle\Form\Type\Plugin\Select2\AjaxEntityType
+    ite_form.form.type.plugin.select2.ajax_choice.class:       ITE\FormBundle\Form\Type\Plugin\Select2\AjaxChoiceType
     ite_form.select2.entity_converter.class:                   ITE\FormBundle\Service\Converter\Plugin\Select2\EntityConverter
 
 services:
@@ -21,6 +22,12 @@ services:
         arguments: [ %ite_form.plugin.select2.options%, @router, @ite_form.select2.entity_converter ]
         tags:
             - { name: form.type, alias: ite_select2_ajax_entity }
+
+    ite_form.form.type.plugin.select2.ajax_choice:
+        class:                                          %ite_form.form.type.plugin.select2.ajax_choice.class%
+        arguments: [ %ite_form.plugin.select2.options% ]
+        tags:
+            - { name: form.type, alias: ite_select2_ajax_choice }
 
     ite_form.select2.entity_converter:
         class:                                          %ite_form.select2.entity_converter.class%
