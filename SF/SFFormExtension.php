@@ -95,7 +95,7 @@ class SFFormExtension extends SFExtension implements SFFormExtensionInterface
     /**
      * @param GetResponseForControllerResultEvent $event
      */
-    public function onKernelView(GetResponseForControllerResultEvent $event)
+    public function onAjaxRequest(GetResponseForControllerResultEvent $event)
     {
         $request = $event->getRequest();
         $result = $event->getControllerResult();
@@ -117,7 +117,7 @@ class SFFormExtension extends SFExtension implements SFFormExtensionInterface
     /**
      * @param FilterResponseEvent $event
      */
-    public function onKernelResponse(FilterResponseEvent $event)
+    public function onAjaxResponse(FilterResponseEvent $event)
     {
         $response = $event->getResponse();
 

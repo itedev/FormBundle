@@ -9,9 +9,8 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
- * This is the class that validates and merges configuration from your app/config files
- *
- * To learn more see {@link http://symfony.com/doc/current/cookbook/bundles/extension.html#cookbook-bundles-extension-config-class}
+ * Class Configuration
+ * @package ITE\FormBundle\DependencyInjection
  */
 class Configuration implements ConfigurationInterface
 {

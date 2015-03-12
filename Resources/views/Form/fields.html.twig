@@ -1,59 +1,49 @@
 {% extends ite_parent_form_resource('ITEFormBundle:Form:fields.html.twig') %}
 
-{% block ite_select2_widget %}
-    {{ block('choice_widget') }}
+{% block ite_form_sf_element_plugins %}
     {% for plugin, element_data in plugins %}
         {{ ite_form_sf_add_plugin_element('#' ~ id, plugin, element_data) }}
     {% endfor %}
+{% endblock %}
+
+{% block ite_select2_widget %}
+    {{ block('choice_widget') }}
+    {{ block('ite_form_sf_element_plugins') }}
 {% endblock ite_select2_widget %}
 
 {% block ite_select2_ajax_entity_widget %}
     {{ block('hidden_widget') }}
-    {% for plugin, element_data in plugins %}
-        {{ ite_form_sf_add_plugin_element('#' ~ id, plugin, element_data) }}
-    {% endfor %}
+    {{ block('ite_form_sf_element_plugins') }}
 {% endblock ite_select2_ajax_entity_widget %}
 
 {% block ite_select2_ajax_choice_widget %}
     {{ block('hidden_widget') }}
-    {% for plugin, element_data in plugins %}
-        {{ ite_form_sf_add_plugin_element('#' ~ id, plugin, element_data) }}
-    {% endfor %}
+    {{ block('ite_form_sf_element_plugins') }}
 {% endblock ite_select2_ajax_choice_widget %}
 
 {% block ite_tinymce_textarea_widget %}
     {{ block('textarea_widget') }}
-    {% for plugin, element_data in plugins %}
-        {{ ite_form_sf_add_plugin_element('#' ~ id, plugin, element_data) }}
-    {% endfor %}
+    {{ block('ite_form_sf_element_plugins') }}
 {% endblock ite_tinymce_textarea_widget %}
 
 {% block ite_bootstrap_colorpicker_text_widget %}
     {{ block('form_widget_simple') }}
-    {% for plugin, element_data in plugins %}
-        {{ ite_form_sf_add_plugin_element('#' ~ id, plugin, element_data) }}
-    {% endfor %}
+    {{ block('ite_form_sf_element_plugins') }}
 {% endblock ite_bootstrap_colorpicker_text_widget %}
 
 {% block ite_bootstrap_spinedit_number_widget %}
     {{ block('number_widget') }}
-    {% for plugin, element_data in plugins %}
-        {{ ite_form_sf_add_plugin_element('#' ~ id, plugin, element_data) }}
-    {% endfor %}
+    {{ block('ite_form_sf_element_plugins') }}
 {% endblock ite_bootstrap_spinedit_number_widget %}
 
 {% block ite_bootstrap_spinedit_integer_widget %}
     {{ block('integer_widget') }}
-    {% for plugin, element_data in plugins %}
-        {{ ite_form_sf_add_plugin_element('#' ~ id, plugin, element_data) }}
-    {% endfor %}
+    {{ block('ite_form_sf_element_plugins') }}
 {% endblock ite_bootstrap_spinedit_integer_widget %}
 
 {% block ite_bootstrap_datetimepicker_widget %}
     {{ block('form_widget_simple') }}
-    {% for plugin, element_data in plugins %}
-        {{ ite_form_sf_add_plugin_element('#' ~ id, plugin, element_data) }}
-    {% endfor %}
+    {{ block('ite_form_sf_element_plugins') }}
 {% endblock ite_bootstrap_datetimepicker_widget %}
 
 {% block ite_bootstrap_datetimepicker2_widget %}
@@ -130,16 +120,12 @@
 
 {% block ite_minicolors_text_widget %}
     {{ block('form_widget_simple') }}
-    {% for plugin, element_data in plugins %}
-        {{ ite_form_sf_add_plugin_element('#' ~ id, plugin, element_data) }}
-    {% endfor %}
+    {{ block('ite_form_sf_element_plugins') }}
 {% endblock ite_minicolors_text_widget %}
 
 {% block ite_knob_number_widget %}
     {{ block('form_widget_simple') }}
-    {% for plugin, element_data in plugins %}
-        {{ ite_form_sf_add_plugin_element('#' ~ id, plugin, element_data) }}
-    {% endfor %}
+    {{ block('ite_form_sf_element_plugins') }}
 {% endblock ite_knob_number_widget %}
 
 {% block ite_starrating_rating_widget %}

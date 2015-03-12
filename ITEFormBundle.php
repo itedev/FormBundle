@@ -2,9 +2,9 @@
 
 namespace ITE\FormBundle;
 
-use ITE\FormBundle\DependencyInjection\Compiler\ExtensionCompilerPass;
-use ITE\FormBundle\DependencyInjection\Compiler\FormResourceCompilerPass;
-use ITE\FormBundle\DependencyInjection\Compiler\RouterResourceCompilerPass;
+use ITE\FormBundle\DependencyInjection\Compiler\SFFromExtensionPass;
+use ITE\FormBundle\DependencyInjection\Compiler\FormResourcePass;
+use ITE\FormBundle\DependencyInjection\Compiler\RouterResourcePass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
@@ -19,9 +19,9 @@ class ITEFormBundle extends Bundle
      */
     public function build(ContainerBuilder $container)
     {
-        $container->addCompilerPass(new ExtensionCompilerPass());
-        $container->addCompilerPass(new FormResourceCompilerPass());
-        $container->addCompilerPass(new RouterResourceCompilerPass());
+        $container->addCompilerPass(new SFFromExtensionPass());
+        $container->addCompilerPass(new FormResourcePass());
+        $container->addCompilerPass(new RouterResourcePass());
 
         parent::build($container);
     }

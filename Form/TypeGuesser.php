@@ -55,7 +55,7 @@ class TypeGuesser implements FormTypeGuesserInterface
         return new TypeGuess(
             $typeAnnotation->getType(),
             $typeAnnotation->getOptions(),
-            Guess::HIGH_CONFIDENCE + 1
+            Guess::VERY_HIGH_CONFIDENCE
         );
     }
 

@@ -7,10 +7,10 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * Class RouterResourceCompilerPass
+ * Class RouterResourcePass
  * @package ITE\FormBundle\DependencyInjection\Compiler
  */
-class RouterResourceCompilerPass implements CompilerPassInterface
+class RouterResourcePass implements CompilerPassInterface
 {
     /**
      * @param ContainerBuilder $container

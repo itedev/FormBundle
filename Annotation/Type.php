@@ -1,6 +1,7 @@
 <?php
 
 namespace ITE\FormBundle\Annotation;
+
 use InvalidArgumentException;
 
 /**

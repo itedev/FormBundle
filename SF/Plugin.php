@@ -27,19 +27,15 @@ class Plugin implements ExtensionInterface
             ->children()
                 ->arrayNode(static::NAME)
                     ->canBeUnset()
-                    ->addDefaultsIfNotSet()
-                    ->treatFalseLike(array('enabled' => false))
-                    ->treatTrueLike(array('enabled' => true))
-                    ->treatNullLike(array('enabled' => true))
-                    ->children()
+                    ->canBeEnabled()
         ;
 
-        $node
-            ->booleanNode('enabled')->defaultFalse()->end()
-            ->variableNode('options')->defaultValue(array())->end()
+        return $node
+            ->children()
+                ->variableNode('options')
+                    ->defaultValue(array())
+                ->end()
         ;
-
-        return $node;
     }
 
     /**

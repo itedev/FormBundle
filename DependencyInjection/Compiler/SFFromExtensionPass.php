@@ -8,10 +8,10 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
 /**
- * Class ExtensionCompilerPass
+ * Class SFFromExtensionPass
  * @package ITE\FormBundle\DependencyInjection\Compiler
  */
-class ExtensionCompilerPass implements CompilerPassInterface
+class SFFromExtensionPass implements CompilerPassInterface
 {
     /**
      * {@inheritdoc}

@@ -23,7 +23,9 @@ class FileuploadPlugin extends Plugin
         $node = parent::addConfiguration($rootNode, $container);
 
         return $node
-            ->variableNode('file_manager')->defaultValue(array())->end()
+            ->variableNode('file_manager')
+                ->defaultValue(array())
+            ->end()
         ;
     }
 

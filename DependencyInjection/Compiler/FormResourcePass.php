@@ -8,10 +8,10 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
- * Class FormResourceCompilerPass
+ * Class FormResourcePass
  * @package ITE\FormBundle\DependencyInjection\Compiler
  */
-class FormResourceCompilerPass implements CompilerPassInterface
+class FormResourcePass implements CompilerPassInterface
 {
     /**
      * {@inheritdoc}

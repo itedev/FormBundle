@@ -23,22 +23,13 @@ class Component implements ExtensionInterface
     public function addConfiguration(ArrayNodeDefinition $rootNode, ContainerBuilder $container)
     {
         /** @var $node NodeBuilder */
-        $node = $rootNode
+        return $rootNode
             ->children()
                 ->arrayNode(static::NAME)
                     ->canBeUnset()
-                    ->addDefaultsIfNotSet()
-                    ->treatFalseLike(array('enabled' => false))
-                    ->treatTrueLike(array('enabled' => true))
-                    ->treatNullLike(array('enabled' => true))
+                    ->canBeEnabled()
                     ->children()
         ;
-
-        $node
-            ->booleanNode('enabled')->defaultFalse()
-        ;
-
-        return $node;
     }
 
     /**

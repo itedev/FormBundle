@@ -42,5 +42,4 @@ interface SFFormExtensionInterface extends SFExtensionInterface
      */
     public function getElementBag();
 
-
 } 
