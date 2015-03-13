@@ -1,6 +1,6 @@
 <?php
 
-namespace ITE\FormBundle\Form\Type\Plugin\StarRating;
+namespace ITE\FormBundle\Form\Type\Plugin\Starrating;
 
 use ITE\FormBundle\SF\Plugin\StarratingPlugin;
 use Symfony\Component\Form\AbstractType as BaseAbstractType;

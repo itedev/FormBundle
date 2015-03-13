@@ -4,12 +4,12 @@ parameters:
 
 services:
     ite_form.form.type_extension.component.collection.collection:
-        class:                                                          %ite_form.form.type_extension.component.collection.collection.class%
+        class: %ite_form.form.type_extension.component.collection.collection.class%
         arguments: [ %ite_form.component.collection.widget_show_animation%, %ite_form.component.collection.widget_hide_animation% ]
         tags:
             - { name: form.type_extension, alias: collection }
 
     ite_form.twig.extension.component.collection:
-        class:                                                          %ite_form.twig.extension.component.collection.class%
+        class: %ite_form.twig.extension.component.collection.class%
         tags:
             - { name: twig.extension }

@@ -9,13 +9,13 @@
     var $collection = $(collection);
 
     this.collectionSelector = '#' + $collection.attr('id');
-    this.collectionId = $collection.data('collection-id');
+    this.collectionId = $collection.data('collectionId');
     this.collectionItemsSelector = this.collectionSelector + ' .collection-items:first';
     this.collectionItemSelector = this.collectionItemsSelector + ' > .collection-item';
 
-//    $(this.collectionItemSelector).each(function(index) {
-//      $(this).attr('data-index', index);
-//    });
+    $(this.collectionItemSelector).each(function(index) {
+      $(this).attr('data-index', index);
+    });
 
     this.index = $(this.collectionItemSelector).length - 1;
     this.show = $collection.data('show-animation');
@@ -32,7 +32,7 @@
         $item.parents('.collection-item').each(function() {
           var parentCollectionItem = $(this);
 
-          var parentPrototypeName = parentCollectionItem.closest('[data-collection-id]').data('prototype-name');
+          var parentPrototypeName = parentCollectionItem.closest('[data-collection-id]').data('prototypeName');
           replacementTokens[parentPrototypeName] = parentCollectionItem.data('index');
         });
         replacementTokens[prototypeName] = self.index;
@@ -44,7 +44,7 @@
       this.index++;
 
       var $collection = $(this.collectionSelector);
-      var prototypeName = $collection.data('prototype-name');
+      var prototypeName = $collection.data('prototypeName');
       if ('undefined' === typeof prototypeName) {
         prototypeName = '__name__';
       }
@@ -163,14 +163,32 @@
     // add
     $('body').on('click.collection', '[data-collection-add-btn]', function (e) {
       var $btn = $(e.target);
-      $btn.closest('[data-collection-id]').collection('add');
+      var $collection = $btn.data('collectionAddBtn')
+        ? $($btn.data('collectionAddBtn'))
+        : $btn.closest('[data-collection-id]');
+      if (!$collection.length) {
+        return;
+      }
+
+      $collection.collection('add');
       e.preventDefault();
     });
 
     // remove
     $('body').on('click.collection', '[data-collection-remove-btn]', function (e) {
       var $btn = $(e.target);
-      $btn.closest('[data-collection-id]').collection('remove', $btn);
+      //var $row = $btn.data('collectionRemoveBtn')
+      //  ? $($btn.data('collectionRemoveBtn'))
+      //  : $btn.closest('.collection-item');
+      var $collection = $btn.data('collectionRemoveBtn')
+        ? $($btn.data('collectionRemoveBtn'))
+        : $btn.closest('[data-collection-id]');
+
+      if (!$collection.length) {
+        return;
+      }
+
+      $collection.collection('remove', $btn);
       e.preventDefault();
     });
   });

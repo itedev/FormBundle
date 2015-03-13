@@ -1,9 +1,9 @@
 parameters:
-    ite_form.form.type.plugin.starrating.rating.class:        ITE\FormBundle\Form\Type\Plugin\Starrating\RatingType
+    ite_form.form.type.plugin.starrating.rating.class: ITE\FormBundle\Form\Type\Plugin\Starrating\RatingType
 
 services:
     ite_form.form.type.plugin.starrating.rating:
-        class:                                          %ite_form.form.type.plugin.starrating.rating.class%
+        class: %ite_form.form.type.plugin.starrating.rating.class%
         arguments: [ %ite_form.plugin.starrating.options% ]
         tags:
             - { name: form.type, alias: ite_starrating_rating }

@@ -25,10 +25,6 @@ class CollectionComponent extends Component
         /** @var $node NodeBuilder */
         $node = parent::addConfiguration($rootNode, $container);
         $node
-            ->enumNode('type')
-                ->values(array('bs2', 'bs3'))
-                ->isRequired()
-            ->end()
             ->arrayNode('widget_show_animation')
                 ->addDefaultsIfNotSet()
                 ->info('animation for showing new collection items')
@@ -67,7 +63,6 @@ class CollectionComponent extends Component
      */
     public function loadConfiguration(FileLoader $loader, array $config, ContainerBuilder $container)
     {
-        $container->setParameter('ite_form.component.collection.type', $config['type']);
         $container->setParameter('ite_form.component.collection.widget_show_animation', $config['widget_show_animation']);
         $container->setParameter('ite_form.component.collection.widget_hide_animation', $config['widget_hide_animation']);
 
@@ -79,16 +74,7 @@ class CollectionComponent extends Component
      */
     public function addFormResources(ContainerInterface $container)
     {
-        switch ($container->getParameter('ite_form.component.collection.type')) {
-            case 'bs2':
-                $template = 'ITEFormBundle:Form/Component/collection:bs2.html.twig';
-                break;
-            case 'bs3':
-                $template = 'ITEFormBundle:Form/Component/collection:bs3.html.twig';
-                break;
-        }
-
-        return array($template);
+        return array('ITEFormBundle:Form/Component/collection:fields.html.twig');
     }
 
 }
