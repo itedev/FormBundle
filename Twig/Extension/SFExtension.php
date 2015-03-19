@@ -66,6 +66,7 @@ class SFExtension extends Twig_Extension
     public function parentFormResource($filename = null)
     {
         if (isset($filename)) {
+            $filename = (string) $filename;
             $index = array_search($filename, $this->formResources);
 
             return $this->formResources[--$index];

@@ -1,4 +1,4 @@
-{% extends ite_parent_form_resource('ITEFormBundle:Form:fields.html.twig') %}
+{% extends ite_parent_form_resource(_self.templateName) %}
 
 {% block ite_form_sf_element_plugins %}
     {% for plugin, element_data in plugins %}
