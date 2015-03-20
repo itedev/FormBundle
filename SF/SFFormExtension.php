@@ -54,7 +54,7 @@ class SFFormExtension extends SFExtension implements SFFormExtensionInterface
      */
     public function addJavascripts()
     {
-        $inputs = array();
+        $inputs = array('@ITEFormBundle/Resources/public/js/sf.form.js');
 
         // add component js
         foreach ($this->getComponents() as $component) {
