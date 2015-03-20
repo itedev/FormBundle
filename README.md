@@ -75,8 +75,6 @@ List of JavaScript files, that you need to include in your global template:
 {% javascripts
     '@AcmeDemoBundle/Resources/public/js/jquery.js'
     {# ... #}
-    '@ITEJsBundle/Resources/public/js/sf.js' {# don't forget to include this js from ITEJsBundle! #}
-    '@ITEFormBundle/Resources/public/js/sf.form.js'
     ite_js_sf_assets()
 %}
 <script type="text/javascript" src="{{ asset_url }}"></script>
