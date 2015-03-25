@@ -7,7 +7,8 @@ Available plugins
 .. toctree::
     :hidden:
 
-    plugin/select2
+    plugin/select2/index
+    plugin/select2/demo
     plugin/tinymce
     plugin/bootstrap_datetimepicker
     plugin/bootstrap_datetimepicker2

@@ -10,9 +10,6 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 /**
- * Class ObjectChoiceList
- * @package ITE\FormBundle\Form\ChoiceList
- *
  * A choice list for object choices.
  *
  * Supports generation of choice labels, choice groups and choice values
@@ -58,23 +55,23 @@ class ObjectChoiceList extends ChoiceList
     /**
      * Creates a new object choice list.
      *
-     * @param array|\Traversable       $choices           The array of choices. Choices may also be given
+     * @param array|\Traversable        $choices          The array of choices. Choices may also be given
      *                                                    as hierarchy of unlimited depth by creating nested
      *                                                    arrays. The title of the sub-hierarchy can be
      *                                                    stored in the array key pointing to the nested
      *                                                    array. The topmost level of the hierarchy may also
      *                                                    be a \Traversable.
-     * @param string                   $labelPath         A property path pointing to the property used
+     * @param string                    $labelPath        A property path pointing to the property used
      *                                                    for the choice labels. The value is obtained
-     *                                            by calling the getter on the object. If the
+     *                                                    by calling the getter on the object. If the
      *                                                    path is NULL, the object's __toString() method
      *                                                    is used instead.
-     * @param array                    $preferredChoices  A flat array of choices that should be
+     * @param array                     $preferredChoices A flat array of choices that should be
      *                                                    presented to the user with priority.
-     * @param string                   $groupPath         A property path pointing to the property used
+     * @param string                    $groupPath        A property path pointing to the property used
      *                                                    to group the choices. Only allowed if
      *                                                    the choices are given as flat array.
-     * @param string                   $valuePath         A property path pointing to the property used
+     * @param string                    $valuePath        A property path pointing to the property used
      *                                                    for the choice values. If not given, integers
      *                                                    are generated instead.
      * @param PropertyAccessorInterface $propertyAccessor The reflection graph for reading property paths.
@@ -99,7 +96,7 @@ class ObjectChoiceList extends ChoiceList
      * @param array              $preferredChoices The choices to display with priority.
      *
      * @throws InvalidArgumentException When passing a hierarchy of choices and using
-     *                                   the "groupPath" option at the same time.
+     *                                  the "groupPath" option at the same time.
      */
     protected function initialize($choices, array $labels, array $preferredChoices)
     {
@@ -122,11 +119,13 @@ class ObjectChoiceList extends ChoiceList
                 if (null === $group) {
                     $groupedChoices[$i] = $choice;
                 } else {
-                    if (!isset($groupedChoices[$group])) {
-                        $groupedChoices[$group] = array();
+                    $groupName = (string) $group;
+
+                    if (!isset($groupedChoices[$groupName])) {
+                        $groupedChoices[$groupName] = array();
                     }
 
-                    $groupedChoices[$group][$i] = $choice;
+                    $groupedChoices[$groupName][$i] = $choice;
                 }
             }
 
@@ -141,6 +140,80 @@ class ObjectChoiceList extends ChoiceList
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getValuesForChoices(array $choices)
+    {
+        if (!$this->valuePath) {
+            return parent::getValuesForChoices($choices);
+        }
+
+        // Use the value path to compare the choices
+        $choices = $this->fixChoices($choices);
+        $values = array();
+
+        foreach ($choices as $i => $givenChoice) {
+            // Ignore non-readable choices
+            if (!is_object($givenChoice) && !is_array($givenChoice)) {
+                continue;
+            }
+
+            $givenValue = (string) $this->propertyAccessor->getValue($givenChoice, $this->valuePath);
+
+            foreach ($this->values as $value) {
+                if ($value === $givenValue) {
+                    $values[$i] = $value;
+                    unset($choices[$i]);
+
+                    if (0 === count($choices)) {
+                        break 2;
+                    }
+                }
+            }
+        }
+
+        return $values;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @deprecated Deprecated since version 2.4, to be removed in 3.0.
+     */
+    public function getIndicesForChoices(array $choices)
+    {
+        if (!$this->valuePath) {
+            return parent::getIndicesForChoices($choices);
+        }
+
+        // Use the value path to compare the choices
+        $choices = $this->fixChoices($choices);
+        $indices = array();
+
+        foreach ($choices as $i => $givenChoice) {
+            // Ignore non-readable choices
+            if (!is_object($givenChoice) && !is_array($givenChoice)) {
+                continue;
+            }
+
+            $givenValue = (string) $this->propertyAccessor->getValue($givenChoice, $this->valuePath);
+
+            foreach ($this->values as $j => $value) {
+                if ($value === $givenValue) {
+                    $indices[$i] = $j;
+                    unset($choices[$i]);
+
+                    if (0 === count($choices)) {
+                        break 2;
+                    }
+                }
+            }
+        }
+
+        return $indices;
+    }
+
+    /**
      * Creates a new unique value for this choice.
      *
      * If a property path for the value was given at object creation,
@@ -149,7 +222,7 @@ class ObjectChoiceList extends ChoiceList
      *
      * @param mixed $choice The choice to create a value for
      *
-     * @return integer|string A unique value without character limitations.
+     * @return int|string A unique value without character limitations.
      */
     protected function createValue($choice)
     {
@@ -160,11 +233,6 @@ class ObjectChoiceList extends ChoiceList
         return parent::createValue($choice);
     }
 
-    /**
-     * @param $choices
-     * @param array $labels
-     * @throws StringCastException
-     */
     private function extractLabels($choices, array &$labels)
     {
         foreach ($choices as $i => $choice) {
@@ -198,4 +266,4 @@ class ObjectChoiceList extends ChoiceList
     /**
      * NEW METHODS END
      */
-} 
+}

@@ -3,9 +3,6 @@
 namespace ITE\FormBundle\Form\ChoiceList;
 
 /**
- * Class SimpleChoiceList
- * @package ITE\FormBundle\Form\ChoiceList
- *
  * A choice list for choices of type string or integer.
  *
  * Choices and their associated labels can be passed in a single array. Since
@@ -26,13 +23,26 @@ namespace ITE\FormBundle\Form\ChoiceList;
 class SimpleChoiceList extends ChoiceList
 {
     /**
+     * NEW PROPERTIES START
+     */
+
+    /**
+     * @var callable|string|null $choiceLabel
+     */
+    private $choiceLabel;
+
+    /**
+     * NEW PROPERTIES END
+     */
+
+    /**
      * Creates a new simple choice list.
      *
      * @param array $choices The array of choices with the choices as keys and
-     *                       the labels as values. Choices may also be given
-     *                       as hierarchy of unlimited depth by creating nested
-     *                       arrays. The title of the sub-hierarchy is stored
-     *                       in the array key pointing to the nested array.
+     *                                the labels as values. Choices may also be given
+     *                                as hierarchy of unlimited depth by creating nested
+     *                                arrays. The title of the sub-hierarchy is stored
+     *                                in the array key pointing to the nested array.
      * @param array $preferredChoices A flat array of choices that should be
      *                                presented to the user with priority.
      */
@@ -118,7 +128,7 @@ class SimpleChoiceList extends ChoiceList
      * @param mixed $choice           The choice to test.
      * @param array $preferredChoices An array of preferred choices.
      *
-     * @return Boolean Whether the choice is preferred.
+     * @return bool Whether the choice is preferred.
      */
     protected function isPreferred($choice, array $preferredChoices)
     {
@@ -129,9 +139,9 @@ class SimpleChoiceList extends ChoiceList
     /**
      * Converts the choice to a valid PHP array key.
      *
-     * @param mixed $choice The choice.
+     * @param mixed $choice The choice
      *
-     * @return string|integer A valid PHP array key.
+     * @return string|int A valid PHP array key
      */
     protected function fixChoice($choice)
     {
@@ -161,17 +171,40 @@ class SimpleChoiceList extends ChoiceList
      */
 
     /**
+     * Set choiceLabel
+     *
+     * @param callable|null|string $choiceLabel
+     * @return SimpleChoiceList
+     */
+    public function setChoiceLabel($choiceLabel)
+    {
+        $this->choiceLabel = $choiceLabel;
+
+        return $this;
+    }
+
+    /**
      * @param array $values
      * @return void
      */
     public function addNewValues(array $values)
     {
-        $choices = array_combine($values, $values);
+        $choices = [];
+        foreach ($values as $value) {
+            if (is_callable($this->choiceLabel)) {
+                $label = call_user_func($this->choiceLabel, $value);
+            } elseif (is_string($this->choiceLabel)) {
+                $label = $this->choiceLabel;
+            } else {
+                $label = $value;
+            }
+
+            $choices[$value] = $label;
+        }
         $this->addNewChoices($choices, $choices);
     }
 
     /**
      * NEW METHODS END
      */
-
-} 
+}

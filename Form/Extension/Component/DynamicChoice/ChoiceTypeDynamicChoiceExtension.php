@@ -69,10 +69,11 @@ class ChoiceTypeDynamicChoiceExtension extends AbstractTypeExtension
             $choices = null !== $options['choices'] ? $options['choices'] : array();
 
             // Reuse existing choice lists in order to increase performance
-            $hash = md5(json_encode(array($choices, $options['preferred_choices'])));
+            $hash = hash('sha256', serialize(array($choices, $options['preferred_choices'])));
 
             if (!isset($choiceListCache[$hash])) {
                 $choiceListCache[$hash] = new SimpleChoiceList($choices, $options['preferred_choices']);
+                $choiceListCache[$hash]->setChoiceLabel($options['choice_label']);
                 if ($options['allow_modify']) {
                     $choiceListCache[$hash]->setAllowModify(true);
                 }
@@ -88,6 +89,11 @@ class ChoiceTypeDynamicChoiceExtension extends AbstractTypeExtension
         $resolver->setDefaults(array(
             'allow_modify' => $allowModify,
             'choice_list' => $choiceList,
+            'choice_label' => null,
+        ));
+
+        $resolver->setAllowedTypes(array(
+            'choice_label' => array('string', 'function', 'null')
         ));
     }
 

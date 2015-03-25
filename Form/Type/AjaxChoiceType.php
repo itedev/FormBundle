@@ -44,7 +44,6 @@ class AjaxChoiceType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-
     }
 
     /**
@@ -53,9 +52,6 @@ class AjaxChoiceType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $self = $this;
-        $url = function (Options $options) use ($self) {
-            return $self->getRouter()->generate($options['route'], $options['route_parameters']);
-        };
 
         $emptyData = function (Options $options) {
             if ($options['multiple']) {
@@ -82,28 +78,35 @@ class AjaxChoiceType extends AbstractType
             return $emptyValue;
         };
 
+        $urlNormalizer = function (Options $options, $url) use ($self) {
+            if (isset($options['route'])) {
+                return $self->getRouter()->generate($options['route'], $options['route_parameters']);
+            } elseif (isset($url)) {
+                return $url;
+            } else {
+                throw new \RuntimeException('You must specify "route" or "url" option.');
+            }
+        };
+
         $resolver->setDefaults(array(
             'multiple' => false,
             'empty_value' => $emptyValue,
             'empty_data' => $emptyData,
             'compound' => false,
             'error_bubbling' => true,
-            'choice_label' => 'Previously selected',
-            'choice_label_builder' => null,
+            'route' => null,
             'route_parameters' => array(),
-            'url' => $url,
+            'url' => null,
+            'choice_label' => null,
         ));
 
         $resolver->setAllowedTypes(array(
-            'choice_label' => array('string', 'function')
-        ));
-
-        $resolver->setRequired(array(
-            'route',
+            'choice_label' => array('string', 'function', 'null')
         ));
 
         $resolver->setNormalizers(array(
             'empty_value' => $emptyValueNormalizer,
+            'url' => $urlNormalizer,
         ));
     }
 
@@ -112,7 +115,6 @@ class AjaxChoiceType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-
     }
 
     /**
@@ -120,7 +122,6 @@ class AjaxChoiceType extends AbstractType
      */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-
     }
 
     /**

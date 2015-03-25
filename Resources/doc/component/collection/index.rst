@@ -19,9 +19,7 @@ Simple configuration:
 
     ite_form:
         components:
-            collection:
-                enabled: true
-                type: bs3
+            collection: ~
 
 Full configuration:
 
@@ -32,7 +30,6 @@ Full configuration:
         components:
             collection:
                 enabled:              false
-                type:                 ~ # One of "bs2"; "bs3", Required
 
                 # animation for showing new collection items
                 widget_show_animation:

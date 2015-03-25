@@ -9,28 +9,28 @@ parameters:
 
 services:
     ite_form.form.type_extension.component.dynamic_choice.choice:
-        class:                                                          %ite_form.form.type_extension.component.dynamic_choice.choice.class%
+        class: %ite_form.form.type_extension.component.dynamic_choice.choice.class%
         tags:
             - { name: form.type_extension, alias: choice }
 
     ite_form.form.type_extension.component.dynamic_choice.entity:
-        class:                                                          %ite_form.form.type_extension.component.dynamic_choice.entity.class%
+        class: %ite_form.form.type_extension.component.dynamic_choice.entity.class%
         tags:
             - { name: form.type_extension, alias: entity }
 
     ite_form.form.type.component.dynamic_choice.ajax_entity:
-        class:                                                          %ite_form.form.type.component.dynamic_choice.ajax_entity.class%
+        class: %ite_form.form.type.component.dynamic_choice.ajax_entity.class%
         arguments: [ @router ]
         tags:
             - { name: form.type, alias: ite_ajax_entity }
 
     ite_form.choice_converter:
-        class:                                                          %ite_form.choice_converter.class%
+        class: %ite_form.choice_converter.class%
 
     ite_form.entity_converter:
-        class:                                                          %ite_form.entity_converter.class%
+        class: %ite_form.entity_converter.class%
         arguments: [ @doctrine.orm.entity_manager, @request= ]
 
     ite_form.widget_generator:
-        class:                                                          %ite_form.widget_generator.class%
+        class: %ite_form.widget_generator.class%
         arguments: [ @form.factory ]

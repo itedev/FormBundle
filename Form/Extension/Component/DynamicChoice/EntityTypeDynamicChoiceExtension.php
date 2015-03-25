@@ -40,13 +40,6 @@ class EntityTypeDynamicChoiceExtension extends AbstractTypeExtension
     /**
      * {@inheritdoc}
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $choiceListCache =& $this->choiceListCache;
@@ -69,6 +62,13 @@ class EntityTypeDynamicChoiceExtension extends AbstractTypeExtension
                 array_walk_recursive($choiceHashes, function (&$value) {
                     $value = spl_object_hash($value);
                 });
+            } elseif ($choiceHashes instanceof \Traversable) {
+                $hashes = array();
+                foreach ($choiceHashes as $value) {
+                    $hashes[] = spl_object_hash($value);
+                }
+
+                $choiceHashes = $hashes;
             }
 
             $preferredChoiceHashes = $options['preferred_choices'];
@@ -89,14 +89,14 @@ class EntityTypeDynamicChoiceExtension extends AbstractTypeExtension
                 ? spl_object_hash($options['group_by'])
                 : $options['group_by'];
 
-            $hash = md5(json_encode(array(
+            $hash = hash('sha256', json_encode(array(
                 spl_object_hash($options['em']),
                 $options['class'],
                 $propertyHash,
                 $loaderHash,
                 $choiceHashes,
                 $preferredChoiceHashes,
-                $groupByHash
+                $groupByHash,
             )));
 
             if (!isset($choiceListCache[$hash])) {
@@ -128,6 +128,6 @@ class EntityTypeDynamicChoiceExtension extends AbstractTypeExtension
      */
     public function getExtendedType()
     {
-        return 'choice';
+        return 'entity';
     }
 } 
