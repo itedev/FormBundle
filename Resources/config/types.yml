@@ -1,0 +1,16 @@
+parameters:
+    ite_form.form.type.ajax_choice.class: ITE\FormBundle\Form\Type\AjaxChoiceType
+    ite_form.form.type.ajax_entity.class: ITE\FormBundle\Form\Type\AjaxEntityType
+
+services:
+    ite_form.form.type.ajax_choice:
+        class: %ite_form.form.type.ajax_choice.class%
+        arguments: [ @router ]
+        tags:
+            - { name: form.type, alias: ite_ajax_choice }
+
+    ite_form.form.type.ajax_entity:
+        class: %ite_form.form.type.ajax_entity.class%
+        arguments: [ @doctrine ]
+        tags:
+            - { name: form.type, alias: ite_ajax_entity }

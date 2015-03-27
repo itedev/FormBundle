@@ -29,6 +29,7 @@ class ITEFormExtension extends Extension
 
         $loader->load('sf.yml');
         $loader->load('services.yml');
+        $loader->load('types.yml');
 
         $container->setParameter('ite_form.timezone', $config['timezone']);
 

@@ -6,7 +6,6 @@ parameters:
 
     ite_form.form.input_entity_type.class:               ITE\FormBundle\Form\Type\InputEntityType
     ite_form.form.markup_type.class:                     ITE\FormBundle\Form\Type\MarkupType
-    ite_form.form.ajax_choice_type.class:                ITE\FormBundle\Form\Type\AjaxChoiceType
 
 services:
     ite_form.form.type_extension.plugin.form:
@@ -36,8 +35,3 @@ services:
         tags:
             - { name: form.type, alias: ite_markup }
 
-    ite_form.form.ajax_choice_type:
-        class:                                              %ite_form.form.ajax_choice_type.class%
-        arguments: [ @router ]
-        tags:
-            - { name: form.type, alias: ite_ajax_choice }

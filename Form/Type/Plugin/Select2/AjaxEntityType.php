@@ -77,7 +77,6 @@ class AjaxEntityType extends AbstractType
             'plugin_options' => array(),
             'allow_create' => false,
             'create_url' => $createUrl,
-            'error_bubbling' => false,
         ));
         $resolver->setAllowedTypes(array(
             'plugin_options' => array('array'),
@@ -85,9 +84,6 @@ class AjaxEntityType extends AbstractType
         ));
         $resolver->setOptional(array(
             'create_route',
-        ));
-        $resolver->setAllowedValues(array(
-            'expanded' => array(false),
         ));
     }
 

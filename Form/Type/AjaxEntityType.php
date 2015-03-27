@@ -2,10 +2,14 @@
 
 namespace ITE\FormBundle\Form\Type;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\Options;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
  * Class AjaxEntityType
@@ -13,6 +17,19 @@ use Symfony\Component\Form\FormView;
  */
 class AjaxEntityType extends AbstractType
 {
+    /**
+     * @var ManagerRegistry $registry
+     */
+    protected $registry;
+
+    /**
+     * @param ManagerRegistry $registry
+     */
+    public function __construct(ManagerRegistry $registry)
+    {
+        $this->registry = $registry;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -32,6 +49,52 @@ class AjaxEntityType extends AbstractType
      */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        $registry = $this->registry;
+
+        $emNormalizer = function (Options $options, $em) use ($registry) {
+            /* @var ManagerRegistry $registry */
+            if (null !== $em) {
+                if ($em instanceof ObjectManager) {
+                    return $em;
+                }
+
+                return $registry->getManager($em);
+            }
+
+            $em = $registry->getManagerForClass($options['class']);
+
+            if (null === $em) {
+                throw new \RuntimeException(sprintf(
+                    'Class "%s" seems not to be a managed Doctrine entity. '.
+                    'Did you forget to map it?',
+                    $options['class']
+                ));
+            }
+
+            return $em;
+        };
+
+        $resolver->setDefaults(array(
+            'em' => null,
+            'property' => null,
+        ));
+
+        $resolver->setRequired(array('class'));
+
+        $resolver->setNormalizers(array(
+            'em' => $emNormalizer,
+        ));
+
+        $resolver->setAllowedTypes(array(
+            'em' => array('null', 'string', 'Doctrine\Common\Persistence\ObjectManager'),
+        ));
     }
 
     /**

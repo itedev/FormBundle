@@ -91,10 +91,6 @@ class ChoiceTypeDynamicChoiceExtension extends AbstractTypeExtension
             'choice_list' => $choiceList,
             'choice_label' => null,
         ));
-
-        $resolver->setAllowedTypes(array(
-            'choice_label' => array('string', 'function', 'null')
-        ));
     }
 
     /**

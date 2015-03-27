@@ -65,23 +65,28 @@ class AjaxChoiceType extends AbstractType
             return $options['required'] ? null : '';
         };
 
-        $emptyValueNormalizer = function (Options $options, $emptyValue) {
+        // for BC with the "empty_value" option
+        $placeholder = function (Options $options) {
+            return $options['empty_value'];
+        };
+
+        $placeholderNormalizer = function (Options $options, $placeholder) {
             if ($options['multiple']) {
                 // never use an empty value for this case
                 return;
-            } elseif (false === $emptyValue) {
+            } elseif (false === $placeholder) {
                 // an empty value should be added but the user decided otherwise
                 return;
             }
 
             // empty value has been set explicitly
-            return $emptyValue;
+            return $placeholder;
         };
 
         $urlNormalizer = function (Options $options, $url) use ($self) {
-            if (isset($options['route'])) {
+            if (!empty($options['route'])) {
                 return $self->getRouter()->generate($options['route'], $options['route_parameters']);
-            } elseif (isset($url)) {
+            } elseif (!empty($url)) {
                 return $url;
             } else {
                 throw new \RuntimeException('You must specify "route" or "url" option.');
@@ -90,22 +95,19 @@ class AjaxChoiceType extends AbstractType
 
         $resolver->setDefaults(array(
             'multiple' => false,
-            'empty_value' => $emptyValue,
             'empty_data' => $emptyData,
-            'compound' => false,
-            'error_bubbling' => true,
+            'empty_value' => $emptyValue,
+            'placeholder' => $placeholder,
+            'error_bubbling' => false,
             'route' => null,
             'route_parameters' => array(),
             'url' => null,
             'choice_label' => null,
         ));
 
-        $resolver->setAllowedTypes(array(
-            'choice_label' => array('string', 'function', 'null')
-        ));
-
         $resolver->setNormalizers(array(
-            'empty_value' => $emptyValueNormalizer,
+            'empty_value' => $placeholderNormalizer,
+            'placeholder' => $placeholderNormalizer,
             'url' => $urlNormalizer,
         ));
     }
@@ -115,6 +117,10 @@ class AjaxChoiceType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
+        $view->vars = array_replace($view->vars, array(
+            'multiple' => $options['multiple'],
+            'placeholder' => null,
+        ));
     }
 
     /**

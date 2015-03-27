@@ -1,7 +1,6 @@
 parameters:
     ite_form.form.type_extension.component.dynamic_choice.choice.class: ITE\FormBundle\Form\Extension\Component\DynamicChoice\ChoiceTypeDynamicChoiceExtension
     ite_form.form.type_extension.component.dynamic_choice.entity.class: ITE\FormBundle\Form\Extension\Component\DynamicChoice\EntityTypeDynamicChoiceExtension
-    ite_form.form.type.component.dynamic_choice.ajax_entity.class:      ITE\FormBundle\Form\Type\Component\DynamicChoice\AjaxEntityType
 
     ite_form.entity_converter.class:                                    ITE\FormBundle\Service\Converter\EntityConverter
     ite_form.choice_converter.class:                                    ITE\FormBundle\Service\Converter\ChoiceConverter
@@ -17,12 +16,6 @@ services:
         class: %ite_form.form.type_extension.component.dynamic_choice.entity.class%
         tags:
             - { name: form.type_extension, alias: entity }
-
-    ite_form.form.type.component.dynamic_choice.ajax_entity:
-        class: %ite_form.form.type.component.dynamic_choice.ajax_entity.class%
-        arguments: [ @router ]
-        tags:
-            - { name: form.type, alias: ite_ajax_entity }
 
     ite_form.choice_converter:
         class: %ite_form.choice_converter.class%
