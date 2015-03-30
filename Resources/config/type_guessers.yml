@@ -1,0 +1,9 @@
+parameters:
+    ite_form.form.type_guesser.class: ITE\FormBundle\Form\TypeGuesser
+
+services:
+    ite_form.form.type_guesser:
+        class: %ite_form.form.type_guesser.class%
+        arguments: [ @annotations.reader, @doctrine.orm.entity_manager, [] ]
+        tags:
+            - { name: form.type_guesser }

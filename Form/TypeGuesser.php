@@ -29,13 +29,20 @@ class TypeGuesser implements FormTypeGuesserInterface
     protected $em;
 
     /**
+     * @var array|FormTypeGuesserInterface[]
+     */
+    protected $guessers = [];
+
+    /**
      * @param Reader $reader
      * @param EntityManager $em
+     * @param array|FormTypeGuesserInterface[] $guessers
      */
-    public function __construct(Reader $reader, EntityManager $em)
+    public function __construct(Reader $reader, EntityManager $em, $guessers = [])
     {
         $this->reader = $reader;
         $this->em = $em;
+        $this->guessers = $guessers;
     }
 
     /**
@@ -45,16 +52,24 @@ class TypeGuesser implements FormTypeGuesserInterface
     {
         /** @var $classMetadata ClassMetadataInfo */
         $classMetadata = $this->em->getClassMetadata($className);
-        $reflProperty = $classMetadata->getReflectionProperty($property);
+        $refProp = $classMetadata->getReflectionProperty($property);
         /** @var $typeAnnotation Type */
-        $typeAnnotation = $this->reader->getPropertyAnnotation($reflProperty, self::TYPE_ANNOTATION);
+        $typeAnnotation = $this->reader->getPropertyAnnotation($refProp, self::TYPE_ANNOTATION);
         if (!$typeAnnotation) {
             return null;
         }
 
+        $options = [];
+        foreach ($this->guessers as $guesser) {
+            $guess = $guesser->guessType($className, $property);
+            if ($guess instanceof TypeGuess) {
+                $options = array_merge($options, $guess->getOptions());
+            }
+        }
+
         return new TypeGuess(
             $typeAnnotation->getType(),
-            $typeAnnotation->getOptions(),
+            array_merge($options, $typeAnnotation->getOptions()),
             Guess::VERY_HIGH_CONFIDENCE
         );
     }
@@ -73,6 +88,9 @@ class TypeGuesser implements FormTypeGuesserInterface
     {
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function guessPattern($class, $property)
     {
     }

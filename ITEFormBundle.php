@@ -2,6 +2,7 @@
 
 namespace ITE\FormBundle;
 
+use ITE\FormBundle\DependencyInjection\Compiler\FormPass;
 use ITE\FormBundle\DependencyInjection\Compiler\SFFromExtensionPass;
 use ITE\FormBundle\DependencyInjection\Compiler\FormResourcePass;
 use ITE\FormBundle\DependencyInjection\Compiler\RouterResourcePass;
@@ -20,6 +21,7 @@ class ITEFormBundle extends Bundle
     public function build(ContainerBuilder $container)
     {
         $container->addCompilerPass(new SFFromExtensionPass());
+        $container->addCompilerPass(new FormPass());
         $container->addCompilerPass(new FormResourcePass());
         $container->addCompilerPass(new RouterResourcePass());
 
