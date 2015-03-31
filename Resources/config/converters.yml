@@ -1,0 +1,24 @@
+parameters:
+    ite_form.entity_converter.class:    ITE\FormBundle\Service\Converter\EntityConverter
+    ite_form.choice_converter.class:    ITE\FormBundle\Service\Converter\ChoiceConverter
+    ite_form.kernel_listener.class:     ITE\FormBundle\EventListener\KernelListener
+    ite_form.converter_manager.class:   ITE\FormBundle\Service\Converter\ConverterManager
+
+services:
+    ite_form.kernel_listener:
+        class: %ite_form.kernel_listener.class%
+        arguments: [ @ite_form.converter_manager ]
+        tags:
+            - { name: kernel.event_listener, event: kernel.view, method: onKernelView, priority: 255 }
+
+    ite_form.choice_converter:
+        class: %ite_form.choice_converter.class%
+
+    ite_form.entity_converter:
+        class: %ite_form.entity_converter.class%
+        arguments: [ @doctrine.orm.entity_manager, @request_stack ]
+        tags:
+            - { name: ite_form.converter, alias: default }
+
+    ite_form.converter_manager:
+        class: %ite_form.converter_manager.class%

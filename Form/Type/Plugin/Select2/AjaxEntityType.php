@@ -2,6 +2,7 @@
 
 namespace ITE\FormBundle\Form\Type\Plugin\Select2;
 
+use ITE\FormBundle\Form\ChoiceList\AjaxEntityChoiceList;
 use ITE\FormBundle\Form\DataTransformer\StringToArrayTransformer;
 use ITE\FormBundle\Form\EventListener\ExplodeCollectionListener;
 use ITE\FormBundle\Service\Converter\Plugin\Select2\EntityConverterInterface;
@@ -63,24 +64,57 @@ class AjaxEntityType extends AbstractType
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $type = $this;
-        $createUrl = function (Options $options) use ($type) {
+        $self = $this;
+
+        $createUrl = function (Options $options) use ($self) {
             if ($options['allow_create']) {
                 if (isset($options['create_route'])) {
-                    return $type->getRouter()->generate($options['create_route']);
+                    return $self->getRouter()->generate($options['create_route']);
                 }
+
                 throw new RuntimeException('You must specify create_route when using true for allow_create option.');
             }
+
             return null;
         };
+
+        $urlNormalizer = function (Options $options, $url) use ($self) {
+            if (!empty($options['route'])) {
+                return $self->getRouter()->generate($options['route'], $options['route_parameters']);
+            } elseif (!empty($url)) {
+                return $url;
+            } else {
+                throw new \RuntimeException('You must specify "route" or "url" option.');
+            }
+        };
         $resolver->setDefaults(array(
+            'choices'  => array(),
+            'choice_list' => function (Options $options) {
+                return new AjaxEntityChoiceList(
+                    $options['em'],
+                    $options['class'],
+                    $options['property']
+                );
+            },
+            'allow_modify' => true,
             'plugin_options' => array(),
+            'route' => null,
+            'route_parameters' => array(),
+            'url' => null,
             'allow_create' => false,
             'create_url' => $createUrl,
+        ));
+        $resolver->setNormalizers(array(
+            'url' => $urlNormalizer,
         ));
         $resolver->setAllowedTypes(array(
             'plugin_options' => array('array'),
             'allow_create' => array('bool'),
+        ));
+        $resolver->setAllowedValues(array(
+            'allow_modify' => array(true),
+            'choices' => array(array()),
+            'expanded' => array(false),
         ));
         $resolver->setOptional(array(
             'create_route',
@@ -92,11 +126,6 @@ class AjaxEntityType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        if (!$options['multiple']) {
-            return;
-        }
-        $builder->addEventSubscriber(new ExplodeCollectionListener());
-        $builder->addViewTransformer(new StringToArrayTransformer());
     }
 
     /**
@@ -104,16 +133,6 @@ class AjaxEntityType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        if ($form->getData()) {
-            $choices = $view->vars['choices'];
-
-            $defaultValue = $options['multiple']
-                ? $this->entityConverter->convertChoicesToOptions($choices)
-                : $this->entityConverter->convertChoiceToOption(current($choices));
-
-            $view->vars['attr']['data-default-value'] = json_encode($defaultValue);
-        }
-
         $view->vars['attr']['data-property'] = $options['property'];
 
         if (!isset($view->vars['plugins'])) {
@@ -128,6 +147,7 @@ class AjaxEntityType extends AbstractType
             'options' => array_replace_recursive($this->options, $options['plugin_options'], array(
                 'ajax' => array(
                     'url' => $options['url'],
+                    'dataType' => 'json',
                 ),
                 'multiple' => $options['multiple'],
                 'allowClear' => false !== $options['empty_value'] && null !== $options['empty_value'],
@@ -140,7 +160,7 @@ class AjaxEntityType extends AbstractType
      */
     public function getParent()
     {
-        return 'ite_ajax_entity';
+        return 'entity';
     }
 
     /**

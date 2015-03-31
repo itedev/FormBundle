@@ -11,7 +11,7 @@ use ITE\FormBundle\Service\Converter\EntityConverter as BaseEntityConverter;
 class EntityConverter extends BaseEntityConverter implements EntityConverterInterface
 {
     /**
-     * @param $entity
+     * @param object $entity
      * @param null $labelPath
      * @return array
      */
@@ -26,7 +26,7 @@ class EntityConverter extends BaseEntityConverter implements EntityConverterInte
     }
 
     /**
-     * @param $entities
+     * @param array $entities
      * @param null $labelPath
      * @return array
      */
@@ -43,7 +43,7 @@ class EntityConverter extends BaseEntityConverter implements EntityConverterInte
     }
 
     /**
-     * @param $choices
+     * @param array $choices
      * @return array
      */
     public function convertChoicesToOptions($choices)
@@ -52,7 +52,7 @@ class EntityConverter extends BaseEntityConverter implements EntityConverterInte
     }
 
     /**
-     * @param $choice
+     * @param object $choice
      * @return array
      */
     public function convertChoiceToOption($choice)

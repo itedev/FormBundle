@@ -1,9 +1,9 @@
 parameters:
-    ite_form.form.type.plugin.select2.abstract.class:   ITE\FormBundle\Form\Type\Plugin\Select2\AbstractChoiceType
-    ite_form.form.type.plugin.select2.google_font.class:       ITE\FormBundle\Form\Type\Plugin\Select2\GoogleFontType
-    ite_form.form.type.plugin.select2.ajax_entity.class:       ITE\FormBundle\Form\Type\Plugin\Select2\AjaxEntityType
-    ite_form.form.type.plugin.select2.ajax_choice.class:       ITE\FormBundle\Form\Type\Plugin\Select2\AjaxChoiceType
-    ite_form.select2.entity_converter.class:                   ITE\FormBundle\Service\Converter\Plugin\Select2\EntityConverter
+    ite_form.form.type.plugin.select2.abstract.class:       ITE\FormBundle\Form\Type\Plugin\Select2\AbstractChoiceType
+    ite_form.form.type.plugin.select2.google_font.class:    ITE\FormBundle\Form\Type\Plugin\Select2\GoogleFontType
+    ite_form.form.type.plugin.select2.ajax_entity.class:    ITE\FormBundle\Form\Type\Plugin\Select2\AjaxEntityType
+    ite_form.form.type.plugin.select2.ajax_choice.class:    ITE\FormBundle\Form\Type\Plugin\Select2\AjaxChoiceType
+    ite_form.select2.entity_converter.class:                ITE\FormBundle\Service\Converter\Plugin\Select2\EntityConverter
 
 services:
     ite_form.form.type.plugin.select2.abstract:

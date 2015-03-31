@@ -20,29 +20,18 @@
 
       // ajax
       if (extras.hasOwnProperty('ajax')) {
-        var initSelectionCallback = options.hasOwnProperty('initSelection') ? options['initSelection'] : null;
         var property = element.data('property');
 
         options = $.extend(true, options, {
-          initSelection: function(el, callback) {
-            if (el.val()) {
-              callback(el.data('default-value'));
-            }
-
-            // call initSelection callback - if set
-            if (initSelectionCallback) {
-              initSelectionCallback.call(element, el, callback);
-            }
-          },
           ajax: {
-            data: function(term, page) {
+            data: function(params) {
               return {
-                term: term,
-                page: page,
+                term: params.term,
+                page: params.page,
                 property: property
               };
             },
-            results: function(data, page) {
+            processResults: function(data) {
               return {
                 results: data
               };

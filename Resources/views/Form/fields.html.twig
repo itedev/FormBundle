@@ -11,15 +11,15 @@
     {{ block('ite_form_sf_element_plugins') }}
 {% endblock ite_select2_widget %}
 
-{% block ite_select2_ajax_entity_widget %}
-    {{ block('hidden_widget') }}
-    {{ block('ite_form_sf_element_plugins') }}
-{% endblock ite_select2_ajax_entity_widget %}
-
 {% block ite_select2_ajax_choice_widget %}
-    {{ block('hidden_widget') }}
+    {{ block('choice_widget') }}
     {{ block('ite_form_sf_element_plugins') }}
 {% endblock ite_select2_ajax_choice_widget %}
+
+{% block ite_select2_ajax_entity_widget %}
+    {{ block('choice_widget') }}
+    {{ block('ite_form_sf_element_plugins') }}
+{% endblock ite_select2_ajax_entity_widget %}
 
 {% block ite_tinymce_textarea_widget %}
     {{ block('textarea_widget') }}

@@ -5,6 +5,7 @@ namespace ITE\FormBundle\Service\Converter;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Form\Exception\StringCastException;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
@@ -20,9 +21,9 @@ class EntityConverter implements EntityConverterInterface
     protected $em;
 
     /**
-     * @var Request $request
+     * @var Request $requestStack
      */
-    protected $request;
+    protected $requestStack;
 
     /**
      * @var PropertyAccessor
@@ -31,12 +32,12 @@ class EntityConverter implements EntityConverterInterface
 
     /**
      * @param EntityManager $em
-     * @param Request $request
+     * @param RequestStack $requestStack
      */
-    public function __construct(EntityManager $em, Request $request)
+    public function __construct(EntityManager $em, RequestStack $requestStack)
     {
         $this->em = $em;
-        $this->request = $request;
+        $this->requestStack = $requestStack;
         $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
     }
 
@@ -60,16 +61,24 @@ class EntityConverter implements EntityConverterInterface
      */
     public function convertEntitiesToOptions($entities, $labelPath = null)
     {
+        if (!is_array($entities) && !($entities instanceof \Traversable)) {
+            throw new \InvalidArgumentException('You must pass "array" or instance of "Traversable"');
+        }
+
         if (empty($entities)) {
             return array();
         }
 
-        $entity = reset($entities);
-        $idPath = $this->getEntityIdentifier($entity);
-        $labelPath = $this->getLabelPathFromRequest($labelPath);
-
         $options = array();
+        $first = true;
+        $idPath = null;
+
         foreach ($entities as $entity) {
+            if ($first) {
+                $idPath = $this->getEntityIdentifier($entity);
+                $labelPath = $this->getLabelPathFromRequest($labelPath);
+                $first = false;
+            }
             $options[] = $this->internalConvertEntityToOption($entity, $labelPath, $idPath);
         }
 
@@ -113,8 +122,9 @@ class EntityConverter implements EntityConverterInterface
      */
     protected function getLabelPathFromRequest($labelPath = null)
     {
-        if (!isset($labelPath) && $this->request->query->has('property')) {
-            return $this->request->query->get('property');
+        $request = $this->requestStack->getCurrentRequest();
+        if (!isset($labelPath) && $request->query->has('property')) {
+            return $request->query->get('property');
         }
 
         return null;
@@ -145,15 +155,12 @@ class EntityConverter implements EntityConverterInterface
 
     /**
      * @param $entity
-     * @return mixed
+     * @return string
      */
     protected function getEntityIdentifier($entity)
     {
-        $meta = $this->em->getClassMetadata(get_class($entity));
+        $metadata = $this->em->getClassMetadata(get_class($entity));
 
-        $idFieldNames = $meta->getIdentifierFieldNames();
-        $idPath = array_shift($idFieldNames);
-
-        return $idPath;
+        return $metadata->getSingleIdentifierFieldName();
     }
 }
