@@ -31,7 +31,7 @@ class ITEFormExtension extends Extension
         $loader->load('services.yml');
         $loader->load('types.yml');
         $loader->load('type_guessers.yml');
-        $loader->load('converters.yml');
+        $loader->load('entity_converters.yml');
 
         $container->setParameter('ite_form.timezone', $config['timezone']);
 

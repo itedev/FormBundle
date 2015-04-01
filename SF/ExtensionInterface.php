@@ -46,16 +46,14 @@ interface ExtensionInterface
     public function addRoutes(Loader $loader, ContainerInterface $container);
 
     /**
-     * @param ContainerInterface $container
      * @return array
      */
-    public function addStylesheets(ContainerInterface $container);
+    public function getStylesheets();
 
     /**
-     * @param ContainerInterface $container
      * @return array
      */
-    public function addJavascripts(ContainerInterface $container);
+    public function getJavascripts();
 
     /**
      * @param ContainerInterface $container

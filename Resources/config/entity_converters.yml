@@ -1,0 +1,20 @@
+parameters:
+    ite_form.entity_converter.default.class:    ITE\FormBundle\EntityConverter\DefaultConverter
+    ite_form.entity_converter_manager.class:    ITE\FormBundle\EntityConverter\ConverterManager
+    ite_form.kernel_listener.class:             ITE\FormBundle\EventListener\KernelListener
+
+services:
+    ite_form.entity_converter.default:
+        class: %ite_form.entity_converter.default.class%
+        arguments: [ @doctrine.orm.entity_manager, @request_stack ]
+        tags:
+            - { name: ite_form.converter, alias: default }
+
+    ite_form.entity_converter_manager:
+        class: %ite_form.entity_converter_manager.class%
+
+    ite_form.kernel_listener:
+        class: %ite_form.kernel_listener.class%
+        arguments: [ @ite_form.entity_converter_manager ]
+        tags:
+            - { name: kernel.event_listener, event: kernel.view, method: onKernelView, priority: 255 }

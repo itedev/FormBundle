@@ -1,10 +1,10 @@
 <?php
 
-namespace ITE\FormBundle\Service\Converter;
+namespace ITE\FormBundle\EntityConverter;
 
 /**
  * Class ConverterManager
- * @package ITE\FormBundle\Service\Converter
+ * @package ITE\FormBundle\EntityConverter
  */
 class ConverterManager implements ConverterManagerInterface
 {

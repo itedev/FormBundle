@@ -77,7 +77,7 @@ class Plugin implements ExtensionInterface
     /**
      * {@inheritdoc}
      */
-    public function addStylesheets(ContainerInterface $container)
+    public function getStylesheets()
     {
         return array();
     }
@@ -85,7 +85,7 @@ class Plugin implements ExtensionInterface
     /**
      * {@inheritdoc}
      */
-    public function addJavascripts(ContainerInterface $container)
+    public function getJavascripts()
     {
         return array(sprintf('@ITEFormBundle/Resources/public/js/plugin/%s.js', static::NAME));
     }

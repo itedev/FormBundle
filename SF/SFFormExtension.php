@@ -50,9 +50,35 @@ class SFFormExtension extends SFExtension implements SFFormExtensionInterface
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
-    public function addJavascripts()
+    public function getStylesheets()
+    {
+        $inputs = array();
+
+        // add component css
+        foreach ($this->getComponents() as $component) {
+            /** @var $component ExtensionInterface */
+            if ($component->isEnabled($this->container)) {
+                $inputs = array_merge($inputs, $component->getStylesheets());
+            }
+        }
+
+        // add plugin css
+        foreach ($this->getPlugins() as $plugin) {
+            /** @var $plugin ExtensionInterface */
+            if ($plugin->isEnabled($this->container)) {
+                $inputs = array_merge($inputs, $plugin->getStylesheets());
+            }
+        }
+
+        return $inputs;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getJavascripts()
     {
         $inputs = array('@ITEFormBundle/Resources/public/js/sf.form.js');
 
@@ -60,7 +86,7 @@ class SFFormExtension extends SFExtension implements SFFormExtensionInterface
         foreach ($this->getComponents() as $component) {
             /** @var $component ExtensionInterface */
             if ($component->isEnabled($this->container)) {
-                $inputs = array_merge($inputs, $component->addJavascripts($this->container));
+                $inputs = array_merge($inputs, $component->getJavascripts());
             }
         }
 
@@ -68,7 +94,7 @@ class SFFormExtension extends SFExtension implements SFFormExtensionInterface
         foreach ($this->getPlugins() as $plugin) {
             /** @var $plugin ExtensionInterface */
             if ($plugin->isEnabled($this->container)) {
-                $inputs = array_merge($inputs, $plugin->addJavascripts($this->container));
+                $inputs = array_merge($inputs, $plugin->getJavascripts());
             }
         }
 

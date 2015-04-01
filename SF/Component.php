@@ -70,7 +70,7 @@ class Component implements ExtensionInterface
     /**
      * {@inheritdoc}
      */
-    public function addStylesheets(ContainerInterface $container)
+    public function getStylesheets()
     {
         return array();
     }
@@ -78,13 +78,8 @@ class Component implements ExtensionInterface
     /**
      * {@inheritdoc}
      */
-    public function addJavascripts(ContainerInterface $container)
+    public function getJavascripts()
     {
-        $bundlePath = $container->get('kernel')->getBundle('ITEFormBundle')->getPath();
-        if (file_exists(sprintf('%s/Resources/public/js/component/%s.js', $bundlePath, static::NAME))) {
-            return array(sprintf('@ITEFormBundle/Resources/public/js/component/%s.js', static::NAME));
-        }
-
         return array();
     }
 

@@ -77,4 +77,12 @@ class CollectionComponent extends Component
         return array('ITEFormBundle:Form/Component/collection:fields.html.twig');
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getJavascripts()
+    {
+        return array('@ITEFormBundle/Resources/public/js/component/collection.js');
+    }
+
 }

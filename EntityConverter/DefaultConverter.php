@@ -1,6 +1,6 @@
 <?php
 
-namespace ITE\FormBundle\Service\Converter;
+namespace ITE\FormBundle\EntityConverter;
 
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Form\Exception\StringCastException;
@@ -11,9 +11,9 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 /**
  * Class EntityConverter
- * @package ITE\FormBundle\Service\Converter
+ * @package ITE\FormBundle\EntityConverter
  */
-class EntityConverter implements EntityConverterInterface
+class DefaultConverter implements ConverterInterface
 {
     /**
      * @var EntityManager
@@ -42,24 +42,11 @@ class EntityConverter implements EntityConverterInterface
     }
 
     /**
-     * @param $entity
+     * @param array $entities
      * @param null $labelPath
      * @return array
      */
-    public function convertEntityToOption($entity, $labelPath = null)
-    {
-        $idPath = $this->getEntityIdentifier($entity);
-        $labelPath = $this->getLabelPathFromRequest($labelPath);
-
-        return $this->internalConvertEntityToOption($entity, $labelPath, $idPath);
-    }
-
-    /**
-     * @param $entities
-     * @param null $labelPath
-     * @return array
-     */
-    public function convertEntitiesToOptions($entities, $labelPath = null)
+    public function convert($entities, $labelPath = null)
     {
         if (!is_array($entities) && !($entities instanceof \Traversable)) {
             throw new \InvalidArgumentException('You must pass "array" or instance of "Traversable"');
@@ -69,48 +56,23 @@ class EntityConverter implements EntityConverterInterface
             return array();
         }
 
-        $options = array();
         $first = true;
-        $idPath = null;
-
+        $valuePath = null;
+        $choices = array();
         foreach ($entities as $entity) {
             if ($first) {
-                $idPath = $this->getEntityIdentifier($entity);
+                $valuePath = $this->getValuePath($entity);
                 $labelPath = $this->getLabelPathFromRequest($labelPath);
                 $first = false;
             }
-            $options[] = $this->internalConvertEntityToOption($entity, $labelPath, $idPath);
-        }
 
-        return $options;
-    }
+            $value = $this->getValue($entity, $valuePath);
+            $label = $this->getLabel($entity, $labelPath);
 
-    /**
-     * @param $entity
-     * @param null $labelPath
-     * @return array
-     */
-    public function convertEntityToChoice($entity, $labelPath = null)
-    {
-        $option = $this->convertEntityToOption($entity, $labelPath);
-
-        return array(
-            $option['value'] => $option['label']
-        );
-    }
-
-    /**
-     * @param $entities
-     * @param null $labelPath
-     * @return array
-     */
-    public function convertEntitiesToChoices($entities, $labelPath = null)
-    {
-        $options = $this->convertEntitiesToOptions($entities, $labelPath);
-
-        $choices = array();
-        foreach ($options as $option) {
-            $choices[$option['value']] = $option['label'];
+            $choices[] = array(
+                'value' => $value,
+                'label' => $label,
+            );
         }
 
         return $choices;
@@ -122,23 +84,26 @@ class EntityConverter implements EntityConverterInterface
      */
     protected function getLabelPathFromRequest($labelPath = null)
     {
-        $request = $this->requestStack->getCurrentRequest();
-        if (!isset($labelPath) && $request->query->has('property')) {
-            return $request->query->get('property');
+        if (!isset($labelPath)) {
+            $request = $this->requestStack->getMasterRequest();
+
+            $property = $request->query->get('property');
+            $property = !empty($property) ? $property : null;
+
+            return $property;
         }
 
-        return null;
+        return $labelPath;
     }
 
     /**
-     * @param $entity
-     * @param null|string $labelPath
-     * @param null|string $idPath
-     * @return array
-     * @throws StringCastException
+     * @param object $entity
+     * @param string|null $labelPath
+     * @return string
      */
-    protected function internalConvertEntityToOption($entity, $labelPath, $idPath)
+    protected function getLabel($entity, $labelPath)
     {
+        $label = null;
         if ($labelPath) {
             $label = (string) $this->propertyAccessor->getValue($entity, $labelPath);
         } elseif (is_object($entity) && method_exists($entity, '__toString')) {
@@ -147,20 +112,27 @@ class EntityConverter implements EntityConverterInterface
             throw new StringCastException(sprintf('A "__toString()" method was not found on the objects of type "%s" passed to the choice field. To read a custom getter instead, set the argument $labelPath to the desired property path.', get_class($entity)));
         }
 
-        return array(
-            'value' => $this->propertyAccessor->getValue($entity, $idPath),
-            'label' => $label
-        );
+        return $label;
     }
 
     /**
-     * @param $entity
+     * @param object $entity
      * @return string
      */
-    protected function getEntityIdentifier($entity)
+    protected function getValuePath($entity)
     {
         $metadata = $this->em->getClassMetadata(get_class($entity));
 
         return $metadata->getSingleIdentifierFieldName();
+    }
+
+    /**
+     * @param object $entity
+     * @param string $valuePath
+     * @return mixed
+     */
+    protected function getValue($entity, $valuePath)
+    {
+        return $this->propertyAccessor->getValue($entity, $valuePath);
     }
 }

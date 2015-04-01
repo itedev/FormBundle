@@ -3,32 +3,34 @@ parameters:
     ite_form.form.type.plugin.select2.google_font.class:    ITE\FormBundle\Form\Type\Plugin\Select2\GoogleFontType
     ite_form.form.type.plugin.select2.ajax_entity.class:    ITE\FormBundle\Form\Type\Plugin\Select2\AjaxEntityType
     ite_form.form.type.plugin.select2.ajax_choice.class:    ITE\FormBundle\Form\Type\Plugin\Select2\AjaxChoiceType
-    ite_form.select2.entity_converter.class:                ITE\FormBundle\Service\Converter\Plugin\Select2\EntityConverter
+    ite_form.entity_converter.select2.class:                ITE\FormBundle\EntityConverter\Plugin\Select2\Select2Converter
 
 services:
     ite_form.form.type.plugin.select2.abstract:
-        class:                                          %ite_form.form.type.plugin.select2.abstract.class%
+        class: %ite_form.form.type.plugin.select2.abstract.class%
         arguments: [ %ite_form.plugin.select2.options% ]
         abstract: true
 
     ite_form.form.type.plugin.select2.google_font:
-        class:                                          %ite_form.form.type.plugin.select2.google_font.class%
+        class: %ite_form.form.type.plugin.select2.google_font.class%
         arguments: [ %ite_form.plugin.select2.options% ]
         tags:
             - { name: form.type, alias: ite_select2_google_font }
 
     ite_form.form.type.plugin.select2.ajax_entity:
-        class:                                          %ite_form.form.type.plugin.select2.ajax_entity.class%
-        arguments: [ %ite_form.plugin.select2.options%, @router, @ite_form.select2.entity_converter ]
+        class: %ite_form.form.type.plugin.select2.ajax_entity.class%
+        arguments: [ %ite_form.plugin.select2.options%, @router ]
         tags:
             - { name: form.type, alias: ite_select2_ajax_entity }
 
     ite_form.form.type.plugin.select2.ajax_choice:
-        class:                                          %ite_form.form.type.plugin.select2.ajax_choice.class%
-        arguments: [ %ite_form.plugin.select2.options% ]
+        class: %ite_form.form.type.plugin.select2.ajax_choice.class%
+        arguments: [ %ite_form.plugin.select2.options%, @router ]
         tags:
             - { name: form.type, alias: ite_select2_ajax_choice }
 
-    ite_form.select2.entity_converter:
-        class:                                          %ite_form.select2.entity_converter.class%
-        parent:                                         ite_form.entity_converter
+    ite_form.entity_converter.select2:
+        class: %ite_form.entity_converter.select2.class%
+        parent: ite_form.entity_converter.default
+        tags:
+            - { name: ite_form.converter, alias: select2 }

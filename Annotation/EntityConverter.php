@@ -13,7 +13,12 @@ class EntityConverter extends ConfigurationAnnotation
     /**
      * @var string $alias
      */
-    protected $alias;
+    protected $alias = 'default';
+
+    /**
+     * @var string|null $labelPath
+     */
+    protected $labelPath = null;
 
     /**
      * Get alias
@@ -34,6 +39,29 @@ class EntityConverter extends ConfigurationAnnotation
     public function setAlias($alias)
     {
         $this->alias = $alias;
+
+        return $this;
+    }
+
+    /**
+     * Get labelPath
+     *
+     * @return null
+     */
+    public function getLabelPath()
+    {
+        return $this->labelPath;
+    }
+
+    /**
+     * Set labelPath
+     *
+     * @param null $labelPath
+     * @return EntityConverter
+     */
+    public function setLabelPath($labelPath)
+    {
+        $this->labelPath = $labelPath;
 
         return $this;
     }
