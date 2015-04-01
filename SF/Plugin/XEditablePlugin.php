@@ -10,5 +10,11 @@ use ITE\FormBundle\SF\Plugin;
  */
 class XEditablePlugin extends Plugin
 {
-    const NAME = 'x_editable';
+    /**
+     * {@inheritdoc}
+     */
+    public static function getName()
+    {
+        return 'x_editable';
+    }
 }

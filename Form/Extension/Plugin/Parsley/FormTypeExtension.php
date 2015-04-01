@@ -40,7 +40,7 @@ class FormTypeExtension extends AbstractTypeExtension
      */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        if (!$form->isRoot() || !FormUtils::isFormHasPlugin($form, ParsleyPlugin::NAME)) {
+        if (!$form->isRoot() || !FormUtils::isFormHasPlugin($form, ParsleyPlugin::getName())) {
             return;
         }
 
@@ -49,11 +49,11 @@ class FormTypeExtension extends AbstractTypeExtension
         if (!isset($view->vars['plugins'])) {
             $view->vars['plugins'] = array();
         }
-        $view->vars['plugins'][ParsleyPlugin::NAME] = array(
+        $view->vars['plugins'][ParsleyPlugin::getName()] = array(
             'extras' => array(
                 'constraints' => $constraints
             ),
-            'options' => (object) array_replace_recursive($this->options, $options['plugins'][ParsleyPlugin::NAME]),
+            'options' => (object) array_replace_recursive($this->options, $options['plugins'][ParsleyPlugin::getName()]),
         );
         $view->vars['attr']['parsley-validate'] = '';
     }

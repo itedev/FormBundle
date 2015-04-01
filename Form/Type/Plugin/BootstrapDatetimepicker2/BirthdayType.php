@@ -37,8 +37,8 @@ class BirthdayType extends AbstractType
         /** @var $dateTimeToLocalizedStringTransformer DateTimeToLocalizedStringTransformer */
         $dateTimeToLocalizedStringTransformer = $viewTransformers[0];
 
-        $view->vars['plugins'][BootstrapDatetimepicker2Plugin::NAME]['options'] = array_replace_recursive(
-            $view->vars['plugins'][BootstrapDatetimepicker2Plugin::NAME]['options'], array(
+        $view->vars['plugins'][BootstrapDatetimepicker2Plugin::getName()]['options'] = array_replace_recursive(
+            $view->vars['plugins'][BootstrapDatetimepicker2Plugin::getName()]['options'], array(
                 'viewMode' => 2, //years
                 'startDate' => $dateTimeToLocalizedStringTransformer->transform($startDate),
                 'endDate' => $dateTimeToLocalizedStringTransformer->transform($endDate),

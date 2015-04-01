@@ -12,9 +12,10 @@ use ITE\JsBundle\SF\SFExtensionInterface;
 interface SFFormExtensionInterface extends SFExtensionInterface
 {
     /**
+     * @param string $alias
      * @param ExtensionInterface $component
      */
-    public function addComponent(ExtensionInterface $component);
+    public function addComponent($alias, ExtensionInterface $component);
 
     /**
      * Get components
@@ -24,9 +25,10 @@ interface SFFormExtensionInterface extends SFExtensionInterface
     public function getComponents();
 
     /**
+     * @param string $alias
      * @param ExtensionInterface $plugin
      */
-    public function addPlugin(ExtensionInterface $plugin);
+    public function addPlugin($alias, ExtensionInterface $plugin);
 
     /**
      * Get plugins

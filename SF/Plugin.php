@@ -15,7 +15,7 @@ use Symfony\Component\Routing\RouteCollection;
  * Class Plugin
  * @package ITE\FormBundle\SF
  */
-class Plugin implements ExtensionInterface
+abstract class Plugin implements ExtensionInterface
 {
     /**
      * {@inheritdoc}
@@ -25,7 +25,7 @@ class Plugin implements ExtensionInterface
         /** @var $node NodeBuilder */
         $node = $rootNode
             ->children()
-                ->arrayNode(static::NAME)
+                ->arrayNode(static::getName())
                     ->canBeUnset()
                     ->canBeEnabled()
         ;
@@ -43,8 +43,8 @@ class Plugin implements ExtensionInterface
      */
     public function loadConfiguration(FileLoader $loader, array $config, ContainerBuilder $container)
     {
-        $container->setParameter(sprintf('ite_form.plugin.%s.options', static::NAME), $config['options']);
-        $loader->load(sprintf('plugin/%s.yml', static::NAME));
+        $container->setParameter(sprintf('ite_form.plugin.%s.options', static::getName()), $config['options']);
+        $loader->load(sprintf('plugin/%s.yml', static::getName()));
     }
 
     /**
@@ -61,7 +61,7 @@ class Plugin implements ExtensionInterface
     public function addRoutes(Loader $loader, ContainerInterface $container)
     {
         $bundlePath = $container->get('kernel')->getBundle('ITEFormBundle')->getPath();
-        $pluginName = Inflector::classify(static::NAME);
+        $pluginName = Inflector::classify(static::getName());
 
         $routeCollection = new RouteCollection();
         if (file_exists(sprintf('%s/Controller/Plugin/%s', $bundlePath, $pluginName))) {
@@ -87,14 +87,7 @@ class Plugin implements ExtensionInterface
      */
     public function getJavascripts()
     {
-        return array(sprintf('@ITEFormBundle/Resources/public/js/plugin/%s.js', static::NAME));
+        return array(sprintf('@ITEFormBundle/Resources/public/js/plugin/%s.js', static::getName()));
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isEnabled(ContainerInterface $container)
-    {
-        return $container->getParameter(sprintf('ite_form.plugin.%s.enabled', static::NAME));
-    }
 } 

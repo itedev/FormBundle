@@ -49,7 +49,7 @@ class GoogleFontType extends BaseAbstractType
         if (!isset($view->vars['plugins'])) {
             $view->vars['plugins'] = array();
         }
-        $view->vars['plugins'][Select2Plugin::NAME] = array(
+        $view->vars['plugins'][Select2Plugin::getName()] = array(
             'extras' => array(
                 'google_fonts' => true
             ),

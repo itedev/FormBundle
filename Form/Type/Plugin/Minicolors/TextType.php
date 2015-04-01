@@ -48,7 +48,7 @@ class TextType extends AbstractType
         if (!isset($view->vars['plugins'])) {
             $view->vars['plugins'] = array();
         }
-        $view->vars['plugins'][MinicolorsPlugin::NAME] = array(
+        $view->vars['plugins'][MinicolorsPlugin::getName()] = array(
             'extras' => (object) array(),
             'options' => (object) array_replace_recursive($this->options, $options['plugin_options'])
         );

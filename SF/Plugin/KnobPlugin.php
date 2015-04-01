@@ -10,5 +10,11 @@ use ITE\FormBundle\SF\Plugin;
  */
 class KnobPlugin extends Plugin
 {
-    const NAME = 'knob';
+    /**
+     * {@inheritdoc}
+     */
+    public static function getName()
+    {
+        return 'knob';
+    }
 }

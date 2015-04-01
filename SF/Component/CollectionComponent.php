@@ -15,8 +15,6 @@ use Symfony\Component\DependencyInjection\Loader\FileLoader;
  */
 class CollectionComponent extends Component
 {
-    const NAME = 'collection';
-
     /**
      * {@inheritdoc}
      */
@@ -85,4 +83,11 @@ class CollectionComponent extends Component
         return array('@ITEFormBundle/Resources/public/js/component/collection.js');
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public static function getName()
+    {
+        return 'collection';
+    }
 }

@@ -10,5 +10,11 @@ use ITE\FormBundle\SF\Component;
  */
 class EditableComponent extends Component
 {
-    const NAME = 'editable';
+    /**
+     * {@inheritdoc}
+     */
+    public static function getName()
+    {
+        return 'editable';
+    }
 }

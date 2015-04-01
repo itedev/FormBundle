@@ -75,7 +75,7 @@ class AjaxEntityType extends AbstractAjaxChoiceType
 
         $view->vars['attr']['data-property'] = $options['property'];
 
-        $extras =& $view->vars['plugins'][Select2Plugin::NAME]['extras'];
+        $extras =& $view->vars['plugins'][Select2Plugin::getName()]['extras'];
         $extras['allow_create'] = $options['allow_create'];
         $extras['create_url'] = $options['create_url'];
     }

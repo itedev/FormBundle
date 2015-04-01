@@ -10,5 +10,11 @@ use ITE\FormBundle\SF\Component;
  */
 class ValidationComponent extends Component
 {
-    const NAME = 'validation';
+    /**
+     * {@inheritdoc}
+     */
+    public static function getName()
+    {
+        return 'validation';
+    }
 }

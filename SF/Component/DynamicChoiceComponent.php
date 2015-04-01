@@ -10,5 +10,11 @@ use ITE\FormBundle\SF\Component;
  */
 class DynamicChoiceComponent extends Component
 {
-    const NAME = 'dynamic_choice';
+    /**
+     * {@inheritdoc}
+     */
+    public static function getName()
+    {
+        return 'dynamic_choice';
+    }
 }

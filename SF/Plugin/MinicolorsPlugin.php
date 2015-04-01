@@ -10,5 +10,11 @@ use ITE\FormBundle\SF\Plugin;
  */
 class MinicolorsPlugin extends Plugin
 {
-    const NAME = 'minicolors';
+    /**
+     * {@inheritdoc}
+     */
+    public static function getName()
+    {
+        return 'minicolors';
+    }
 }

@@ -10,5 +10,11 @@ use ITE\FormBundle\SF\Plugin;
  */
 class FormPlugin extends Plugin
 {
-    const NAME = 'form';
+    /**
+     * {@inheritdoc}
+     */
+    public static function getName()
+    {
+        return 'form';
+    }
 }

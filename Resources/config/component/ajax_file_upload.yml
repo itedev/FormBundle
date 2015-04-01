@@ -19,11 +19,6 @@ services:
         class:                                                          %ite_form.default_ajax_token_provider.class%
         arguments: [ @request= ]
 
-    ite_form.form.type_extension.component.ajax_file_upload.file:
-        class:                                                          %ite_form.form.type_extension.component.ajax_file_upload.file.class%
-        tags:
-            - { name: form.type_extension, alias: file }
-
     ite_form.form.type.component.ajax_file_upload.ajax_file:
         class:                                                          %ite_form.form.type.component.ajax_file_upload.ajax_file.class%
         arguments: [ @router, @ite_form.file_manager, @?vich_uploader.storage ]

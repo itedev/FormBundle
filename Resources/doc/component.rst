@@ -36,17 +36,20 @@ Create new class that extends ``ITE\FormBundle\SF\Component`` class or implement
 
 .. code-block:: php
 
-    namespace Acme\DemoBundle\SF\Component;
+    namespace Acme\DemoBundle\SF\Form\Component;
 
     use ITE\FormBundle\SF\Component;
 
     class FooComponent extends Component
     {
-        const NAME = 'foo'; // define id for your component
-
         public function loadConfiguration(FileLoader $loader, array $config, ContainerBuilder $container)
         {
             // ...
+        }
+
+        public static function getName()
+        {
+            return 'foo';
         }
     }
 
@@ -58,6 +61,6 @@ And register new service for it with tag ``ite_form.component``.
 
         services:
             acme_demo.component.foo:
-                class: Acme\DemoBundle\SF\Component\FooComponent
+                class: Acme\DemoBundle\SF\Form\Component\FooComponent
                 tags:
                     - { name: ite_form.component }

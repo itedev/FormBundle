@@ -10,5 +10,11 @@ use ITE\FormBundle\SF\Plugin;
  */
 class NodPlugin extends Plugin
 {
-    const NAME = 'nod';
+    /**
+     * {@inheritdoc}
+     */
+    public static function getName()
+    {
+        return 'nod';
+    }
 }

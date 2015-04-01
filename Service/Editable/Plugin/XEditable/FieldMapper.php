@@ -228,14 +228,14 @@ class FieldMapper
                 $builtOptions = array_replace($builtOptions, $this->processChoices($view, $text));
                 $builtOptions['select2'] = array_replace_recursive(
                     $this->container->getParameter('ite_form.plugin.select2.options'),
-                    (array) $view->vars['plugins'][Select2Plugin::NAME]['options']
+                    (array) $view->vars['plugins'][Select2Plugin::getName()]['options']
                 );
                 $extras['plugin'] = 'select2';
                 break;
             case 'datetime':
                 $builtOptions['datetimepicker'] = array_replace_recursive(
                     $this->container->getParameter('ite_form.plugin.bootstrap_datetimepicker.options'),
-                    (array) $view->vars['plugins'][BootstrapDatetimepickerPlugin::NAME]['options']
+                    (array) $view->vars['plugins'][BootstrapDatetimepickerPlugin::getName()]['options']
                 );
                 $builtOptions['format'] = $builtOptions['datetimepicker']['format'];
                 $builtOptions['viewformat'] = $builtOptions['datetimepicker']['format'];
@@ -248,7 +248,7 @@ class FieldMapper
             case 'tinymce':
                 $builtOptions['tinymce'] = array_replace_recursive(
                     $this->container->getParameter('ite_form.plugin.tinymce.options'),
-                    (array) $view->vars['plugins'][TinymcePlugin::NAME]['options']
+                    (array) $view->vars['plugins'][TinymcePlugin::getName()]['options']
                 );
                 $builtOptions['onblur'] = 'ignore';
                 $extras['plugin'] = 'tinymce';

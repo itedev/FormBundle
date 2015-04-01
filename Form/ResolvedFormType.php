@@ -22,27 +22,6 @@ class ResolvedFormType extends BaseResolvedFormType
     /**
      * {@inheritdoc}
      */
-    public function createView(FormInterface $form, FormView $parent = null)
-    {
-        $options = $form->getConfig()->getOptions();
-
-        $view = $this->newView($parent);
-
-        $this->buildView($view, $form, $options);
-
-        $orderer = new FormOrderer();
-        foreach ($orderer->order($form) as $name) {
-            $view->children[$name] = $form[$name]->createView($view);
-        }
-
-        $this->finishView($view, $form, $options);
-
-        return $view;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     protected function newBuilder($name, $dataClass, FormFactoryInterface $factory, array $options)
     {
         if ($this->getInnerType() instanceof ButtonTypeInterface) {

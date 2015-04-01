@@ -10,5 +10,11 @@ use ITE\FormBundle\SF\Plugin;
  */
 class StarratingPlugin extends Plugin
 {
-    const NAME = 'starrating';
+    /**
+     * {@inheritdoc}
+     */
+    public static function getName()
+    {
+        return 'starrating';
+    }
 }

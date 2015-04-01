@@ -10,5 +10,11 @@ use ITE\FormBundle\SF\Plugin;
  */
 class ParsleyPlugin extends Plugin
 {
-    const NAME = 'parsley';
+    /**
+     * {@inheritdoc}
+     */
+    public static function getName()
+    {
+        return 'parsley';
+    }
 }

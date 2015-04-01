@@ -12,8 +12,6 @@ use Symfony\Component\DependencyInjection\Loader\FileLoader;
  */
 class Select2Plugin extends ChoicePlugin
 {
-    const NAME = 'select2';
-
     /**
      * {@inheritdoc}
      */
@@ -21,6 +19,14 @@ class Select2Plugin extends ChoicePlugin
     {
         parent::loadConfiguration($loader, $config, $container);
 
-        $this->addExtendedChoiceTypes(sprintf('ite_form.form.type.plugin.%s.abstract', static::NAME), static::NAME, $container);
+        $this->addExtendedChoiceTypes(sprintf('ite_form.form.type.plugin.%s.abstract', static::getName()), static::getName(), $container);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getName()
+    {
+        return 'select2';
     }
 }

@@ -46,7 +46,7 @@ class FileType extends AbstractType
         if (!isset($view->vars['plugins'])) {
             $view->vars['plugins'] = array();
         }
-        $view->vars['plugins'][FineuploaderPlugin::NAME] = array(
+        $view->vars['plugins'][FineuploaderPlugin::getName()] = array(
             'extras' => (object) array(),
             'options' => array_replace_recursive(
                 $this->options,

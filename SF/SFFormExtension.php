@@ -3,7 +3,6 @@
 namespace ITE\FormBundle\SF;
 
 use ITE\JsBundle\SF\SFExtension;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
@@ -15,11 +14,6 @@ use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
  */
 class SFFormExtension extends SFExtension implements SFFormExtensionInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
     /**
      * @var array
      */
@@ -41,11 +35,10 @@ class SFFormExtension extends SFExtension implements SFFormExtensionInterface
     protected $formErrors = array();
 
     /**
-     * @param ContainerInterface $container
+     *
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct()
     {
-        $this->container = $container;
         $this->elementBag = new ElementBag();
     }
 
@@ -59,17 +52,13 @@ class SFFormExtension extends SFExtension implements SFFormExtensionInterface
         // add component css
         foreach ($this->getComponents() as $component) {
             /** @var $component ExtensionInterface */
-            if ($component->isEnabled($this->container)) {
-                $inputs = array_merge($inputs, $component->getStylesheets());
-            }
+            $inputs = array_merge($inputs, $component->getStylesheets());
         }
 
         // add plugin css
         foreach ($this->getPlugins() as $plugin) {
             /** @var $plugin ExtensionInterface */
-            if ($plugin->isEnabled($this->container)) {
-                $inputs = array_merge($inputs, $plugin->getStylesheets());
-            }
+            $inputs = array_merge($inputs, $plugin->getStylesheets());
         }
 
         return $inputs;
@@ -85,17 +74,13 @@ class SFFormExtension extends SFExtension implements SFFormExtensionInterface
         // add component js
         foreach ($this->getComponents() as $component) {
             /** @var $component ExtensionInterface */
-            if ($component->isEnabled($this->container)) {
-                $inputs = array_merge($inputs, $component->getJavascripts());
-            }
+            $inputs = array_merge($inputs, $component->getJavascripts());
         }
 
         // add plugin js
         foreach ($this->getPlugins() as $plugin) {
             /** @var $plugin ExtensionInterface */
-            if ($plugin->isEnabled($this->container)) {
-                $inputs = array_merge($inputs, $plugin->getJavascripts());
-            }
+            $inputs = array_merge($inputs, $plugin->getJavascripts());
         }
 
         return $inputs;
@@ -123,21 +108,21 @@ class SFFormExtension extends SFExtension implements SFFormExtensionInterface
      */
     public function onAjaxRequest(GetResponseForControllerResultEvent $event)
     {
-        $request = $event->getRequest();
-        $result = $event->getControllerResult();
-
-        // is form was submitted via ajax - get its errors if exist
-        if (in_array($request->getMethod(), array('GET', 'POST'))) {
-            $property = 'POST' === $request->getMethod() ? 'request' : 'query';
-            if (is_array($result) || $result instanceof \Traversable) {
-                foreach ($result as $var) {
-                    if ($var instanceof FormView && $request->$property->has($var->vars['name'])) {
-                        $this->collectFormErrors($var);
-                        break;
-                    }
-                }
-            }
-        }
+//        $request = $event->getRequest();
+//        $result = $event->getControllerResult();
+//
+//        // is form was submitted via ajax - get its errors if exist
+//        if (in_array($request->getMethod(), array('GET', 'POST'))) {
+//            $property = 'POST' === $request->getMethod() ? 'request' : 'query';
+//            if (is_array($result) || $result instanceof \Traversable) {
+//                foreach ($result as $var) {
+//                    if ($var instanceof FormView && $request->$property->has($var->vars['name'])) {
+//                        $this->collectFormErrors($var);
+//                        break;
+//                    }
+//                }
+//            }
+//        }
     }
 
     /**
@@ -145,23 +130,24 @@ class SFFormExtension extends SFExtension implements SFFormExtensionInterface
      */
     public function onAjaxResponse(FilterResponseEvent $event)
     {
-        $response = $event->getResponse();
-
-        if (count($this->formErrors)) {
-            $response->headers->set('X-SF-FormErrors', json_encode($this->formErrors));
-        }
-
-        if ($this->elementBag->count()) {
-            $response->headers->set('X-SF-Elements', json_encode($this->elementBag->peekAll()));
-        }
+//        $response = $event->getResponse();
+//
+//        if (count($this->formErrors)) {
+//            $response->headers->set('X-SF-FormErrors', json_encode($this->formErrors));
+//        }
+//
+//        if ($this->elementBag->count()) {
+//            $response->headers->set('X-SF-Elements', json_encode($this->elementBag->peekAll()));
+//        }
     }
 
     /**
+     * @param string $alias
      * @param ExtensionInterface $component
      */
-    public function addComponent(ExtensionInterface $component)
+    public function addComponent($alias, ExtensionInterface $component)
     {
-        $this->components[] = $component;
+        $this->components[$alias] = $component;
     }
 
     /**
@@ -175,11 +161,12 @@ class SFFormExtension extends SFExtension implements SFFormExtensionInterface
     }
 
     /**
+     * @param string $alias
      * @param ExtensionInterface $plugin
      */
-    public function addPlugin(ExtensionInterface $plugin)
+    public function addPlugin($alias, ExtensionInterface $plugin)
     {
-        $this->plugins[] = $plugin;
+        $this->plugins[$alias] = $plugin;
     }
 
     /**
@@ -202,43 +189,43 @@ class SFFormExtension extends SFExtension implements SFFormExtensionInterface
         return $this->elementBag;
     }
 
-    /**
-     * @param FormView $form
-     */
-    protected function collectFormErrors(FormView $form)
-    {
-        $formErrors = array(
-            'form' => array(),
-            'children' => array(),
-        );
-        $this->processChildrenRecursive($formErrors, $form);
-        $this->formErrors = $formErrors;
-    }
-
-    /**
-     * @param $formErrors
-     * @param FormView $element
-     */
-    protected function processChildrenRecursive(&$formErrors, FormView $element)
-    {
-        if (count($element->vars['errors'])) {
-            $value = array(
-                'error_type' => $element->vars['error_type'],
-                'errors' => array_map(function($error) {
-                    /** @var $error FormError */
-                    return $error->getMessage();
-                }, $element->vars['errors']),
-            );
-
-            if (!isset($element->parent)) {
-                $formErrors['form'] = $value;
-            } else {
-                $formErrors['children'][$element->vars['full_name']] = $value;
-            }
-        }
-
-        foreach ($element->children as $child) {
-            $this->processChildrenRecursive($formErrors, $child);
-        }
-    }
+//    /**
+//     * @param FormView $form
+//     */
+//    protected function collectFormErrors(FormView $form)
+//    {
+//        $formErrors = array(
+//            'form' => array(),
+//            'children' => array(),
+//        );
+//        $this->processChildrenRecursive($formErrors, $form);
+//        $this->formErrors = $formErrors;
+//    }
+//
+//    /**
+//     * @param $formErrors
+//     * @param FormView $element
+//     */
+//    protected function processChildrenRecursive(&$formErrors, FormView $element)
+//    {
+//        if (count($element->vars['errors'])) {
+//            $value = array(
+//                'error_type' => $element->vars['error_type'],
+//                'errors' => array_map(function($error) {
+//                    /** @var $error FormError */
+//                    return $error->getMessage();
+//                }, $element->vars['errors']),
+//            );
+//
+//            if (!isset($element->parent)) {
+//                $formErrors['form'] = $value;
+//            } else {
+//                $formErrors['children'][$element->vars['full_name']] = $value;
+//            }
+//        }
+//
+//        foreach ($element->children as $child) {
+//            $this->processChildrenRecursive($formErrors, $child);
+//        }
+//    }
 }

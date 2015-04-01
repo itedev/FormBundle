@@ -22,32 +22,44 @@ class SFFromExtensionPass implements CompilerPassInterface
             return;
         }
 
-        $sfFormDefinition = $container->getDefinition('ite_form.sf.extension.form');
-        $this->processComponents($sfFormDefinition, $container);
-        $this->processPlugins($sfFormDefinition, $container);
+        $definition = $container->getDefinition('ite_form.sf.extension.form');
+        $this->processComponents($definition, $container);
+        $this->processPlugins($definition, $container);
     }
 
     /**
-     * @param Definition $sfFormDefinition
+     * @param Definition $definition
      * @param ContainerBuilder $container
      */
-    protected function processComponents(Definition $sfFormDefinition, ContainerBuilder $container)
+    protected function processComponents(Definition $definition, ContainerBuilder $container)
     {
         $serviceIds = $container->findTaggedServiceIds('ite_form.component');
-        foreach ($serviceIds as $serviceId => $attributes) {
-            $sfFormDefinition->addMethodCall('addComponent', array(new Reference($serviceId)));
+        foreach ($serviceIds as $serviceId => $tags) {
+            foreach ($tags as $tag) {
+                $alias = $tag['alias'];
+                $enabled = $container->getParameter(sprintf('ite_form.component.%s.enabled', $alias));
+                if ($enabled) {
+                    $definition->addMethodCall('addComponent', array($alias, new Reference($serviceId)));
+                }
+            }
         }
     }
 
     /**
-     * @param Definition $sfFormDefinition
+     * @param Definition $definition
      * @param ContainerBuilder $container
      */
-    protected function processPlugins(Definition $sfFormDefinition, ContainerBuilder $container)
+    protected function processPlugins(Definition $definition, ContainerBuilder $container)
     {
         $serviceIds = $container->findTaggedServiceIds('ite_form.plugin');
-        foreach ($serviceIds as $serviceId => $attributes) {
-            $sfFormDefinition->addMethodCall('addPlugin', array(new Reference($serviceId)));
+        foreach ($serviceIds as $serviceId => $tags) {
+            foreach ($tags as $tag) {
+                $alias = $tag['alias'];
+                $enabled = $container->getParameter(sprintf('ite_form.plugin.%s.enabled', $alias));
+                if ($enabled) {
+                    $definition->addMethodCall('addPlugin', array($alias, new Reference($serviceId)));
+                }
+            }
         }
     }
 }

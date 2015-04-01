@@ -28,8 +28,8 @@ class ITEFormExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
 
         $loader->load('sf.yml');
-        $loader->load('services.yml');
         $loader->load('types.yml');
+        $loader->load('type_extensions.yml');
         $loader->load('type_guessers.yml');
         $loader->load('entity_converters.yml');
 
@@ -59,11 +59,11 @@ class ITEFormExtension extends Extension
             /** @var $component ExtensionInterface */
             $component = $container->get($serviceId);
 
-            $enabled = isset($config[$component::NAME]) && !empty($config[$component::NAME]['enabled']);
-            $container->setParameter(sprintf('ite_form.component.%s.enabled', $component::NAME), $enabled);
+            $enabled = isset($config[$component::getName()]) && !empty($config[$component::getName()]['enabled']);
+            $container->setParameter(sprintf('ite_form.component.%s.enabled', $component::getName()), $enabled);
 
             if ($enabled) {
-                $component->loadConfiguration($loader, $config[$component::NAME], $container);
+                $component->loadConfiguration($loader, $config[$component::getName()], $container);
             }
         }
     }
@@ -80,11 +80,11 @@ class ITEFormExtension extends Extension
             /** @var $plugin ExtensionInterface */
             $plugin = $container->get($serviceId);
 
-            $enabled = isset($config[$plugin::NAME]) && !empty($config[$plugin::NAME]['enabled']);
-            $container->setParameter(sprintf('ite_form.plugin.%s.enabled', $plugin::NAME), $enabled);
+            $enabled = isset($config[$plugin::getName()]) && !empty($config[$plugin::getName()]['enabled']);
+            $container->setParameter(sprintf('ite_form.plugin.%s.enabled', $plugin::getName()), $enabled);
 
             if ($enabled) {
-                $plugin->loadConfiguration($loader, $config[$plugin::NAME], $container);
+                $plugin->loadConfiguration($loader, $config[$plugin::getName()], $container);
             }
         }
     }

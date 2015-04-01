@@ -65,7 +65,7 @@ class AbstractChoiceType extends BaseAbstractType
         if (!isset($view->vars['plugins'])) {
             $view->vars['plugins'] = array();
         }
-        $view->vars['plugins'][Select2Plugin::NAME] = array(
+        $view->vars['plugins'][Select2Plugin::getName()] = array(
             'extras' => (object) array(),
             'options' => (object) array_replace_recursive($this->options, $options['plugin_options'])
         );

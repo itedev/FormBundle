@@ -2,27 +2,30 @@ parameters:
     ite_form.sf.extension.form.class:   ITE\FormBundle\SF\SFFormExtension
     ite_form.twig.extension.sf.class:   ITE\FormBundle\Twig\Extension\SFExtension
     ite_form.route_loader.class:        ITE\FormBundle\Routing\RouteLoader
+
+    form.resolved_type_factory.class:   ITE\FormBundle\Form\ResolvedFormTypeFactory
+
+    # todo: refactor services below
     ite_form.param_protector.class:     ITE\FormBundle\Service\Security\ParamProtector
 
 services:
     ite_form.sf.extension.form:
         class: %ite_form.sf.extension.form.class%
-        arguments: [@service_container]
         tags:
             - { name: ite_js.sf.extension, alias: form }
 
     ite_form.twig.extension.sf:
         class: %ite_form.twig.extension.sf.class%
-        arguments: [@ite_form.sf.extension.form, %twig.form.resources%]
+        arguments: [ @ite_form.sf.extension.form, %twig.form.resources% ]
         tags:
             - { name: twig.extension }
 
     ite_form.route_loader:
         class: %ite_form.route_loader.class%
-        arguments: [@service_container]
+        arguments: [ @service_container ]
         tags:
             - { name: routing.loader }
 
     ite_form.param_protector:
         class: %ite_form.param_protector.class%
-        arguments: [@session, %kernel.secret%]
+        arguments: [ @session, %kernel.secret% ]

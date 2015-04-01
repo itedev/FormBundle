@@ -10,5 +10,11 @@ use ITE\FormBundle\SF\Plugin;
  */
 class BootstrapColorpickerPlugin extends Plugin
 {
-    const NAME = 'bootstrap_colorpicker';
+    /**
+     * {@inheritdoc}
+     */
+    public static function getName()
+    {
+        return 'bootstrap_colorpicker';
+    }
 }

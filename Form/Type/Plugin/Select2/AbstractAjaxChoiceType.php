@@ -91,7 +91,7 @@ abstract class AbstractAjaxChoiceType extends AbstractType
         if (!isset($view->vars['plugins'])) {
             $view->vars['plugins'] = array();
         }
-        $view->vars['plugins'][Select2Plugin::NAME] = array(
+        $view->vars['plugins'][Select2Plugin::getName()] = array(
             'extras' => array(
                 'ajax' => true,
             ),

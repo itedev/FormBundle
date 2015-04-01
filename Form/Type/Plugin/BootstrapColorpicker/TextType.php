@@ -48,7 +48,7 @@ class TextType extends AbstractType
         if (!isset($view->vars['plugins'])) {
             $view->vars['plugins'] = array();
         }
-        $view->vars['plugins'][BootstrapColorpickerPlugin::NAME] = array(
+        $view->vars['plugins'][BootstrapColorpickerPlugin::getName()] = array(
             'extras' => (object) array(),
             'options' => (object) array_replace_recursive($this->options, $options['plugin_options'])
         );

@@ -40,7 +40,7 @@ class FormTypeExtension extends AbstractTypeExtension
      */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        if (!$form->isRoot() || !FormUtils::isFormHasPlugin($form, NodPlugin::NAME)) {
+        if (!$form->isRoot() || !FormUtils::isFormHasPlugin($form, NodPlugin::getName())) {
             return;
         }
 
@@ -49,11 +49,11 @@ class FormTypeExtension extends AbstractTypeExtension
         if (!isset($view->vars['plugins'])) {
             $view->vars['plugins'] = array();
         }
-        $view->vars['plugins'][NodPlugin::NAME] = array(
+        $view->vars['plugins'][NodPlugin::getName()] = array(
             'extras' => (object) array(),
             'options' => array(
                 'metrics' => $constraints,
-                'options' => (object) array_replace_recursive($this->options, $options['plugins'][NodPlugin::NAME]),
+                'options' => (object) array_replace_recursive($this->options, $options['plugins'][NodPlugin::getName()]),
             )
         );
     }

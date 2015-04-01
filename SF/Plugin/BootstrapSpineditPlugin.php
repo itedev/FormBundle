@@ -10,5 +10,11 @@ use ITE\FormBundle\SF\Plugin;
  */
 class BootstrapSpineditPlugin extends Plugin
 {
-    const NAME = 'bootstrap_spinedit';
+    /**
+     * {@inheritdoc}
+     */
+    public static function getName()
+    {
+        return 'bootstrap_spinedit';
+    }
 }

@@ -1,50 +1,45 @@
 parameters:
-    ite_form.component.collection.class:                        ITE\FormBundle\SF\Component\CollectionComponent
-    ite_form.component.dynamic_choice.class:                    ITE\FormBundle\SF\Component\DynamicChoiceComponent
-    ite_form.component.ajax_file_upload.class:                  ITE\FormBundle\SF\Component\AjaxFileUploadComponent
-    ite_form.component.hierarchical.class:                      ITE\FormBundle\SF\Component\HierarchicalComponent
-    ite_form.component.editable.class:                          ITE\FormBundle\SF\Component\EditableComponent
-    ite_form.component.ordered.class:                           ITE\FormBundle\SF\Component\OrderedComponent
-    ite_form.component.validation.class:                        ITE\FormBundle\SF\Component\ValidationComponent
-    ite_form.component.debug.class:                             ITE\FormBundle\SF\Component\DebugComponent
+    ite_form.component.collection.class:        ITE\FormBundle\SF\Component\CollectionComponent
+    ite_form.component.dynamic_choice.class:    ITE\FormBundle\SF\Component\DynamicChoiceComponent
+    ite_form.component.ajax_file_upload.class:  ITE\FormBundle\SF\Component\AjaxFileUploadComponent
+    ite_form.component.hierarchical.class:      ITE\FormBundle\SF\Component\HierarchicalComponent
+    ite_form.component.editable.class:          ITE\FormBundle\SF\Component\EditableComponent
+    ite_form.component.ordered.class:           ITE\FormBundle\SF\Component\OrderedComponent
+    ite_form.component.validation.class:        ITE\FormBundle\SF\Component\ValidationComponent
+    ite_form.component.debug.class:             ITE\FormBundle\SF\Component\DebugComponent
 
 services:
     ite_form.component.collection:
-        class:                                                  %ite_form.component.collection.class%
+        class: %ite_form.component.collection.class%
         tags:
-            - { name: ite_form.component }
+            - { name: ite_form.component, alias: collection }
 
     ite_form.component.dynamic_choice:
-        class:                                                  %ite_form.component.dynamic_choice.class%
+        class: %ite_form.component.dynamic_choice.class%
         tags:
-            - { name: ite_form.component }
+            - { name: ite_form.component, alias: dynamic_choice }
 
     ite_form.component.ajax_file_upload:
-        class:                                                  %ite_form.component.ajax_file_upload.class%
+        class: %ite_form.component.ajax_file_upload.class%
         tags:
-            - { name: ite_form.component }
+            - { name: ite_form.component, alias: ajax_file_upload }
 
     ite_form.component.hierarchical:
-        class:                                                  %ite_form.component.hierarchical.class%
+        class: %ite_form.component.hierarchical.class%
         tags:
-            - { name: ite_form.component }
+            - { name: ite_form.component, alias: hierarchical }
 
     ite_form.component.editable:
-        class:                                                  %ite_form.component.editable.class%
+        class: %ite_form.component.editable.class%
         tags:
-            - { name: ite_form.component }
-
-    ite_form.component.ordered:
-        class:                                                  %ite_form.component.ordered.class%
-        tags:
-            - { name: ite_form.component }
+            - { name: ite_form.component, alias: editable }
 
     ite_form.component.validation:
-        class:                                                  %ite_form.component.validation.class%
+        class: %ite_form.component.validation.class%
         tags:
-            - { name: ite_form.component }
+            - { name: ite_form.component, alias: validation }
 
     ite_form.component.debug:
-        class:                                                  %ite_form.component.debug.class%
+        class: %ite_form.component.debug.class%
         tags:
-            - { name: ite_form.component }
+            - { name: ite_form.component, alias: debug }

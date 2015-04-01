@@ -10,5 +10,11 @@ use ITE\FormBundle\SF\Plugin;
  */
 class BootstrapDaterangepickerPlugin extends Plugin
 {
-    const NAME = 'bootstrap_daterangepicker';
+    /**
+     * {@inheritdoc}
+     */
+    public static function getName()
+    {
+        return 'bootstrap_daterangepicker';
+    }
 }

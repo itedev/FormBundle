@@ -9,7 +9,7 @@ use Symfony\Component\DependencyInjection\DefinitionDecorator;
  * Class ChoicePlugin
  * @package ITE\FormBundle\SF
  */
-class ChoicePlugin extends Plugin
+abstract class ChoicePlugin extends Plugin
 {
     /**
      * @param $serviceId

@@ -10,5 +10,11 @@ use ITE\FormBundle\SF\Plugin;
  */
 class BootstrapDatetimepickerPlugin extends Plugin
 {
-    const NAME = 'bootstrap_datetimepicker';
+    /**
+     * {@inheritdoc}
+     */
+    public static function getName()
+    {
+        return 'bootstrap_datetimepicker';
+    }
 }

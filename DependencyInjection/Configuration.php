@@ -59,7 +59,7 @@ class Configuration implements ConfigurationInterface
                     ->addDefaultsIfNotSet();
 
         $serviceIds = $this->container->findTaggedServiceIds('ite_form.component');
-        foreach ($serviceIds as $serviceId => $attributes) {
+        foreach ($serviceIds as $serviceId => $tags) {
             /** @var $component ExtensionInterface */
             $component = $this->container->get($serviceId);
             $component->addConfiguration($componentsNode, $this->container);
@@ -78,7 +78,7 @@ class Configuration implements ConfigurationInterface
                     ->addDefaultsIfNotSet();
 
         $serviceIds = $this->container->findTaggedServiceIds('ite_form.plugin');
-        foreach ($serviceIds as $serviceId => $attributes) {
+        foreach ($serviceIds as $serviceId => $tags) {
             /** @var $plugin ExtensionInterface */
             $plugin = $this->container->get($serviceId);
             $plugin->addConfiguration($pluginsNode, $this->container);

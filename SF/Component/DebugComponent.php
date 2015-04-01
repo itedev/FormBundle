@@ -10,5 +10,11 @@ use ITE\FormBundle\SF\Component;
  */
 class DebugComponent extends Component
 {
-    const NAME = 'debug';
+    /**
+     * {@inheritdoc}
+     */
+    public static function getName()
+    {
+        return 'debug';
+    }
 }

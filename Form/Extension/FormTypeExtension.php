@@ -48,14 +48,6 @@ class FormTypeExtension extends AbstractTypeExtension
     /**
      * {@inheritdoc}
      */
-    public function buildView(FormView $view, FormInterface $form, array $options)
-    {
-        $view->vars['submitted'] = $form->isSubmitted();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getExtendedType()
     {
         return 'form';

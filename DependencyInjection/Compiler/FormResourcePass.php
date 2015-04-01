@@ -38,9 +38,7 @@ class FormResourcePass implements CompilerPassInterface
     {
         foreach ($sfForm->getComponents() as $component) {
             /** @var $component ExtensionInterface */
-            if ($component->isEnabled($container)) {
-                $resources = array_merge($resources, $component->addFormResources($container));
-            }
+            $resources = array_merge($resources, $component->addFormResources($container));
         }
 
         return $resources;
@@ -56,9 +54,7 @@ class FormResourcePass implements CompilerPassInterface
     {
         foreach ($sfForm->getPlugins() as $plugin) {
             /** @var $plugin ExtensionInterface */
-            if ($plugin->isEnabled($container)) {
-                $resources = array_merge($resources, $plugin->addFormResources($container));
-            }
+            $resources = array_merge($resources, $plugin->addFormResources($container));
         }
 
         return $resources;

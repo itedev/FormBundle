@@ -52,9 +52,7 @@ class RouteLoader extends BaseLoader
     {
         foreach ($sfForm->getComponents() as $component) {
             /** @var $component ExtensionInterface */
-            if ($component->isEnabled($container)) {
-                $collection->addCollection($component->addRoutes($this, $container));
-            }
+            $collection->addCollection($component->addRoutes($this, $container));
         }
     }
 
@@ -67,9 +65,7 @@ class RouteLoader extends BaseLoader
     {
         foreach ($sfForm->getPlugins() as $plugin) {
             /** @var $plugin ExtensionInterface */
-            if ($plugin->isEnabled($container)) {
-                $collection->addCollection($plugin->addRoutes($this, $container));
-            }
+            $collection->addCollection($plugin->addRoutes($this, $container));
         }
     }
 

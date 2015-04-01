@@ -10,5 +10,11 @@ use ITE\FormBundle\SF\Plugin;
  */
 class TinymcePlugin extends Plugin
 {
-    const NAME = 'tinymce';
+    /**
+     * {@inheritdoc}
+     */
+    public static function getName()
+    {
+        return 'tinymce';
+    }
 }

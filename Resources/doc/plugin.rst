@@ -49,16 +49,31 @@ Create new class that extends ``ITE\FormBundle\SF\Plugin`` class or implements
 
 .. code-block:: php
 
-    namespace Acme\DemoBundle\SF\Plugin;
+    namespace Acme\DemoBundle\SF\Form\Plugin;
 
     use ITE\FormBundle\SF\Plugin;
 
     class FooPlugin extends Plugin
     {
-        const NAME = 'foo'; // define id for your plugin
-
         public function loadConfiguration(FileLoader $loader, array $config, ContainerBuilder $container)
         {
             // ...
         }
+
+        public static function getName()
+        {
+            return 'foo';
+        }
     }
+
+And register new service for it with tag ``ite_form.plugin``.
+
+.. configuration-block::
+
+    .. code-block:: yaml
+
+        services:
+            acme_demo.plugin.foo:
+                class: Acme\DemoBundle\SF\Form\Plugin\FooPlugin
+                tags:
+                    - { name: ite_form.plugin }

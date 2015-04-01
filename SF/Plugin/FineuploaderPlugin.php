@@ -10,5 +10,11 @@ use ITE\FormBundle\SF\Plugin;
  */
 class FineuploaderPlugin extends Plugin
 {
-    const NAME = 'fineuploader';
+    /**
+     * {@inheritdoc}
+     */
+    public static function getName()
+    {
+        return 'fineuploader';
+    }
 }

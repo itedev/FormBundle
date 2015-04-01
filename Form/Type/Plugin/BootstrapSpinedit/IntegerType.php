@@ -50,7 +50,7 @@ class IntegerType extends AbstractType
             $view->vars['plugins'] = array();
         }
 
-        $view->vars['plugins'][BootstrapSpineditPlugin::NAME] = array(
+        $view->vars['plugins'][BootstrapSpineditPlugin::getName()] = array(
             'extras' => (object) array(),
             'options' => (object) array_replace_recursive($this->options, $options['plugin_options'], array(
                     'numberOfDecimals' => 0,

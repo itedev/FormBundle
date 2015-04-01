@@ -50,8 +50,8 @@ class BirthdayType extends AbstractType
         /** @var $dateTimeToLocalizedStringTransformer DateTimeToLocalizedStringTransformer */
         $dateTimeToLocalizedStringTransformer = $viewTransformers[0];
 
-        $view->vars['plugins'][BootstrapDatetimepickerPlugin::NAME]['options'] = array_replace_recursive(
-            $view->vars['plugins'][BootstrapDatetimepickerPlugin::NAME]['options'], array(
+        $view->vars['plugins'][BootstrapDatetimepickerPlugin::getName()]['options'] = array_replace_recursive(
+            $view->vars['plugins'][BootstrapDatetimepickerPlugin::getName()]['options'], array(
                 'startView' => 4, // decade view
                 'minView' => 2, // month view
                 'startDate' => $dateTimeToLocalizedStringTransformer->transform($startDate),

@@ -7,10 +7,10 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
 /**
- * Class FormPass
+ * Class FormTypeGuesserPass
  * @package ITE\FormBundle\DependencyInjection\Compiler
  */
-class FormPass implements CompilerPassInterface
+class FormTypeGuesserPass implements CompilerPassInterface
 {
     /**
      * {@inheritdoc}
@@ -22,15 +22,15 @@ class FormPass implements CompilerPassInterface
         }
 
         $definition = $container->getDefinition('ite_form.form.type_guesser');
-        $guesserServiceIds = array_keys($container->findTaggedServiceIds('form.type_guesser'));
-        $guesserServiceIds = array_filter($guesserServiceIds, function($guesserServiceId) {
-            return $guesserServiceId !== 'ite_form.form.type_guesser';
+        $serviceIds = array_keys($container->findTaggedServiceIds('form.type_guesser'));
+        $serviceIds = array_filter($serviceIds, function($serviceId) {
+            return $serviceId !== 'ite_form.form.type_guesser';
         });
 
-        $guessers = array_map(function($guesserServiceId) {
-            return new Reference($guesserServiceId);
-        }, $guesserServiceIds);
+        $serviceReferences = array_map(function($serviceId) {
+            return new Reference($serviceId);
+        }, $serviceIds);
 
-        $definition->replaceArgument(2, $guessers);
+        $definition->replaceArgument(2, $serviceReferences);
     }
 }

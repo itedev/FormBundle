@@ -49,7 +49,7 @@ class TextareaType extends AbstractType
         if (!isset($view->vars['plugins'])) {
             $view->vars['plugins'] = array();
         }
-        $view->vars['plugins'][TinymcePlugin::NAME] = array(
+        $view->vars['plugins'][TinymcePlugin::getName()] = array(
             'extras' => (object) array(),
             'options' => (object) ArrayUtils::replaceRecursive($this->options, $options['plugin_options']),
         );

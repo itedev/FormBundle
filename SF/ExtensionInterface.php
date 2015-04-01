@@ -16,8 +16,6 @@ use Symfony\Component\Routing\RouteCollection;
  */
 interface ExtensionInterface
 {
-    const NAME = 'undefined';
-
     /**
      * @param ArrayNodeDefinition $pluginsNode
      * @param ContainerBuilder $container
@@ -56,8 +54,7 @@ interface ExtensionInterface
     public function getJavascripts();
 
     /**
-     * @param ContainerInterface $container
-     * @return bool
+     * @return string
      */
-    public function isEnabled(ContainerInterface $container);
+    public static function getName();
 } 

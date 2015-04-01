@@ -15,7 +15,7 @@ use Symfony\Component\Routing\RouteCollection;
  * Class Component
  * @package ITE\FormBundle\SF
  */
-class Component implements ExtensionInterface
+abstract class Component implements ExtensionInterface
 {
     /**
      * {@inheritdoc}
@@ -25,7 +25,7 @@ class Component implements ExtensionInterface
         /** @var $node NodeBuilder */
         return $rootNode
             ->children()
-                ->arrayNode(static::NAME)
+                ->arrayNode(static::getName())
                     ->canBeUnset()
                     ->canBeEnabled()
                     ->children()
@@ -37,7 +37,7 @@ class Component implements ExtensionInterface
      */
     public function loadConfiguration(FileLoader $loader, array $config, ContainerBuilder $container)
     {
-        $loader->load(sprintf('component/%s.yml', static::NAME));
+        $loader->load(sprintf('component/%s.yml', static::getName()));
     }
 
     /**
@@ -54,7 +54,7 @@ class Component implements ExtensionInterface
     public function addRoutes(Loader $loader, ContainerInterface $container)
     {
         $bundlePath = $container->get('kernel')->getBundle('ITEFormBundle')->getPath();
-        $componentName = Inflector::classify(static::NAME);
+        $componentName = Inflector::classify(static::getName());
 
         $routeCollection = new RouteCollection();
         if (file_exists(sprintf('%s/Controller/Component/%s', $bundlePath, $componentName))) {
@@ -83,11 +83,4 @@ class Component implements ExtensionInterface
         return array();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isEnabled(ContainerInterface $container)
-    {
-        return $container->getParameter(sprintf('ite_form.component.%s.enabled', static::NAME));
-    }
 } 

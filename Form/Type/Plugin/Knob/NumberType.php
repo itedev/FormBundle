@@ -48,7 +48,7 @@ class NumberType extends AbstractType
         if (!isset($view->vars['plugins'])) {
             $view->vars['plugins'] = array();
         }
-        $view->vars['plugins'][KnobPlugin::NAME] = array(
+        $view->vars['plugins'][KnobPlugin::getName()] = array(
             'extras' => (object) array(),
             'options' => (object) array_replace_recursive($this->options, $options['plugin_options'])
         );

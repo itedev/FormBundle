@@ -13,8 +13,6 @@ use Symfony\Component\DependencyInjection\Loader\FileLoader;
  */
 class AjaxFileUploadComponent extends Component
 {
-    const NAME = 'ajax_file_upload';
-
     /**
      * {@inheritdoc}
      */
@@ -37,6 +35,14 @@ class AjaxFileUploadComponent extends Component
         $container->setParameter('ite_form.file_manager.tmp_prefix', $config['tmp_prefix']);
 
         parent::loadConfiguration($loader, $config, $container);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getName()
+    {
+        return 'ajax_file_upload';
     }
 
 }

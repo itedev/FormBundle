@@ -52,7 +52,7 @@ class RatingType extends BaseAbstractType
         if (!isset($view->vars['plugins'])) {
             $view->vars['plugins'] = array();
         }
-        $view->vars['plugins'][StarratingPlugin::NAME] = array(
+        $view->vars['plugins'][StarratingPlugin::getName()] = array(
             'extras' => (object) array(),
             'options' => (object) array_replace_recursive($this->options, $options['plugin_options'])
         );

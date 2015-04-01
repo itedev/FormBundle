@@ -11,13 +11,19 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class HierarchicalComponent extends Component
 {
-    const NAME = 'hierarchical';
-
     /**
      * {@inheritdoc}
      */
     public function getJavascripts()
     {
         return array('@ITEFormBundle/Resources/public/js/component/hierarchical.js');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getName()
+    {
+        return 'hierarchical';
     }
 }

@@ -58,7 +58,7 @@ class DateTimeType extends AbstractType
         if (!isset($view->vars['plugins'])) {
             $view->vars['plugins'] = array();
         }
-        $view->vars['plugins'][BootstrapDatetimepickerPlugin::NAME] = array(
+        $view->vars['plugins'][BootstrapDatetimepickerPlugin::getName()] = array(
             'extras' => (object) array(),
             'options' => array_replace_recursive($this->options, $options['plugin_options'], array(
                 'format' => strtr($options['format'], array(

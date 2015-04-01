@@ -33,16 +33,16 @@ class FormTypeExtension extends AbstractTypeExtension
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        if (!$form->isRoot() || !FormUtils::isFormHasPlugin($form, FormPlugin::NAME)) {
+        if (!$form->isRoot() || !FormUtils::isFormHasPlugin($form, FormPlugin::getName())) {
             return;
         }
 
         if (!isset($view->vars['plugins'])) {
             $view->vars['plugins'] = array();
         }
-        $view->vars['plugins'][FormPlugin::NAME] = array(
+        $view->vars['plugins'][FormPlugin::getName()] = array(
             'extras' => (object) array(),
-            'options' => (object) array_replace_recursive($this->options, $options['plugins'][FormPlugin::NAME]),
+            'options' => (object) array_replace_recursive($this->options, $options['plugins'][FormPlugin::getName()]),
         );
     }
 
