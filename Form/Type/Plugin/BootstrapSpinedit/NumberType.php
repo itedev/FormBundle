@@ -3,7 +3,7 @@
 namespace ITE\FormBundle\Form\Type\Plugin\BootstrapSpinedit;
 
 use ITE\FormBundle\SF\Plugin\BootstrapSpineditPlugin;
-use ITE\FormBundle\Util\LocaleUtils;
+use ITE\Common\Util\LocaleUtils;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;

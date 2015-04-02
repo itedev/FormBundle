@@ -3,7 +3,7 @@
 namespace ITE\FormBundle\Form\Type\Plugin\Tinymce;
 
 use ITE\FormBundle\SF\Plugin\TinymcePlugin;
-use ITE\FormBundle\Util\ArrayUtils;
+use ITE\Common\Util\ArrayUtils;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;

@@ -6,7 +6,7 @@ use ITE\FormBundle\Form\EventListener\FileuploadSubscriber;
 use ITE\FormBundle\Service\File\FileManagerInterface;
 use ITE\FormBundle\Service\File\WebFile;
 use ITE\FormBundle\Util\FormUtils;
-use ITE\FormBundle\Util\UrlUtils;
+use ITE\Common\Util\UrlUtils;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;

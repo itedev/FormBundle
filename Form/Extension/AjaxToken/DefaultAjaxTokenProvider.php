@@ -2,7 +2,6 @@
 
 namespace ITE\FormBundle\Form\Extension\AjaxToken;
 
-use ITE\FormBundle\Util\UrlUtils;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Util\SecureRandom;

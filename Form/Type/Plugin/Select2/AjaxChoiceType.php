@@ -3,7 +3,6 @@
 namespace ITE\FormBundle\Form\Type\Plugin\Select2;
 
 use ITE\FormBundle\SF\Plugin\Select2Plugin;
-use ITE\FormBundle\Util\ArrayUtils;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
