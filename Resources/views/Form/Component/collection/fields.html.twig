@@ -29,7 +29,6 @@
                 'class': 'collection-item ' ~ widget_form_group_attr.class|default(''),
                 'id': id ~ '_item'
             }) %}
-            {#{% do ite_debug() %}#}
             {% set widget_form_group_tag = form.parent.vars.collection_item_tag|default('div') %}
         {% endif %}
     {% endif %}
@@ -76,28 +75,24 @@
 {% endblock widget_form_group_end %}
 
 {% block collection_attributes -%}
+    {% set collection_attr = [] %}
     {% if 'collection' in form.vars.block_prefixes %}
         {% if prototype is defined %}
             {% set prototype_markup = form_row(prototype) %}
             {% set data_prototype_name = form.vars.form.vars.prototype.vars.name|default('__name__') %}
             {% set data_prototype_label = form.vars.form.vars.prototype.vars.label|default('__name__label__') %}
-            {% set widget_form_group_attr = widget_form_group_attr|merge({
+            {% set collection_attr = collection_attr|merge({
                 'data-prototype': prototype_markup,
                 'data-prototype-name': data_prototype_name,
                 'data-prototype-label': data_prototype_label
-            })|merge(attr) %}
+            }) %}
         {% endif %}
-        {% set widget_form_group_attr = widget_form_group_attr|merge({
+        {% set collection_attr = collection_attr|merge({
             'id': id ~ '_collection',
             'data-collection-id': collection_id
         })|merge(attr) %}
-        {% if attr.class is defined %}
-            {% set widget_form_group_attr = widget_form_group_attr|merge({
-                'class': widget_form_group_attr.class|default('row') ~ ' ' ~ attr.class
-            }) %}
-        {% endif %}
 
-        {%- for attrname, attrvalue in widget_form_group_attr -%}
+        {%- for attrname, attrvalue in collection_attr -%}
             {{- " " -}}
             {%- if attrvalue is sameas(true) -%}
                 {{- attrname }}="{{ attrname }}"
