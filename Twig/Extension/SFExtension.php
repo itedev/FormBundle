@@ -4,6 +4,8 @@ namespace ITE\FormBundle\Twig\Extension;
 
 use ITE\FormBundle\SF\SFFormExtensionInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Twig_Environment;
 use Twig_Extension;
 use Twig_Template;
@@ -25,6 +27,11 @@ class SFExtension extends Twig_Extension
     protected $formResources;
 
     /**
+     * @var PropertyAccessor
+     */
+    protected $accessor;
+
+    /**
      * @param SFFormExtensionInterface $sfForm
      * @param $formResources
      */
@@ -32,6 +39,7 @@ class SFExtension extends Twig_Extension
     {
         $this->sfForm = $sfForm;
         $this->formResources = $formResources;
+        $this->accessor = PropertyAccess::createPropertyAccessor();
     }
 
     /**
@@ -44,6 +52,7 @@ class SFExtension extends Twig_Extension
             new \Twig_SimpleFunction('ite_parent_form_resource', array($this, 'parentFormResource')),
             new \Twig_SimpleFunction('ite_last_form_resource', array($this, 'lastFormResource')),
             new \Twig_SimpleFunction('ite_uniqid', array($this, 'uniqId')),
+            new \Twig_SimpleFunction('ite_set_attribute', array($this, 'setAttribute')),
             new \Twig_SimpleFunction('ite_dynamic_form_widget', array($this, 'dynamicFormWidget'), array('is_safe' => array('html'), 'needs_environment' => true)),
             new \Twig_SimpleFunction('ite_dynamic_form_row', array($this, 'dynamicFormRow'), array('is_safe' => array('html'), 'needs_environment' => true)),
         );
@@ -90,6 +99,16 @@ class SFExtension extends Twig_Extension
     public function uniqId($prefix = '')
     {
         return uniqid($prefix);
+    }
+
+    /**
+     * @param $object
+     * @param $attributeName
+     * @param $attributeValue
+     */
+    public function setAttribute($object, $attributeName, $attributeValue)
+    {
+        $this->accessor->setValue($object, $attributeName, $attributeValue);
     }
 
     /**

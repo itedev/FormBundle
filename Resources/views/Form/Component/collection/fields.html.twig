@@ -132,13 +132,17 @@
 {% endblock form_widget_add_btn %}
 
 {% block form_widget_remove_btn %}
-{% spaceless %}
-    {% if widget_remove_btn|default(null) %}
-        {% set collection_id = form.parent.vars.id %}
-        {#{% set collection_item_id = id ~ '_item' %}#}
-    {% endif %}
-    {{ parent() }}
-{% endspaceless %}
+    {% spaceless %}
+        {% if widget_remove_btn|default(null) %}
+            {% set collection_id = form.parent.vars.id %}
+            {#{% set collection_item_id = id ~ '_item' %}#}
+        {% endif %}
+        {% if form.vars['remove_btn_rendered'] is not defined %}
+            {{ parent() }}
+            {{ ite_set_attribute(form, 'vars[remove_btn_rendered]', true) }}
+        {% endif %}
+
+    {% endspaceless %}
 {% endblock form_widget_remove_btn %}
 
 {% block collection_button %}
