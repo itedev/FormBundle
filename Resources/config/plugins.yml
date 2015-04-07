@@ -4,7 +4,6 @@ parameters:
     ite_form.plugin.bootstrap_colorpicker.class:        ITE\FormBundle\SF\Plugin\BootstrapColorpickerPlugin
     ite_form.plugin.bootstrap_spinedit.class:           ITE\FormBundle\SF\Plugin\BootstrapSpineditPlugin
     ite_form.plugin.bootstrap_datetimepicker.class:     ITE\FormBundle\SF\Plugin\BootstrapDatetimepickerPlugin
-    ite_form.plugin.bootstrap_datetimepicker2.class:    ITE\FormBundle\SF\Plugin\BootstrapDatetimepicker2Plugin
     ite_form.plugin.fileupload.class:                   ITE\FormBundle\SF\Plugin\FileuploadPlugin
     ite_form.plugin.fineuploader.class:                 ITE\FormBundle\SF\Plugin\FineuploaderPlugin
     ite_form.plugin.minicolors.class:                   ITE\FormBundle\SF\Plugin\MinicolorsPlugin
@@ -41,11 +40,6 @@ services:
         class: %ite_form.plugin.bootstrap_datetimepicker.class%
         tags:
             - { name: ite_form.plugin, alias: bootstrap_datetimepicker }
-
-    ite_form.plugin.bootstrap_datetimepicker2:
-        class: %ite_form.plugin.bootstrap_datetimepicker2.class%
-        tags:
-            - { name: ite_form.plugin, alias: bootstrap_datetimepicker2 }
 
     ite_form.plugin.fileupload:
         class: %ite_form.plugin.fileupload.class%

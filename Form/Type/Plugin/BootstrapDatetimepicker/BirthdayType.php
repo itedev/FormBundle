@@ -11,6 +11,10 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
  * Class BirthdayType
+ *
+ * Birthday type wrapper for bootstrap-datetimepeeker
+ * Plugin URL: https://github.com/Eonasdan/bootstrap-datetimepicker
+ *
  * @package ITE\FormBundle\Form\Type\Plugin\BootstrapDatetimepicker
  */
 class BirthdayType extends AbstractType
@@ -35,6 +39,9 @@ class BirthdayType extends AbstractType
     {
         $resolver->setDefaults(array(
                 'years' => range(date('Y') - 120, date('Y')),
+                'plugin_options' => array(
+                    'locale' => \Locale::getDefault()
+                ),
             ));
     }
 
@@ -52,10 +59,9 @@ class BirthdayType extends AbstractType
 
         $view->vars['plugins'][BootstrapDatetimepickerPlugin::getName()]['options'] = array_replace_recursive(
             $view->vars['plugins'][BootstrapDatetimepickerPlugin::getName()]['options'], array(
-                'startView' => 4, // decade view
-                'minView' => 2, // month view
-                'startDate' => $dateTimeToLocalizedStringTransformer->transform($startDate),
-                'endDate' => $dateTimeToLocalizedStringTransformer->transform($endDate),
+                'viewMode' => 'days', // days view
+                'minDate' => $dateTimeToLocalizedStringTransformer->transform($startDate),
+                'maxDate' => $dateTimeToLocalizedStringTransformer->transform($endDate),
             )
         );
     }
