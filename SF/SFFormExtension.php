@@ -100,45 +100,8 @@ class SFFormExtension extends SFExtension implements SFFormExtensionInterface
         }
 
         $dump .= '});})(jQuery);';
+
         return $dump;
-    }
-
-    /**
-     * @param GetResponseForControllerResultEvent $event
-     */
-    public function onAjaxRequest(GetResponseForControllerResultEvent $event)
-    {
-//        $request = $event->getRequest();
-//        $result = $event->getControllerResult();
-//
-//        // is form was submitted via ajax - get its errors if exist
-//        if (in_array($request->getMethod(), array('GET', 'POST'))) {
-//            $property = 'POST' === $request->getMethod() ? 'request' : 'query';
-//            if (is_array($result) || $result instanceof \Traversable) {
-//                foreach ($result as $var) {
-//                    if ($var instanceof FormView && $request->$property->has($var->vars['name'])) {
-//                        $this->collectFormErrors($var);
-//                        break;
-//                    }
-//                }
-//            }
-//        }
-    }
-
-    /**
-     * @param FilterResponseEvent $event
-     */
-    public function onAjaxResponse(FilterResponseEvent $event)
-    {
-//        $response = $event->getResponse();
-//
-//        if (count($this->formErrors)) {
-//            $response->headers->set('X-SF-FormErrors', json_encode($this->formErrors));
-//        }
-//
-//        if ($this->elementBag->count()) {
-//            $response->headers->set('X-SF-Elements', json_encode($this->elementBag->peekAll()));
-//        }
     }
 
     /**
