@@ -47,26 +47,26 @@ class ElementBag
     }
 
     /**
-     * @param $selector
-     * @param $parents
-     * @param $options
+     * @param string $selector
+     * @param array $parentSelectors
+     * @param array $options
      */
-    public function addHierarchicalElement($selector, $parents, $options)
+    public function addHierarchicalElement($selector, $parentSelectors, array $options = [])
     {
-        foreach ($parents as $i => $parentSelector) {
+        foreach ($parentSelectors as $i => $parentSelector) {
             $parentOptions = array();
             $this->processSelector($parentSelector, $parentOptions);
             if (!$this->has($parentSelector)) {
                 $this->add($parentSelector, $parentOptions);
             }
-            $parents[$i] = $parentSelector;
+            $parentSelectors[$i] = $parentSelector;
         }
 
         $this->processSelector($selector, $options);
         if (null === $element = $this->get($selector)) {
             $element = $this->add($selector, $options);
         }
-        $element->setParents($parents);
+        $element->setParents($parentSelectors);
     }
 
     /**

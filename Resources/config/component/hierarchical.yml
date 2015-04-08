@@ -3,7 +3,7 @@ parameters:
 
 services:
     ite_form.form.type_extension.component.hierarchical.form:
-        class:                                                      %ite_form.form.type_extension.component.hierarchical.form.class%
-        arguments: [ @ite_form.sf.extension.form, @router ]
+        class: %ite_form.form.type_extension.component.hierarchical.form.class%
+        arguments: [ @ite_form.sf.extension.form ]
         tags:
             - { name: form.type_extension, alias: form }

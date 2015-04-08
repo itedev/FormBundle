@@ -8,8 +8,6 @@ use ITE\FormBundle\Form\Builder\SubmitButtonBuilder;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Form\ButtonTypeInterface;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\ResolvedFormType as BaseResolvedFormType;
 use Symfony\Component\Form\SubmitButtonTypeInterface;
 
@@ -34,4 +32,5 @@ class ResolvedFormType extends BaseResolvedFormType
 
         return new FormBuilder($name, $dataClass, new EventDispatcher(), $factory, $options);
     }
+
 }
