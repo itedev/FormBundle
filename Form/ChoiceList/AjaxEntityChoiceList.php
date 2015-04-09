@@ -2,13 +2,6 @@
 
 namespace ITE\FormBundle\Form\ChoiceList;
 
-use Doctrine\ORM\QueryBuilder;
-use Symfony\Bridge\Doctrine\Form\ChoiceList\EntityLoaderInterface;
-use Symfony\Component\Form\Exception\StringCastException;
-use Symfony\Component\Form\Extension\Core\ChoiceList\ObjectChoiceList;
-use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
-use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\Form\Exception\RuntimeException;
 use Doctrine\Common\Persistence\ObjectManager;
 
 /**
