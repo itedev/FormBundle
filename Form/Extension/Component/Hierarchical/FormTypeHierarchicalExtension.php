@@ -40,28 +40,9 @@ class FormTypeHierarchicalExtension extends AbstractTypeExtension
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        if (empty($options['hierarchical_parents']) || !is_callable($options['hierarchical_modifier'])) {
+        if (empty($options['hierarchical_parents'])) {
             return;
         }
-
-//        $parents = $options['hierarchical_parents'];
-//        $formModifier = $options['hierarchical_modifier'];
-//
-//        $propertyAccessor = PropertyAccess::createPropertyAccessor();
-//        foreach ($parents as $parent) {
-//            // $builder is parent form
-//            $builder
-//                ->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event) use ($formModifier, $propertyAccessor, $parent) {
-//                    $formModifier($event->getForm(), $propertyAccessor->getValue($event->getData(), $parent));
-//                })
-//            ;
-//            $builder
-//                ->get($parent)
-//                ->addEventListener(FormEvents::POST_SUBMIT, function(FormEvent $event) use ($formModifier) {
-//                    $formModifier($event->getForm()->getParent(), $event->getForm()->getData());
-//                })
-//            ;
-//        }
     }
 
     /**
@@ -159,7 +140,6 @@ class FormTypeHierarchicalExtension extends AbstractTypeExtension
         $resolver->setDefaults([
 //            'hierarchical' => false,
             'hierarchical_parents' => null,
-            'hierarchical_modifier' => null,
         ]);
         $resolver->setNormalizers(array(
             'hierarchical_parents' => $hierarchicalParentsNormalizer,
