@@ -5,8 +5,8 @@ namespace ITE\FormBundle\Form\Builder;
 use ITE\FormBundle\EventListener\Event\HierarchicalFormEvent;
 use ITE\FormBundle\EventListener\HierarchicalFormEvents;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Form\FormBuilder as BaseFormBuilder;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -35,17 +35,28 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
     }
 
     /**
-     * @param $child
+     * @param int|string|FormBuilderInterface $child
+     * @param string|array $parentNames
      * @param null $type
      * @param array $options
-     * @param null $parentNames
      * @param null $formModifier
      * @return $this|FormBuilderInterface
      */
-    public function addHierarchical($child, $type = null, array $options = array(), $parentNames = null, $formModifier = null)
+    public function addHierarchical($child, $parentNames, $type = null, array $options = array(), $formModifier = null)
     {
+        if (!is_string($parentNames) && !is_array($parentNames)) {
+            throw new UnexpectedTypeException($parentNames, 'string or array');
+        }
+        if (empty($parentNames)) {
+            throw new \InvalidArgumentException('You must set at least one parent');
+        }
         if (!is_array($parentNames)) {
             $parentNames = array($parentNames);
+        }
+        foreach ($parentNames as $parentName) {
+            if (!$this->has($parentName)) {
+                throw new \InvalidArgumentException(sprintf('FormBuilder does not contain "%s" child'));
+            }
         }
 
         $options = array_merge($options, [
@@ -54,8 +65,7 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
 
         $propertyAccessor = $this->propertyAccessor;
 
-        // event listener for root
-        // get parent value via `$propertyAccessor->getValue($event->getData(), $parent)`
+        // PRE_SET_DATA event listener for root builder
         $preSetDataParentValueFetcher = function(FormEvent $event) use ($parentNames, $propertyAccessor) {
             $parentValues = [];
             $data = $event->getData();
@@ -76,8 +86,7 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
             })
         ;
 
-        // event listener for parents
-        // get parent value via `$event->getForm()->getData()`
+        // POST SUBMIT event listeners for parent builders
         $childName = $child instanceof self
             ? $child->getName()
             : $child;
