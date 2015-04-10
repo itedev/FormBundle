@@ -20,11 +20,11 @@ interface FormBuilderInterface extends BaseFormBuilderInterface
 
     /**
      * @param $child
-     * @param array|string $parentNames
+     * @param array|string $parents
      * @param null $type
      * @param array $options
      * @param callable $formModifier
      * @return FormBuilderInterface
      */
-    public function addHierarchical($child, $parentNames, $type = null, array $options = array(), $formModifier = null);
+    public function addHierarchical($child, $parents, $type = null, array $options = array(), $formModifier = null);
 }

@@ -36,95 +36,95 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
 
     /**
      * @param int|string|FormBuilderInterface $child
-     * @param string|array $parentNames
+     * @param string|array $parents
      * @param null $type
      * @param array $options
      * @param null $formModifier
      * @return $this|FormBuilderInterface
      */
-    public function addHierarchical($child, $parentNames, $type = null, array $options = array(), $formModifier = null)
+    public function addHierarchical($child, $parents, $type = null, array $options = array(), $formModifier = null)
     {
-        if (!is_string($parentNames) && !is_array($parentNames)) {
-            throw new UnexpectedTypeException($parentNames, 'string or array');
+        if (!is_string($parents) && !is_array($parents)) {
+            throw new UnexpectedTypeException($parents, 'string or array');
         }
-        if (empty($parentNames)) {
+        if (empty($parents)) {
             throw new \InvalidArgumentException('You must set at least one parent');
         }
-        if (!is_array($parentNames)) {
-            $parentNames = array($parentNames);
+        if (!is_array($parents)) {
+            $parents = array($parents);
         }
-        foreach ($parentNames as $parentName) {
-            if (!$this->has($parentName)) {
+        foreach ($parents as $parent) {
+            if (!$this->has($parent)) {
                 throw new \InvalidArgumentException(sprintf('FormBuilder does not contain "%s" child'));
             }
         }
 
-        $options = array_merge($options, [
-            'hierarchical_parents' => $parentNames,
-        ]);
-
         $propertyAccessor = $this->propertyAccessor;
 
         // PRE_SET_DATA event listener for root builder
-        $preSetDataParentValueFetcher = function(FormEvent $event) use ($parentNames, $propertyAccessor) {
-            $parentValues = [];
-            $data = $event->getData();
-            foreach ($parentNames as $parentName) {
-                $parentValues[$parentName] = $propertyAccessor->getValue($data, $parentName);
-            }
-
-            return $parentValues;
-        };
-
         $this
-            ->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event) use ($formModifier, $preSetDataParentValueFetcher) {
-                $params = array_merge(
-                    [$event->getForm()],
-                    $preSetDataParentValueFetcher($event)
-                );
-                call_user_func_array($formModifier, $params);
+            ->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event) use ($child, $type, $options, $parents, $formModifier, $propertyAccessor) {
+                $form = $event->getForm();
+                $data = $event->getData();
+
+                $parentValues = [];
+                foreach ($parents as $parent) {
+                    $parentValues[$parent] = $propertyAccessor->getValue($data, $parent);
+                }
+
+                $params = $parentValues;
+                array_unshift($params, $options);
+//                array_unshift($params, $form);
+
+                $modifiedOptions = call_user_func_array($formModifier, $params);
+
+                $form->add($child, $type, $modifiedOptions);
             })
         ;
 
         // POST SUBMIT event listeners for parent builders
-        $childName = $child instanceof self
-            ? $child->getName()
-            : $child;
-
         $parentValues = [];
-        $this->addEventListener(HierarchicalFormEvents::PARENT_POST_SUBMIT, function(HierarchicalFormEvent $event) use ($formModifier, $childName, $parentNames, &$parentValues) {
-            if ($childName !== $event->getChildName() || !in_array($event->getParentName(), $parentNames)) {
+        $this->addEventListener(HierarchicalFormEvents::PARENT_POST_SUBMIT, function(HierarchicalFormEvent $event) use ($child, $type, $options, $parents, $formModifier, &$parentValues) {
+            if ($child !== $event->getChildName() || !in_array($event->getParentName(), $parents)) {
                 return;
             }
             $parentValues[$event->getParentName()] = $event->getParentData();
 
-            if (count($parentNames) === count($parentValues)) {
+            if (count($parents) === count($parentValues)) {
                 // keep parent name order
-                $parentValues = array_merge(array_flip($parentNames), $parentValues);
-                $params = array_merge(
-                    [$event->getForm()],
-                    $parentValues
-                );
+                $parentValues = array_merge(array_flip($parents), $parentValues);
+                $form = $event->getForm();
+
+                $params = $parentValues;
+                array_unshift($params, $options);
+//                array_unshift($params, $form);
                 $parentValues = [];
-                call_user_func_array($formModifier, $params);
+
+                $modifiedOptions = call_user_func_array($formModifier, $params);
+
+                $form->add($child, $type, $modifiedOptions);
             }
         });
 
         $that = $this;
-        foreach ($parentNames as $parentName) {
+        foreach ($parents as $parent) {
             $this
-                ->get($parentName)
-                ->addEventListener(FormEvents::POST_SUBMIT, function(FormEvent $event) use ($childName, $parentName, $that) {
+                ->get($parent)
+                ->addEventListener(FormEvents::POST_SUBMIT, function(FormEvent $event) use ($child, $parent, $that) {
                     $hierarchicalEvent = new HierarchicalFormEvent(
                         $event->getForm()->getParent(),
-                        $childName,
-                        $parentName,
+                        $child,
+                        $parent,
                         $event->getForm()->getData()
                     );
                     $that->getEventDispatcher()->dispatch(HierarchicalFormEvents::PARENT_POST_SUBMIT, $hierarchicalEvent);
                 })
             ;
         }
+
+        $options = array_merge($options, [
+            'hierarchical_parents' => $parents,
+        ]);
 
         return parent::add($child, $type, $options);
     }
