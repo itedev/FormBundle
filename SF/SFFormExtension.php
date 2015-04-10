@@ -89,7 +89,7 @@ class SFFormExtension extends SFExtension implements SFFormExtensionInterface
     /**
      * @return string
      */
-    public function dump()
+    public function getInlineJavascripts()
     {
         $dump = '';
         $dump .= '(function($){$(function(){';
