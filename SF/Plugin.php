@@ -13,7 +13,8 @@ use Symfony\Component\Routing\RouteCollection;
 
 /**
  * Class Plugin
- * @package ITE\FormBundle\SF
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 abstract class Plugin implements ExtensionInterface
 {

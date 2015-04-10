@@ -13,7 +13,8 @@ use Symfony\Component\Routing\RouterInterface;
 
 /**
  * Class AjaxChoiceType
- * @package FormBundle\Form\Type\Plugin\Select2
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class AjaxChoiceType extends AbstractAjaxChoiceType
 {

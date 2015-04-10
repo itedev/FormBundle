@@ -15,7 +15,8 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
  * Birthday type wrapper for bootstrap-datetimepeeker
  * Plugin URL: https://github.com/Eonasdan/bootstrap-datetimepicker
  *
- * @package ITE\FormBundle\Form\Type\Plugin\BootstrapDatetimepicker
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class BirthdayType extends AbstractType
 {

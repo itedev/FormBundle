@@ -4,7 +4,8 @@ namespace ITE\FormBundle\Service\Validation;
 
 /**
  * Interface ConstraintConverterInterface
- * @package ITE\FormBundle\Service\Validation
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 interface ConstraintConverterInterface
 {

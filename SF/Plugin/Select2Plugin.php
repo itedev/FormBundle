@@ -8,7 +8,8 @@ use Symfony\Component\DependencyInjection\Loader\FileLoader;
 
 /**
  * Class Select2Plugin
- * @package ITE\FormBundle\SF\Plugin
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class Select2Plugin extends ChoicePlugin
 {

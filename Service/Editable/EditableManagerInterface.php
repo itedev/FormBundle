@@ -6,7 +6,8 @@ use Symfony\Component\Form\Form;
 
 /**
  * Interface EditableManagerInterface
- * @package ITE\FormBundle\Service\Editable
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 interface EditableManagerInterface
 {

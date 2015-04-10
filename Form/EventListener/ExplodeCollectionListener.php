@@ -11,7 +11,8 @@ use Symfony\Component\Form\FormEvents;
 
 /**
  * Class ExplodeCollectionListener
- * @package ITE\FormBundle\Form\EventListener
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class ExplodeCollectionListener implements EventSubscriberInterface
 {

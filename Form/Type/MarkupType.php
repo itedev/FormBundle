@@ -13,7 +13,8 @@ use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 /**
  * Class MarkupType
- * @package ITE\FormBundle\Form\Type
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class MarkupType extends AbstractType
 {

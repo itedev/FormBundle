@@ -6,7 +6,8 @@ use Symfony\Component\Form\DataTransformerInterface;
 
 /**
  * Class StringToArrayTransformer
- * @package Symfony\Component\Form\Extension\Core\DataTransformer
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class StringToArrayTransformer implements DataTransformerInterface
 {

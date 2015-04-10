@@ -11,7 +11,8 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
  * Class TextareaType
- * @package ITE\FormBundle\Form\Type\Plugin\Tinymce
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class TextareaType extends AbstractType
 {

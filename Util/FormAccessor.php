@@ -15,7 +15,8 @@ use Symfony\Component\Form\Extension\Validator\ViolationMapper\ViolationPathIter
 
 /**
  * Class FormAccessor
- * @package ITE\FormBundle\Util
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class FormAccessor
 {

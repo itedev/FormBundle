@@ -8,7 +8,8 @@ use Symfony\Component\Yaml\Yaml;
 
 /**
  * Class RouterResourcePass
- * @package ITE\FormBundle\DependencyInjection\Compiler
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class RouterResourcePass implements CompilerPassInterface
 {

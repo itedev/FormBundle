@@ -8,7 +8,8 @@ use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * Class FormTypeGuesserPass
- * @package ITE\FormBundle\DependencyInjection\Compiler
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class FormTypeGuesserPass implements CompilerPassInterface
 {

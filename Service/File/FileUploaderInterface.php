@@ -5,7 +5,8 @@ namespace ITE\FormBundle\Service\File;
 
 /**
  * Interface FileUploaderInterface
- * @package ITE\FormBundle\Service\File
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 interface FileUploaderInterface
 {

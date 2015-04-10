@@ -8,7 +8,8 @@ use Symfony\Component\Validator\Constraint;
 
 /**
  * Class ConstraintConverter
- * @package ITE\FormBundle\Service\Validation
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class ConstraintConverter implements ConstraintConverterInterface
 {

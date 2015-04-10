@@ -7,7 +7,8 @@ use Zend\Crypt\BlockCipher;
 
 /**
  * Class ParamProtector
- * @package ITE\FormBundle\Service\Security
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class ParamProtector implements ParamConverterInterface
 {

@@ -14,7 +14,8 @@ use Symfony\Component\Validator\ValidationVisitorInterface;
 
 /**
  * Class ValidationVisitor
- * @package ITE\FormBundle\Service\Validation
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class ValidationVisitor implements ValidationVisitorInterface, GlobalExecutionContextInterface
 {

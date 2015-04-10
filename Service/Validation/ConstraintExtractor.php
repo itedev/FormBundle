@@ -11,7 +11,8 @@ use Symfony\Component\Validator\MetadataFactoryInterface;
 
 /**
  * Class ConstraintExtractor
- * @package ITE\FormBundle\Service\Validation
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class ConstraintExtractor implements ConstraintExtractorInterface
 {

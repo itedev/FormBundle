@@ -6,7 +6,8 @@ use ITE\FormBundle\SF\Component;
 
 /**
  * Class ValidationComponent
- * @package ITE\FormBundle\SF\Component
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class ValidationComponent extends Component
 {

@@ -4,7 +4,8 @@ namespace ITE\FormBundle\Service\Security;
 
 /**
  * Interface ParamConverterInterface
- * @package ITE\FormBundle\Service\Security
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 interface ParamConverterInterface
 {

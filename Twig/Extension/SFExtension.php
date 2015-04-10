@@ -12,7 +12,8 @@ use Twig_Template;
 
 /**
  * Class SFExtension
- * @package ITE\FormBundle\Twig\Extension
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class SFExtension extends Twig_Extension
 {

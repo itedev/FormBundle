@@ -14,7 +14,8 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
  * Date type wrapper for bootstrap-datetimepeeker
  * Plugin URL: https://github.com/Eonasdan/bootstrap-datetimepicker
  *
- * @package ITE\FormBundle\Form\Type\Plugin\BootstrapDatetimepicker
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class DateType extends AbstractType
 {

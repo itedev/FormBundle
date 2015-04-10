@@ -11,7 +11,8 @@ use Symfony\Component\DependencyInjection\Loader;
 
 /**
  * Class ITEFormExtension
- * @package ITE\FormBundle\DependencyInjection
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class ITEFormExtension extends Extension
 {

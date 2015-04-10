@@ -12,7 +12,8 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
  * Class ITEFormBundle
- * @package ITE\FormBundle
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class ITEFormBundle extends Bundle
 {

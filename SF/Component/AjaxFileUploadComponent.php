@@ -9,7 +9,8 @@ use Symfony\Component\DependencyInjection\Loader\FileLoader;
 
 /**
  * Class AjaxFileUploadComponent
- * @package ITE\FormBundle\SF\Component
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class AjaxFileUploadComponent extends Component
 {

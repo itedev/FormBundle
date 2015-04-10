@@ -12,7 +12,8 @@ use Symfony\Component\Routing\RouteCollection;
 
 /**
  * Interface ExtensionInterface
- * @package ITE\FormBundle\SF
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 interface ExtensionInterface
 {

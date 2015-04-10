@@ -8,7 +8,8 @@ use Symfony\Component\Validator\Constraints\Count;
 
 /**
  * Class CountConverter
- * @package ITE\FormBundle\Service\Validation\Constraints
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class CountConverter extends ConstraintConverter
 {

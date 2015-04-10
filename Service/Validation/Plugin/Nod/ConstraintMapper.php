@@ -12,7 +12,8 @@ use Symfony\Component\Form\FormView;
 
 /**
  * Class ConstraintMapper
- * @package ITE\FormBundle\Service\Validation\Plugin\Nod
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class ConstraintMapper implements ConstraintMapperInterface
 {

@@ -7,7 +7,8 @@ use Symfony\Component\Validator\Constraints\Regex;
 
 /**
  * Class RegexConverter
- * @package ITE\FormBundle\Service\Validation\Constraints
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class RegexConverter extends ConstraintConverter
 {

@@ -12,7 +12,8 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
  * Class FormTypeAjaxTokenExtension
- * @package ITE\FormBundle\Form\Extension\Component\AjaxFileUpload
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class FormTypeAjaxTokenExtension extends AbstractTypeExtension
 {

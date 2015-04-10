@@ -13,7 +13,8 @@ use Symfony\Component\Form\SubmitButtonTypeInterface;
 
 /**
  * Class ResolvedFormType
- * @package ITE\FormBundle\Form
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class ResolvedFormType extends BaseResolvedFormType
 {

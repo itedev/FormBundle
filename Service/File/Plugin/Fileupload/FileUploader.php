@@ -6,7 +6,8 @@ use ITE\FormBundle\Service\File\FileUploader as BaseFileUploader;
 
 /**
  * Class FileUploadEngine
- * @package ITE\FormBundle\Service\File\Plugin\Fileupload
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class FileUploader extends BaseFileUploader
 {

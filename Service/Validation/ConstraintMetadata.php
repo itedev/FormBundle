@@ -4,7 +4,8 @@ namespace ITE\FormBundle\Service\Validation;
 
 /**
  * Class ConstraintMetadata
- * @package ITE\FormBundle\Service\Validation
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class ConstraintMetadata implements ConstraintMetadataInterface
 {

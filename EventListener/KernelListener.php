@@ -9,7 +9,8 @@ use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
 
 /**
  * Class KernelListener
- * @package ITE\FormBundle\EventListener
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class KernelListener
 {

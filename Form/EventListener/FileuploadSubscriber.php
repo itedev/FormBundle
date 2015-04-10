@@ -13,7 +13,8 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * Class FileuploadSubscriber
- * @package ITE\FormBundle\Form\EventListener
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class FileuploadSubscriber implements EventSubscriberInterface
 {

@@ -6,7 +6,8 @@ use Symfony\Component\Form\SubmitButtonBuilder as BaseSubmitButtonBuilder;
 
 /**
  * Class SubmitButtonBuilder
- * @package ITE\FormBundle\Form\Builder
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class SubmitButtonBuilder extends BaseSubmitButtonBuilder
 {

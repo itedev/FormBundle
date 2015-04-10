@@ -10,7 +10,8 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
  * Class TextType
- * @package ITE\FormBundle\Form\Type\Plugin\BootstrapColorpicker
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class TextType extends AbstractType
 {

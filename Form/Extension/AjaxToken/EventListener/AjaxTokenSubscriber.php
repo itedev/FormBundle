@@ -8,7 +8,8 @@ use Symfony\Component\Form\FormEvent;
 
 /**
  * Class AjaxTokenSubscriber
- * @package ITE\FormBundle\Form\Extension\AjaxToken\EventListener
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class AjaxTokenSubscriber implements EventSubscriberInterface
 {

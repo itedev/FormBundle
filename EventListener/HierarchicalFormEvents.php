@@ -4,7 +4,8 @@ namespace ITE\FormBundle\EventListener;
 
 /**
  * Class HierarchicalFormEvents
- * @package ITE\FormBundle\EventListener
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 final class HierarchicalFormEvents
 {

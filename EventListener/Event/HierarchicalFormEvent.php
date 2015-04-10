@@ -7,7 +7,8 @@ use Symfony\Component\Form\FormInterface;
 
 /**
  * Class HierarchicalFormEvent
- * @package ITE\FormBundle\EventListener\Event
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class HierarchicalFormEvent extends Event
 {

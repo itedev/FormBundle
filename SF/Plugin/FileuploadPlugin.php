@@ -9,7 +9,8 @@ use Symfony\Component\DependencyInjection\Loader\FileLoader;
 
 /**
  * Class FileuploadPlugin
- * @package ITE\FormBundle\SF\Plugin
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class FileuploadPlugin extends Plugin
 {

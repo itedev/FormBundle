@@ -9,7 +9,8 @@ use Symfony\Component\Form\FormView;
 
 /**
  * Class FormConstraint
- * @package ITE\FormBundle\Service\Validation
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class FormConstraint
 {

@@ -6,7 +6,8 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 /**
  * Class AjaxEntityChoiceList
- * @package ITE\FormBundle\Form\ChoiceList
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class AjaxEntityChoiceList extends EntityChoiceList
 {

@@ -19,7 +19,8 @@ use Vich\UploaderBundle\Storage\StorageInterface;
 
 /**
  * Class AjaxFileType
- * @package ITE\FormBundle\Form\Type\Component\AjaxFileUpload
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class AjaxFileType extends AbstractType
 {

@@ -16,7 +16,8 @@ use ITE\FormBundle\Util\FormUtils;
 
 /**
  * Class FieldMapper
- * @package ITE\FormBundle\Service\Editable\Plugin\XEditable
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class FieldMapper
 {

@@ -4,7 +4,8 @@ namespace ITE\FormBundle\EntityConverter;
 
 /**
  * Class ConverterManager
- * @package ITE\FormBundle\EntityConverter
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class ConverterManager implements ConverterManagerInterface
 {

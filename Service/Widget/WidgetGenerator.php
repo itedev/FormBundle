@@ -7,7 +7,8 @@ use Symfony\Component\Form\FormView;
 
 /**
  * Class WidgetGenerator
- * @package ITE\FormBundle\Service\Widget
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class WidgetGenerator implements WidgetGeneratorInterface
 {

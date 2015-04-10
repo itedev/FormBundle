@@ -4,7 +4,8 @@ namespace ITE\FormBundle\Service\Validation\Constraints;
 
 /**
  * Class LessThanOrEqualConverter
- * @package ITE\FormBundle\Service\Validation\Constraints
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class LessThanOrEqualConverter extends AbstractComparisonConverter
 {

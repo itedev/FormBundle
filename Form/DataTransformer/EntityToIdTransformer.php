@@ -14,7 +14,8 @@ use Symfony\Component\PropertyAccess\PropertyPath;
 
 /**
  * Class EntityToIdTransformer
- * @package ITE\FormBundle\Form\DataTransformer
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class EntityToIdTransformer implements DataTransformerInterface
 {

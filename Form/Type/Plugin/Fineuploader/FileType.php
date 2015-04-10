@@ -10,7 +10,8 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
  * Class FileType
- * @package ITE\FormBundle\Form\Type\Plugin\Fineuploader
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class FileType extends AbstractType
 {

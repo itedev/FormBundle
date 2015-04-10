@@ -10,7 +10,8 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
  * Class FormTypeExtension
- * @package ITE\FormBundle\Form\Extension\Plugin
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class FormTypeExtension extends AbstractTypeExtension
 {

@@ -10,7 +10,8 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
  * Class IntegerType
- * @package ITE\FormBundle\Form\Type\Plugin\BootstrapSpinedit
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class IntegerType extends AbstractType
 {

@@ -11,7 +11,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 /**
  * Class FileController
- * @package ITE\FormBundle\Controller\Plugin\Fileupload
  *
  * @Route("/ite-form/fileupload")
  */

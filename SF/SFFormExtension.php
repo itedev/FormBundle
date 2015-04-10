@@ -10,7 +10,8 @@ use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
 
 /**
  * Class SFFormExtension
- * @package ITE\FormBundle\SF
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class SFFormExtension extends SFExtension implements SFFormExtensionInterface
 {

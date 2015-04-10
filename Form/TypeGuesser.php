@@ -12,7 +12,8 @@ use Symfony\Component\Form\Guess\TypeGuess;
 
 /**
  * Class TypeGuesser
- * @package ITE\FormBundle\Form
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class TypeGuesser implements FormTypeGuesserInterface
 {

@@ -6,7 +6,8 @@ use Symfony\Component\Form\FormBuilderInterface as BaseFormBuilderInterface;
 
 /**
  * Interface FormBuilderInterface
- * @package ITE\FormBundle\Form\Builder
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 interface FormBuilderInterface extends BaseFormBuilderInterface
 {

@@ -7,7 +7,8 @@ use ITE\JsBundle\SF\SFExtensionInterface;
 
 /**
  * Interface SFFormExtensionInterface
- * @package ITE\FormBundle\SF
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 interface SFFormExtensionInterface extends SFExtensionInterface
 {

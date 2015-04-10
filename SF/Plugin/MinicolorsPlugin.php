@@ -6,7 +6,8 @@ use ITE\FormBundle\SF\Plugin;
 
 /**
  * Class MinicolorsPlugin
- * @package ITE\FormBundle\SF\Plugin
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class MinicolorsPlugin extends Plugin
 {

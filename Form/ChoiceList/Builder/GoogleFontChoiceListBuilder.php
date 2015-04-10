@@ -5,7 +5,8 @@ namespace ITE\FormBundle\Form\ChoiceList\Builder;
 
 /**
  * Class GoogleFontChoiceListBuilder
- * @package ITE\FormBundle\Form\ChoiceList\Builder
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class GoogleFontChoiceListBuilder
 {

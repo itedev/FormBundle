@@ -10,7 +10,8 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
  * Class Configuration
- * @package ITE\FormBundle\DependencyInjection
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class Configuration implements ConfigurationInterface
 {

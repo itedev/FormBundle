@@ -7,7 +7,8 @@ use Symfony\Component\Validator\Constraints\Email;
 
 /**
  * Class EmailConverter
- * @package ITE\FormBundle\Service\Validation\Constraints
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class EmailConverter extends ConstraintConverter
 {

@@ -7,7 +7,8 @@ use Symfony\Component\Form\FormFactoryInterface;
 
 /**
  * Class EditableManager
- * @package ITE\FormBundle\Service\Editable
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class EditableManager implements EditableManagerInterface
 {

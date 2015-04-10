@@ -11,7 +11,8 @@ use Twig_Template;
 
 /**
  * Class CollectionExtension
- * @package ITE\FormBundle\Twig\Extension\Component\Collection
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class CollectionExtension extends Twig_Extension
 {

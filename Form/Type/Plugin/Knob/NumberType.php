@@ -10,7 +10,8 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
  * Class NumberType
- * @package ITE\FormBundle\Form\Type\Plugin\Knob
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class NumberType extends AbstractType
 {

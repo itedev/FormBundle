@@ -6,7 +6,8 @@ use ITE\FormBundle\SF\Plugin;
 
 /**
  * Class BootstrapDatetimepickerPlugin
- * @package ITE\FormBundle\SF\Plugin
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class BootstrapDatetimepickerPlugin extends Plugin
 {

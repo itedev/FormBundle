@@ -10,7 +10,8 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
  * Class AbstractChoiceType
- * @package ITE\FormBundle\Form\Type\Plugin\Select2
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class AbstractChoiceType extends BaseAbstractType
 {

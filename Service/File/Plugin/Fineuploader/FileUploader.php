@@ -7,7 +7,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * Class FileUploadEngine
- * @package ITE\FormBundle\Service\File\Plugin\Fineuploader
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class FileUploader extends BaseFileUploader
 {

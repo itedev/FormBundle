@@ -7,7 +7,8 @@ use Symfony\Component\DependencyInjection\DefinitionDecorator;
 
 /**
  * Class ChoicePlugin
- * @package ITE\FormBundle\SF
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 abstract class ChoicePlugin extends Plugin
 {

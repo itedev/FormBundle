@@ -7,7 +7,8 @@ use Symfony\Component\Validator\Constraints\Url;
 
 /**
  * Class UrlConverter
- * @package ITE\FormBundle\Service\Validation\Constraints
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class UrlConverter extends ConstraintConverter
 {

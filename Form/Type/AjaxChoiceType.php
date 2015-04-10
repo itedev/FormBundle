@@ -12,7 +12,8 @@ use Symfony\Component\Routing\RouterInterface;
 
 /**
  * Class AjaxChoiceType
- * @package FormBundle\Form\Type
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class AjaxChoiceType extends AbstractType
 {

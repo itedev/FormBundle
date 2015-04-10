@@ -15,7 +15,8 @@ use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 /**
  * Class FormBuilder
- * @package ITE\FormBundle\Form\Builder
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
 {

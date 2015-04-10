@@ -12,7 +12,8 @@ use Symfony\Component\Finder\SplFileInfo;
 
 /**
  * Class ClearTempDirCommand
- * @package ITE\FormBundle\Command
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class ClearTempDirCommand extends ContainerAwareCommand
 {

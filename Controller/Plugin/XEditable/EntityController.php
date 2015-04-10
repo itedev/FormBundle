@@ -14,7 +14,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class FileController
- * @package ITE\FormBundle\Controller\Plugin\XEditable
  *
  * @Route("/ite-form/x-editable")
  */

@@ -11,7 +11,8 @@ use Symfony\Component\DependencyInjection\Loader\FileLoader;
 
 /**
  * Class CollectionComponent
- * @package ITE\FormBundle\SF\Component
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class CollectionComponent extends Component
 {

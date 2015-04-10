@@ -8,7 +8,8 @@ use Symfony\Component\Form\ResolvedFormTypeInterface;
 
 /**
  * Class ResolvedFormTypeFactory
- * @package ITE\FormBundle\Form
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class ResolvedFormTypeFactory extends BaseResolvedFormTypeFactory
 {

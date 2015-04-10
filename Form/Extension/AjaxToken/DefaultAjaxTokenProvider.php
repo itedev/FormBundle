@@ -8,7 +8,8 @@ use Symfony\Component\Security\Core\Util\SecureRandom;
 
 /**
  * Class DefaultAjaxTokenProvider
- * @package ITE\FormBundle\Form\Extension\AjaxToken
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class DefaultAjaxTokenProvider implements AjaxTokenProviderInterface
 {

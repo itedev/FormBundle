@@ -14,7 +14,8 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
  * Class ChoiceTypeDynamicChoiceExtension
- * @package ITE\FormBundle\Form\Extension\Component\DynamicChoice
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class ChoiceTypeDynamicChoiceExtension extends AbstractTypeExtension
 {

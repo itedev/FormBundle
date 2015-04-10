@@ -6,7 +6,8 @@ use ITE\FormBundle\Service\Validation\ConstraintConverter;
 
 /**
  * Class NullConverter
- * @package ITE\FormBundle\Service\Validation\Constraints
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class NullConverter extends ConstraintConverter
 {

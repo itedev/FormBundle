@@ -13,7 +13,8 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
  * Class InputEntityType
- * @package ITE\FormBundle\Form\Type
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class InputEntityType extends AbstractType
 {

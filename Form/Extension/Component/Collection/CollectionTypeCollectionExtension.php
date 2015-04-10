@@ -11,7 +11,8 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
  * Class CollectionTypeCollectionExtension
- * @package ITE\FormBundle\Form\Extension\Component\Collection
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class CollectionTypeCollectionExtension extends AbstractTypeExtension
 {

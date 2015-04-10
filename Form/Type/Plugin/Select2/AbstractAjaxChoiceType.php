@@ -12,7 +12,8 @@ use Symfony\Component\Routing\RouterInterface;
 
 /**
  * Class AbstractAjaxChoiceType
- * @package ITE\FormBundle\Form\Type\Plugin\Select2
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 abstract class AbstractAjaxChoiceType extends AbstractType
 {

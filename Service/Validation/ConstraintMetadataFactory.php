@@ -22,7 +22,8 @@ use Symfony\Component\Validator\Constraints\Url;
 
 /**
  * Class ConstraintMetadataFactory
- * @package ITE\FormBundle\Service\Validation
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class ConstraintMetadataFactory
 {

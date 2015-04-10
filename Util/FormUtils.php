@@ -8,7 +8,8 @@ use Symfony\Component\Form\ResolvedFormTypeInterface;
 
 /**
  * Class FormUtils
- * @package ITE\FormBundle\Util
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class FormUtils
 {

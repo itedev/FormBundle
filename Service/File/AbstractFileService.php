@@ -4,7 +4,8 @@ namespace ITE\FormBundle\Service\File;
 
 /**
  * Class AbstractFileService
- * @package ITE\FormBundle\Service\File
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 abstract class AbstractFileService
 {

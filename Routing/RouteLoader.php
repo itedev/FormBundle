@@ -12,7 +12,8 @@ use Symfony\Component\Routing\RouteCollection;
 
 /**
  * Class RouteLoader
- * @package ITE\FormBundle\Routing
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class RouteLoader extends BaseLoader
 {

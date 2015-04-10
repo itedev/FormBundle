@@ -8,7 +8,8 @@ use Twig_Template;
 
 /**
  * Class DebugExtension
- * @package ITE\FormBundle\Twig\Extension\Component\Debug
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class DebugExtension extends Twig_Extension
 {

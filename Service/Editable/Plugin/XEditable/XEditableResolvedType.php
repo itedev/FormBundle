@@ -4,7 +4,8 @@ namespace ITE\FormBundle\Service\Editable\Plugin\XEditable;
 
 /**
  * Class XEditableResolvedType
- * @package ITE\FormBundle\Service\Editable\Plugin\XEditable
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class XEditableResolvedType
 {

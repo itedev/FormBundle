@@ -4,7 +4,8 @@ namespace ITE\FormBundle\Form\Extension\AjaxToken;
 
 /**
  * Interface AjaxTokenProviderInterface
- * @package ITE\FormBundle\Form\Extension\AjaxToken
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 interface AjaxTokenProviderInterface
 {

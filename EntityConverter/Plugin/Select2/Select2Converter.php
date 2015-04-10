@@ -6,7 +6,8 @@ use ITE\FormBundle\EntityConverter\DefaultConverter;
 
 /**
  * Class Select2Converter
- * @package ITE\FormBundle\EntityConverter\Plugin\Select2
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class Select2Converter extends DefaultConverter
 {

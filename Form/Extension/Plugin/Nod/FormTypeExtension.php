@@ -11,7 +11,8 @@ use Symfony\Component\Form\FormView;
 
 /**
  * Class FormTypeExtension
- * @package ITE\FormBundle\Form\Extension\Plugin\Nod
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class FormTypeExtension extends AbstractTypeExtension
 {

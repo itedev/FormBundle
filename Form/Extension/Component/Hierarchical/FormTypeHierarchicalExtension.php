@@ -18,7 +18,8 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 
 /**
  * Class FormTypeHierarchicalExtension
- * @package ITE\FormBundle\Form\Extension\Component\Hierarchical
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class FormTypeHierarchicalExtension extends AbstractTypeExtension
 {

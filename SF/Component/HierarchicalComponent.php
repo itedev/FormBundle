@@ -7,7 +7,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class HierarchicalComponent
- * @package ITE\FormBundle\SF\Component
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class HierarchicalComponent extends Component
 {

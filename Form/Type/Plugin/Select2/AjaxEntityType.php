@@ -15,7 +15,8 @@ use Symfony\Component\Routing\RouterInterface;
 
 /**
  * Class AjaxEntityType
- * @package ITE\FormBundle\Form\Type\Plugin\Select2
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class AjaxEntityType extends AbstractAjaxChoiceType
 {

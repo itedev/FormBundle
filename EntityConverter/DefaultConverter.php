@@ -11,7 +11,8 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 /**
  * Class EntityConverter
- * @package ITE\FormBundle\EntityConverter
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class DefaultConverter implements ConverterInterface
 {

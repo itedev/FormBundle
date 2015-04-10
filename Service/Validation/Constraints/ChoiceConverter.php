@@ -8,7 +8,8 @@ use Symfony\Component\Validator\Constraints\Choice;
 
 /**
  * Class ChoiceConverter
- * @package ITE\FormBundle\Service\Validation\Constraints
+ *
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class ChoiceConverter extends ConstraintConverter
 {
