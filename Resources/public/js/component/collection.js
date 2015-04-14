@@ -162,7 +162,7 @@
   $(function () {
     // add
     $('body').on('click.collection', '[data-collection-add-btn]', function (e) {
-      var $btn = $(e.target);
+      var $btn = $(this);
       var $collection = $btn.data('collectionAddBtn')
         ? $($btn.data('collectionAddBtn'))
         : $btn.closest('[data-collection-id]');
@@ -176,7 +176,7 @@
 
     // remove
     $('body').on('click.collection', '[data-collection-remove-btn]', function (e) {
-      var $btn = $(e.target);
+      var $btn = $(this);
       //var $row = $btn.data('collectionRemoveBtn')
       //  ? $($btn.data('collectionRemoveBtn'))
       //  : $btn.closest('.collection-item');

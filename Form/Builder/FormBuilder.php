@@ -70,7 +70,9 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
 
                 $parentValues = [];
                 foreach ($parents as $parent) {
-                    $parentValues[$parent] = $propertyAccessor->getValue($data, $parent);
+                    $parentValues[$parent] = isset($data)
+                        ? $propertyAccessor->getValue($data, $parent)
+                        : null;
                 }
 
                 $params = $parentValues;
