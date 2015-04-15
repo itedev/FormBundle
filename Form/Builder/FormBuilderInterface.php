@@ -3,6 +3,7 @@
 namespace ITE\FormBundle\Form\Builder;
 
 use Symfony\Component\Form\FormBuilderInterface as BaseFormBuilderInterface;
+use Symfony\Component\Form\FormTypeInterface;
 
 /**
  * Interface FormBuilderInterface
@@ -13,19 +14,28 @@ interface FormBuilderInterface extends BaseFormBuilderInterface
 {
     /**
      * @param int|string|FormBuilderInterface $child
-     * @param null $type
+     * @param string|FormTypeInterface $type
      * @param array $options
      * @return FormBuilderInterface
      */
     public function add($child, $type = null, array $options = array());
 
     /**
-     * @param $child
-     * @param array|string $parents
-     * @param null $type
+     * @param int|string|FormBuilderInterface $child
+     * @param string|array $parents
+     * @param string|FormTypeInterface $type
      * @param array $options
-     * @param callable $formModifier
+     * @param null $formModifier
      * @return FormBuilderInterface
      */
     public function addHierarchical($child, $parents, $type = null, array $options = array(), $formModifier = null);
+
+    /**
+     * @param int|string|FormBuilderInterface $child
+     * @param string|FormTypeInterface $type
+     * @param array $options
+     * @param null $formModifier
+     * @return FormBuilderInterface
+     */
+    public function addDynamic($child, $type = null, array $options = array(), $formModifier = null);
 }
