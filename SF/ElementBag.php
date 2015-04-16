@@ -38,7 +38,7 @@ class ElementBag
      * @param array $options
      * @return Element
      */
-    public function add($selector, $options = array())
+    public function add($selector, $options = [])
     {
         if (!$this->has($selector)) {
             $this->elements[$selector] = new Element($selector, $options);
@@ -54,20 +54,21 @@ class ElementBag
      */
     public function addHierarchicalElement($selector, $parentSelectors, array $options = [])
     {
-        foreach ($parentSelectors as $i => $parentSelector) {
-            $parentOptions = array();
-            $this->processSelector($parentSelector, $parentOptions);
-            if (!$this->has($parentSelector)) {
-                $this->add($parentSelector, $parentOptions);
-            }
-            $parentSelectors[$i] = $parentSelector;
-        }
-
         $this->processSelector($selector, $options);
         if (null === $element = $this->get($selector)) {
             $element = $this->add($selector, $options);
         }
-        $element->setParents($parentSelectors);
+
+        foreach ($parentSelectors as $i => $parentSelector) {
+            $parentOptions = array();
+            $this->processSelector($parentSelector, $parentOptions);
+            if (null === $parent = $this->get($parentSelector)) {
+                $parent = $this->add($parentSelector, $parentOptions);
+            }
+
+            $element->addParent($parentSelector);
+            $parent->addChild($selector);
+        }
     }
 
     /**
@@ -111,6 +112,6 @@ class ElementBag
             return;
         }
         list($selector, $childrenSelector) = explode(' ', $selector, 2);
-        $options['children_selector'] = $childrenSelector;
+        $options['delegate_selector'] = $childrenSelector;
     }
 }

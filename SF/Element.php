@@ -17,7 +17,7 @@ class Element
     /**
      * @var array $options
      */
-    protected $options = array();
+    protected $options = [];
 
     /**
      * @param $selector
@@ -53,6 +53,69 @@ class Element
     }
 
     /**
+     * @param string $parent
+     * @return bool
+     */
+    public function hasParent($parent)
+    {
+        return array_key_exists('parents', $this->options) && in_array($parent, $this->options['parents']);
+    }
+
+    /**
+     * @param string $parent
+     * @return $this
+     */
+    public function addParent($parent)
+    {
+        if (!$this->hasParent($parent)) {
+            if (!array_key_exists('parents', $this->options)) {
+                $this->options['parents'] = [];
+            }
+
+            $this->options['parents'][] = $parent;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param array $children
+     * @return $this
+     */
+    public function setChildren(array $children)
+    {
+        $this->options['children'] = $children;
+
+        return $this;
+    }
+
+    /**
+     * @param $child
+     * @return bool
+     */
+    public function hasChild($child)
+    {
+        return array_key_exists('children', $this->options) && in_array($child, $this->options['children']);
+    }
+
+    /**
+     * @param string $child
+     * @return $this
+     */
+    public function addChild($child)
+    {
+        if (!$this->hasChild($child)) {
+            if (!array_key_exists('children', $this->options)) {
+                $this->options['children'] = [];
+            }
+
+            $this->options['children'][] = $child;
+        }
+
+        return $this;
+    }
+
+    /**
      * Get options
      *
      * @return array
@@ -71,7 +134,7 @@ class Element
     }
 
     /**
-     * @param $plugin
+     * @param string $plugin
      * @return bool
      */
     public function hasPlugin($plugin)
@@ -80,16 +143,19 @@ class Element
     }
 
     /**
-     * @param $plugin
-     * @param $pluginData
+     * @param string $plugin
+     * @param mixed $pluginData
+     * @return $this
      */
     public function addPlugin($plugin, $pluginData)
     {
         if (!$this->hasPlugin($plugin)) {
             if (!array_key_exists('plugins', $this->options)) {
-                $this->options['plugins'] = array();
+                $this->options['plugins'] = [];
             }
             $this->options['plugins'][$plugin] = $pluginData;
         }
+
+        return $this;
     }
 } 

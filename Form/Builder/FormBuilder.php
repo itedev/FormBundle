@@ -64,6 +64,10 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
             throw new \InvalidArgumentException('The form modifier handler must be a valid PHP callable.');
         }
 
+        $options = array_merge($options, [
+            'hierarchical_parents' => $parents,
+        ]);
+
         $propertyAccessor = $this->propertyAccessor;
 
         // PRE_SET_DATA event listener for root builder
@@ -128,10 +132,6 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
                 })
             ;
         }
-
-        $options = array_merge($options, [
-            'hierarchical_parents' => $parents,
-        ]);
 
         return parent::add($child, $type, $options);
     }

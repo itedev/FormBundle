@@ -8,10 +8,12 @@ use ITE\JsBundle\SF\SFExtensionInterface;
 use RuntimeException;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -29,11 +31,18 @@ class FormTypeHierarchicalExtension extends AbstractTypeExtension
     protected $sfForm;
 
     /**
-     * @param SFFormExtensionInterface $sfForm
+     * @var RequestStack $requestStack
      */
-    public function __construct(SFFormExtensionInterface $sfForm)
+    protected $requestStack;
+
+    /**
+     * @param SFFormExtensionInterface $sfForm
+     * @param RequestStack $requestStack
+     */
+    public function __construct(SFFormExtensionInterface $sfForm, RequestStack $requestStack)
     {
         $this->sfForm = $sfForm;
+        $this->requestStack = $requestStack;
     }
 
     /**
@@ -41,25 +50,17 @@ class FormTypeHierarchicalExtension extends AbstractTypeExtension
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        if (empty($options['hierarchical_parents'])) {
-            return;
-        }
-    }
+        $request = $this->requestStack->getMasterRequest();
+        if ($request->headers->has('X-SF-Hierarchical')) {
+            $builder->addEventListener(FormEvents::POST_SUBMIT, function(FormEvent $event) {
+                $form = $event->getForm();
+                if (!$form->isRoot()) {
+                    return;
+                }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function buildView(FormView $view, FormInterface $form, array $options)
-    {
-        $view->vars['hierarchical'] = !empty($options['hierarchical_parents']);
-        if (empty($options['hierarchical_parents'])) {
-            return;
-        }
-
-        foreach ($options['hierarchical_parents'] as $name) {
-            if (!isset($view->parent->children[$name])) {
-                throw new RuntimeException(sprintf('Child "%s" does not exist.', $name));
-            }
+                $event->stopPropagation(); // prevent form validation
+                $form->addError(new FormError('hierarchical')); // dummy error to suppress successful $form->isValid() call
+            }, 900);
         }
     }
 
@@ -68,53 +69,32 @@ class FormTypeHierarchicalExtension extends AbstractTypeExtension
      */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        $hierarchical = false;
-        foreach ($view->children as $child) {
-            // @todo: don't know why isset is needed? Same works for multipart option
-            if (isset($child->vars['hierarchical']) && $child->vars['hierarchical']) {
-                $hierarchical = true;
-                break;
-            }
-        }
-
-        $view->vars['hierarchical'] = $hierarchical;
-
         if (empty($options['hierarchical_parents'])) {
             return;
         }
 
-        $parents = $options['hierarchical_parents'];
-
         $selector = FormUtils::generateSelector($view);
 
-        $parentView = $view->parent;
-        $parents = array_map(function($field) use ($parentView) {
-            return $parentView->children[$field];
+        $parents = $options['hierarchical_parents'];
+        $ascendantView = $view->parent;
+        $parentViews = array_map(function($parent) use ($ascendantView) {
+            return $ascendantView->children[$parent];
         }, $parents);
-        $parentSelectors = array_map(function(FormView $parent) {
-            return FormUtils::generateSelector($parent);
-        }, $parents);
-
-//        if (isset($view->vars['expanded']) && $view->vars['expanded']) {
-//            $view->vars['attr']['data-property-path'] = $view->vars['full_name']
-//                . (isset($view->vars['multiple']) && !empty($view->vars['multiple']) ? '[]' : '');
-//        }
-
-//        $elementOptions = isset($hierarchical['url'])
-//            ? array('hierarchical_url' => $hierarchical['url'])
-//            : array('hierarchical_callback' => $hierarchical['callback']);
+        $parentSelectors = array_map(function(FormView $parentView) {
+            return FormUtils::generateSelector($parentView);
+        }, $parentViews);
 
         $elementOptions = [];
-        if (1 === count($parents)
-            && FormUtils::isFormTypeChildOf($form, 'choice')
-            && isset($options['choices'])
-            && empty($options['choices'])) {
-            /** @var $firstParent FormView */
-            $firstParent = reset($parents);
-            if (FormUtils::isFormViewContainBlockPrefix($firstParent, 'choice')) {
-                $elementOptions['hierarchical_auto_initialize'] = true;
-            }
-        }
+//        if (1 === count($parentViews)
+//            && FormUtils::isFormTypeChildOf($form, 'choice')
+//            && isset($options['choices'])
+//            && empty($options['choices'])) {
+//            /** @var $firstParent FormView */
+//            $firstParentView = reset($parentViews);
+//            if (FormUtils::isFormViewContainBlockPrefix($firstParentView, 'choice')) {
+//                $elementOptions['hierarchical_auto_initialize'] = true;
+//            }
+//        }
 
         $this->sfForm->getElementBag()->addHierarchicalElement($selector, $parentSelectors, $elementOptions);
     }
@@ -128,7 +108,7 @@ class FormTypeHierarchicalExtension extends AbstractTypeExtension
 
         $hierarchicalParentsNormalizer = function(Options $options, $hierarchicalParents) use ($self) {
             if (empty($hierarchicalParents)) {
-                return false;
+                return null;
             }
 
             if (!is_array($hierarchicalParents)) {
@@ -139,7 +119,6 @@ class FormTypeHierarchicalExtension extends AbstractTypeExtension
         };
 
         $resolver->setDefaults([
-//            'hierarchical' => false,
             'hierarchical_parents' => null,
         ]);
         $resolver->setNormalizers(array(

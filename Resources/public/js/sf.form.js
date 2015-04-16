@@ -14,6 +14,7 @@
       }
     },
 
+    // @todo: refactor (and maybe delete)
     addGetParameter: function(url, paramName, paramValue) {
       var urlParts = url.split('?', 2);
       var baseURL = urlParts[0];
@@ -37,6 +38,7 @@
           str = str.replace(new RegExp(from, 'g'), to);
         });
       }
+
       return str;
     },
 
@@ -75,6 +77,7 @@
           return true;
         }
       }
+
       return false;
     },
 
@@ -237,7 +240,10 @@
             return;
           }
 
-          if ('undefined' === typeof SF.plugins[plugin].isApplied || SF.plugins[plugin].isApplied($element)) {
+          if ('undefined' === typeof SF.plugins[plugin].isApplied) {
+            throw new Error('Plugin "' + plugin + '" must implement method "isApplied"');
+          }
+          if (SF.plugins[plugin].isApplied($element)) {
             return;
           }
           if ('undefined' !== typeof SF.plugins[plugin].apply) {
