@@ -9,11 +9,11 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * Class FormTypeExtension
+ * Class FormTypeTimezoneExtension
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-class FormTypeExtension extends AbstractTypeExtension
+class FormTypeTimezoneExtension extends AbstractTypeExtension
 {
     /**
      * @var string

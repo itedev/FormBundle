@@ -43,6 +43,12 @@
       var element = SF.elements.get(selector);
       var $element = SF.elements.getJQueryElement(selector, context, replacementTokens);
 
+      var event = $.Event('ite-before-change.hierarchical');
+      $element.trigger(event);
+      if (false === event.result) {
+        return;
+      }
+
 //      // get parents data
 //      var data = {};
 //      $.each(SF.elements.getParentsRecursive(selector), function(index, parentSelector) {
@@ -97,6 +103,9 @@
             // set element value
             SF.elements.setElementValue($childElement, $newChildElement, childElement, $content);
           });
+
+          var event = $.Event('ite-after-change.hierarchical');
+          $element.trigger(event, [$content]);
         }
       });
       $element.data('hierarchicalJqxhr', jqxhr);

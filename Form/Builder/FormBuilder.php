@@ -149,7 +149,7 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
         if (empty($children)) {
             throw new \RuntimeException('You cannot add dynamic field to empty FormBuilder');
         }
-        reset($children);
+        end($children);
         $sibling = key($children);
 
         $this

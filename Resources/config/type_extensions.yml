@@ -1,6 +1,7 @@
 parameters:
-    ite_form.form.type_extension.plugin.form.class:     ITE\FormBundle\Form\Extension\Plugin\FormTypeExtension
-    ite_form.form.form_type_extension.class:            ITE\FormBundle\Form\Extension\FormTypeExtension
+    ite_form.form.type_extension.plugin.form.class:         ITE\FormBundle\Form\Extension\Plugin\FormTypeExtension
+    ite_form.form.type_extension.timezone.class:            ITE\FormBundle\Form\Extension\FormTypeTimezoneExtension
+    ite_form.form.type_extension.dynamic_prototype.class:   ITE\FormBundle\Form\Extension\CollectionTypeDynamicPrototypeExtension
 
 services:
     ite_form.form.type_extension.plugin.form:
@@ -8,8 +9,13 @@ services:
         tags:
             - { name: form.type_extension, alias: form }
 
-    ite_form.form.form_type_extension:
-        class: %ite_form.form.form_type_extension.class%
+    ite_form.form.type_extension.timezone:
+        class: %ite_form.form.type_extension.timezone.class%
         arguments: [ @session, %ite_form.timezone% ]
         tags:
             - { name: form.type_extension, alias: form }
+
+    ite_form.form.type_extension.dynamic_prototype:
+        class: %ite_form.form.type_extension.dynamic_prototype.class%
+        tags:
+            - { name: form.type_extension, alias: collection }
