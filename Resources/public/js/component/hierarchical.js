@@ -26,7 +26,7 @@
       return matches[1];
     },
 
-    getFullName: function(element, $element) {
+    getFullName: function($element, element) {
       if (element.hasDelegateSelector()) {
         $element = $element.find(element.getDelegateSelector());
       }
@@ -43,28 +43,25 @@
       var element = SF.elements.get(selector);
       var $element = SF.elements.getJQueryElement(selector, context, replacementTokens);
 
-      var event = $.Event('ite-before-change.hierarchical');
+      var elementFullName = SF.util.getFullName($element, element);
+
+      var eventData = {
+        fullName: elementFullName,
+        children: {}
+      };
+      var $childrenElements = {};
+      $.each(element.getChildren(), function(i, childSelector) {
+        var $childElement = SF.elements.getJQueryElement(childSelector, context, replacementTokens);
+
+        $childrenElements[childSelector] = $childElement;
+        eventData.children['#' + $childElement.attr('id')] = $childElement.get(0);
+      });
+
+      var event = $.Event('ite-before-submit.hierarchical', eventData);
       $element.trigger(event);
       if (false === event.result) {
         return;
       }
-
-//      // get parents data
-//      var data = {};
-//      $.each(SF.elements.getParentsRecursive(selector), function(index, parentSelector) {
-//        var $parent = SF.elements.getJQueryElement(parentSelector, context, replacementTokens);
-//        if (!$parent.length) {
-//          return;
-//        }
-//
-//        var parent = SF.elements.get(parentSelector);
-//        var name = SF.util.getSimpleName(parent, $parent);
-//        if (null === name) {
-//          return;
-//        }
-//
-//        data[name] = SF.elements.getElementValue(parent, $parent);
-//      });
 //
 //      // clear children value
 //      $.each(SF.elements.getChildrenRecursive(selector), function(index, childSelector) {
@@ -90,22 +87,41 @@
         data: $form.serialize(),
         dataType: 'html',
         headers: {
-            'X-SF-Hierarchical': '1'
+          'X-SF-Hierarchical': '1',
+          'X-SF-Hierarchical-Field': elementFullName
         },
         success: function(response) {
-          var $content = $(response);
+          var newContext = $(response);
+
+          event = $.Event('ite-after-submit.hierarchical', eventData);
+          $element.trigger(event, [newContext]);
+          if (false === event.result) {
+            return;
+          }
 
           $.each(element.getChildren(), function(i, childSelector) {
             var childElement = SF.elements.get(childSelector);
-            var $childElement = SF.elements.getJQueryElement(childSelector, context, replacementTokens);
-            var $newChildElement = SF.elements.getJQueryElement(childSelector, $content, replacementTokens);
+            var $childElement = $childrenElements[childSelector];
+            var $newChildElement = SF.elements.getJQueryElement(childSelector, newContext, replacementTokens);
 
             // set element value
-            SF.elements.setElementValue($childElement, $newChildElement, childElement, $content);
+            var childEventData = {
+              relatedTarget: $newChildElement.get(0)
+            };
+            event = $.Event('ite-before-change.hierarchical', childEventData);
+            $childElement.trigger(event, [newContext]);
+            if (false === event.result) {
+              return;
+            }
+
+            SF.elements.setElementValue($childElement, $newChildElement, childElement);
+
+            event = $.Event('ite-after-change.hierarchical', childEventData);
+            $element.trigger(event, [newContext]);
           });
 
-          var event = $.Event('ite-after-change.hierarchical');
-          $element.trigger(event, [$content]);
+          event = $.Event('ite-after-children-change.hierarchical', eventData);
+          $element.trigger(event, [newContext]);
         }
       });
       $element.data('hierarchicalJqxhr', jqxhr);
@@ -156,6 +172,10 @@
 
     hasHierarchicalAutoInitialize: function() {
       return this.hasOption('hierarchical_auto_initialize');
+    },
+
+    isCompound: function() {
+      return this.hasOption('compound');
     }
   });
 
@@ -250,8 +270,8 @@
       return null;
     },
 
-    setElementValue: function($element, $newElement, element, $content) {
-      if (element.hasDelegateSelector()) {
+    setElementValue: function($element, $newElement, element) {
+      if (element.isCompound()) {
         $element.html($newElement.html());
       } else {
         var node = $element.get(0);
@@ -269,7 +289,7 @@
       if (element.hasPlugins()) {
         $.each(element.getPlugins(), function(i, plugin) {
           if ('undefined' !== typeof SF.plugins[plugin].setValue) {
-            SF.plugins[plugin].setValue($element, $newElement, $content);
+            SF.plugins[plugin].setValue($element, $newElement);
           }
         });
       }

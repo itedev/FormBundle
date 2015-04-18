@@ -39,13 +39,50 @@ class CollectionTypeCollectionExtension extends AbstractTypeExtension
     /**
      * {@inheritdoc}
      */
+    public function buildView(FormView $view, FormInterface $form, array $options)
+    {
+        $view->vars['collection_id'] = isset($options['collection_id'])
+            ? $options['collection_id']
+            : $view->vars['unique_block_prefix'];
+        $view->vars['collection_item_tag'] = $options['collection_item_tag'];
+
+        $view->vars['attr']['data-collection-id'] = $view->vars['collection_id'];
+        $view->vars['attr']['data-show-animation'] = json_encode($options['widget_show_animation']);
+        $view->vars['attr']['data-hide-animation'] = json_encode($options['widget_hide_animation']);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function finishView(FormView $view, FormInterface $form, array $options)
+    {
+        if (!is_callable($options['prototype_data']) || !$form->getConfig()->hasAttribute('prototype')) {
+            return;
+        }
+
+        $data = call_user_func($options['prototype_data'], $form);
+
+        /** @var FormInterface $oldPrototype */
+        $oldPrototype = $form->getConfig()->getAttribute('prototype');
+        $oldPrototypeOptions = $oldPrototype->getConfig()->getOptions();
+
+        $factory = $form->getConfig()->getFormFactory();
+        $prototype = $factory->createNamed($options['prototype_name'], $options['type'], $data, $oldPrototypeOptions);
+
+        $view->vars['prototype'] = $prototype->createView($view);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'collection_id' => null,
-            'collection_item_tag' => 'div',
-            'widget_show_animation' => $this->widgetShowAnimation,
-            'widget_hide_animation' => $this->widgetHideAnimation,
+          'collection_id' => null,
+          'collection_item_tag' => 'div',
+          'widget_show_animation' => $this->widgetShowAnimation,
+          'widget_hide_animation' => $this->widgetHideAnimation,
+          'prototype_data' => null,
         ));
 
         $globalWidgetShowAnimation = $this->widgetShowAnimation;
@@ -78,24 +115,9 @@ class CollectionTypeCollectionExtension extends AbstractTypeExtension
             return $widgetHideAnimation;
         };
         $resolver->setNormalizers(array(
-            'widget_show_animation' => $widgetShowAnimationNormalizer,
-            'widget_hide_animation' => $widgetHideAnimationNormalizer,
+          'widget_show_animation' => $widgetShowAnimationNormalizer,
+          'widget_hide_animation' => $widgetHideAnimationNormalizer,
         ));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function buildView(FormView $view, FormInterface $form, array $options)
-    {
-        $view->vars['collection_id'] = isset($options['collection_id'])
-            ? $options['collection_id']
-            : $view->vars['unique_block_prefix'];
-        $view->vars['collection_item_tag'] = $options['collection_item_tag'];
-
-        $view->vars['attr']['data-collection-id'] = $view->vars['collection_id'];
-        $view->vars['attr']['data-show-animation'] = json_encode($options['widget_show_animation']);
-        $view->vars['attr']['data-hide-animation'] = json_encode($options['widget_hide_animation']);
     }
 
     /**

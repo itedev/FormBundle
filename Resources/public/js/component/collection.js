@@ -62,57 +62,61 @@
       $item.hide();
       $(this.collectionItemsSelector).append($item);
 
+      var showLength = this.show.length;
       switch (this.show.type.toLowerCase()) {
         case 'fade':
-          $item.fadeIn(this.show.length, afterShow);
+          $item.fadeIn(showLength, afterShow);
           break;
         case 'slide':
-          $item.slideDown(this.show.length, afterShow);
+          $item.slideDown(showLength, afterShow);
           break;
         case 'show':
-          $item.show(this.show.length, afterShow);
+          $item.show(showLength, afterShow);
           break;
         default:
           $item.show(null, afterShow);
           break;
       }
     },
-    remove: function ($btn) {
-      var self = this;
+    remove: function ($item) {
       function afterHide() {
         $item.remove();
 
         $collection.trigger('ite-remove.collection', [$item]);
       }
 
-      if (0 !== $btn.parents('.collection-item').length) {
-        var $item = $btn.closest('.collection-item');
-        var $collection = $(this.collectionSelector);
+      var $collection = $(this.collectionSelector);
 
-        var event = $.Event('ite-before-remove.collection');
-        $collection.trigger(event, [$item]);
-        if (false === event.result) {
-          return;
-        }
-
-        switch (this.hide.type.toLowerCase()) {
-          case 'fade':
-            $item.fadeOut(this.hide.length, afterHide);
-            break;
-          case 'slide':
-            $item.slideUp(this.hide.length, afterHide);
-            break;
-          case 'hide':
-            $item.hide(this.hide.length, afterHide);
-            break;
-          default:
-            $item.hide(null, afterHide);
-            break;
-        }
+      var event = $.Event('ite-before-remove.collection');
+      $collection.trigger(event, [$item]);
+      if (false === event.result) {
+        return;
       }
+
+      var hideLength = this.hide.length;
+      switch (this.hide.type.toLowerCase()) {
+        case 'fade':
+          $item.fadeOut(hideLength, afterHide);
+          break;
+        case 'slide':
+          $item.slideUp(hideLength, afterHide);
+          break;
+        case 'hide':
+          $item.hide(hideLength, afterHide);
+          break;
+        default:
+          $item.hide(null, afterHide);
+          break;
+      }
+    },
+    itemsWrapper: function() {
+      return $(this.collectionItemsSelector);
     },
     items: function() {
       return $(this.collectionItemSelector);
+    },
+    clear: function() {
+      this.itemsWrapper().empty();
     },
     itemsCount: function() {
       return this.items().length;
@@ -124,10 +128,7 @@
       return this.parents().length;
     },
     hasParent: function() {
-      return 0 !== this.parentsCount().length;
-    },
-    itemsWrapper: function() {
-      return $(this.collectionItemsSelector);
+      return 0 !== this.parentsCount();
     }
   };
 
@@ -163,9 +164,7 @@
     // add
     $('body').on('click.collection', '[data-collection-add-btn]', function (e) {
       var $btn = $(this);
-      var $collection = $btn.data('collectionAddBtn')
-        ? $($btn.data('collectionAddBtn'))
-        : $btn.closest('[data-collection-id]');
+      var $collection = $($btn.data('collectionAddBtn'));
       if (!$collection.length) {
         return;
       }
@@ -177,18 +176,14 @@
     // remove
     $('body').on('click.collection', '[data-collection-remove-btn]', function (e) {
       var $btn = $(this);
-      //var $row = $btn.data('collectionRemoveBtn')
-      //  ? $($btn.data('collectionRemoveBtn'))
-      //  : $btn.closest('.collection-item');
-      var $collection = $btn.data('collectionRemoveBtn')
-        ? $($btn.data('collectionRemoveBtn'))
-        : $btn.closest('[data-collection-id]');
+      var $collection = $($btn.data('collectionRemoveBtn'));
+      var $item = $btn.closest('.collection-item');
 
-      if (!$collection.length) {
+      if (!$collection.length || !$item.length) {
         return;
       }
 
-      $collection.collection('remove', $btn);
+      $collection.collection('remove', $item);
       e.preventDefault();
     });
   });

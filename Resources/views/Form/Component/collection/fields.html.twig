@@ -18,14 +18,12 @@
 {% if widget_form_group|default(false) or form.parent == null %}
     {% set widget_form_group_tag = 'div' %}
     {% if form.parent is not null and 'collection' in form.parent.vars.block_prefixes %} {# i am a collection child #}
-        {% if not omit_collection_item %}
-            {# collection item wrapper doesnt need form-group it gets added to childs anyways #}
-        	{% set widget_form_group_attr = widget_form_group_attr|merge({
-                'class': 'collection-item ' ~ widget_form_group_attr.class|default(''),
-                'id': id ~ '_item'
-            }) %}
-            {% set widget_form_group_tag = form.parent.vars.collection_item_tag|default('div') %}
-        {% endif %}
+        {# collection item wrapper doesnt need form-group it gets added to childs anyways #}
+        {% set widget_form_group_attr = widget_form_group_attr|merge({
+            'class': 'collection-item ' ~ widget_form_group_attr.class|default(''),
+            'id': id
+        }) %}
+        {% set widget_form_group_tag = form.parent.vars.collection_item_tag|default('div') %}
     {% endif %}
     {% if errors|length > 0 %}
 	    {# Add Error Class to Widget Wrapper#}
@@ -83,7 +81,7 @@
             }) %}
         {% endif %}
         {% set collection_attr = collection_attr|merge({
-            'id': id ~ '_collection',
+            'id': id,
             'data-collection-id': collection_id
         })|merge(attr) %}
 
@@ -130,7 +128,6 @@
     {% spaceless %}
         {% if widget_remove_btn|default(null) %}
             {% set collection_id = form.parent.vars.id %}
-            {#{% set collection_item_id = id ~ '_item' %}#}
         {% endif %}
         {% if form.vars['remove_btn_rendered'] is not defined %}
             {{ parent() }}
@@ -141,7 +138,7 @@
 {% endblock form_widget_remove_btn %}
 
 {% block collection_button %}
-    <a {% for attrname,attrvalue in button_values.attr %} {{attrname}}="{{attrvalue}}"{% endfor %} data-collection-{{ button_type }}-btn="#{{ collection_id }}_collection">
+    <a {% for attrname,attrvalue in button_values.attr %} {{attrname}}="{{attrvalue}}"{% endfor %} data-collection-{{ button_type }}-btn="#{{ collection_id }}">
     {% if button_values.icon is not null %}
         {{ mopa_bootstrap_icon(button_values.icon, button_values.icon_inverted|default(false)) }}
     {% endif %}

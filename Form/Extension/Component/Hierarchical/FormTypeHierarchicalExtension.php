@@ -84,7 +84,9 @@ class FormTypeHierarchicalExtension extends AbstractTypeExtension
             return FormUtils::generateSelector($parentView);
         }, $parentViews);
 
-        $elementOptions = [];
+        $elementOptions = [
+            'compound' => $view->vars['compound'],
+        ];
 //        if (1 === count($parentViews)
 //            && FormUtils::isFormTypeChildOf($form, 'choice')
 //            && isset($options['choices'])
