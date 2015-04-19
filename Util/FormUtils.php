@@ -2,6 +2,7 @@
 
 namespace ITE\FormBundle\Util;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\ResolvedFormTypeInterface;
@@ -13,6 +14,20 @@ use Symfony\Component\Form\ResolvedFormTypeInterface;
  */
 class FormUtils
 {
+    /**
+     * @param FormInterface $form
+     * @return null|FormInterface
+     */
+    public static function getRootForm(FormInterface $form)
+    {
+        $root = $form;
+        while (!$root->isRoot()) {
+            $root = $root->getParent();
+        }
+
+        return $root;
+    }
+
     /**
      * @param FormView $view
      * @return FormView
@@ -185,5 +200,23 @@ class FormUtils
                 self::formWalkRecursive($child, $callback);
             }
         }
+    }
+
+    /**
+     * @param FormInterface $form
+     * @param EventDispatcherInterface $ed
+     */
+    public static function setEventDispatcher(FormInterface $form, EventDispatcherInterface $ed)
+    {
+        $formConfig = $form->getConfig();
+
+        $refClass = new \ReflectionClass($formConfig);
+        while (!$refClass->hasProperty('dispatcher')) {
+            $refClass = $refClass->getParentClass();
+        }
+        $refProp = $refClass->getProperty('dispatcher');
+        $refProp->setAccessible(true);
+        $refProp->setValue($formConfig, $ed);
+        $refProp->setAccessible(false);
     }
 } 

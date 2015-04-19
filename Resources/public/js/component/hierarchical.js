@@ -88,7 +88,7 @@
         dataType: 'html',
         headers: {
           'X-SF-Hierarchical': '1',
-          'X-SF-Hierarchical-Field': elementFullName
+          'X-SF-Hierarchical-Originator': elementFullName
         },
         success: function(response) {
           var newContext = $(response);

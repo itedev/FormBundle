@@ -9,5 +9,5 @@ namespace ITE\FormBundle\EventListener;
  */
 final class HierarchicalFormEvents
 {
-    const PARENT_POST_SUBMIT = 'form.parent.post_submit';
+    const PARENT_POST_SUBMIT = 'form.hierarchical.parent_post_submit';
 }
