@@ -77,10 +77,8 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
         // PRE_SET_DATA event listener for root builder
         $this
           ->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event) use ($child, $type, $options, $parents, $formModifier, $propertyAccessor) {
-              $parentForm = $event->getForm();
+              $form = $event->getForm();
               $data = $event->getData();
-
-              $form = $parentForm->get($child);
 
               $parentValues = [];
               foreach ($parents as $parent) {
@@ -96,21 +94,20 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
 
               call_user_func_array($formModifier, $params);
 
-              $ed = $parentForm->get($child)->getConfig()->getEventDispatcher();
-              $parentForm->add($child, $type, $hierarchicalEvent->getOptions());
-              FormUtils::setEventDispatcher($parentForm->get($child), $ed);
+              $ed = $form->get($child)->getConfig()->getEventDispatcher();
+              $form->add($child, $type, $hierarchicalEvent->getOptions());
+              FormUtils::setEventDispatcher($form->get($child), $ed);
           })
         ;
 
         $this
           ->get($child)
           ->addEventListener(FormEvents::PRE_SUBMIT, function(FormEvent $event) use ($child, $type, $options, $parents, $formModifier) {
-              $form = $event->getForm();
-              $parentForm = $form->getParent();
+              $form = $event->getForm()->getParent();
 
               $parentValues = [];
               foreach ($parents as $parent) {
-                  $parentValues[$parent] = $parentForm->get($parent)->getData();
+                  $parentValues[$parent] = $form->get($parent)->getData();
               }
 
               $root = FormUtils::getRootForm($form);
@@ -122,9 +119,9 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
 
               call_user_func_array($formModifier, $params);
 
-              $ed = $parentForm->get($child)->getConfig()->getEventDispatcher();
-              $parentForm->add($child, $type, $hierarchicalEvent->getOptions());
-              FormUtils::setEventDispatcher($parentForm->get($child), $ed);
+              $ed = $form->get($child)->getConfig()->getEventDispatcher();
+              $form->add($child, $type, $hierarchicalEvent->getOptions());
+              FormUtils::setEventDispatcher($form->get($child), $ed);
           })
         ;
 

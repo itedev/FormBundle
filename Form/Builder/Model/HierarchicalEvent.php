@@ -173,9 +173,8 @@ class HierarchicalEvent
             return false;
         }
 
-        $parentForm = $this->form->getParent();
         foreach ($this->parents as $parent => $parentData) {
-            if ($this->originator === FormUtils::getFullName($parentForm->get($parent))) {
+            if ($this->originator === FormUtils::getFullName($this->form->get($parent))) {
                 return true;
             }
         }
