@@ -40,6 +40,95 @@ class Element
     }
 
     /**
+     * Get options
+     *
+     * @return array
+     */
+    public function getOptions()
+    {
+        return $this->options;
+    }
+
+    /**
+     * @param array $options
+     * @return $this
+     */
+    public function setOptions(array $options)
+    {
+        $this->options = $options;
+
+        return $this;
+    }
+
+    /**
+     * @param array $options
+     * @return $this
+     */
+    public function addOptions(array $options)
+    {
+        $this->options = array_replace_recursive($this->options, $options);
+
+        return $this;
+    }
+
+    /**
+     * @param string $name
+     * @return bool
+     */
+    public function hasOption($name)
+    {
+        return array_key_exists($name, $this->options);
+    }
+
+    /**
+     * @param string $name
+     * @param mixed $defaultValue
+     * @return null
+     */
+    public function getOption($name, $defaultValue = null)
+    {
+        return $this->hasOption($name) ? $this->options[$name] : $defaultValue;
+    }
+
+    /**
+     * @param string $name
+     * @param mixed $value
+     * @return $this
+     */
+    public function setOption($name, $value)
+    {
+        $this->options[$name] = $value;
+
+        return $this;
+    }
+
+    /**
+     * @param string $plugin
+     * @return bool
+     */
+    public function hasPlugin($plugin)
+    {
+        return array_key_exists('plugins', $this->options) && array_key_exists($plugin, $this->options['plugins']);
+    }
+
+    /**
+     * @param string $plugin
+     * @param mixed $pluginData
+     * @return $this
+     */
+    public function addPlugin($plugin, $pluginData)
+    {
+        if (!$this->hasPlugin($plugin)) {
+            if (!array_key_exists('plugins', $this->options)) {
+                $this->options['plugins'] = [];
+            }
+            $this->options['plugins'][$plugin] = $pluginData;
+        }
+
+        return $this;
+    }
+
+    /**
      * Set parents
      *
      * @param array $parents
@@ -110,50 +199,6 @@ class Element
             }
 
             $this->options['children'][] = $child;
-        }
-
-        return $this;
-    }
-
-    /**
-     * Get options
-     *
-     * @return array
-     */
-    public function getOptions()
-    {
-        return $this->options;
-    }
-
-    /**
-     * @param array $options
-     */
-    public function addOptions(array $options)
-    {
-        $this->options = array_replace_recursive($this->options, $options);
-    }
-
-    /**
-     * @param string $plugin
-     * @return bool
-     */
-    public function hasPlugin($plugin)
-    {
-        return array_key_exists('plugins', $this->options) && array_key_exists($plugin, $this->options['plugins']);
-    }
-
-    /**
-     * @param string $plugin
-     * @param mixed $pluginData
-     * @return $this
-     */
-    public function addPlugin($plugin, $pluginData)
-    {
-        if (!$this->hasPlugin($plugin)) {
-            if (!array_key_exists('plugins', $this->options)) {
-                $this->options['plugins'] = [];
-            }
-            $this->options['plugins'][$plugin] = $pluginData;
         }
 
         return $this;

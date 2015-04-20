@@ -71,24 +71,30 @@ class FormTypeHierarchicalExtension extends AbstractTypeExtension
      */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        if (empty($options['hierarchical_parents'])) {
+        if (empty($options['hierarchical_parents']) && empty($options['hierarchical_trigger'])) {
             return;
         }
 
         $selector = FormUtils::generateSelector($view);
+        $parentSelectors = [];
 
-        $parents = $options['hierarchical_parents'];
-        $ascendantView = $view->parent;
-        $parentViews = array_map(function($parent) use ($ascendantView) {
-            return $ascendantView->children[$parent];
-        }, $parents);
-        $parentSelectors = array_map(function(FormView $parentView) {
-            return FormUtils::generateSelector($parentView);
-        }, $parentViews);
+        if (!empty($options['hierarchical_parents'])) {
+            $parents = $options['hierarchical_parents'];
+            $ascendantView = $view->parent;
+            $parentViews = array_map(function($parent) use ($ascendantView) {
+                return $ascendantView->children[$parent];
+            }, $parents);
+            $parentSelectors = array_map(function(FormView $parentView) {
+                return FormUtils::generateSelector($parentView);
+            }, $parentViews);
+        }
 
         $elementOptions = [
             'compound' => $view->vars['compound'],
         ];
+        if ($options['hierarchical_trigger']) {
+            $elementOptions['hierarchical_trigger'] = true;
+        }
 //        if (1 === count($parentViews)
 //            && FormUtils::isFormTypeChildOf($form, 'choice')
 //            && isset($options['choices'])
@@ -124,12 +130,16 @@ class FormTypeHierarchicalExtension extends AbstractTypeExtension
 
         $resolver->setDefaults([
             'hierarchical_parents' => null,
+            'hierarchical_trigger' => false,
         ]);
         $resolver->setNormalizers(array(
             'hierarchical_parents' => $hierarchicalParentsNormalizer,
         ));
         $resolver->setAllowedTypes([
             'hierarchical_parents' => ['null', 'string', 'array'],
+        ]);
+        $resolver->setAllowedTypes([
+            'hierarchical_trigger' => ['bool'],
         ]);
     }
 

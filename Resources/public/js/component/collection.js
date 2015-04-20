@@ -17,13 +17,16 @@
       $(this).attr('data-index', index);
     });
 
-    this.index = $(this.collectionItemSelector).length - 1;
     this.show = $collection.data('show-animation');
     this.hide = $collection.data('hide-animation');
+    this.initialize();
   };
 
   Collection.prototype = {
     constructor: Collection,
+    initialize: function() {
+      this.index = $(this.collectionItemSelector).length - 1;
+    },
     add: function () {
       var self = this;
       function afterShow() {
@@ -114,6 +117,9 @@
     },
     items: function() {
       return $(this.collectionItemSelector);
+    },
+    isEmpty: function() {
+      return 0 === this.itemsCount();
     },
     clear: function() {
       this.itemsWrapper().empty();

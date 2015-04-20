@@ -48,43 +48,6 @@ class ElementBag
     }
 
     /**
-     * @param string $selector
-     * @param array $parentSelectors
-     * @param array $options
-     */
-    public function addHierarchicalElement($selector, $parentSelectors, array $options = [])
-    {
-        $this->processSelector($selector, $options);
-        if (null === $element = $this->get($selector)) {
-            $element = $this->add($selector, $options);
-        }
-
-        foreach ($parentSelectors as $i => $parentSelector) {
-            $parentOptions = array();
-            $this->processSelector($parentSelector, $parentOptions);
-            if (null === $parent = $this->get($parentSelector)) {
-                $parent = $this->add($parentSelector, $parentOptions);
-            }
-
-            $element->addParent($parentSelector);
-            $parent->addChild($selector);
-        }
-    }
-
-    /**
-     * @param $selector
-     * @param $plugin
-     * @param $pluginData
-     */
-    public function addPluginElement($selector, $plugin, $pluginData)
-    {
-        if (null === $element = $this->get($selector)) {
-            $element = $this->add($selector);
-        }
-        $element->addPlugin($plugin, $pluginData);
-    }
-
-    /**
      * @return array
      */
     public function peekAll()
@@ -100,6 +63,43 @@ class ElementBag
     public function count()
     {
         return count($this->elements);
+    }
+
+    /**
+     * @param string $selector
+     * @param array $parentSelectors
+     * @param array $options
+     */
+    public function addHierarchicalElement($selector, $parentSelectors = [], array $options = [])
+    {
+        foreach ($parentSelectors as $i => $parentSelector) {
+            $parentOptions = [];
+            $this->processSelector($parentSelector, $parentOptions);
+            if (!$this->has($parentSelector)) {
+                $this->add($parentSelector, $parentOptions);
+            }
+
+            $parentSelectors[$i] = $parentSelector;
+        }
+
+        $this->processSelector($selector, $options);
+        if (null === $element = $this->get($selector)) {
+            $element = $this->add($selector, $options);
+        }
+        $element->setOption('hierarchical_parents', $parentSelectors);
+    }
+
+    /**
+     * @param $selector
+     * @param $plugin
+     * @param $pluginData
+     */
+    public function addPluginElement($selector, $plugin, $pluginData)
+    {
+        if (null === $element = $this->get($selector)) {
+            $element = $this->add($selector);
+        }
+        $element->addPlugin($plugin, $pluginData);
     }
 
     /**

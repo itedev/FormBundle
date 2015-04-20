@@ -46,11 +46,11 @@
       var elementFullName = SF.util.getFullName($element, element);
 
       var eventData = {
-        fullName: elementFullName,
+        originator: elementFullName,
         children: {}
       };
       var $childrenElements = {};
-      $.each(element.getChildren(), function(i, childSelector) {
+      $.each(element.getHierarchicalChildren(), function(i, childSelector) {
         var $childElement = SF.elements.getJQueryElement(childSelector, context, replacementTokens);
 
         $childrenElements[childSelector] = $childElement;
@@ -64,7 +64,7 @@
       }
 //
 //      // clear children value
-//      $.each(SF.elements.getChildrenRecursive(selector), function(index, childSelector) {
+//      $.each(SF.elements.getHierarchicalChildrenRecursive(selector), function(index, childSelector) {
 //        var $child = SF.elements.getJQueryElement(childSelector, context, replacementTokens);
 //        if (!$child.length) {
 //          return;
@@ -99,7 +99,7 @@
             return;
           }
 
-          $.each(element.getChildren(), function(i, childSelector) {
+          $.each(element.getHierarchicalChildren(), function(i, childSelector) {
             var childElement = SF.elements.get(childSelector);
             var $childElement = $childrenElements[childSelector];
             var $newChildElement = SF.elements.getJQueryElement(childSelector, newContext, replacementTokens);
@@ -123,43 +123,50 @@
           event = $.Event('ite-after-children-change.hierarchical', eventData);
           $element.trigger(event, [newContext]);
         }
+      }).fail(function() {
+        event = $.Event('ite-after-submit.hierarchical', eventData);
+        $element.trigger(event);
       });
       $element.data('hierarchicalJqxhr', jqxhr);
     }
   });
 
   SF.fn.classes.Element.prototype = $.extend(SF.fn.classes.Element.prototype, {
-    getParents: function() {
-      return this.getOption('parents', []);
+    getHierarchicalParents: function() {
+      return this.getOption('hierarchical_parents', []);
     },
 
-    hasParents: function() {
-      return this.getParents().length > 0;
+    hasHierarchicalParents: function() {
+      return this.getHierarchicalParents().length > 0;
     },
 
-    getChildren: function() {
-      return this.getOption('children', []);
+    getHierarchicalChildren: function() {
+      return this.getOption('hierarchical_children', []);
     },
 
-    hasChildren: function() {
-      return this.getChildren().length > 0;
+    hasHierarchicalChildren: function() {
+      return this.getHierarchicalChildren().length > 0;
     },
 
-    hasChild: function(child) {
-      return this.hasOption('children') && -1 !== $.inArray(child, this.getChildren());
+    hasHierarchicalChild: function(child) {
+      return this.hasOption('hierarchical_children') && -1 !== $.inArray(child, this.getHierarchicalChildren());
     },
 
-    addChild: function(child) {
-      if (!this.hasChild(child)) {
-        if (!this.hasOption('children')) {
-          this.options['children'] = [];
+    addHierarchicalChild: function(child) {
+      if (!this.hasHierarchicalChild(child)) {
+        if (!this.hasOption('hierarchical_children')) {
+          this.options['hierarchical_children'] = [];
         }
-        this.options['children'].push(child);
+        this.options['hierarchical_children'].push(child);
       }
     },
 
-    childrenCount: function() {
-      return this.getChildren().length;
+    hierarchicalChildrenCount: function() {
+      return this.getHierarchicalChildren().length;
+    },
+
+    isCompound: function() {
+      return this.hasOption('compound');
     },
 
     hasDelegateSelector: function() {
@@ -174,43 +181,44 @@
       return this.hasOption('hierarchical_auto_initialize');
     },
 
-    isCompound: function() {
-      return this.hasOption('compound');
+    isHierarchicalTrigger: function() {
+      return this.hasOption('hierarchical_trigger');
     }
+
   });
 
   var baseApply = SF.fn.classes.ElementBag.prototype.apply;
-//  var baseBeforeAdd = SF.fn.classes.ElementBag.prototype.beforeAdd;
+  var baseBeforeAdd = SF.fn.classes.ElementBag.prototype.beforeAdd;
   SF.fn.classes.ElementBag.prototype = $.extend(SF.fn.classes.ElementBag.prototype, {
 
-//    beforeAdd: function(selector, options) {
-//      baseBeforeAdd.apply(this, [selector, options]);
-//
-//      var self = this;
-//      if (options.hasOwnProperty('parents')) {
-//        $.each(options['parents'], function(index, parentSelector) {
-//          self.get(parentSelector).addChild(selector);
-//        });
-//      }
-//    },
+    beforeAdd: function(selector, options) {
+      baseBeforeAdd.apply(this, [selector, options]);
 
-    getParentsRecursive: function(selector) {
+      var self = this;
+      if (options.hasOwnProperty('hierarchical_parents')) {
+        $.each(options['hierarchical_parents'], function(index, parentSelector) {
+          self.get(parentSelector).addHierarchicalChild(selector);
+        });
+      }
+    },
+
+    getHierarchicalParentsRecursive: function(selector) {
       var self = this;
 
-      var parents = this.get(selector).getParents();
+      var parents = this.get(selector).getHierarchicalParents();
       $.each(parents, function(i, parent) {
-        parents = parents.concat(self.getParentsRecursive(parent));
+        parents = parents.concat(self.getHierarchicalParentsRecursive(parent));
       });
 
       return SF.util.arrayUnique(parents);
     },
 
-    getChildrenRecursive: function(selector) {
+    getHierarchicalChildrenRecursive: function(selector) {
       var self = this;
 
-      var children = this.get(selector).getChildren();
+      var children = this.get(selector).getHierarchicalChildren();
       $.each(children, function(i, child) {
-        children = children.concat(self.getChildrenRecursive(child));
+        children = children.concat(self.getHierarchicalChildrenRecursive(child));
       });
 
       return SF.util.arrayUnique(children);
@@ -303,7 +311,7 @@
       var self = this;
 //      var $parentsToChange = [];
       $.each(this.elements, function(selector, element) {
-        if (!element.hasChildren()) {
+        if (!element.hasHierarchicalChildren() && !element.isHierarchicalTrigger()) {
           return;
         }
 
@@ -320,15 +328,14 @@
 
         if (element.hasDelegateSelector()) {
           $element.on('change.hierarchical', element.getDelegateSelector(), data, SF.callbacks.hierarchicalChange);
-        }
-        else {
+        } else {
           $element.on('change.hierarchical', data, SF.callbacks.hierarchicalChange);
         }
 
         $element.data('hierarchical', true);
       });
 
-//        $.each(element.getParents(), function(i, parentSelector) {
+//        $.each(element.getHierarchicalParents(), function(i, parentSelector) {
 //          var $parent = self.getJQueryElement(parentSelector, context, replacementTokens);
 //          if (!$parent.length || 'undefined' !== typeof $parent.data('hierarchical')) {
 //            return;
@@ -347,7 +354,7 @@
 //            $parent.on('change.hierarchical', data, SF.callbacks.hierarchicalChange);
 //          }
 
-//          $.each(parentElement.getChildren(), function(j, childSelector) {
+//          $.each(parentElement.getHierarchicalChildren(), function(j, childSelector) {
 //            var childElement = self.get(childSelector);
 //            if (childElement.hasHierarchicalAutoInitialize()) {
 //              if (-1 === $.inArray($parent, $parentsToChange)) {

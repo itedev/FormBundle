@@ -6,6 +6,7 @@ use ITE\FormBundle\Util\FormUtils;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormTypeInterface;
+use Symfony\Component\Form\Util\FormUtil;
 
 /**
  * Class HierarchicalEvent
@@ -53,7 +54,7 @@ class HierarchicalEvent
     public function __construct(FormInterface $form, array $parents, array $options, $originator = null)
     {
         $this->form = $form;
-        $this->parents = $parents;
+        $this->parents = new ParentCollection($parents);
         $this->options = $options;
         $this->originator = $originator;
     }
@@ -81,7 +82,7 @@ class HierarchicalEvent
     /**
      * Get parents
      *
-     * @return array
+     * @return ParentCollection
      */
     public function getParents()
     {
@@ -157,6 +158,15 @@ class HierarchicalEvent
     }
 
     /**
+     * @param $parent
+     * @return mixed|null
+     */
+    public function getParent($parent)
+    {
+        return $this->parents->get($parent);
+    }
+
+    /**
      * @return bool
      */
     public function hasOriginator()
@@ -188,5 +198,19 @@ class HierarchicalEvent
     public function isSubmitted()
     {
         return $this->hasOriginator();
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasAllParents()
+    {
+        foreach ($this->parents as $parent => $parentData) {
+            if (!FormUtil::isEmpty($parentData)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
