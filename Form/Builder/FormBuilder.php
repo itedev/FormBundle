@@ -4,7 +4,7 @@ namespace ITE\FormBundle\Form\Builder;
 
 use ITE\FormBundle\EventListener\Event\HierarchicalFormEvent;
 use ITE\FormBundle\EventListener\HierarchicalFormEvents;
-use ITE\FormBundle\Form\Builder\Model\HierarchicalEvent;
+use ITE\FormBundle\Form\Builder\Event\HierarchicalEvent;
 use ITE\FormBundle\Util\FormUtils;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;

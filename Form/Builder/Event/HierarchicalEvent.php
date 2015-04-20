@@ -1,6 +1,6 @@
 <?php
 
-namespace ITE\FormBundle\Form\Builder\Model;
+namespace ITE\FormBundle\Form\Builder\Event;
 
 use ITE\FormBundle\Util\FormUtils;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -167,7 +167,7 @@ class HierarchicalEvent
     /**
      * @return bool
      */
-    public function isOriginator()
+    public function isAffected()
     {
         if (!$this->hasOriginator()) {
             return false;
