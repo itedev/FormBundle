@@ -157,6 +157,7 @@
         $.error('Method with name "' +  method + '" does not exist in jQuery.collection');
       }
     });
+
     return ('undefined' === typeof value) ? this : value;
   };
 

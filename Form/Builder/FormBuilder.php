@@ -2,8 +2,6 @@
 
 namespace ITE\FormBundle\Form\Builder;
 
-use ITE\FormBundle\EventListener\Event\HierarchicalFormEvent;
-use ITE\FormBundle\EventListener\HierarchicalFormEvents;
 use ITE\FormBundle\Form\Builder\Event\HierarchicalEvent;
 use ITE\FormBundle\Util\FormUtils;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -92,7 +90,9 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
               $params = $parentValues;
               array_unshift($params, $hierarchicalEvent);
 
-              call_user_func_array($formModifier, $params);
+              if (false === call_user_func_array($formModifier, $params)) {
+                  return;
+              }
 
               $ed = $form->get($child)->getConfig()->getEventDispatcher();
               $form->add($child, $type, $hierarchicalEvent->getOptions());
@@ -117,55 +117,15 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
               $params = $parentValues;
               array_unshift($params, $hierarchicalEvent);
 
-              call_user_func_array($formModifier, $params);
+              if (false === call_user_func_array($formModifier, $params)) {
+                  return;
+              }
 
               $ed = $form->get($child)->getConfig()->getEventDispatcher();
               $form->add($child, $type, $hierarchicalEvent->getOptions());
               FormUtils::setEventDispatcher($form->get($child), $ed);
           })
         ;
-
-//        // POST SUBMIT event listeners for parent builders
-//        $parentValues = [];
-//        $this->addEventListener(HierarchicalFormEvents::PARENT_POST_SUBMIT, function(HierarchicalFormEvent $event) use ($child, $type, $options, $parents, $formModifier, &$parentValues) {
-//            if ($child !== $event->getChildName() || !in_array($event->getParentName(), $parents)) {
-//                return;
-//            }
-//            $parentValues[$event->getParentName()] = $event->getParentData();
-//
-//            if (count($parents) === count($parentValues)) {
-//                // keep parent name order
-//                $parentValues = array_merge(array_flip($parents), $parentValues);
-//                $form = $event->getForm();
-//
-//                $params = $parentValues;
-//                array_unshift($params, $options);
-////                array_unshift($params, $form);
-//                $parentValues = [];
-//
-//                $modifiedOptions = call_user_func_array($formModifier, $params);
-//
-//                $ed = $form->get($child)->getConfig()->getEventDispatcher();
-//                $form->add($child, $type, $modifiedOptions);
-//                FormUtils::setEventDispatcher($form->get($child), $ed);
-//            }
-//        });
-//
-//        $that = $this;
-//        foreach ($parents as $parent) {
-//            $this
-//              ->get($parent)
-//              ->addEventListener(FormEvents::POST_SUBMIT, function(FormEvent $event) use ($child, $parent, $that) {
-//                  $hierarchicalEvent = new HierarchicalFormEvent(
-//                    $event->getForm()->getParent(),
-//                    $child,
-//                    $parent,
-//                    $event->getForm()->getData()
-//                  );
-//                  $that->getEventDispatcher()->dispatch(HierarchicalFormEvents::PARENT_POST_SUBMIT, $hierarchicalEvent);
-//              })
-//            ;
-//        }
 
         return $this;
     }
