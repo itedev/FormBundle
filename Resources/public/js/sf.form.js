@@ -270,6 +270,16 @@
 
   SF.fn.elements = new ElementBag();
 
+  $(document).on('ite-ajax-after-load.content', function(e, contentData){
+    if (!contentData) {
+      return;
+    }
+    if (!contentData.hasOwnProperty('_sf_form_elements')) {
+      return;
+    }
+    eval(contentData['_sf_form_elements']);
+  });
+
 // http://stackoverflow.com/questions/5202296/add-a-hook-to-all-ajax-requests-on-a-page/5202312#5202312
 
 })(jQuery);

@@ -2,6 +2,7 @@
 
 namespace ITE\FormBundle\SF;
 
+use ITE\JsBundle\EventListener\Event\AjaxRequestEvent;
 use ITE\JsBundle\SF\SFExtension;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormView;
@@ -104,6 +105,14 @@ class SFFormExtension extends SFExtension implements SFFormExtensionInterface
 
         return $dump;
     }
+
+    public function onAjaxRequest(AjaxRequestEvent $event)
+    {
+        if ($this->elementBag->count()) {
+            $event->addAjaxData('form_elements', $this->getInlineJavascripts());
+        }
+    }
+
 
     /**
      * @param string $alias
