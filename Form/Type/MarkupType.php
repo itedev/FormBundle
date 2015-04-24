@@ -21,14 +21,14 @@ class MarkupType extends AbstractType
     /**
      * @var PropertyAccessorInterface
      */
-    private $propertyAccessor;
+    protected $propertyAccessor;
 
-    /**
-     * @param PropertyAccessorInterface $propertyAccessor
-     */
-    public function __construct(PropertyAccessorInterface $propertyAccessor = null)
+    public function __construct()
     {
-        $this->propertyAccessor = $propertyAccessor ?: PropertyAccess::createPropertyAccessor();
+        $this->propertyAccessor = PropertyAccess::createPropertyAccessorBuilder()
+            ->disableExceptionOnInvalidIndex()
+            ->getPropertyAccessor();
+        ;
     }
 
     /**
@@ -45,7 +45,6 @@ class MarkupType extends AbstractType
             'compound' => false,
             'auto_initialize' => false,
             'markup' => null,
-            'markup_builder' => null,
         ));
     }
 
@@ -54,33 +53,25 @@ class MarkupType extends AbstractType
      */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        $data = array_key_exists('data', $options)
-            ? $options['data']
-            : $this->propertyAccessor->getValue($form->getParent()->getConfig()->getData(), $form->getPropertyPath());
-
-        $view->vars = array_replace($view->vars, array(
-            'data' => $data,
-            'value' => $data,
-        ));
-        $view->vars['markup'] = $this->getMarkup($data, $options);
+        $view->vars['markup'] = $this->getMarkup($form, $options);
     }
 
     /**
-     * @param $data
+     * @param FormInterface $form
      * @param array $options
      * @return mixed|string
      */
-    protected function getMarkup($data, array $options)
+    protected function getMarkup(FormInterface $form, array $options)
     {
-        if (is_callable($options['markup_builder'])) {
-            return call_user_func_array($options['markup_builder'], [$data]);
-        } elseif (isset($options['markup'])) {
-            return $options['markup'];
-        } elseif (is_object($data) && method_exists($data, '__toString')) {
-            return (string) $data;
+        if (isset($options['markup'])) {
+            if (is_callable($options['markup'])) {
+                return call_user_func_array($options['markup'], [$form]);
+            } elseif (is_string($options['markup'])) {
+                return $options['markup'];
+            } else {
+                throw new \InvalidArgumentException('Invalid markup value');
+            }
         }
-
-        return '';
     }
 
     /**

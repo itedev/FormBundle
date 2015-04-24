@@ -153,10 +153,23 @@
     {% endspaceless %}
 {% endblock form_start %}
 
+{%- block simple_widget_attributes -%}
+    id="{{ id }}"
+    {%- for attrname, attrvalue in attr -%}
+        {{- " " -}}
+        {%- if attrname in ['placeholder', 'title'] -%}
+            {{- attrname }}="{{ attrvalue|trans({}, translation_domain) }}"
+        {%- elseif attrvalue is sameas(true) -%}
+            {{- attrname }}="{{ attrname }}"
+        {%- elseif attrvalue is not sameas(false) -%}
+            {{- attrname }}="{{ attrvalue }}"
+        {%- endif -%}
+    {%- endfor -%}
+{%- endblock simple_widget_attributes -%}
+
 {% block ite_markup_widget %}
-    {% spaceless %}
-        {{ markup|raw }}
-    {% endspaceless %}
+    {% set attr = attr|merge({'class': (attr.class|default('') ~ ' form-control-static')|trim}) %}
+    <p {{ block('simple_widget_attributes') }}>{{ markup|raw }}</p>
 {% endblock ite_markup_widget %}
 
 {# refactor below #}
@@ -168,35 +181,3 @@
         {{ block('form_widget_simple') }}
     {% endif %}
 {% endblock ite_input_entity_widget %}
-
-{#{% block ite_markup_row %}#}
-    {#{% spaceless %}#}
-        {#{{ block('widget_form_group_start') }}#}
-
-        {#{% set show_horizontal_wrapper = horizontal %}#}
-
-        {#{% if horizontal and not label_render %}#}
-            {#{% set horizontal_input_wrapper_class = horizontal_input_wrapper_class ~ ' ' ~ horizontal_label_offset_class %}#}
-        {#{% endif %}#}
-
-        {#{% if show_horizontal_wrapper %}#}
-            {#<div class="{{ horizontal_input_wrapper_class }}">#}
-        {#{% endif %}#}
-
-        {#{{ widget_prefix|trans({}, translation_domain)|raw }} {{ form_widget(form, _context) }} {{ widget_suffix|trans({}, translation_domain)|raw }}#}
-
-        {#{% set type = type|default('text') %}#}
-        {#{% if type != 'hidden' %}#}
-            {#{{ block('form_message') }}#}
-        {#{% endif %}#}
-
-        {#{% if show_horizontal_wrapper %}#}
-            {#</div>#}
-        {#{% endif %}#}
-
-        {#{% if form.parent is not null and 'collection' in form.parent.vars.block_prefixes and widget_remove_btn|default(null) and form.parent.vars.allow_delete|default(false) %}#}
-            {#{{ block('form_widget_remove_btn') }}#}
-        {#{% endif -%}#}
-        {#{{ block('widget_form_group_end') }}#}
-    {#{% endspaceless %}#}
-{#{% endblock ite_markup_row %}#}
