@@ -95,7 +95,7 @@ class AjaxFileType extends AbstractType
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         // fetch ajax token from root form
-        $root = FormUtils::getRootView($view);
+        $root = FormUtils::getViewRoot($view);
         if (!isset($root->vars['ajax_token']) || empty($root->vars['ajax_token'])) {
             throw new \RuntimeException(sprintf(
                 'Unable to retrieve ajax token value. Maybe you forgot to add "%s" option in your root form?',

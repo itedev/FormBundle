@@ -2,10 +2,11 @@
 
 namespace ITE\FormBundle\Form\Extension\Component\Hierarchical;
 
+use ITE\FormBundle\FormAccess\FormAccess;
+use ITE\FormBundle\FormAccess\FormAccessorInterface;
 use ITE\FormBundle\SF\SFFormExtensionInterface;
 use ITE\FormBundle\Util\FormUtils;
 use ITE\JsBundle\SF\SFExtensionInterface;
-use RuntimeException;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
@@ -16,7 +17,6 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 
 /**
  * Class FormTypeHierarchicalExtension
@@ -36,6 +36,11 @@ class FormTypeHierarchicalExtension extends AbstractTypeExtension
     protected $requestStack;
 
     /**
+     * @var FormAccessorInterface
+     */
+    protected $formAccessor;
+
+    /**
      * @param SFFormExtensionInterface $sfForm
      * @param RequestStack $requestStack
      */
@@ -43,6 +48,7 @@ class FormTypeHierarchicalExtension extends AbstractTypeExtension
     {
         $this->sfForm = $sfForm;
         $this->requestStack = $requestStack;
+        $this->formAccessor = FormAccess::createFormAccessor();
     }
 
     /**
@@ -81,8 +87,10 @@ class FormTypeHierarchicalExtension extends AbstractTypeExtension
         if (!empty($options['hierarchical_parents'])) {
             $parents = $options['hierarchical_parents'];
             $ascendantView = $view->parent;
-            $parentViews = array_map(function($parent) use ($ascendantView) {
-                return $ascendantView->children[$parent];
+
+            $formAccessor = $this->formAccessor;
+            $parentViews = array_map(function($parent) use ($ascendantView, $formAccessor) {
+                return $formAccessor->getView($ascendantView, $parent);
             }, $parents);
             $parentSelectors = array_map(function(FormView $parentView) {
                 return FormUtils::generateSelector($parentView);

@@ -30,12 +30,12 @@ interface FormBuilderInterface extends BaseFormBuilderInterface
      */
     public function addHierarchical($child, $parents, $type = null, array $options = array(), $formModifier = null);
 
-    /**
-     * @param int|string|FormBuilderInterface $child
-     * @param string|FormTypeInterface $type
-     * @param array $options
-     * @param null $formModifier
-     * @return FormBuilderInterface
-     */
-    public function addDynamic($child, $type = null, array $options = array(), $formModifier = null);
+//    /**
+//     * @param int|string|FormBuilderInterface $child
+//     * @param string|FormTypeInterface $type
+//     * @param array $options
+//     * @param null $formModifier
+//     * @return FormBuilderInterface
+//     */
+//    public function addDynamic($child, $type = null, array $options = array(), $formModifier = null);
 }

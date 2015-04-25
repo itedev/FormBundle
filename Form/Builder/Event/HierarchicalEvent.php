@@ -2,6 +2,9 @@
 
 namespace ITE\FormBundle\Form\Builder\Event;
 
+use ITE\FormBundle\FormAccess\FormAccess;
+use ITE\FormBundle\FormAccess\FormAccessor;
+use ITE\FormBundle\FormAccess\FormAccessorInterface;
 use ITE\FormBundle\Util\FormUtils;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
@@ -15,6 +18,11 @@ use Symfony\Component\Form\Util\FormUtil;
  */
 class HierarchicalEvent
 {
+    /**
+     * @var FormAccessor
+     */
+    protected $formAccessor;
+
     /**
      * @var FormInterface
      */
@@ -39,7 +47,6 @@ class HierarchicalEvent
      * @var string|FormTypeInterface
      */
     protected $type;
-
     /**
      * @var array
      */
@@ -50,13 +57,15 @@ class HierarchicalEvent
      * @param array $parents
      * @param array $options
      * @param string|null $originator
+     * @param FormAccessor|null $formAccessor
      */
-    public function __construct(FormInterface $form, array $parents, array $options, $originator = null)
+    public function __construct(FormInterface $form, array $parents, array $options, $originator = null, FormAccessor $formAccessor = null)
     {
         $this->form = $form;
         $this->parents = new ParentCollection($parents);
         $this->options = $options;
         $this->originator = $originator;
+        $this->formAccessor = $formAccessor;
     }
 
     /**
@@ -183,8 +192,10 @@ class HierarchicalEvent
             return false;
         }
 
+        $formAccessor = $this->getFormAccessor();
         foreach ($this->parents as $parent => $parentData) {
-            if ($this->originator === FormUtils::getFullName($this->form->get($parent))) {
+            $parentForm = $formAccessor->getForm($this->form, $parent);
+            if ($this->originator === FormUtils::getFullName($parentForm)) {
                 return true;
             }
         }
@@ -212,5 +223,17 @@ class HierarchicalEvent
         }
 
         return true;
+    }
+
+    /**
+     * @return FormAccessorInterface
+     */
+    protected function getFormAccessor()
+    {
+        if (!isset($this->formAccessor)) {
+            $this->formAccessor = FormAccess::createFormAccessor();
+        }
+
+        return $this->formAccessor;
     }
 }

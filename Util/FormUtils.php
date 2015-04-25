@@ -15,24 +15,10 @@ use Symfony\Component\Form\ResolvedFormTypeInterface;
 class FormUtils
 {
     /**
-     * @param FormInterface $form
-     * @return null|FormInterface
-     */
-    public static function getRootForm(FormInterface $form)
-    {
-        $root = $form;
-        while (!$root->isRoot()) {
-            $root = $root->getParent();
-        }
-
-        return $root;
-    }
-
-    /**
      * @param FormView $view
      * @return FormView
      */
-    public static function getRootView(FormView $view)
+    public static function getViewRoot(FormView $view)
     {
         $root = $view;
         while (null !== $root->parent) {
@@ -40,6 +26,15 @@ class FormUtils
         }
 
         return $root;
+    }
+
+    /**
+     * @param FormView $view
+     * @return bool
+     */
+    public static function isViewRoot(FormView $view)
+    {
+        return null === $view->parent;
     }
 
     /**

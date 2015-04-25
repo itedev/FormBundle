@@ -3,6 +3,8 @@
 namespace ITE\FormBundle\Form\Builder;
 
 use ITE\FormBundle\Form\Builder\Event\HierarchicalEvent;
+use ITE\FormBundle\FormAccess\FormAccess;
+use ITE\FormBundle\FormAccess\FormAccessorInterface;
 use ITE\FormBundle\Util\FormUtils;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
@@ -27,6 +29,11 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
     protected $propertyAccessor;
 
     /**
+     * @var FormAccessorInterface
+     */
+    protected $formAccessor;
+
+    /**
      * {@inheritdoc}
      */
     public function __construct($name, $dataClass, EventDispatcherInterface $dispatcher, FormFactoryInterface $factory, array $options = array())
@@ -34,6 +41,7 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
         parent::__construct($name, $dataClass, $dispatcher, $factory, $options);
 
         $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
+        $this->formAccessor = FormAccess::createFormAccessor();
     }
 
     /**
@@ -55,129 +63,138 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
         if (!is_array($parents)) {
             $parents = array($parents);
         }
-        foreach ($parents as $parent) {
-            if (!$this->has($parent)) {
-                throw new \InvalidArgumentException(sprintf('FormBuilder does not contain "%s" child'));
-            }
-        }
         if (!is_callable($formModifier)) {
             throw new \InvalidArgumentException('The form modifier handler must be a valid PHP callable.');
         }
 
         $options = array_merge($options, [
-          'hierarchical_parents' => $parents,
+            'hierarchical_parents' => $parents,
         ]);
 
         $propertyAccessor = $this->propertyAccessor;
+        $formAccessor = $this->formAccessor;
 
         parent::add($child, $type, $options);
 
         // PRE_SET_DATA event listener for root builder
         $this
-          ->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event) use ($child, $type, $options, $parents, $formModifier, $propertyAccessor) {
-              $form = $event->getForm();
-              $data = $event->getData();
+            ->get($child)
+            ->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event) use ($child, $type, $options, $parents, $formModifier, $propertyAccessor, $formAccessor) {
+                $form = $event->getForm()->getParent();
+                $data = $event->getData();
 
-              $parentValues = [];
-              foreach ($parents as $parent) {
-                  $parentValues[$parent] = isset($data)
-                    ? $propertyAccessor->getValue($data, $parent)
-                    : null;
-              }
+//                $parentValues = [];
+//                foreach ($parents as $parent) {
+//                    $parentValues[$parent] = isset($data)
+//                        ? $propertyAccessor->getValue($data, $parent)
+//                        : null;
+//                }
+//
+//                $childForm = $form->get($child);
+                $parentValues = [];
+                foreach ($parents as $parent) {
+                    $parentForm = $formAccessor->getForm($form, $parent);
+                    $parentValues[$parent] = $parentForm ? $parentForm->getData() : null;
+                }
 
-              $hierarchicalEvent = new HierarchicalEvent($form, $parentValues, $options);
+                $hierarchicalEvent = new HierarchicalEvent($form, $parentValues, $options);
 
-              $params = $parentValues;
-              array_unshift($params, $hierarchicalEvent);
+                $params = $parentValues;
+                array_unshift($params, $hierarchicalEvent);
 
-              if (false === call_user_func_array($formModifier, $params)) {
-                  return;
-              }
+                if (false === call_user_func_array($formModifier, $params)) {
+                    return;
+                }
 
-              $ed = $form->get($child)->getConfig()->getEventDispatcher();
-              $form->add($child, $type, $hierarchicalEvent->getOptions());
-              FormUtils::setEventDispatcher($form->get($child), $ed);
-          })
+                $ed = $form->get($child)->getConfig()->getEventDispatcher();
+                $form->add($child, $type, $hierarchicalEvent->getOptions());
+                FormUtils::setEventDispatcher($form->get($child), $ed);
+            })
         ;
 
         $this
-          ->get($child)
-          ->addEventListener(FormEvents::PRE_SUBMIT, function(FormEvent $event) use ($child, $type, $options, $parents, $formModifier) {
-              $form = $event->getForm()->getParent();
+            ->get($child)
+            ->addEventListener(FormEvents::PRE_SUBMIT, function(FormEvent $event) use ($child, $type, $options, $parents, $formModifier, $formAccessor) {
+                $form = $event->getForm()->getParent();
 
-              $parentValues = [];
-              foreach ($parents as $parent) {
-                  $parentValues[$parent] = $form->get($parent)->getData();
-              }
+//                $parentValues = [];
+//                foreach ($parents as $parent) {
+//                    $parentValues[$parent] = $form->get($parent)->getData();
+//                }
+                $parentValues = [];
+                foreach ($parents as $parent) {
+                    $parentForm = $formAccessor->getForm($form, $parent);
+                    $parentValues[$parent] = $parentForm ? $parentForm->getData() : null;
+                }
 
-              $root = FormUtils::getRootForm($form);
-              $originator = $root->getConfig()->getAttribute('hierarchical_originator');
-              $hierarchicalEvent = new HierarchicalEvent($form, $parentValues, $options, $originator);
+                $rootForm = $form->getRoot();
+                $originator = $rootForm->getConfig()->getAttribute('hierarchical_originator');
+                $hierarchicalEvent = new HierarchicalEvent($form, $parentValues, $options, $originator, $formAccessor);
 
-              $params = $parentValues;
-              array_unshift($params, $hierarchicalEvent);
+                $params = $parentValues;
+                array_unshift($params, $hierarchicalEvent);
 
-              if (false === call_user_func_array($formModifier, $params)) {
-                  return;
-              }
+                if (false === call_user_func_array($formModifier, $params)) {
+                    return;
+                }
 
-              $ed = $form->get($child)->getConfig()->getEventDispatcher();
-              $form->add($child, $type, $hierarchicalEvent->getOptions());
-              FormUtils::setEventDispatcher($form->get($child), $ed);
-          })
+                $ed = $form->get($child)->getConfig()->getEventDispatcher();
+                $form->add($child, $type, $hierarchicalEvent->getOptions());
+                FormUtils::setEventDispatcher($form->get($child), $ed);
+            })
         ;
 
         return $this;
     }
 
-    /**
-     * @param int|string|FormBuilderInterface $child
-     * @param string|FormTypeInterface $type
-     * @param array $options
-     * @param null $formModifier
-     * @return $this|FormBuilderInterface
-     */
-    public function addDynamic($child, $type = null, array $options = array(), $formModifier = null)
-    {
-        $children = $this->all();
-        if (empty($children)) {
-            throw new \RuntimeException('You cannot add dynamic field to empty FormBuilder');
-        }
-        end($children);
-        $sibling = key($children);
-
-        $this
-          ->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event) use ($child, $type, $options, $formModifier) {
-              $form = $event->getForm();
-              $data = $event->getData();
-
-              $params = [$options, $data];
-
-              if (is_callable($formModifier)) {
-                  $options = call_user_func_array($formModifier, $params);
-              }
-
-              $form->add($child, $type, $options);
-          })
-        ;
-        $this
-          ->get($sibling)
-          ->addEventListener(FormEvents::POST_SUBMIT, function(FormEvent $event) use ($child, $type, $options, $formModifier) {
-              $form = $event->getForm()->getParent();
-              $data = $form->getData();
-
-              $params = [$options, $data];
-
-              if (is_callable($formModifier)) {
-                  $options = call_user_func_array($formModifier, $params);
-              }
-
-              $form->add($child, $type, $options);
-          })
-        ;
-
-        return parent::add($child, $type, $options);
-    }
+//    /**
+//     * @param int|string|FormBuilderInterface $child
+//     * @param string|FormTypeInterface $type
+//     * @param array $options
+//     * @param null $formModifier
+//     * @return $this|FormBuilderInterface
+//     */
+//    public function addDynamic($child, $type = null, array $options = array(), $formModifier = null)
+//    {
+//        $children = $this->all();
+//        if (empty($children)) {
+//            throw new \RuntimeException('You cannot add dynamic field to empty FormBuilder');
+//        }
+//        end($children);
+//        $sibling = key($children);
+//
+//        $this
+//          ->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event) use ($child, $type, $options, $formModifier) {
+//              $form = $event->getForm();
+//              $data = $event->getData();
+//
+//              $params = [$options, $data];
+//
+//              if (is_callable($formModifier)) {
+//                  $options = call_user_func_array($formModifier, $params);
+//              }
+//
+//              $form->add($child, $type, $options);
+//          })
+//        ;
+//        $this
+//          ->get($sibling)
+//          ->addEventListener(FormEvents::POST_SUBMIT, function(FormEvent $event) use ($child, $type, $options, $formModifier) {
+//              $form = $event->getForm()->getParent();
+//              $data = $form->getData();
+//
+//              $params = [$options, $data];
+//
+//              if (is_callable($formModifier)) {
+//                  $options = call_user_func_array($formModifier, $params);
+//              }
+//
+//              $form->add($child, $type, $options);
+//          })
+//        ;
+//
+//        return parent::add($child, $type, $options);
+//    }
 
     /**
      * @param $name
