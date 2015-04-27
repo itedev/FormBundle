@@ -36,9 +36,6 @@ class SFFormExtension extends SFExtension implements SFFormExtensionInterface
      */
     protected $formErrors = array();
 
-    /**
-     *
-     */
     public function __construct()
     {
         $this->elementBag = new ElementBag();
@@ -89,7 +86,7 @@ class SFFormExtension extends SFExtension implements SFFormExtensionInterface
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getInlineJavascripts()
     {
@@ -106,13 +103,15 @@ class SFFormExtension extends SFExtension implements SFFormExtensionInterface
         return $dump;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function onAjaxRequest(AjaxRequestEvent $event)
     {
         if ($this->elementBag->count()) {
-            $event->addAjaxData('form_elements', $this->getInlineJavascripts());
+            $event->addAjaxData('elements', $this->elementBag->peekAll());
         }
     }
-
 
     /**
      * @param string $alias

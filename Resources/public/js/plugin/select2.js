@@ -88,8 +88,9 @@
       element.select2('val', '');
     },
 
-    setValue: function(element) {
-      element.select2('val', element.val());
+    setValue: function($element, $newElement) {
+      $element.html($newElement.html());
+      $element.val($newElement.val());
     }
   };
 })(jQuery);

@@ -1,18 +1,7 @@
 (function($) {
   SF.fn.plugins = {};
 
-  var baseProcessXhr = SF.fn.util.processXhr;
-
   SF.fn.util = $.extend(SF.fn.util, {
-    processXhr: function(xhr, settings) {
-      baseProcessXhr.apply(SF, [xhr, settings]);
-
-      var elementsHeader = xhr.getResponseHeader('X-SF-Elements');
-      if (elementsHeader) {
-        var elements = $.parseJSON(elementsHeader);
-        SF.elements.set(elements);
-      }
-    },
 
     // @todo: refactor (and maybe delete)
     addGetParameter: function(url, paramName, paramValue) {
@@ -234,6 +223,7 @@
         if ('undefined' === typeof SF.plugins[plugin]) {
           return;
         }
+
         $.each(selectors, function(index, selector) {
           var $element = self.getJQueryElement(selector, context, replacementTokens);
           if (!$element.length) {
@@ -246,6 +236,7 @@
           if (SF.plugins[plugin].isApplied($element)) {
             return;
           }
+
           if ('undefined' !== typeof SF.plugins[plugin].apply) {
             var pluginData = self.get(selector).getPluginData(plugin);
             var event = $.Event('ite-before-apply.plugin');
@@ -253,6 +244,7 @@
             if (false === event.result) {
               return;
             }
+
             SF.plugins[plugin].apply($element, pluginData);
             $element.trigger('ite-apply.plugin', [pluginData, plugin]);
           }
@@ -270,16 +262,13 @@
 
   SF.fn.elements = new ElementBag();
 
-  $(document).on('ite-ajax-after-load.content', function(e, contentData){
-    if (!contentData) {
+  $(document).on('ite-ajax-after-load.content', function(e, contentData) {
+    if (!contentData.hasOwnProperty('_sf_elements')) {
       return;
     }
-    if (!contentData.hasOwnProperty('_sf_form_elements')) {
-      return;
-    }
-    eval(contentData['_sf_form_elements']);
-  });
 
-// http://stackoverflow.com/questions/5202296/add-a-hook-to-all-ajax-requests-on-a-page/5202312#5202312
+    SF.elements.set(contentData['_sf_elements']);
+    SF.elements.apply();
+  });
 
 })(jQuery);

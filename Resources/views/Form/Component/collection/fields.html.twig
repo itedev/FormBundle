@@ -1,18 +1,18 @@
 {% extends ite_parent_form_resource(_self.templateName) %}
 
-{% block form_rows_visible %}
-    {% spaceless %}
-        {% for index, child in form %}
-            {% if 'hidden' not in child.vars.block_prefixes %}
-                {% if 'collection' in form.vars.block_prefixes %}
-                    {# pass index to child.vars.attr #}
-                    {#{% set child = child|merge({'vars': {'attr': {'data-index': index} } }) %}#}
-                {% endif %}
-                {{ form_row(child) }}
-            {% endif %}
-        {% endfor %}
-    {% endspaceless %}
-{% endblock form_rows_visible %}
+{#{% block form_rows_visible %}#}
+    {#{% spaceless %}#}
+        {#{% for index, child in form %}#}
+            {#{% if 'hidden' not in child.vars.block_prefixes %}#}
+                {#{% if 'collection' in form.vars.block_prefixes %}#}
+                    {#&#123;&#35; pass index to child.vars.attr &#35;&#125;#}
+                    {#&#123;&#35;{% set child = child|merge({'vars': {'attr': {'data-index': index} } }) %}&#35;&#125;#}
+                {#{% endif %}#}
+                {#{{ form_row(child) }}#}
+            {#{% endif %}#}
+        {#{% endfor %}#}
+    {#{% endspaceless %}#}
+{#{% endblock form_rows_visible %}#}
 
 {% block widget_form_group_start %}
 {% if widget_form_group|default(false) or form.parent == null %}

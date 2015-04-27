@@ -279,30 +279,28 @@
     },
 
     setElementValue: function($element, $newElement, element) {
-      if (element.isCompound()) {
-        $element.html($newElement.html());
-      } else {
-        var node = $element.get(0);
-        if (rxText.test(node.nodeName)) {
-          $element.val($newElement.val());
-        } else if (rxSelect.test(node.nodeName)) {
-          $element.html($newElement.html());
-          var firstOption = $element.children('option:first');
-          if (firstOption.length) {
-            $element.val(firstOption.attr('value'));
+      if (!element.hasPlugins()) {
+        if (!element.isCompound()) {
+          var node = $element.get(0);
+          if (rxText.test(node.nodeName)) {
+            $element.val($newElement.val());
+          } else if (rxSelect.test(node.nodeName)) {
+            $element.html($newElement.html());
+            $element.val($newElement.val());
           }
+        } else {
+          $element.html($newElement.html());
         }
-      }
-
-      if (element.hasPlugins()) {
+      } else {
         $.each(element.getPlugins(), function(i, plugin) {
           if ('undefined' !== typeof SF.plugins[plugin].setValue) {
             SF.plugins[plugin].setValue($element, $newElement);
+
+            return false; // break
           }
         });
       }
-
-      $element.trigger('change.hierarchical');
+//      $element.trigger('change.hierarchical');
     },
 
     apply: function(context, replacementTokens) {
