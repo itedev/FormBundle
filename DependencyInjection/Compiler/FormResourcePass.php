@@ -20,11 +20,24 @@ class FormResourcePass implements CompilerPassInterface
     public function process(ContainerBuilder $container)
     {
         $resources = $container->getParameter('twig.form.resources');
-        $resources[] = 'ITEFormBundle:Form:fields.html.twig';
-
         $sfForm = $container->get('ite_form.sf.extension.form');
-        $resources = $this->processComponents($sfForm, $resources, $container);
-        $resources = $this->processPlugins($sfForm, $resources, $container);
+
+        $sfResources = [];
+        $sfResources[] = 'ITEFormBundle:Form:fields.html.twig';
+        $sfResources = $this->processComponents($sfForm, $sfResources, $container);
+        $sfResources = $this->processPlugins($sfForm, $sfResources, $container);
+
+        $index = array_search('@sf_form_resources', $resources);
+        if (false !== $index) {
+            array_splice(
+                $resources,
+                $index,
+                1,
+                $sfResources
+            );
+        } else {
+            $resources = array_merge($resources, $sfResources);
+        }
 
         $container->setParameter('twig.form.resources', $resources);
     }
