@@ -78,6 +78,29 @@ class FormUtils
     }
 
     /**
+     * @param FormInterface $form
+     * @param $propertyPath
+     * @return null|FormInterface
+     */
+    public static function getFormByFullName(FormInterface $form, $propertyPath)
+    {
+        $propertyPathElements = array_map(function($value) {
+            return trim($value, '[]');
+        }, explode('[', $propertyPath));
+        array_shift($propertyPathElements);
+
+        $root = $form;
+        foreach ($propertyPathElements as $propertyPathElement) {
+            if (!$root->has($propertyPathElement)) {
+                return null;
+            }
+            $root = $root->get($propertyPathElement);
+        }
+
+        return $root;
+    }
+
+    /**
      * @param FormView $view
      * @return string
      */
