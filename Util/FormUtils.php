@@ -54,50 +54,51 @@ class FormUtils
         return $fullName;
     }
 
-    /**
-     * @param FormView $rootView
-     * @param $propertyPath
-     * @return null|FormView
-     */
-    public static function getViewByFullName(FormView $rootView, $propertyPath)
-    {
-        $propertyPathElements = array_map(function($value) {
-            return trim($value, '[]');
-        }, explode('[', $propertyPath));
-        array_shift($propertyPathElements);
-
-        $view = $rootView;
-        foreach ($propertyPathElements as $propertyPathElement) {
-            if (!isset($view->children[$propertyPathElement])) {
-                return null;
-            }
-            $view = $view->children[$propertyPathElement];
-        }
-
-        return $view;
-    }
 
     /**
      * @param FormInterface $form
-     * @param $propertyPath
+     * @param string $fullName
      * @return null|FormInterface
      */
-    public static function getFormByFullName(FormInterface $form, $propertyPath)
+    public static function getFormByFullName(FormInterface $form, $fullName)
     {
-        $propertyPathElements = array_map(function($value) {
-            return trim($value, '[]');
-        }, explode('[', $propertyPath));
-        array_shift($propertyPathElements);
+        $names = array_map(function($name) {
+            return trim($name, '[]');
+        }, explode('[', $fullName));
+        array_shift($names);
 
-        $root = $form;
-        foreach ($propertyPathElements as $propertyPathElement) {
-            if (!$root->has($propertyPathElement)) {
+        $current = $form;
+        foreach ($names as $name) {
+            if (!$current->has($name)) {
                 return null;
             }
-            $root = $root->get($propertyPathElement);
+            $current = $current->get($name);
         }
 
-        return $root;
+        return $current;
+    }
+
+    /**
+     * @param FormView $view
+     * @param string $fullName
+     * @return null|FormView
+     */
+    public static function getViewByFullName(FormView $view, $fullName)
+    {
+        $names = array_map(function($name) {
+            return trim($name, '[]');
+        }, explode('[', $fullName));
+        array_shift($names);
+
+        $current = $view;
+        foreach ($names as $name) {
+            if (!isset($current->children[$name])) {
+                return null;
+            }
+            $current = $current->children[$name];
+        }
+
+        return $current;
     }
 
     /**
