@@ -39,9 +39,10 @@
           replacementTokens[parentPrototypeName] = parentCollectionItem.data('index');
         });
         replacementTokens[prototypeName] = self.index;
-        SF.elements.apply($item, replacementTokens);
 
         $collection.trigger('ite-add.collection', [$item]);
+
+        SF.elements.apply($item, replacementTokens);
       }
 
       this.index++;

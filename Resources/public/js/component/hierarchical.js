@@ -76,11 +76,11 @@
 //      // clear element value
 //      SF.elements.clearElementValue(element, $element);
 
-      var jqxhr = $element.data('hierarchicalJqxhr');
+      var $form = $element.closest('form');
+      var jqxhr = $form.data('hierarchicalJqxhr');
       if (jqxhr) {
         jqxhr.abort();
       }
-      var $form = $element.closest('form');
       jqxhr = $.ajax({
         type: $form.attr('method'),
         url: $form.attr('action'),
@@ -123,11 +123,12 @@
           event = $.Event('ite-after-children-change.hierarchical', eventData);
           $element.trigger(event, [newContext]);
         }
-      }).fail(function() {
+      });
+      jqxhr.fail(function() {
         event = $.Event('ite-after-submit.hierarchical', eventData);
         $element.trigger(event);
       });
-      $element.data('hierarchicalJqxhr', jqxhr);
+      $form.data('hierarchicalJqxhr', jqxhr);
     }
   });
 
