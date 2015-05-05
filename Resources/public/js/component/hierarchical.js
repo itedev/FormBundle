@@ -45,6 +45,7 @@
       if (element.hasDelegateSelector()) {
         $element = $element.find(element.getDelegateSelector());
       }
+
       return $element.attr('name');
     }
   });

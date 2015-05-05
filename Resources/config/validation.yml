@@ -1,0 +1,12 @@
+parameters:
+    ite_form.validation.form_metadata_factory.class:    ITE\FormBundle\Validation\FormMetadataFactory
+    ite_form.validation.constraint_normalizer.class:    ITE\FormBundle\Validation\AbstractConstraintNormalizer
+
+services:
+    ite_form.validation.form_metadata_factory:
+        class: %ite_form.validation.form_metadata_factory.class%
+        arguments: [ @validator.mapping.class_metadata_factory ]
+
+    ite_form.validation.constraint_normalizer:
+        class: %ite_form.validation.constraint_normalizer.class%
+        arguments: [ @translator, %validator.translation_domain% ]
