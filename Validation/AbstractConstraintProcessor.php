@@ -2,16 +2,14 @@
 
 namespace ITE\FormBundle\Validation;
 
-use Doctrine\Common\Util\Inflector;
 use Symfony\Component\Translation\TranslatorInterface;
-use Symfony\Component\Validator\Constraint;
 
 /**
- * Class AbstractConstraintNormalizer
+ * Class AbstractConstraintProcessor
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-abstract class AbstractConstraintNormalizer
+abstract class AbstractConstraintProcessor implements ConstraintProcessorInterface
 {
     /**
      * Whether to format {@link \DateTime} objects as RFC-3339 dates
@@ -39,74 +37,54 @@ abstract class AbstractConstraintNormalizer
     protected $translationDomain;
 
     /**
+     * Set translator
+     *
      * @param TranslatorInterface $translator
-     * @param string $translationDomain
+     * @return AbstractConstraintProcessor
      */
-    public function __construct(TranslatorInterface $translator, $translationDomain = 'validators')
+    public function setTranslator(TranslatorInterface $translator)
     {
         $this->translator = $translator;
-        $this->translationDomain = $translationDomain;
+
+        return $this;
     }
 
     /**
-     * @param Constraint $constraint
-     * @return bool
+     * Set translationDomain
+     *
+     * @param string $translationDomain
+     * @return AbstractConstraintProcessor
+     */
+    public function setTranslationDomain($translationDomain)
+    {
+        $this->translationDomain = $translationDomain;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     abstract public function supports(Constraint $constraint);
 
     /**
-     * @param Constraint $constraint
-     * @return mixed
+     * {@inheritdoc}
      */
-    abstract public function normalize(Constraint $constraint);
+    abstract public function process(Constraint $constraint);
 
     /**
-     * @param Constraint $constraint
-     * @return string
-     */
-    protected function getType(Constraint $constraint)
-    {
-        $constraintClass = get_class($constraint);
-        $constraintClassName = substr($constraintClass, strrpos($constraintClass, '\\') + 1);
-
-        return Inflector::tableize($constraintClassName);
-    }
-
-    /**
-     * @param Constraint $constraint
-     * @return string
-     */
-    protected function getMessage(Constraint $constraint)
-    {
-        if (!property_exists($constraint, 'message')) {
-            throw new \InvalidArgumentException('Constraint does not have property "message"');
-        }
-
-        return $this->translate($constraint->message);
-    }
-
-    /**
-     * @param Constraint $constraint
-     * @return array
-     */
-    protected function getOptions(Constraint $constraint)
-    {
-        return [];
-    }
-
-    /**
-     * @param $message
+     * @param string $message
      * @param array $parameters
-     * @param null $pluralization
+     * @param null $plural
      * @return string
      */
-    protected function translate($message, $parameters = array(), $pluralization = null)
+    protected function translate($message, $parameters = [], $plural = null)
     {
-        if (null === $pluralization) {
+        if (null === $plural) {
             $translatedMessage = $this->translator->trans($message, $parameters, $this->translationDomain);
         } else {
             try {
-                $translatedMessage = $this->translator->transChoice($message, $pluralization, $parameters, $this->translationDomain);
+                $translatedMessage = $this->translator->transChoice($message, $plural, $parameters, $this->translationDomain);
             } catch (\InvalidArgumentException $e) {
                 $translatedMessage = $this->translator->trans($message, $parameters, $this->translationDomain);
             }

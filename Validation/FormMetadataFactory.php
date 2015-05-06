@@ -56,7 +56,6 @@ class FormMetadataFactory
         FormUtils::formWalkRecursiveWithPrototype($form, function(FormInterface $child,
             FormMetadata $parentFormMetadata, ClassMetadata $parentClassMetadata = null) use ($metadataFactory) {
             $name = $child->getName();
-//            $compound = $child->getConfig()->getCompound();
 
             $formMetadata = new FormMetadata();
 
@@ -81,7 +80,7 @@ class FormMetadataFactory
             }
 
             // get constraints from form
-            $constraints = $child->getConfig()->getOption('constraints', []);
+            $constraints = $child->getConfig()->getOption('constraints');
             $formMetadata->addConstraints($constraints);
 
             $parentFormMetadata->add($child->getName(), $formMetadata);

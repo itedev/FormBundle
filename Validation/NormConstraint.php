@@ -25,6 +25,11 @@ class NormConstraint implements NormConstraintInterface
     private $options = [];
 
     /**
+     * @var array $attributes
+     */
+    private $attributes = [];
+
+    /**
      * @param string $type
      * @param string $message
      * @param array $options
@@ -74,5 +79,50 @@ class NormConstraint implements NormConstraintInterface
     public function getOption($name, $defaultValue = null)
     {
         return array_key_exists($name, $this->options) ? $this->options[$name] : $defaultValue;
+    }
+
+    /**
+     * Get attributes
+     *
+     * @return array
+     */
+    public function getAttributes()
+    {
+        return $this->attributes;
+    }
+
+    /**
+     * Set attributes
+     *
+     * @param array $attributes
+     * @return NormConstraint
+     */
+    public function setAttributes(array $attributes)
+    {
+        $this->attributes = $attributes;
+
+        return $this;
+    }
+
+    /**
+     * @param string $name
+     * @param mixed $value
+     * @return $this
+     */
+    public function setAttribute($name, $value)
+    {
+        $this->attributes[$name] = $value;
+
+        return $this;
+    }
+
+    /**
+     * @param $name
+     * @param null $defaultValue
+     * @return null
+     */
+    public function getAttribute($name, $defaultValue = null)
+    {
+        return array_key_exists($name, $this->attributes) ? $this->attributes[$name] : $defaultValue;
     }
 }

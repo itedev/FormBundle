@@ -2,6 +2,7 @@
 
 namespace ITE\FormBundle;
 
+use ITE\FormBundle\DependencyInjection\Compiler\Component\Validation\ConstraintPass;
 use ITE\FormBundle\DependencyInjection\Compiler\EntityConverterPass;
 use ITE\FormBundle\DependencyInjection\Compiler\FormTypeGuesserPass;
 use ITE\FormBundle\DependencyInjection\Compiler\SFFromExtensionPass;
@@ -27,6 +28,7 @@ class ITEFormBundle extends Bundle
         $container->addCompilerPass(new FormTypeGuesserPass());
         $container->addCompilerPass(new RouterResourcePass());
         $container->addCompilerPass(new EntityConverterPass());
+        $container->addCompilerPass(new ConstraintPass());
 
         parent::build($container);
     }

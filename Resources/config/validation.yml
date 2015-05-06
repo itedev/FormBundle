@@ -1,12 +1,90 @@
 parameters:
-    ite_form.validation.form_metadata_factory.class:    ITE\FormBundle\Validation\FormMetadataFactory
-    ite_form.validation.constraint_normalizer.class:    ITE\FormBundle\Validation\AbstractConstraintNormalizer
+    ite_form.form.type_extension.component.validation.validation.class: ITE\FormBundle\Form\Extension\Component\Validation\FormTypeValidationExtension
+
+    ite_form.validation.constraint_manager.class:                       ITE\FormBundle\Validation\ConstraintManager
+
+    ite_form.validation.form_metadata_factory.class:                    ITE\FormBundle\Validation\FormMetadataFactory
+
+    ite_form.validation.constraint_converter.default.class:             ITE\FormBundle\Validation\ConstraintConverter\DefaultConverter
+    ite_form.validation.constraint_converter.choice.class:              ITE\FormBundle\Validation\ConstraintConverter\ChoiceConverter
+
+    ite_form.validation.constraint_processor.base.class:                ITE\FormBundle\Validation\AbstractConstraintProcessor
+    ite_form.validation.constraint_processor.abstract_comparison.class: ITE\FormBundle\Validation\ConstraintProcessor\AbstractComparisonProcessor
+    ite_form.validation.constraint_processor.default.class:             ITE\FormBundle\Validation\ConstraintProcessor\DefaultProcessor
+    ite_form.validation.constraint_processor.choice.class:              ITE\FormBundle\Validation\ConstraintProcessor\ChoiceProcessor
+    ite_form.validation.constraint_processor.count.class:               ITE\FormBundle\Validation\ConstraintProcessor\CountProcessor
+    ite_form.validation.constraint_processor.length.class:              ITE\FormBundle\Validation\ConstraintProcessor\LengthProcessor
+    ite_form.validation.constraint_processor.range.class:               ITE\FormBundle\Validation\ConstraintProcessor\RangeProcessor
+    ite_form.validation.constraint_processor.type.class:                ITE\FormBundle\Validation\ConstraintProcessor\TypeProcessor
 
 services:
+    ite_form.form.type_extension.component.validation.validation:
+        class: %ite_form.form.type_extension.component.validation.validation.class%
+        tags:
+            - { name: form.type_extension, alias: form }
+
+    ite_form.validation.constraint_manager:
+        class: %ite_form.validation.constraint_manager.class%
+
     ite_form.validation.form_metadata_factory:
         class: %ite_form.validation.form_metadata_factory.class%
         arguments: [ @validator.mapping.class_metadata_factory ]
 
-    ite_form.validation.constraint_normalizer:
-        class: %ite_form.validation.constraint_normalizer.class%
-        arguments: [ @translator, %validator.translation_domain% ]
+    ite_form.validation.constraint_converter.default:
+        class: %ite_form.validation.constraint_converter.default.class%
+        tags:
+            - { name: ite_form.validation.constraint_converter }
+
+    ite_form.validation.constraint_converter.choice:
+        class: %ite_form.validation.constraint_converter.choice.class%
+        tags:
+            - { name: ite_form.validation.constraint_converter }
+
+    ite_form.validation.constraint_processor.base:
+        class: %ite_form.validation.constraint_processor.base.class%
+        abstract: true
+        calls:
+            - [ setTranslator, [ @translator ] ]
+            - [ setTranslationDomain, [ %validator.translation_domain% ] ]
+
+    ite_form.validation.constraint_processor.abstract_comparison:
+        class: %ite_form.validation.constraint_processor.abstract_comparison.class%
+        parent: ite_form.validation.constraint_processor.base
+        tags:
+            - { name: ite_form.validation.constraint_processor }
+
+    ite_form.validation.constraint_processor.default:
+        class: %ite_form.validation.constraint_processor.default.class%
+        parent: ite_form.validation.constraint_processor.base
+        tags:
+            - { name: ite_form.validation.constraint_processor }
+
+    ite_form.validation.constraint_processor.choice:
+        class: %ite_form.validation.constraint_processor.choice.class%
+        parent: ite_form.validation.constraint_processor.base
+        tags:
+            - { name: ite_form.validation.constraint_processor }
+
+    ite_form.validation.constraint_processor.count:
+        class: %ite_form.validation.constraint_processor.count.class%
+        parent: ite_form.validation.constraint_processor.base
+        tags:
+            - { name: ite_form.validation.constraint_processor }
+
+    ite_form.validation.constraint_processor.length:
+        class: %ite_form.validation.constraint_processor.length.class%
+        parent: ite_form.validation.constraint_processor.base
+        tags:
+            - { name: ite_form.validation.constraint_processor }
+
+    ite_form.validation.constraint_processor.range:
+        class: %ite_form.validation.constraint_processor.range.class%
+        parent: ite_form.validation.constraint_processor.base
+        tags:
+            - { name: ite_form.validation.constraint_processor }
+
+    ite_form.validation.constraint_processor.type:
+        class: %ite_form.validation.constraint_processor.type.class%
+        parent: ite_form.validation.constraint_processor.base
+        tags:
+            - { name: ite_form.validation.constraint_processor }
