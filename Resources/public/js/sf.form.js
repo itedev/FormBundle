@@ -270,5 +270,14 @@
     SF.elements.set(contentData['_sf_elements']);
     SF.elements.apply();
   });
+  $(document).ajaxComplete(function(event, xhr, settings) {
+    var elementsHeader = xhr.getResponseHeader('X-SF-Elements');
+
+    if (elementsHeader) {
+      SF.elements.set($.parseJSON(elementsHeader));
+      SF.elements.apply();
+    }
+
+  });
 
 })(jQuery);
