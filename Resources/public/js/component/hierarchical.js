@@ -3,6 +3,21 @@
   var rxCheckable = /^(?:checkbox|radio)$/i;
   var rxSelect = /^select$/i;
 
+  $.fn.hierarchical = function(option) {
+    var value;
+    this.each(function() {
+      var $this = $(this);
+
+      if ('active' === option) {
+        value = 'undefined' !== typeof $this.data('hierarchicalJqxhr');
+      } else {
+        $.error('Method with name "' +  option + '" does not exist in jQuery.hierarchical');
+      }
+    });
+
+    return ('undefined' === typeof value) ? this : value;
+  };
+
   SF.fn.util = $.extend(SF.fn.util, {
     arrayUnique: function(arr) {
       return $.grep(arr, function(v, k) {
@@ -30,6 +45,7 @@
       if (element.hasDelegateSelector()) {
         $element = $element.find(element.getDelegateSelector());
       }
+
       return $element.attr('name');
     }
   });
@@ -76,11 +92,11 @@
 //      // clear element value
 //      SF.elements.clearElementValue(element, $element);
 
-      var jqxhr = $element.data('hierarchicalJqxhr');
-      if (jqxhr) {
-        jqxhr.abort();
-      }
       var $form = $element.closest('form');
+      var jqxhr = $form.data('hierarchicalJqxhr');
+      if (jqxhr) {
+        jqxhr.abort('hierarchicalAbort');
+      }
       jqxhr = $.ajax({
         type: $form.attr('method'),
         url: $form.attr('action'),
@@ -91,8 +107,9 @@
           'X-SF-Hierarchical-Originator': elementFullName
         },
         success: function(response) {
-          var newContext = $(response);
+          $form.removeData('hierarchicalJqxhr');
 
+          var newContext = $(response);
           event = $.Event('ite-after-submit.hierarchical', eventData);
           $element.trigger(event, [newContext]);
           if (false === event.result) {
@@ -123,11 +140,16 @@
           event = $.Event('ite-after-children-change.hierarchical', eventData);
           $element.trigger(event, [newContext]);
         }
-      }).fail(function() {
+      });
+      jqxhr.fail(function() {
+        if (0 !== jqxhr.readyState || 'hierarchicalAbort' !== jqxhr.statusText) {
+          $form.removeData('hierarchicalJqxhr');
+        }
+
         event = $.Event('ite-after-submit.hierarchical', eventData);
         $element.trigger(event);
       });
-      $element.data('hierarchicalJqxhr', jqxhr);
+      $form.data('hierarchicalJqxhr', jqxhr);
     }
   });
 

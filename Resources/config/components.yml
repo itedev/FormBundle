@@ -4,7 +4,6 @@ parameters:
     ite_form.component.ajax_file_upload.class:  ITE\FormBundle\SF\Component\AjaxFileUploadComponent
     ite_form.component.hierarchical.class:      ITE\FormBundle\SF\Component\HierarchicalComponent
     ite_form.component.editable.class:          ITE\FormBundle\SF\Component\EditableComponent
-    ite_form.component.ordered.class:           ITE\FormBundle\SF\Component\OrderedComponent
     ite_form.component.validation.class:        ITE\FormBundle\SF\Component\ValidationComponent
     ite_form.component.debug.class:             ITE\FormBundle\SF\Component\DebugComponent
 

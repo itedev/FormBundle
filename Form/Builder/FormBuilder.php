@@ -36,7 +36,9 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
     /**
      * {@inheritdoc}
      */
-    public function __construct($name, $dataClass, EventDispatcherInterface $dispatcher, FormFactoryInterface $factory, array $options = array())
+    public function __construct($name, $dataClass, EventDispatcherInterface $dispatcher, FormFactoryInterface $factory,
+        array $options = []
+    )
     {
         parent::__construct($name, $dataClass, $dispatcher, $factory, $options);
 
@@ -79,7 +81,8 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
         // PRE_SET_DATA event listener for root builder
         $this
             ->get($child)
-            ->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event) use ($child, $type, $options, $parents, $formModifier, $propertyAccessor, $formAccessor) {
+            ->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event)
+            use ($child, $type, $options, $parents, $formModifier, $propertyAccessor, $formAccessor) {
                 $form = $event->getForm()->getParent();
                 $data = $event->getData();
 
@@ -91,6 +94,7 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
 //                }
 //
 //                $childForm = $form->get($child);
+
                 $parentValues = [];
                 foreach ($parents as $parent) {
                     $parentForm = $formAccessor->getForm($form, $parent);
@@ -114,7 +118,8 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
 
         $this
             ->get($child)
-            ->addEventListener(FormEvents::PRE_SUBMIT, function(FormEvent $event) use ($child, $type, $options, $parents, $formModifier, $formAccessor) {
+            ->addEventListener(FormEvents::PRE_SUBMIT, function(FormEvent $event)
+            use ($child, $type, $options, $parents, $formModifier, $formAccessor) {
                 $form = $event->getForm()->getParent();
 
 //                $parentValues = [];

@@ -204,19 +204,73 @@ class FormUtils
 
     /**
      * @param FormInterface $form
-     * @param $callback
+     * @param callable $callback
+     * @param mixed|null $data
      * @throws \InvalidArgumentException
      */
-    public static function formWalkRecursive(FormInterface $form, $callback)
+    public static function formWalkRecursive(FormInterface $form, $callback, $data = null)
     {
         if (!is_callable($callback)) {
             throw new \InvalidArgumentException();
         }
         foreach ($form as $child) {
             /** @var $child FormInterface */
-            call_user_func($callback, $child);
+            $data = !is_array($data) ? [$data] : $data;
+            $result = call_user_func_array($callback, array_merge([$child], $data));
             if ($child->count()) {
-                self::formWalkRecursive($child, $callback);
+                self::formWalkRecursive($child, $callback, $result);
+            }
+        }
+    }
+
+    /**
+     * @param FormInterface $form
+     * @param $callback
+     * @param null $data
+     */
+    public static function formWalkRecursiveWithPrototype(FormInterface $form, $callback, $data = null)
+    {
+        if (!is_callable($callback)) {
+            throw new \InvalidArgumentException();
+        }
+        foreach ($form as $child) {
+            /** @var $child FormInterface */
+            $data = !is_array($data) ? [$data] : $data;
+            $result = call_user_func_array($callback, array_merge([$child], $data));
+
+            $type = $child->getConfig()->getType();
+            $isCollection = FormUtils::isResolvedFormTypeChildOf($type, 'collection');
+            if ($isCollection) {
+                $prototype = $child->getConfig()->getAttribute('prototype');
+
+                $result = !is_array($result) ? [$result] : $result;
+                $result = call_user_func_array($callback, array_merge([$prototype], $result));
+                self::formWalkRecursiveWithPrototype($prototype, $callback, $result);
+            } else {
+                if ($child->count()) {
+                    self::formWalkRecursiveWithPrototype($child, $callback, $result);
+                }
+            }
+        }
+    }
+
+    /**
+     * @param FormView $view
+     * @param $callback
+     * @param mixed|null $data
+     * @throws \InvalidArgumentException
+     */
+    public static function formViewWalkRecursive(FormView $view, $callback, $data = null)
+    {
+        if (!is_callable($callback)) {
+            throw new \InvalidArgumentException();
+        }
+        foreach ($view as $child) {
+            /** @var $child FormView */
+            $data = !is_array($data) ? [$data] : $data;
+            $result = call_user_func_array($callback, array_merge([$child], $data));
+            if ($child->count()) {
+                self::formViewWalkRecursive($child, $callback, $result);
             }
         }
     }
