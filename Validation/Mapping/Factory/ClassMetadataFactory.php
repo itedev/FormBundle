@@ -1,11 +1,12 @@
 <?php
 
-namespace Symfony\Component\Validator\Mapping\Factory;
+namespace ITE\FormBundle\Validation\Mapping\Factory;
 
+use ITE\FormBundle\Validation\Mapping\ClassMetadata;
 use ITE\FormBundle\Validation\Mapping\Loader\LoaderInterface;
 use Symfony\Component\Validator\Exception\NoSuchMetadataException;
 use Symfony\Component\Validator\Mapping\Cache\CacheInterface;
-use Symfony\Component\Validator\Mapping\ClassMetadata;
+use Symfony\Component\Validator\Mapping\Factory\MetadataFactoryInterface;
 
 /**
  * Creates new {@link ClassMetadataInterface} instances.
@@ -26,8 +27,9 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
  * between multiple PHP requests.
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-class LazyLoadingMetadataFactory implements MetadataFactoryInterface
+class ClassMetadataFactory implements MetadataFactoryInterface
 {
     /**
      * The loader for loading the class metadata

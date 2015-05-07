@@ -2,7 +2,7 @@
 
 namespace ITE\FormBundle\Validation\Mapping\Loader;
 
-use Symfony\Component\Validator\Constraint;
+use ITE\FormBundle\Validation\Constraint;
 use Symfony\Component\Validator\Exception\MappingException;
 
 /**
@@ -15,6 +15,7 @@ use Symfony\Component\Validator\Exception\MappingException;
  * constraints with the syntax "alias:ShortName".
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 abstract class AbstractLoader implements LoaderInterface
 {

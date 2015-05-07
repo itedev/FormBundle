@@ -2,24 +2,40 @@
 
 namespace ITE\FormBundle\Validation\Mapping;
 
-use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Constraint as ServerConstraint;
+use ITE\FormBundle\Validation\Constraint as ClientConstraint;
 
 /**
  * Class FormMetadata
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-class FormMetadata
+class FormMetadata implements FormMetadataInterface
 {
     /**
-     * @var array $constraints
+     * @var array|ServerConstraint[] $serverConstraints
      */
-    private $constraints = [];
+    private $serverConstraints = [];
 
     /**
-     * @var array $constraintsByGroup
+     * @var array|ServerConstraint[][] $serverConstraintsByGroup
      */
-    private $constraintsByGroup = [];
+    private $serverConstraintsByGroup = [];
+
+    /**
+     * @var array|ClientConstraint[] $clientConstraints
+     */
+    private $clientConstraints = [];
+
+    /**
+     * @var array|ClientConstraint[][] $clientConstraintsByGroup
+     */
+    private $clientConstraintsByGroup = [];
+
+    /**
+     * @var  $parent
+     */
+    private $parent;
 
     /**
      * @var array|FormMetadata[] $children
@@ -27,68 +43,142 @@ class FormMetadata
     private $children = [];
 
     /**
-     * @param Constraint $constraint
-     * @return $this
+     * {@inheritdoc}
      */
-    public function addConstraint(Constraint $constraint)
+    public function addServerConstraint(ServerConstraint $constraint)
     {
-        $this->constraints[] = $constraint;
+        $this->serverConstraints[] = $constraint;
 
         foreach ($constraint->groups as $group) {
-            $this->constraintsByGroup[$group][] = $constraint;
+            $this->serverConstraintsByGroup[$group][] = $constraint;
         }
 
         return $this;
     }
 
     /**
-     * @param array $constraints
-     * @return $this
+     * {@inheritdoc}
      */
-    public function addConstraints(array $constraints)
+    public function addServerConstraints(array $constraints)
     {
         foreach ($constraints as $constraint) {
-            $this->addConstraint($constraint);
+            $this->addServerConstraint($constraint);
         }
 
         return $this;
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
-    public function getConstraints()
+    public function getServerConstraints()
     {
-        return $this->constraints;
+        return $this->serverConstraints;
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
-    public function hasConstraints()
+    public function hasServerConstraints()
     {
-        return count($this->constraints) > 0;
+        return count($this->serverConstraints) > 0;
     }
 
     /**
-     * @param $group
-     * @return array
+     * {@inheritdoc}
      */
-    public function findConstraints($group)
+    public function findServerConstraints($group)
     {
-        return isset($this->constraintsByGroup[$group])
-            ? $this->constraintsByGroup[$group]
+        return isset($this->serverConstraintsByGroup[$group])
+            ? $this->serverConstraintsByGroup[$group]
             : [];
     }
 
     /**
-     * @param $name
-     * @param FormMetadata $formMetadata
-     * @return $this
+     * {@inheritdoc}
      */
-    public function add($name, FormMetadata $formMetadata)
+    public function addClientConstraint(ClientConstraint $constraint)
+    {
+        $this->clientConstraints[] = $constraint;
+
+        foreach ($constraint->groups as $group) {
+            $this->clientConstraintsByGroup[$group][] = $constraint;
+        }
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addClientConstraints(array $constraints)
+    {
+        foreach ($constraints as $constraint) {
+            $this->addClientConstraint($constraint);
+        }
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getClientConstraints()
+    {
+        return $this->serverConstraints;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasClientConstraints()
+    {
+        return count($this->serverConstraints) > 0;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function findClientConstraints($group)
+    {
+        return isset($this->serverConstraintsByGroup[$group])
+            ? $this->serverConstraintsByGroup[$group]
+            : [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isRoot()
+    {
+        return null === $this->parent;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getParent()
+    {
+        return $this->parent;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setParent(FormMetadata $parent = null)
+    {
+        $this->parent = $parent;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addChild($name, FormMetadata $formMetadata)
     {
         $this->children[$name] = $formMetadata;
+        $formMetadata->setParent($this);
 
         return $this;
     }

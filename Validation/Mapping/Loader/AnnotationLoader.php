@@ -4,12 +4,13 @@ namespace ITE\FormBundle\Validation\Mapping\Loader;
 
 use Doctrine\Common\Annotations\Reader;
 use ITE\FormBundle\Validation\Constraint;
-use Symfony\Component\Validator\Mapping\ClassMetadata;
+use ITE\FormBundle\Validation\Mapping\ClassMetadata;
 
 /**
  * Loads validation metadata using a Doctrine annotation {@link Reader}.
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class AnnotationLoader implements LoaderInterface
 {
@@ -32,13 +33,13 @@ class AnnotationLoader implements LoaderInterface
         $className = $reflClass->name;
         $success = false;
 
-//        foreach ($this->reader->getClassAnnotations($reflClass) as $constraint) {
-//            if ($constraint instanceof Constraint) {
-//                $metadata->addConstraint($constraint);
-//            }
-//
-//            $success = true;
-//        }
+        foreach ($this->reader->getClassAnnotations($reflClass) as $constraint) {
+            if ($constraint instanceof Constraint) {
+                $metadata->addConstraint($constraint);
+            }
+
+            $success = true;
+        }
 
         foreach ($reflClass->getProperties() as $property) {
             if ($property->getDeclaringClass()->name == $className) {

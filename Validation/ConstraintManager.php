@@ -2,8 +2,7 @@
 
 namespace ITE\FormBundle\Validation;
 
-use Symfony\Component\Validator\Constraint;
-use ITE\FormBundle\Validation\Constraint as ClientConstraint;
+use Symfony\Component\Validator\Constraint as ServerConstraint;
 
 /**
  * Class ConstraintManager
@@ -39,10 +38,10 @@ class ConstraintManager
     }
 
     /**
-     * @param Constraint $constraint
-     * @return ClientConstraint|null
+     * @param ServerConstraint $constraint
+     * @return Constraint|null
      */
-    public function convert(Constraint $constraint)
+    public function convert(ServerConstraint $constraint)
     {
         foreach ($this->converters as $converter) {
             if ($converter->supports($constraint)) {
@@ -54,9 +53,9 @@ class ConstraintManager
     }
 
     /**
-     * @param ClientConstraint $constraint
+     * @param Constraint $constraint
      */
-    public function process(ClientConstraint $constraint)
+    public function process(Constraint $constraint)
     {
         foreach ($this->processors as $processor) {
             if ($processor->supports($constraint)) {

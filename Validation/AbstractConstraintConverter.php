@@ -2,7 +2,7 @@
 
 namespace ITE\FormBundle\Validation;
 
-use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Constraint as ServerConstraint;
 
 /**
  * Class AbstractConstraintConverter
@@ -12,21 +12,11 @@ use Symfony\Component\Validator\Constraint;
 abstract class AbstractConstraintConverter implements ConstraintConverterInterface
 {
     /**
-     * {@inheritdoc}
-     */
-    abstract public function supports(Constraint $constraint);
-
-    /**
-     * {@inheritdoc}
-     */
-    abstract public function convert(Constraint $constraint);
-
-    /**
-     * @param Constraint $constraint
+     * @param ServerConstraint $constraint
      * @param string $clientConstraintClass
      * @return array
      */
-    protected function getOptions(Constraint $constraint, $clientConstraintClass)
+    protected function getOptions(ServerConstraint $constraint, $clientConstraintClass)
     {
         $options = [];
 

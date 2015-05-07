@@ -9,11 +9,34 @@ use Symfony\Component\Validator\Exception\MissingOptionsException;
 /**
  * Class Constraint
  *
+ * @see Symfony\Component\Validator\Constraint
+ *
+ * @property array $groups The groups that the constraint belongs to
+ *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 abstract class Constraint
 {
+    /**
+     * The name of the group given to all constraints with no explicit group.
+     *
+     * @var string
+     */
     const DEFAULT_GROUP = 'Default';
+
+    /**
+     * Marks a constraint that can be put onto classes.
+     *
+     * @var string
+     */
+    const CLASS_CONSTRAINT = 'class';
+
+    /**
+     * Marks a constraint that can be put onto properties.
+     *
+     * @var string
+     */
+    const PROPERTY_CONSTRAINT = 'property';
 
     /**
      * @var array $attributes
@@ -79,8 +102,16 @@ abstract class Constraint
     }
 
     /**
-     * @param string $option
-     * @param mixed $value
+     * Sets the value of a lazily initialized option.
+     *
+     * Corresponding properties are added to the object on first access. Hence
+     * this method will be called at most once per constraint instance and
+     * option name.
+     *
+     * @param string $option The option name
+     * @param mixed  $value  The value to set
+     *
+     * @throws InvalidOptionsException If an invalid option name is given
      */
     public function __set($option, $value)
     {
@@ -90,37 +121,96 @@ abstract class Constraint
             return;
         }
 
-        throw new InvalidOptionsException(sprintf('The option "%s" does not exist in constraint %s', $option, get_class($this)), [$option]);
+        throw new InvalidOptionsException(sprintf('The option "%s" does not exist in constraint %s', $option, get_class($this)), array($option));
     }
 
     /**
-     * @param string $option
-     * @return array
+     * Returns the value of a lazily initialized option.
+     *
+     * Corresponding properties are added to the object on first access. Hence
+     * this method will be called at most once per constraint instance and
+     * option name.
+     *
+     * @param string $option The option name
+     *
+     * @return mixed The value of the option
+     *
+     * @throws InvalidOptionsException If an invalid option name is given
+     *
+     * @internal This method should not be used or overwritten in userland code.
+     *
+     * @since 2.6
      */
     public function __get($option)
     {
         if ('groups' === $option) {
-            $this->groups = [self::DEFAULT_GROUP];
+            $this->groups = array(self::DEFAULT_GROUP);
 
             return $this->groups;
         }
 
-        throw new InvalidOptionsException(sprintf('The option "%s" does not exist in constraint %s', $option, get_class($this)), [$option]);
+        throw new InvalidOptionsException(sprintf('The option "%s" does not exist in constraint %s', $option, get_class($this)), array($option));
     }
 
     /**
+     * Adds the given group if this constraint is in the Default group.
+     *
+     * @param string $group
+     *
+     * @api
+     */
+    public function addImplicitGroupName($group)
+    {
+        if (in_array(Constraint::DEFAULT_GROUP, $this->groups) && !in_array($group, $this->groups)) {
+            $this->groups[] = $group;
+        }
+    }
+
+    /**
+     * Returns the name of the default option.
+     *
+     * Override this method to define a default option.
+     *
      * @return string
+     *
+     * @see __construct()
+     *
+     * @api
      */
     public function getDefaultOption()
     {
     }
 
     /**
+     * Returns the name of the required options.
+     *
+     * Override this method if you want to define required options.
+     *
      * @return array
+     *
+     * @see __construct()
+     *
+     * @api
      */
     public function getRequiredOptions()
     {
-        return [];
+        return array();
+    }
+
+    /**
+     * Returns whether the constraint can be put onto classes, properties or
+     * both.
+     *
+     * This method should return one or more of the constants
+     * Constraint::CLASS_CONSTRAINT and Constraint::PROPERTY_CONSTRAINT.
+     *
+     * @return string|array One or more constant values
+     *
+     * @api
+     */
+    public function getTargets()
+    {
+        return self::PROPERTY_CONSTRAINT;
     }
 
     /**

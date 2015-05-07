@@ -2,8 +2,7 @@
 
 namespace ITE\FormBundle\Validation;
 
-use Symfony\Component\Validator\Constraint;
-use ITE\FormBundle\Validation\Constraint as ClientConstraint;
+use Symfony\Component\Validator\Constraint as ServerConstraint;
 
 /**
  * Interface ConstraintConverterInterface
@@ -13,14 +12,14 @@ use ITE\FormBundle\Validation\Constraint as ClientConstraint;
 interface ConstraintConverterInterface
 {
     /**
-     * @param Constraint $constraint
+     * @param ServerConstraint $constraint
      * @return bool
      */
-    public function supports(Constraint $constraint);
+    public function supports(ServerConstraint $constraint);
 
     /**
-     * @param Constraint $constraint
-     * @return ClientConstraint
+     * @param ServerConstraint $constraint
+     * @return Constraint
      */
-    public function convert(Constraint $constraint);
+    public function convert(ServerConstraint $constraint);
 }

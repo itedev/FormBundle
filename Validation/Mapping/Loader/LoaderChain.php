@@ -2,8 +2,8 @@
 
 namespace ITE\FormBundle\Validation\Mapping\Loader;
 
+use ITE\FormBundle\Validation\Mapping\ClassMetadata;
 use Symfony\Component\Validator\Exception\MappingException;
-use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 /**
  * Loads validation metadata from multiple {@link LoaderInterface} instances.
@@ -13,6 +13,7 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
  * loaders in the chain.
  *
  * @author Bernhard Schussek <bschussek@gmail.com>
+ * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class LoaderChain implements LoaderInterface
 {
