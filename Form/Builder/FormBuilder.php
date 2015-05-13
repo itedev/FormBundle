@@ -78,22 +78,23 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
 
         parent::add($child, $type, $options);
 
-        // PRE_SET_DATA event listener for root builder
+        // FormEvents::PRE_SET_DATA
         $this
             ->get($child)
             ->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event)
             use ($child, $type, $options, $parents, $formModifier, $propertyAccessor, $formAccessor) {
                 $form = $event->getForm()->getParent();
-                $data = $event->getData();
+                if ($form->isSubmitted()) {
+                    return;
+                }
 
+//                $data = $event->getData();
 //                $parentValues = [];
 //                foreach ($parents as $parent) {
 //                    $parentValues[$parent] = isset($data)
 //                        ? $propertyAccessor->getValue($data, $parent)
 //                        : null;
 //                }
-//
-//                $childForm = $form->get($child);
 
                 $parentValues = [];
                 foreach ($parents as $parent) {
@@ -116,16 +117,13 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
             })
         ;
 
+        // FormEvents::PRE_SUBMIT
         $this
             ->get($child)
             ->addEventListener(FormEvents::PRE_SUBMIT, function(FormEvent $event)
             use ($child, $type, $options, $parents, $formModifier, $formAccessor) {
                 $form = $event->getForm()->getParent();
 
-//                $parentValues = [];
-//                foreach ($parents as $parent) {
-//                    $parentValues[$parent] = $form->get($parent)->getData();
-//                }
                 $parentValues = [];
                 foreach ($parents as $parent) {
                     $parentForm = $formAccessor->getForm($form, $parent);

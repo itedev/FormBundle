@@ -188,7 +188,7 @@
     },
 
     isCompound: function() {
-      return this.hasOption('compound');
+      return this.getOption('compound', false);
     },
 
     hasDelegateSelector: function() {
@@ -203,8 +203,16 @@
       return this.hasOption('hierarchical_auto_initialize');
     },
 
-    isHierarchicalTrigger: function() {
-      return this.hasOption('hierarchical_trigger');
+    isHierarchicalOriginator: function() {
+      return this.getOption('hierarchical_originator', false);
+    },
+
+    hasHierarchicalTriggerEvent: function() {
+      return this.hasOption('hierarchical_trigger_event');
+    },
+
+    getHierarchicalTriggerEvent: function() {
+      return this.getOption('hierarchical_trigger_event');
     }
 
   });
@@ -322,7 +330,10 @@
           }
         });
       }
-//      $element.trigger('change.hierarchical');
+
+      if (element.hasHierarchicalTriggerEvent()) {
+        $element.trigger(element.getHierarchicalTriggerEvent());
+      }
     },
 
     apply: function(context, replacementTokens) {
@@ -331,7 +342,7 @@
       var self = this;
 //      var $parentsToChange = [];
       $.each(this.elements, function(selector, element) {
-        if (!element.hasHierarchicalChildren() && !element.isHierarchicalTrigger()) {
+        if (!element.hasHierarchicalChildren() && !element.isHierarchicalOriginator()) {
           return;
         }
 

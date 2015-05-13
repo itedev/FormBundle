@@ -100,8 +100,11 @@ class FormTypeHierarchicalExtension extends AbstractTypeExtension
         $elementOptions = [
             'compound' => $view->vars['compound'],
         ];
-        if ($options['hierarchical_trigger']) {
-            $elementOptions['hierarchical_trigger'] = true;
+        if ($options['hierarchical_originator']) {
+            $elementOptions['hierarchical_originator'] = true;
+        }
+        if ($options['hierarchical_trigger_event']) {
+            $elementOptions['hierarchical_trigger_event'] = $options['hierarchical_trigger_event'];
         }
 //        if (1 === count($parentViews)
 //            && FormUtils::isFormTypeChildOf($form, 'choice')
@@ -138,16 +141,16 @@ class FormTypeHierarchicalExtension extends AbstractTypeExtension
 
         $resolver->setDefaults([
             'hierarchical_parents' => null,
-            'hierarchical_trigger' => false,
+            'hierarchical_originator' => false,
+            'hierarchical_trigger_event' => null,
         ]);
         $resolver->setNormalizers(array(
             'hierarchical_parents' => $hierarchicalParentsNormalizer,
         ));
         $resolver->setAllowedTypes([
             'hierarchical_parents' => ['null', 'string', 'array'],
-        ]);
-        $resolver->setAllowedTypes([
-            'hierarchical_trigger' => ['bool'],
+            'hierarchical_originator' => ['bool'],
+            'hierarchical_trigger_event' => ['null', 'string'],
         ]);
     }
 

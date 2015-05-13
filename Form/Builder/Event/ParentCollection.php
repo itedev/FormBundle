@@ -28,7 +28,7 @@ class ParentCollection implements Countable, IteratorAggregate
     }
 
     /**
-     * @param $parent
+     * @param string $parent
      * @return bool
      */
     public function has($parent)
@@ -37,8 +37,8 @@ class ParentCollection implements Countable, IteratorAggregate
     }
 
     /**
-     * @param $parent
-     * @return null
+     * @param string $parent
+     * @return mixed|null
      */
     public function get($parent)
     {

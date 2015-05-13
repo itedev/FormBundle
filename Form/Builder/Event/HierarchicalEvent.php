@@ -34,9 +34,9 @@ class HierarchicalEvent
     protected $originator;
 
     /**
-     * @var array
+     * @var ParentCollection
      */
-    protected $parents = [];
+    protected $parents;
 
     /**
      * @var int|string|FormBuilderInterface
@@ -47,6 +47,7 @@ class HierarchicalEvent
      * @var string|FormTypeInterface
      */
     protected $type;
+
     /**
      * @var array
      */
@@ -59,7 +60,8 @@ class HierarchicalEvent
      * @param string|null $originator
      * @param FormAccessor|null $formAccessor
      */
-    public function __construct(FormInterface $form, array $parents, array $options, $originator = null, FormAccessor $formAccessor = null)
+    public function __construct(FormInterface $form, array $parents, array $options, $originator = null,
+        FormAccessor $formAccessor = null)
     {
         $this->form = $form;
         $this->parents = new ParentCollection($parents);
@@ -167,7 +169,16 @@ class HierarchicalEvent
     }
 
     /**
-     * @param $parent
+     * @param mixed $data
+     * @return $this
+     */
+    public function setData($data)
+    {
+        return $this->setOption('data', $data);
+    }
+
+    /**
+     * @param string $parent
      * @return mixed|null
      */
     public function getParent($parent)
@@ -214,15 +225,17 @@ class HierarchicalEvent
     /**
      * @return bool
      */
-    public function hasAllParents()
+    public function isParentsEmpty()
     {
-        foreach ($this->parents as $parent => $parentData) {
-            if (!FormUtil::isEmpty($parentData)) {
-                return false;
-            }
-        }
+        return $this->parents->isEmpty();
+    }
 
-        return true;
+    /**
+     * @return bool
+     */
+    public function isParentsNotEmpty()
+    {
+        return $this->parents->isNotEmpty();
     }
 
     /**
