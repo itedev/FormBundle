@@ -90,7 +90,12 @@ class FormTypeHierarchicalExtension extends AbstractTypeExtension
 
             $formAccessor = $this->formAccessor;
             $parentViews = array_map(function($parent) use ($ascendantView, $formAccessor) {
-                return $formAccessor->getView($ascendantView, $parent);
+                $parentView = $formAccessor->getView($ascendantView, $parent);
+                if (null === $parentView) {
+                    throw new \RuntimeException(sprintf('FormView for parent "%s" not found', $parent));
+                }
+
+                return $parentView;
             }, $parents);
             $parentSelectors = array_map(function(FormView $parentView) {
                 return FormUtils::generateSelector($parentView);

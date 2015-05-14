@@ -66,12 +66,20 @@
         children: {}
       };
       var $childrenElements = {};
+      var childrenCount = 0;
       $.each(element.getHierarchicalChildren(), function(i, childSelector) {
         var $childElement = SF.elements.getJQueryElement(childSelector, context, replacementTokens);
-
         $childrenElements[childSelector] = $childElement;
-        eventData.children['#' + $childElement.attr('id')] = $childElement.get(0);
+
+        if ($childElement.length) {
+          eventData.children['#' + $childElement.attr('id')] = $childElement.get(0);
+          childrenCount++;
+        }
       });
+
+      if (!childrenCount) {
+        return;
+      }
 
       var event = $.Event('ite-before-submit.hierarchical', eventData);
       $element.trigger(event);
@@ -120,6 +128,10 @@
             var childElement = SF.elements.get(childSelector);
             var $childElement = $childrenElements[childSelector];
             var $newChildElement = SF.elements.getJQueryElement(childSelector, newContext, replacementTokens);
+
+            if (!$childElement.length) {
+              return;
+            }
 
             // set element value
             var childEventData = {
@@ -318,6 +330,7 @@
             $element.html($newElement.html());
             $element.val($newElement.val());
           }
+          $element.html($newElement.html());
         } else {
           $element.html($newElement.html());
         }
