@@ -240,9 +240,8 @@ class FormUtils
 
             $type = $child->getConfig()->getType();
             $isCollection = FormUtils::isResolvedFormTypeChildOf($type, 'collection');
-            if ($isCollection) {
-                $prototype = $child->getConfig()->getAttribute('prototype');
-
+            $prototype = $child->getConfig()->getAttribute('prototype');
+            if ($isCollection && null !== $prototype) {
                 $result = !is_array($result) ? [$result] : $result;
                 $result = call_user_func_array($callback, array_merge([$prototype], $result));
                 self::formWalkRecursiveWithPrototype($prototype, $callback, $result);
@@ -271,6 +270,36 @@ class FormUtils
             $result = call_user_func_array($callback, array_merge([$child], $data));
             if ($child->count()) {
                 self::formViewWalkRecursive($child, $callback, $result);
+            }
+        }
+    }
+
+    /**
+     * @param FormView $view
+     * @param $callback
+     * @param mixed|null $data
+     * @throws \InvalidArgumentException
+     */
+    public static function formViewWalkRecursiveWithPrototype(FormView $view, $callback, $data = null)
+    {
+        if (!is_callable($callback)) {
+            throw new \InvalidArgumentException();
+        }
+        foreach ($view as $child) {
+            /** @var $child FormView */
+            $data = !is_array($data) ? [$data] : $data;
+            $result = call_user_func_array($callback, array_merge([$child], $data));
+
+            if (array_key_exists('prototype', $child->vars)) {
+                $prototype = $child->vars['prototype'];
+
+                $result = !is_array($result) ? [$result] : $result;
+                $result = call_user_func_array($callback, array_merge([$prototype], $result));
+                self::formViewWalkRecursiveWithPrototype($prototype, $callback, $result);
+            } else {
+                if ($child->count()) {
+                    self::formViewWalkRecursiveWithPrototype($child, $callback, $result);
+                }
             }
         }
     }
