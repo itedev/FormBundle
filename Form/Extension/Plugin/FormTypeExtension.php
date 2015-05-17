@@ -20,41 +20,41 @@ class FormTypeExtension extends AbstractTypeExtension
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $pluginsNormalizer = function (Options $options, $plugins) {
+        $pluginsNormalizer = function(Options $options, $plugins) {
             if (!isset($plugins)) {
-                return array();
+                return [];
             }
 
-            $normalizedPlugins = array();
+            $normalizedPlugins = [];
             if (is_array($plugins)) {
                 foreach ($plugins as $plugin => $pluginOptions) {
                     if (is_int($plugin)) {
                         if (is_string($pluginOptions)) {
-                            $normalizedPlugins[$pluginOptions] = array();
+                            $normalizedPlugins[$pluginOptions] = [];
                         }
                     } else {
-                        $normalizedPlugins[$plugin] = is_array($pluginOptions) ? $pluginOptions : array();
+                        $normalizedPlugins[$plugin] = is_array($pluginOptions) ? $pluginOptions : [];
                     }
                 }
             } else {
-                $normalizedPlugins[$plugins] = array();
+                $normalizedPlugins[$plugins] = [];
             }
 
             return $normalizedPlugins;
         };
 
-        $resolver->setOptional(array(
+        $resolver->setOptional([
             'plugins'
-        ));
+        ]);
 //        $resolver->setDefaults(array(
 //            'plugins' => array()
 //        ));
-        $resolver->setAllowedTypes(array(
-            'plugins' => array('array'),
-        ));
-        $resolver->setNormalizers(array(
+        $resolver->setAllowedTypes([
+            'plugins' => ['array'],
+        ]);
+        $resolver->setNormalizers([
             'plugins' => $pluginsNormalizer,
-        ));
+        ]);
     }
 
     /**

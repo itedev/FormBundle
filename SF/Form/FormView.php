@@ -12,17 +12,17 @@ class FormView
     /**
      * @var array
      */
-    public $options = [];
+    private $options = [];
 
     /**
      * @var FormView|null
      */
-    public $parent;
+    private $parent;
 
     /**
      * @var array|FormView[]
      */
-    public $children = [];
+    private $children = [];
 
     /**
      * @param FormView $parent
@@ -40,6 +40,22 @@ class FormView
     public function getParent()
     {
         return $this->parent;
+    }
+
+    /**
+     * @return FormView
+     */
+    public function getRoot()
+    {
+        return null !== $this->parent ? $this->getRoot() : $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRoot()
+    {
+        return null !== $this->parent;
     }
 
     /**
@@ -129,5 +145,28 @@ class FormView
     public function count()
     {
         return count($this->children);
+    }
+
+    /**
+     * @return array
+     */
+    public function toArray()
+    {
+        $children = [];
+        foreach ($this->children as $name => $child) {
+            $children[$name] = $child->toArray();
+        }
+
+        $options = [];
+        foreach ($this->options as $name => $value) {
+            $options[$name] = 'prototype' === $name
+                ? $value->toArray()
+                : $value;
+        }
+
+        return [
+            'options' => $options,
+            'children' => $children
+        ];
     }
 }

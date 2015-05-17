@@ -2,29 +2,29 @@
 
 namespace ITE\FormBundle\SF\Form;
 
-use ITE\FormBundle\Util\FormUtils;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView as ServerFormView;
+use Symfony\Component\Form\FormView;
+use ITE\FormBundle\SF\Form\FormView as ClientFormView;
 
 /**
  * Class FormViewBuilder
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-class FormViewBuilder
+class FormViewBuilder implements FormViewBuilderInterface
 {
     /**
-     * @param ServerFormView $serverView
+     * @param FormView $view
      * @param FormInterface $form
-     * @return FormView
+     * @return ClientFormView
      */
-    public function createView(ServerFormView $serverView, FormInterface $form)
+    public function createView(FormView $view, FormInterface $form)
     {
-        $view = new FormView();
-        $view->setOptions([
-            'id' => $serverView->vars['id'],
-            'name' => $serverView->vars['name'],
-            'full_name' => $serverView->vars['full_name'],
+        $clientView = new ClientFormView();
+        $clientView->setOptions([
+            'id' => $view->vars['id'],
+            'name' => $view->vars['name'],
+            'full_name' => $view->vars['full_name'],
 //                'read_only' => $serverView->vars['read_only'],
 //                'required' => $serverView->vars['required'],
 //                'compound' => $serverView->vars['compound'],
@@ -32,23 +32,23 @@ class FormViewBuilder
 
         foreach ($form as $childForm) {
             $name = $childForm->getName();
-            $childServerView = $serverView[$name];
+            $childView = $view[$name];
 
-            $childView = $this->createView($childServerView, $childForm);
+            $childClientView = $this->createView($childView, $childForm);
 
-            if ($childForm->getConfig()->hasAttribute('prototype') && isset($childServerView->vars['prototype'])) {
+            if ($childForm->getConfig()->hasAttribute('prototype') && isset($childView->vars['prototype'])) {
                 $prototypeForm = $childForm->getConfig()->getAttribute('prototype');
-                $prototypeServerView = $childServerView->vars['prototype'];
+                $prototypeView = $childView->vars['prototype'];
 
-                $prototypeFormView = $this->createView($prototypeServerView, $prototypeForm);
+                $prototypeClientView = $this->createView($prototypeView, $prototypeForm);
 
-                $childView->setOption('prototype', $prototypeFormView);
-                $childView->setOption('prototype_name', $childForm->getConfig()->getOption('prototype_name'));
+                $childClientView->setOption('prototype', $prototypeClientView);
+                $childClientView->setOption('prototype_name', $childForm->getConfig()->getOption('prototype_name'));
             }
 
-            $view->addChild($name, $childView);
+            $clientView->addChild($name, $childClientView);
         }
 
-        return $view;
+        return $clientView;
     }
 }

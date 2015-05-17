@@ -19,12 +19,12 @@ class SFFormExtension extends SFExtension implements SFFormExtensionInterface
     /**
      * @var array
      */
-    protected $components = array();
+    protected $components = [];
 
     /**
      * @var array
      */
-    protected $plugins = array();
+    protected $plugins = [];
 
     /**
      * @var ElementBag $elementBag
@@ -32,13 +32,19 @@ class SFFormExtension extends SFExtension implements SFFormExtensionInterface
     protected $elementBag;
 
     /**
-     * @var array
+     * @var FormBag
      */
-    protected $formErrors = array();
+    public $formBag;
+
+//    /**
+//     * @var array
+//     */
+//    protected $formErrors = [];
 
     public function __construct()
     {
         $this->elementBag = new ElementBag();
+        $this->formBag = new FormBag();
     }
 
     /**
@@ -46,7 +52,7 @@ class SFFormExtension extends SFExtension implements SFFormExtensionInterface
      */
     public function getStylesheets()
     {
-        $inputs = array();
+        $inputs = [];
 
         // add component css
         foreach ($this->getComponents() as $component) {
@@ -68,7 +74,7 @@ class SFFormExtension extends SFExtension implements SFFormExtensionInterface
      */
     public function getJavascripts()
     {
-        $inputs = array('@ITEFormBundle/Resources/public/js/sf.form.js');
+        $inputs = ['@ITEFormBundle/Resources/public/js/sf.form.js'];
 
         // add component js
         foreach ($this->getComponents() as $component) {
@@ -96,6 +102,11 @@ class SFFormExtension extends SFExtension implements SFFormExtensionInterface
         if ($this->elementBag->count()) {
             $dump .= 'SF.elements.set(' . json_encode($this->elementBag->peekAll()) . ');';
             $dump .= 'SF.elements.apply();';
+        }
+
+        if ($this->formBag->count()) {
+            $dump .= 'SF.forms.set(' . json_encode($this->formBag->toArray()) . ');';
+            $dump .= 'SF.forms.apply();';
         }
 
         $dump .= '});})(jQuery);';
@@ -157,6 +168,16 @@ class SFFormExtension extends SFExtension implements SFFormExtensionInterface
     public function getElementBag()
     {
         return $this->elementBag;
+    }
+
+    /**
+     * Get formBag
+     *
+     * @return FormBag
+     */
+    public function getFormBag()
+    {
+        return $this->formBag;
     }
 
 //    /**

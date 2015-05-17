@@ -5,6 +5,8 @@ parameters:
 
     form.resolved_type_factory.class:   ITE\FormBundle\Form\ResolvedFormTypeFactory
 
+    ite_form.form_view_builder.class:   ITE\FormBundle\SF\Form\FormViewBuilder
+
     # todo: refactor services below
     ite_form.param_protector.class:     ITE\FormBundle\Service\Security\ParamProtector
 
@@ -25,6 +27,9 @@ services:
         arguments: [ @service_container ]
         tags:
             - { name: routing.loader }
+
+    ite_form.form_view_builder:
+        class: %ite_form.form_view_builder.class%
 
     ite_form.param_protector:
         class: %ite_form.param_protector.class%
