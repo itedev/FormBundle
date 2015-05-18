@@ -102,7 +102,8 @@ abstract class AbstractAjaxChoiceType extends AbstractType
                     'dataType' => 'json',
                 ),
                 'multiple' => $options['multiple'],
-                'allowClear' => false !== $options['empty_value'] && null !== $options['empty_value'],
+                'placeholder' => $options['placeholder'],
+                'allowClear' => !$options['required'],
             ))
         );
     }
