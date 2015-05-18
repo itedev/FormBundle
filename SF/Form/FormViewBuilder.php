@@ -3,7 +3,7 @@
 namespace ITE\FormBundle\SF\Form;
 
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
+use Symfony\Component\Form\FormView as ServerFormView;
 use ITE\FormBundle\SF\Form\FormView as ClientFormView;
 
 /**
@@ -14,11 +14,11 @@ use ITE\FormBundle\SF\Form\FormView as ClientFormView;
 class FormViewBuilder implements FormViewBuilderInterface
 {
     /**
-     * @param FormView $view
+     * @param ServerFormView $view
      * @param FormInterface $form
      * @return ClientFormView
      */
-    public function createView(FormView $view, FormInterface $form)
+    public function createView(ServerFormView $view, FormInterface $form)
     {
         $clientView = new ClientFormView();
         $clientView->setOptions([
