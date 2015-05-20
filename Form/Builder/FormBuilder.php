@@ -47,12 +47,7 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
     }
 
     /**
-     * @param int|string|FormBuilderInterface $child
-     * @param string|array $parents
-     * @param string|FormTypeInterface $type
-     * @param array $options
-     * @param null $formModifier
-     * @return $this|FormBuilderInterface
+     * {@inheritdoc}
      */
     public function addHierarchical($child, $parents, $type = null, array $options = array(), $formModifier = null)
     {
@@ -146,6 +141,25 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
                 FormUtils::setEventDispatcher($form->get($child), $ed);
             })
         ;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addDataAware($child, $type = null, $formModifier = null)
+    {
+        if (!is_callable($formModifier)) {
+            throw new \InvalidArgumentException('The form modifier handler must be a valid PHP callable.');
+        }
+        $this->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event) use ($child, $type, $formModifier) {
+            $form = $event->getForm();
+            $data = $event->getData();
+
+            $options = call_user_func($formModifier, $data);
+            $form->add($child, $type, $options);
+        });
 
         return $this;
     }
