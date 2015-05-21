@@ -30,6 +30,14 @@ interface FormBuilderInterface extends BaseFormBuilderInterface
      */
     public function addHierarchical($child, $parents, $type = null, array $options = array(), $formModifier = null);
 
+    /**
+     * @param int|string|FormBuilderInterface $child
+     * @param string|FormTypeInterface $type
+     * @param null $formModifier
+     * @return FormBuilderInterface
+     */
+    public function addDataAware($child, $type = null, $formModifier = null);
+
 //    /**
 //     * @param int|string|FormBuilderInterface $child
 //     * @param string|FormTypeInterface $type
