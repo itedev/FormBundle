@@ -164,55 +164,6 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
         return $this;
     }
 
-//    /**
-//     * @param int|string|FormBuilderInterface $child
-//     * @param string|FormTypeInterface $type
-//     * @param array $options
-//     * @param null $formModifier
-//     * @return $this|FormBuilderInterface
-//     */
-//    public function addDynamic($child, $type = null, array $options = array(), $formModifier = null)
-//    {
-//        $children = $this->all();
-//        if (empty($children)) {
-//            throw new \RuntimeException('You cannot add dynamic field to empty FormBuilder');
-//        }
-//        end($children);
-//        $sibling = key($children);
-//
-//        $this
-//          ->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event) use ($child, $type, $options, $formModifier) {
-//              $form = $event->getForm();
-//              $data = $event->getData();
-//
-//              $params = [$options, $data];
-//
-//              if (is_callable($formModifier)) {
-//                  $options = call_user_func_array($formModifier, $params);
-//              }
-//
-//              $form->add($child, $type, $options);
-//          })
-//        ;
-//        $this
-//          ->get($sibling)
-//          ->addEventListener(FormEvents::POST_SUBMIT, function(FormEvent $event) use ($child, $type, $options, $formModifier) {
-//              $form = $event->getForm()->getParent();
-//              $data = $form->getData();
-//
-//              $params = [$options, $data];
-//
-//              if (is_callable($formModifier)) {
-//                  $options = call_user_func_array($formModifier, $params);
-//              }
-//
-//              $form->add($child, $type, $options);
-//          })
-//        ;
-//
-//        return parent::add($child, $type, $options);
-//    }
-
     /**
      * @param $name
      * @param $type
