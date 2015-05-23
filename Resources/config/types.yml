@@ -2,6 +2,7 @@ parameters:
     ite_form.form.type.ajax_choice.class:           ITE\FormBundle\Form\Type\AjaxChoiceType
     ite_form.form.type.ajax_entity.class:           ITE\FormBundle\Form\Type\AjaxEntityType
     ite_form.form.type.google_font.class:           ITE\FormBundle\Form\Type\GoogleFontType
+    ite_form.form.type.range.class:                 ITE\FormBundle\Form\Type\RangeType
 
     # todo: refactor types below
     ite_form.form.input_entity_type.class:          ITE\FormBundle\Form\Type\InputEntityType
@@ -24,6 +25,11 @@ services:
         class: %ite_form.form.type.google_font.class%
         tags:
             - { name: form.type, alias: ite_google_font }
+
+    ite_form.form.type.range:
+        class: %ite_form.form.type.range.class%
+        tags:
+            - { name: form.type, alias: ite_range }
 
     ite_form.form.input_entity_type:
         class: %ite_form.form.input_entity_type.class%
