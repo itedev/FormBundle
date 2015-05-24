@@ -2,8 +2,8 @@
 
 namespace ITE\FormBundle\Form\Type\Plugin\Starrating;
 
+use ITE\FormBundle\Form\Type\Plugin\AbstractPluginType;
 use ITE\FormBundle\SF\Plugin\StarratingPlugin;
-use Symfony\Component\Form\AbstractType as BaseAbstractType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -13,36 +13,21 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-class RatingType extends BaseAbstractType
+class RatingType extends AbstractPluginType
 {
-    /**
-     * @var array $options
-     */
-    protected $options;
-
-    /**
-     * @param $options
-     */
-    public function __construct($options)
-    {
-        $this->options = $options;
-    }
-
     /**
      * {@inheritdoc}
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $resolver->setDefaults(array(
-            'plugin_options' => array(),
+        parent::setDefaultOptions($resolver);
+
+        $resolver->setDefaults([
             'expanded' => true,
-        ));
-        $resolver->setAllowedTypes(array(
-            'plugin_options' => array('array'),
-        ));
-        $resolver->setAllowedValues(array(
-            'expanded' => array(true),
-        ));
+        ]);
+        $resolver->setAllowedValues([
+            'expanded' => [true],
+        ]);
     }
 
     /**
@@ -50,13 +35,10 @@ class RatingType extends BaseAbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        if (!isset($view->vars['plugins'])) {
-            $view->vars['plugins'] = array();
-        }
-        $view->vars['plugins'][StarratingPlugin::getName()] = array(
-            'extras' => (object) array(),
+        $view->vars['plugins'][StarratingPlugin::getName()] = [
+            'extras' => (object) [],
             'options' => (object) array_replace_recursive($this->options, $options['plugin_options'])
-        );
+        ];
     }
 
     /**

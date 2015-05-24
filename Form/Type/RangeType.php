@@ -3,7 +3,6 @@
 namespace ITE\FormBundle\Form\Type;
 
 use ITE\FormBundle\Form\DataTransformer\RangeToArrayTransformer;
-use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -13,7 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-class RangeType extends AbstractType
+class RangeType extends AbstractRangeType
 {
     /**
      * {@inheritdoc}
@@ -40,16 +39,8 @@ class RangeType extends AbstractType
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $classNormalizer = function(Options $options, $class) {
-            $rangeInterface = 'ITE\FormBundle\Form\Data\RangeInterface';
-
-            $refClass = new \ReflectionClass($class);
-            if (!$refClass->implementsInterface($rangeInterface) ) {
-                throw new \RuntimeException(sprintf('Class "%s" must implement "%s" interface.', $class, $rangeInterface));
-            }
-
-            return $class;
-        };
+        // need to call parent method!
+        parent::setDefaultOptions($resolver);
 
         $resolver->setDefaults([
             'type' => 'text',
@@ -59,10 +50,6 @@ class RangeType extends AbstractType
             'from_name' => 'from',
             'to_name' => 'to',
             'error_bubbling' => false,
-            'class' => 'ITE\FormBundle\Form\Data\Range',
-        ]);
-        $resolver->setNormalizers([
-            'class' => $classNormalizer,
         ]);
     }
 

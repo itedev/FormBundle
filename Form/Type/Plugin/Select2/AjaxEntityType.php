@@ -41,7 +41,7 @@ class AjaxEntityType extends AbstractAjaxChoiceType
             return null;
         };
 
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'choice_list' => function (Options $options) {
                 return new AjaxEntityChoiceList(
                     $options['em'],
@@ -51,13 +51,13 @@ class AjaxEntityType extends AbstractAjaxChoiceType
             },
             'allow_create' => false,
             'create_url' => $createUrl,
-        ));
-        $resolver->setAllowedTypes(array(
-            'allow_create' => array('bool'),
-        ));
-        $resolver->setOptional(array(
+        ]);
+        $resolver->setAllowedTypes([
+            'allow_create' => ['bool'],
+        ]);
+        $resolver->setOptional([
             'create_route',
-        ));
+        ]);
     }
 
     /**

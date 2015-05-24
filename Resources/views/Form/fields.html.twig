@@ -46,17 +46,17 @@
     {{ block('ite_form_sf_element_plugins') }}
 {% endblock ite_bootstrap_datetimepicker_widget %}
 
-{% block ite_bootstrap_datetimepicker2_widget %}
-    <div id="{{ id }}_bootstrap_datetimepicker2" class="input-append bootstrap-datetimepicker2">
-        {{ block('form_widget_simple') }}
-        <span class="add-on">
-            <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
-        </span>
-    </div>
-    {% for plugin, element_data in plugins %}
-        {{ ite_form_sf_add_plugin_element('#' ~ id ~ '_bootstrap_datetimepicker2', plugin, element_data) }}
-    {% endfor %}
-{% endblock ite_bootstrap_datetimepicker2_widget %}
+{#{% block ite_bootstrap_datetimepicker2_widget %}#}
+    {#<div id="{{ id }}_bootstrap_datetimepicker2" class="input-append bootstrap-datetimepicker2">#}
+        {#{{ block('form_widget_simple') }}#}
+        {#<span class="add-on">#}
+            {#<i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>#}
+        {#</span>#}
+    {#</div>#}
+    {#{% for plugin, element_data in plugins %}#}
+        {#{{ ite_form_sf_add_plugin_element('#' ~ id ~ '_bootstrap_datetimepicker2', plugin, element_data) }}#}
+    {#{% endfor %}#}
+{#{% endblock ite_bootstrap_datetimepicker2_widget %}#}
 
 {% block ite_fileupload_file_widget %}
     {% set selector = id %}
@@ -141,6 +141,11 @@
         {{ ite_form_sf_add_plugin_element('#' ~ id ~ ' input[type="radio"]', plugin, element_data) }}
     {% endfor %}
 {% endblock ite_starrating_rating_widget %}
+
+{% block ite_ion_range_slider_range_widget %}
+    {{ block('form_widget_simple') }}
+    {{ block('ite_form_sf_element_plugins') }}
+{% endblock ite_ion_range_slider_range_widget %}
 
 {% block form_start %}
     {% spaceless %}

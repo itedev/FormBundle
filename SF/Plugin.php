@@ -80,7 +80,7 @@ abstract class Plugin implements ExtensionInterface
      */
     public function getStylesheets()
     {
-        return array();
+        return [];
     }
 
     /**
@@ -88,7 +88,7 @@ abstract class Plugin implements ExtensionInterface
      */
     public function getJavascripts()
     {
-        return array(sprintf('@ITEFormBundle/Resources/public/js/plugin/%s.js', static::getName()));
+        return [sprintf('@ITEFormBundle/Resources/public/js/plugin/%s.js', static::getName())];
     }
 
 } 

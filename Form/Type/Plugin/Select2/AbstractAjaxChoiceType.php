@@ -63,25 +63,25 @@ abstract class AbstractAjaxChoiceType extends AbstractType
                 throw new \RuntimeException('You must specify "route" or "url" option.');
             }
         };
-        $resolver->setDefaults(array(
-            'choices' => array(),
+        $resolver->setDefaults([
+            'choices' => [],
             'allow_modify' => true,
-            'plugin_options' => array(),
+            'plugin_options' => [],
             'route' => null,
-            'route_parameters' => array(),
+            'route_parameters' => [],
             'url' => null,
-        ));
-        $resolver->setNormalizers(array(
+        ]);
+        $resolver->setNormalizers([
             'url' => $urlNormalizer,
-        ));
-        $resolver->setAllowedTypes(array(
-            'plugin_options' => array('array'),
-        ));
-        $resolver->setAllowedValues(array(
-            'allow_modify' => array(true),
-            'choices' => array(array()),
-            'expanded' => array(false),
-        ));
+        ]);
+        $resolver->setAllowedTypes([
+            'plugin_options' => ['array'],
+        ]);
+        $resolver->setAllowedValues([
+            'allow_modify' => [true],
+            'choices' => [[]],
+            'expanded' => [false],
+        ]);
     }
 
     /**
@@ -89,23 +89,20 @@ abstract class AbstractAjaxChoiceType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        if (!isset($view->vars['plugins'])) {
-            $view->vars['plugins'] = array();
-        }
-        $view->vars['plugins'][Select2Plugin::getName()] = array(
-            'extras' => array(
+        $view->vars['plugins'][Select2Plugin::getName()] = [
+            'extras' => [
                 'ajax' => true,
-            ),
-            'options' => array_replace_recursive($this->options, $options['plugin_options'], array(
-                'ajax' => array(
+            ],
+            'options' => array_replace_recursive($this->options, $options['plugin_options'], [
+                'ajax' => [
                     'url' => $options['url'],
                     'dataType' => 'json',
-                ),
+                ],
                 'multiple' => $options['multiple'],
                 'placeholder' => $options['placeholder'],
                 'allowClear' => !$options['required'],
-            ))
-        );
+            ]),
+        ];
     }
 
 }

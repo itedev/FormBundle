@@ -2,8 +2,8 @@
 
 namespace ITE\FormBundle\Form\Type\Plugin\Select2;
 
+use ITE\FormBundle\Form\Type\Plugin\AbstractPluginType;
 use ITE\FormBundle\SF\Plugin\Select2Plugin;
-use Symfony\Component\Form\AbstractType as BaseAbstractType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -13,25 +13,12 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-class AbstractChoiceType extends BaseAbstractType
+class AbstractChoiceType extends AbstractPluginType
 {
-    /**
-     * @var array $options
-     */
-    protected $options;
-
     /**
      * @var string $type
      */
     protected $type;
-
-    /**
-     * @param $options
-     */
-    public function __construct($options)
-    {
-        $this->options = $options;
-    }
 
     /**
      * @param $type
@@ -44,32 +31,16 @@ class AbstractChoiceType extends BaseAbstractType
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
-    {
-        $resolver->setDefaults(array(
-            'plugin_options' => array(),
-        ));
-        $resolver->setAllowedTypes(array(
-            'plugin_options' => array('array'),
-        ));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         if ('entity' === $this->type) {
             $view->vars['attr']['data-property'] = $options['property'];
         }
 
-        if (!isset($view->vars['plugins'])) {
-            $view->vars['plugins'] = array();
-        }
-        $view->vars['plugins'][Select2Plugin::getName()] = array(
-            'extras' => (object) array(),
+        $view->vars['plugins'][Select2Plugin::getName()] = [
+            'extras' => (object) [],
             'options' => (object) array_replace_recursive($this->options, $options['plugin_options'])
-        );
+        ];
 
         array_splice(
             $view->vars['block_prefixes'],

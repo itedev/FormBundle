@@ -2,8 +2,8 @@
 
 namespace ITE\FormBundle\Form\Type\Plugin\BootstrapDatetimepicker;
 
+use ITE\FormBundle\Form\Type\Plugin\AbstractPluginType;
 use ITE\FormBundle\SF\Plugin\BootstrapDatetimepickerPlugin;
-use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\DataTransformer\DateTimeToLocalizedStringTransformer;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -18,32 +18,20 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-class BirthdayType extends AbstractType
+class BirthdayType extends AbstractPluginType
 {
-    /**
-     * @var array $options
-     */
-    protected $options;
-
-    /**
-     * @param $options
-     */
-    public function __construct($options)
-    {
-        $this->options = $options;
-    }
-
     /**
      * {@inheritdoc}
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $resolver->setDefaults(array(
-                'years' => range(date('Y') - 120, date('Y')),
-                'plugin_options' => array(
-                    'locale' => \Locale::getDefault()
-                ),
-            ));
+        parent::setDefaultOptions($resolver);
+        $resolver->setDefaults([
+            'years' => range(date('Y') - 120, date('Y')),
+            'plugin_options' => [
+                'locale' => \Locale::getDefault()
+            ],
+        ]);
     }
 
     /**
