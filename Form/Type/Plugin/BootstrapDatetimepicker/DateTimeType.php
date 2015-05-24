@@ -4,6 +4,7 @@ namespace ITE\FormBundle\Form\Type\Plugin\BootstrapDatetimepicker;
 
 use ITE\FormBundle\Form\Type\Plugin\AbstractPluginType;
 use ITE\FormBundle\SF\Plugin\BootstrapDatetimepickerPlugin;
+use ITE\FormBundle\Util\MomentJsUtils;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Options;
@@ -27,13 +28,9 @@ class DateTimeType extends AbstractPluginType
     {
         parent::setDefaultOptions($resolver);
 
-        $format = function(Options $options) {
-            return 'yyyy-MM-dd HH' . ($options['with_minutes'] ? ':mm' : '') . ($options['with_seconds'] ? ':ss' : '');
-        };
-
         $resolver->setDefaults([
             'widget' => 'single_text',
-            'format' => $format,
+            'format' => 'yyyy-MM-dd HH:mm:ss',
             'plugin_options' => [
                 'locale' => \Locale::getDefault()
             ],
@@ -51,7 +48,7 @@ class DateTimeType extends AbstractPluginType
         $view->vars['plugins'][BootstrapDatetimepickerPlugin::getName()] = [
             'extras' => (object) [],
             'options' => array_replace_recursive($this->options, $options['plugin_options'], [
-                'format' => BootstrapDatetimepickerPlugin::formatPHPDateTimeFormat($options['format']),
+                'format' => MomentJsUtils::icuToMomentJs($options['format']),
             ])
         ];
 

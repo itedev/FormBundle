@@ -35,6 +35,13 @@ class RangeType extends AbstractPluginType
                 'type' => 'double',
             ])
         ];
+
+        array_splice(
+            $view->vars['block_prefixes'],
+            array_search($this->getName(), $view->vars['block_prefixes']),
+            0,
+            'ite_ion_range_slider'
+        );
     }
 
     /**

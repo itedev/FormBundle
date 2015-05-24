@@ -25,13 +25,20 @@ class RangeToStringTransformer implements DataTransformerInterface
     protected $separator;
 
     /**
+     * @var DataTransformerInterface
+     */
+    protected $transformer;
+
+    /**
      * @param string $class
      * @param $separator
+     * @param DataTransformerInterface $transformer
      */
-    public function __construct($class, $separator)
+    public function __construct($class, $separator, DataTransformerInterface $transformer = null)
     {
         $this->class = $class;
         $this->separator = $separator;
+        $this->transformer = $transformer;
     }
 
     /**
@@ -47,9 +54,16 @@ class RangeToStringTransformer implements DataTransformerInterface
             throw new TransformationFailedException('Expected a \ITE\FormBundle\Form\Data\RangeInterface.');
         }
 
+        $from = $value->getFrom();
+        $to = $value->getTo();
+        if (null !== $this->transformer) {
+            $from = $this->transformer->transform($from);
+            $to = $this->transformer->transform($to);
+        }
+
         return implode($this->separator, [
-            $value->getFrom(),
-            $value->getTo(),
+            $from,
+            $to,
         ]);
     }
 
@@ -71,7 +85,17 @@ class RangeToStringTransformer implements DataTransformerInterface
             throw new TransformationFailedException(sprintf('Separator "%s" is not found', $this->separator));
         }
 
-        list($from, $to) = explode($this->separator, $value);
+        list($from, $to) = explode($this->separator, $value, 2);
+        if ('' === trim($from)) {
+            $from = null;
+        }
+        if ('' === trim($to)) {
+            $to = null;
+        }
+        if (null !== $this->transformer) {
+            $from = $this->transformer->reverseTransform($from);
+            $to = $this->transformer->reverseTransform($to);
+        }
 
         $class = $this->class;
         /** @var RangeInterface $range */

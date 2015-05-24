@@ -4,6 +4,7 @@ namespace ITE\FormBundle\Form\Type\Plugin\BootstrapDatetimepicker;
 
 use ITE\FormBundle\Form\Type\Plugin\AbstractPluginType;
 use ITE\FormBundle\SF\Plugin\BootstrapDatetimepickerPlugin;
+use ITE\FormBundle\Util\MomentJsUtils;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -53,7 +54,7 @@ class TimeType extends AbstractPluginType
         $view->vars['plugins'][BootstrapDatetimepickerPlugin::getName()] = [
             'extras' => (object) [],
             'options' => array_replace_recursive($this->options, $options['plugin_options'], [
-                'format' => BootstrapDatetimepickerPlugin::formatPHPDateTimeFormat($format),
+                'format' => MomentJsUtils::icuToMomentJs($format),
             ])
         ];
 

@@ -142,10 +142,15 @@
     {% endfor %}
 {% endblock ite_starrating_rating_widget %}
 
-{% block ite_ion_range_slider_range_widget %}
+{% block ite_ion_range_slider_widget %}
     {{ block('form_widget_simple') }}
     {{ block('ite_form_sf_element_plugins') }}
-{% endblock ite_ion_range_slider_range_widget %}
+{% endblock ite_ion_range_slider_widget %}
+
+{% block ite_bootstrap_daterangepicker_widget %}
+    {{ block('form_widget_simple') }}
+    {{ block('ite_form_sf_element_plugins') }}
+{% endblock ite_bootstrap_daterangepicker_widget %}
 
 {% block form_start %}
     {% spaceless %}
