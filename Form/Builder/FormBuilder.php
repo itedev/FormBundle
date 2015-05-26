@@ -3,6 +3,7 @@
 namespace ITE\FormBundle\Form\Builder;
 
 use ITE\FormBundle\Form\Builder\Event\HierarchicalEvent;
+use ITE\FormBundle\Form\Builder\Event\Model\HierarchicalParent;
 use ITE\FormBundle\FormAccess\FormAccess;
 use ITE\FormBundle\FormAccess\FormAccessorInterface;
 use ITE\FormBundle\Util\FormUtils;
@@ -32,6 +33,11 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
      * @var FormAccessorInterface
      */
     protected $formAccessor;
+
+    /**
+     * @var array $formHashes
+     */
+    protected $formHashes = [];
 
     /**
      * {@inheritdoc}
@@ -68,8 +74,8 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
             'hierarchical_parents' => $parents,
         ]);
 
-        $propertyAccessor = $this->propertyAccessor;
         $formAccessor = $this->formAccessor;
+        $formHashes =& $this->formHashes;
 
         parent::add($child, $type, $options);
 
@@ -77,38 +83,43 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
         $this
             ->get($child)
             ->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event)
-            use ($child, $type, $options, $parents, $formModifier, $propertyAccessor, $formAccessor) {
+            use ($child, $type, $options, $parents, $formModifier, $formAccessor, &$formHashes) {
                 $form = $event->getForm()->getParent();
-                if ($form->isSubmitted()) {
+
+                $formHash = spl_object_hash($event->getForm());
+                if (in_array($formHash, $formHashes) || $form->isSubmitted()) {
                     return;
                 }
 
-//                $data = $event->getData();
-//                $parentValues = [];
-//                foreach ($parents as $parent) {
-//                    $parentValues[$parent] = isset($data)
-//                        ? $propertyAccessor->getValue($data, $parent)
-//                        : null;
-//                }
+                $hierarchicalParents = [];
+                $parentDatas = [];
+                foreach ($parents as $parentName) {
+                    $parentForm = $formAccessor->getForm($form, $parentName);
+                    $parentData = $parentForm ? $parentForm->getData() : null;
 
-                $parentValues = [];
-                foreach ($parents as $parent) {
-                    $parentForm = $formAccessor->getForm($form, $parent);
-                    $parentValues[$parent] = $parentForm ? $parentForm->getData() : null;
+                    $hierarchicalParent = new HierarchicalParent($parentName, $parentData, $parentForm);
+                    $hierarchicalParents[$parentName] = $hierarchicalParent;
+                    $parentDatas[$parentName] = $parentData;
                 }
 
-                $hierarchicalEvent = new HierarchicalEvent($form, $parentValues, $options);
+                $hierarchicalEvent = new HierarchicalEvent($form, $hierarchicalParents, $options);
 
-                $params = $parentValues;
+                $params = $parentDatas;
                 array_unshift($params, $hierarchicalEvent);
 
                 if (false === call_user_func_array($formModifier, $params)) {
+                    // save old form hash
+                    $formHashes[] = $formHash;
+
                     return;
                 }
 
                 $ed = $form->get($child)->getConfig()->getEventDispatcher();
                 $form->add($child, $type, $hierarchicalEvent->getOptions());
                 FormUtils::setEventDispatcher($form->get($child), $ed);
+
+                // save new form hash
+                $formHashes[] = spl_object_hash($form->get($child));
             })
         ;
 
@@ -116,29 +127,43 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
         $this
             ->get($child)
             ->addEventListener(FormEvents::PRE_SUBMIT, function(FormEvent $event)
-            use ($child, $type, $options, $parents, $formModifier, $formAccessor) {
+            use ($child, $type, $options, $parents, $formModifier, $formAccessor, &$formHashes) {
                 $form = $event->getForm()->getParent();
 
-                $parentValues = [];
-                foreach ($parents as $parent) {
-                    $parentForm = $formAccessor->getForm($form, $parent);
-                    $parentValues[$parent] = $parentForm ? $parentForm->getData() : null;
-                }
+                $formHash = spl_object_hash($event->getForm());
 
                 $rootForm = $form->getRoot();
                 $originator = $rootForm->getConfig()->getAttribute('hierarchical_originator');
-                $hierarchicalEvent = new HierarchicalEvent($form, $parentValues, $options, $originator, $formAccessor);
 
-                $params = $parentValues;
+                $hierarchicalParents = [];
+                $parentDatas = [];
+                foreach ($parents as $parentName) {
+                    $parentForm = $formAccessor->getForm($form, $parentName);
+                    $parentData = $parentForm ? $parentForm->getData() : null;
+
+                    $hierarchicalParent = new HierarchicalParent($parentName, $parentData, $parentForm, $originator);
+                    $hierarchicalParents[$parentName] = $hierarchicalParent;
+                    $parentDatas[$parentName] = $parentData;
+                }
+
+                $hierarchicalEvent = new HierarchicalEvent($form, $hierarchicalParents, $options, $originator);
+
+                $params = $parentDatas;
                 array_unshift($params, $hierarchicalEvent);
 
                 if (false === call_user_func_array($formModifier, $params)) {
+                    // save old form hash
+                    $formHashes[] = $formHash;
+
                     return;
                 }
 
                 $ed = $form->get($child)->getConfig()->getEventDispatcher();
                 $form->add($child, $type, $hierarchicalEvent->getOptions());
                 FormUtils::setEventDispatcher($form->get($child), $ed);
+
+                // save new form hash
+                $formHashes[] = spl_object_hash($form->get($child));
             })
         ;
 

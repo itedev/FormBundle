@@ -2,6 +2,8 @@
 
 namespace ITE\FormBundle\Form\Builder\Event;
 
+use ITE\FormBundle\Form\Builder\Event\Model\HierarchicalParent;
+use ITE\FormBundle\Form\Builder\Event\Model\HierarchicalParentCollection;
 use ITE\FormBundle\FormAccess\FormAccess;
 use ITE\FormBundle\FormAccess\FormAccessor;
 use ITE\FormBundle\FormAccess\FormAccessorInterface;
@@ -9,7 +11,6 @@ use ITE\FormBundle\Util\FormUtils;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormTypeInterface;
-use Symfony\Component\Form\Util\FormUtil;
 
 /**
  * Class HierarchicalEvent
@@ -34,7 +35,7 @@ class HierarchicalEvent
     protected $originator;
 
     /**
-     * @var ParentCollection
+     * @var HierarchicalParentCollection
      */
     protected $parents;
 
@@ -55,19 +56,16 @@ class HierarchicalEvent
 
     /**
      * @param FormInterface $form
-     * @param array $parents
+     * @param array|HierarchicalParent[] $parents
      * @param array $options
      * @param string|null $originator
-     * @param FormAccessor|null $formAccessor
      */
-    public function __construct(FormInterface $form, array $parents, array $options, $originator = null,
-        FormAccessor $formAccessor = null)
+    public function __construct(FormInterface $form, array $parents, array $options, $originator = null)
     {
         $this->form = $form;
-        $this->parents = new ParentCollection($parents);
+        $this->parents = new HierarchicalParentCollection($parents);
         $this->options = $options;
         $this->originator = $originator;
-        $this->formAccessor = $formAccessor;
     }
 
     /**
@@ -93,7 +91,7 @@ class HierarchicalEvent
     /**
      * Get parents
      *
-     * @return ParentCollection
+     * @return HierarchicalParentCollection
      */
     public function getParents()
     {
@@ -145,6 +143,16 @@ class HierarchicalEvent
 
     /**
      * @param string $name
+     * @param mixed $defaultValue
+     * @return mixed
+     */
+    public function getOption($name, $defaultValue = null)
+    {
+        return array_key_exists($name, $this->options) ? $this->options[$name] : $defaultValue;
+    }
+
+    /**
+     * @param string $name
      * @param mixed $value
      * @return $this
      */
@@ -178,12 +186,41 @@ class HierarchicalEvent
     }
 
     /**
-     * @param string $parent
-     * @return mixed|null
+     * @param string $name
+     * @param mixed $value
+     * @return $this
      */
-    public function getParent($parent)
+    public function setAttribute($name, $value)
     {
-        return $this->parents->get($parent);
+        $attr = $this->getOption('attr', []);
+        $attr[$name] = $value;
+        $this->setOption('attr', $attr);
+
+        return $this;
+    }
+
+    /**
+     * @param string $name
+     * @return $this
+     */
+    public function unsetAttribute($name)
+    {
+        $attr = $this->getOption('attr', []);
+        if (array_key_exists($name, $attr)) {
+            unset($attr[$name]);
+            $this->setOption('attr', $attr);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param string $parentName
+     * @return HierarchicalParent|null
+     */
+    public function getParent($parentName)
+    {
+        return $this->parents->get($parentName);
     }
 
     /**
@@ -203,10 +240,9 @@ class HierarchicalEvent
             return false;
         }
 
-        $formAccessor = $this->getFormAccessor();
-        foreach ($this->parents as $parent => $parentData) {
-            $parentForm = $formAccessor->getForm($this->form, $parent);
-            if ($this->originator === FormUtils::getFullName($parentForm)) {
+        foreach ($this->parents as $parentName => $parent) {
+            /** @var HierarchicalParent $parent */
+            if ($parent->isOriginator()) {
                 return true;
             }
         }
@@ -236,17 +272,5 @@ class HierarchicalEvent
     public function isParentsNotEmpty()
     {
         return $this->parents->isNotEmpty();
-    }
-
-    /**
-     * @return FormAccessorInterface
-     */
-    protected function getFormAccessor()
-    {
-        if (!isset($this->formAccessor)) {
-            $this->formAccessor = FormAccess::createFormAccessor();
-        }
-
-        return $this->formAccessor;
     }
 }

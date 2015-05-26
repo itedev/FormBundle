@@ -1,6 +1,6 @@
 <?php
 
-namespace ITE\FormBundle\Form\Builder\Event;
+namespace ITE\FormBundle\Form\Builder\Event\Model;
 
 use ArrayIterator;
 use Countable;
@@ -8,19 +8,19 @@ use IteratorAggregate;
 use Symfony\Component\Form\Util\FormUtil;
 
 /**
- * Class ParentCollection
+ * Class HierarchicalParentCollection
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-class ParentCollection implements Countable, IteratorAggregate
+class HierarchicalParentCollection implements Countable, IteratorAggregate
 {
     /**
-     * @var array $parents
+     * @var array|HierarchicalParent[] $parents
      */
     private $parents = [];
 
     /**
-     * @param array $parents
+     * @param array|HierarchicalParent[] $parents
      */
     public function __construct(array $parents = [])
     {
@@ -28,21 +28,21 @@ class ParentCollection implements Countable, IteratorAggregate
     }
 
     /**
-     * @param string $parent
+     * @param string $parentName
      * @return bool
      */
-    public function has($parent)
+    public function has($parentName)
     {
-        return isset($this->parents[$parent]) || array_key_exists($parent, $this->parents);
+        return isset($this->parents[$parentName]) || array_key_exists($parentName, $this->parents);
     }
 
     /**
-     * @param string $parent
-     * @return mixed|null
+     * @param string $parentName
+     * @return HierarchicalParent|null
      */
-    public function get($parent)
+    public function get($parentName)
     {
-        return $this->has($parent) ? $this->parents[$parent] : null;
+        return $this->has($parentName) ? $this->parents[$parentName] : null;
     }
 
     /**
@@ -50,8 +50,8 @@ class ParentCollection implements Countable, IteratorAggregate
      */
     public function isEmpty()
     {
-        foreach ($this->parents as $parent => $parentData) {
-            if (!FormUtil::isEmpty($parentData)) {
+        foreach ($this->parents as $parentName => $parent) {
+            if (!$parent->isEmpty()) {
                 return false;
             }
         }
@@ -64,8 +64,8 @@ class ParentCollection implements Countable, IteratorAggregate
      */
     public function isNotEmpty()
     {
-        foreach ($this->parents as $parent => $parentData) {
-            if (FormUtil::isEmpty($parentData)) {
+        foreach ($this->parents as $parentName => $parent) {
+            if ($parent->isEmpty()) {
                 return false;
             }
         }
