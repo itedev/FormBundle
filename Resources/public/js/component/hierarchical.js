@@ -11,7 +11,7 @@
       if ('active' === option) {
         value = 'undefined' !== typeof $this.data('hierarchicalJqxhr');
       } else {
-        $.error('Method with name "' +  option + '" does not exist in jQuery.hierarchical');
+        $.error('Method with name "' + option + '" does not exist in jQuery.hierarchical');
       }
     });
 
@@ -21,7 +21,7 @@
   SF.fn.util = $.extend(SF.fn.util, {
     arrayUnique: function(arr) {
       return $.grep(arr, function(v, k) {
-        return $.inArray(v ,arr) === k;
+        return $.inArray(v, arr) === k;
       });
     },
 
@@ -59,10 +59,11 @@
       var element = SF.elements.get(selector);
       var $element = SF.elements.getJQueryElement(selector, context, replacementTokens);
 
-      var elementFullName = SF.util.getFullName($element, element);
+      var originator = SF.util.getFullName($element, element);
+      var originatorData = SF.elements.getElementValue($element, element);
 
       var eventData = {
-        originator: elementFullName,
+        originator: originator,
         children: {}
       };
       var $childrenElements = {};
@@ -112,7 +113,7 @@
         dataType: 'html',
         headers: {
           'X-SF-Hierarchical': '1',
-          'X-SF-Hierarchical-Originator': elementFullName
+          'X-SF-Hierarchical-Originator': originator
         },
         success: function(response) {
           $form.removeData('hierarchicalJqxhr');
@@ -135,6 +136,8 @@
 
             // set element value
             var childEventData = {
+              originator: originator,
+              originatorData: originatorData,
               relatedTarget: $newChildElement.get(0)
             };
             event = $.Event('ite-before-change.hierarchical', childEventData);
@@ -146,7 +149,7 @@
             SF.elements.setElementValue($childElement, $newChildElement, childElement);
 
             event = $.Event('ite-after-change.hierarchical', childEventData);
-            $element.trigger(event, [newContext]);
+            $childElement.trigger(event, [newContext]);
           });
 
           event = $.Event('ite-after-children-change.hierarchical', eventData);
@@ -295,29 +298,44 @@
       $element.trigger('ite-clear.hierarchical');
     },
 
-    getElementValue: function(element, $element) {
-      var node;
-      if (element.hasDelegateSelector()) {
-        var delegateSelector = element.getDelegateSelector();
+    getElementValue: function($element, element) {
+      if (!element.hasPlugins()) {
+        if (element.hasDelegateSelector()) {
+          var delegateSelector = element.getDelegateSelector();
 
-        var values = [];
-        $element.find(delegateSelector).filter(function() {
-          return this.checked;
-        }).each(function() {
-          values.push($(this).val());
-        });
-        if ('input[type="radio"]' === delegateSelector) {
-          return values.length ? values[0] : null;
+          var values = [];
+          $element.find(delegateSelector).filter(function() {
+            return this.checked;
+          }).each(function() {
+            values.push($(this).val());
+          });
+          if ('input[type="radio"]' === delegateSelector) {
+            return values.length ? values[0] : null;
+          }
+
+          return values;
+        } else {
+          var node = $element.get(0);
+          if (rxText.test(node.nodeName) || rxSelect.test(node.nodeName)) {
+            return $element.val();
+          }
         }
-        return values;
       } else {
-        node = $element.get(0);
-        if (rxText.test(node.nodeName) || rxSelect.test(node.nodeName)) {
-          return $element.val();
+        var value;
+        $.each(element.getPlugins(), function(i, plugin) {
+          if ('undefined' !== typeof SF.plugins[plugin].getValue) {
+            value = SF.plugins[plugin].getValue($element);
+
+            return false; // break
+          }
+        });
+
+        if ('undefined' !== typeof value) {
+          return value;
         }
       }
 
-      return null;
+      return $element.html();
     },
 
     setElementValue: function($element, $newElement, element) {
