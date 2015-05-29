@@ -146,7 +146,7 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
                     $parentDatas[$parentName] = $parentData;
                 }
 
-                $hierarchicalEvent = new HierarchicalEvent($form, $hierarchicalParents, $options, $originator);
+                $hierarchicalEvent = new HierarchicalEvent($form, $hierarchicalParents, $options, true, $originator);
 
                 $params = $parentDatas;
                 array_unshift($params, $hierarchicalEvent);
