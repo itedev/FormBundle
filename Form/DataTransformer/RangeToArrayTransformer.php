@@ -48,10 +48,6 @@ class RangeToArrayTransformer implements DataTransformerInterface
     {
         if (null === $value) {
             return;
-//            return [
-//                $this->fromName => null,
-//                $this->toName => null,
-//            ];
         }
 
         if (!($value instanceof RangeInterface)) {

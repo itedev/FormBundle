@@ -92,6 +92,11 @@ class RangeToStringTransformer implements DataTransformerInterface
         if ('' === trim($to)) {
             $to = null;
         }
+
+        if (null === $from && null === $to) {
+            return;
+        }
+
         if (null !== $this->transformer) {
             $from = $this->transformer->reverseTransform($from);
             $to = $this->transformer->reverseTransform($to);
