@@ -1,9 +1,16 @@
 parameters:
-    ite_form.form.type.plugin.ion_range_slider.range.class: ITE\FormBundle\Form\Type\Plugin\IonRangeSlider\RangeType
+    ite_form.form.type.plugin.ion_range_slider.range.integer.class: ITE\FormBundle\Form\Type\Plugin\IonRangeSlider\IntegerRangeType
+    ite_form.form.type.plugin.ion_range_slider.range.number.class:  ITE\FormBundle\Form\Type\Plugin\IonRangeSlider\NumberRangeType
 
 services:
-    ite_form.form.type.plugin.ion_range_slider.range:
-        class: %ite_form.form.type.plugin.ion_range_slider.range.class%
+    ite_form.form.type.plugin.ion_range_slider.range.integer:
+        class: %ite_form.form.type.plugin.ion_range_slider.range.integer.class%
         arguments: [ %ite_form.plugin.ion_range_slider.options% ]
         tags:
-            - { name: form.type, alias: ite_ion_range_slider_range }
+            - { name: form.type, alias: ite_ion_range_slider_integer_range }
+
+    ite_form.form.type.plugin.ion_range_slider.range.number:
+        class: %ite_form.form.type.plugin.ion_range_slider.range.number.class%
+        arguments: [ %ite_form.plugin.ion_range_slider.options% ]
+        tags:
+            - { name: form.type, alias: ite_ion_range_slider_number_range }

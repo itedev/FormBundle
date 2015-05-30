@@ -1,9 +1,16 @@
 parameters:
-    ite_form.form.type.plugin.bootstrap_daterangepicker.range.class:    ITE\FormBundle\Form\Type\Plugin\BootstrapDaterangepicker\RangeType
+    ite_form.form.type.plugin.bootstrap_daterangepicker.range.date.class:   ITE\FormBundle\Form\Type\Plugin\BootstrapDaterangepicker\DateRangeType
+    ite_form.form.type.plugin.bootstrap_daterangepicker.range.datetime.class:   ITE\FormBundle\Form\Type\Plugin\BootstrapDaterangepicker\DateTimeRangeType
 
 services:
-    ite_form.form.type.plugin.bootstrap_daterangepicker.range:
-        class: %ite_form.form.type.plugin.bootstrap_daterangepicker.range.class%
+    ite_form.form.type.plugin.bootstrap_daterangepicker.range.date:
+        class: %ite_form.form.type.plugin.bootstrap_daterangepicker.range.date.class%
         arguments: [ %ite_form.plugin.bootstrap_daterangepicker.options% ]
         tags:
-            - { name: form.type, alias: ite_bootstrap_daterangepicker_range }
+            - { name: form.type, alias: ite_bootstrap_daterangepicker_date_range }
+
+    ite_form.form.type.plugin.bootstrap_daterangepicker.range.datetime:
+        class: %ite_form.form.type.plugin.bootstrap_daterangepicker.range.datetime.class%
+        arguments: [ %ite_form.plugin.bootstrap_daterangepicker.options% ]
+        tags:
+            - { name: form.type, alias: ite_bootstrap_daterangepicker_datetime_range }

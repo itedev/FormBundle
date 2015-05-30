@@ -25,8 +25,10 @@ class Range implements RangeInterface
      */
     public function __construct($from = null, $to = null)
     {
-        $this->from = $from;
-        $this->to = $to;
+        $this
+            ->setFrom($from)
+            ->setTo($to)
+        ;
     }
 
     /**

@@ -13,19 +13,19 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * Class RangeType
+ * Class DateRangeType
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-class RangeType extends AbstractPluginType
+class DateRangeType extends AbstractPluginType
 {
     /**
      * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $dateFormat = \IntlDateFormatter::MEDIUM;
-        $timeFormat = \IntlDateFormatter::MEDIUM;
+        $dateFormat = is_int($options['format']) ? $options['format'] : \IntlDateFormatter::MEDIUM;
+        $timeFormat = \IntlDateFormatter::NONE;
         $calendar = \IntlDateFormatter::GREGORIAN;
         $pattern = is_string($options['format']) ? $options['format'] : null;
 
@@ -53,6 +53,7 @@ class RangeType extends AbstractPluginType
             'extras' => (object) [],
             'options' => (object) array_replace_recursive($this->options, $options['plugin_options'], [
                 'format' => MomentJsUtils::icuToMomentJs($options['format']),
+                'timePicker' => false,
             ])
         ];
 
@@ -74,7 +75,8 @@ class RangeType extends AbstractPluginType
         $resolver->setDefaults([
             'model_timezone' => null,
             'view_timezone' => null,
-            'format' => 'yyyy-MM-dd HH:mm:ss',
+            'format' => 'yyyy-MM-dd',
+            'class' => 'ITE\FormBundle\Form\Data\DateRange',
         ]);
     }
 
@@ -91,6 +93,6 @@ class RangeType extends AbstractPluginType
      */
     public function getName()
     {
-        return 'ite_bootstrap_daterangepicker_range';
+        return 'ite_bootstrap_daterangepicker_date_range';
     }
 }
