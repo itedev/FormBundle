@@ -2,6 +2,7 @@
 
 namespace ITE\FormBundle\Form\Builder;
 
+use ITE\FormBundle\FormAccess\FormAccessorInterface;
 use Symfony\Component\Form\FormBuilderInterface as BaseFormBuilderInterface;
 use Symfony\Component\Form\FormTypeInterface;
 
@@ -12,6 +13,11 @@ use Symfony\Component\Form\FormTypeInterface;
  */
 interface FormBuilderInterface extends BaseFormBuilderInterface
 {
+    /**
+     * @return FormAccessorInterface
+     */
+    public function getFormAccessor();
+
     /**
      * @param int|string|FormBuilderInterface $child
      * @param string|FormTypeInterface $type

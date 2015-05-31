@@ -4,10 +4,12 @@ namespace ITE\FormBundle\Form\Builder;
 
 use ITE\FormBundle\Form\Builder\Event\HierarchicalEvent;
 use ITE\FormBundle\Form\Builder\Event\Model\HierarchicalParent;
+use ITE\FormBundle\Form\Form;
 use ITE\FormBundle\FormAccess\FormAccess;
 use ITE\FormBundle\FormAccess\FormAccessorInterface;
 use ITE\FormBundle\Util\FormUtils;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Form\Exception\BadMethodCallException;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Form\FormBuilder as BaseFormBuilder;
 use Symfony\Component\Form\FormEvent;
@@ -50,6 +52,40 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
 
         $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
         $this->formAccessor = FormAccess::createFormAccessor();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFormAccessor()
+    {
+        return $this->formAccessor;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getForm()
+    {
+        if ($this->locked) {
+            throw new BadMethodCallException('FormBuilder methods cannot be accessed anymore once the builder is turned into a FormConfigInterface instance.');
+        }
+
+        $children = $this->all();
+
+        $form = new Form($this->getFormConfig());
+
+        foreach ($children as $child) {
+            // Automatic initialization is only supported on root forms
+            $form->add($child->setAutoInitialize(false)->getForm());
+        }
+
+        if ($this->getAutoInitialize()) {
+            // Automatically initialize the form if it is configured so
+            $form->initialize();
+        }
+
+        return $form;
     }
 
     /**

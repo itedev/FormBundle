@@ -306,19 +306,43 @@ class FormUtils
 
     /**
      * @param FormInterface $form
-     * @param EventDispatcherInterface $ed
+     * @param $eventName
+     * @param $listener
+     * @param int $priority
      */
-    public static function setEventDispatcher(FormInterface $form, EventDispatcherInterface $ed)
+    public static function addEventListener(FormInterface $form, $eventName, $listener, $priority = 0)
     {
-        $formConfig = $form->getConfig();
+        $ed = $form->getConfig()->getEventDispatcher();
 
-        $refClass = new \ReflectionClass($formConfig);
+        $refClass = new \ReflectionClass($ed);
         while (!$refClass->hasProperty('dispatcher')) {
             $refClass = $refClass->getParentClass();
         }
         $refProp = $refClass->getProperty('dispatcher');
         $refProp->setAccessible(true);
-        $refProp->setValue($formConfig, $ed);
+
+        /** @var EventDispatcherInterface $internalEd */
+        $internalEd = $refProp->getValue($ed);
+        $internalEd->addListener($eventName, $listener, $priority);
+
+        $refProp->setAccessible(false);
+    }
+
+    /**
+     * @param FormInterface $form
+     * @param EventDispatcherInterface $ed
+     */
+    public static function setEventDispatcher(FormInterface $form, EventDispatcherInterface $ed)
+    {
+        $config = $form->getConfig();
+
+        $refClass = new \ReflectionClass($config);
+        while (!$refClass->hasProperty('dispatcher')) {
+            $refClass = $refClass->getParentClass();
+        }
+        $refProp = $refClass->getProperty('dispatcher');
+        $refProp->setAccessible(true);
+        $refProp->setValue($config, $ed);
         $refProp->setAccessible(false);
     }
 } 
