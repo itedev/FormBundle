@@ -27,7 +27,7 @@
     initialize: function() {
       this.index = $(this.collectionItemSelector).length - 1;
     },
-    add: function () {
+    add: function(afterShowCallback) {
       var self = this;
       function afterShow() {
         // apply plugins
@@ -39,6 +39,10 @@
           replacementTokens[parentPrototypeName] = parentCollectionItem.data('index');
         });
         replacementTokens[prototypeName] = self.index;
+
+        if ($.isFunction(afterShowCallback)) {
+          afterShowCallback.apply($collection, [$item]);
+        }
 
         $collection.trigger('ite-add.collection', [$item]);
 
@@ -82,7 +86,7 @@
           break;
       }
     },
-    remove: function ($item) {
+    remove: function($item) {
       function afterHide() {
         $item.remove();
 
@@ -170,7 +174,7 @@
 
   $(function () {
     // add
-    $('body').on('click.collection', '[data-collection-add-btn]', function (e) {
+    $('body').on('click.collection', '[data-collection-add-btn]', function(e) {
       var $btn = $(this);
       var $collection = $($btn.data('collectionAddBtn'));
       if (!$collection.length) {
@@ -182,7 +186,7 @@
     });
 
     // remove
-    $('body').on('click.collection', '[data-collection-remove-btn]', function (e) {
+    $('body').on('click.collection', '[data-collection-remove-btn]', function(e) {
       var $btn = $(this);
       var $collection = $($btn.data('collectionRemoveBtn'));
       var $item = $btn.closest('.collection-item');
