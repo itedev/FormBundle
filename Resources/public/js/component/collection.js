@@ -124,12 +124,12 @@
       return $(this.collectionItemSelector);
     },
     isEmpty: function() {
-      return 0 === this.itemsCount();
+      return 0 === this.count();
     },
     clear: function() {
       this.itemsWrapper().empty();
     },
-    itemsCount: function() {
+    count: function() {
       return this.items().length;
     },
     parents: function() {
