@@ -3,11 +3,11 @@
 namespace ITE\FormBundle\SF\Form;
 
 /**
- * Class FormView
+ * Class ClientFormView
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-class FormView
+class ClientFormView
 {
     /**
      * @var array
@@ -15,19 +15,19 @@ class FormView
     private $options = [];
 
     /**
-     * @var FormView|null
+     * @var ClientFormView|null
      */
     private $parent;
 
     /**
-     * @var array|FormView[]
+     * @var array|ClientFormView[]
      */
     private $children = [];
 
     /**
-     * @param FormView $parent
+     * @param ClientFormView $parent
      */
-    public function __construct(FormView $parent = null)
+    public function __construct(ClientFormView $parent = null)
     {
         $this->parent = $parent;
     }
@@ -35,7 +35,7 @@ class FormView
     /**
      * Get parent
      *
-     * @return FormView|null
+     * @return ClientFormView|null
      */
     public function getParent()
     {
@@ -43,7 +43,7 @@ class FormView
     }
 
     /**
-     * @return FormView
+     * @return ClientFormView
      */
     public function getRoot()
     {
@@ -61,10 +61,10 @@ class FormView
     /**
      * Set parent
      *
-     * @param FormView|null $parent
+     * @param ClientFormView|null $parent
      * @return $this
      */
-    public function setParent(FormView $parent = null)
+    public function setParent(ClientFormView $parent = null)
     {
         $this->parent = $parent;
 
@@ -74,7 +74,7 @@ class FormView
     /**
      * Get children
      *
-     * @return array|FormView[]
+     * @return array|ClientFormView[]
      */
     public function getChildren()
     {
@@ -83,10 +83,10 @@ class FormView
 
     /**
      * @param string $name
-     * @param FormView $child
+     * @param ClientFormView $child
      * @return $this
      */
-    public function addChild($name, FormView $child)
+    public function addChild($name, ClientFormView $child)
     {
         $child->setParent($this);
         $this->children[$name] = $child;

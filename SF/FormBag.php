@@ -2,7 +2,7 @@
 
 namespace ITE\FormBundle\SF;
 
-use ITE\FormBundle\SF\Form\FormView;
+use ITE\FormBundle\SF\Form\ClientFormView;
 
 /**
  * Class FormBag
@@ -25,7 +25,7 @@ class FormBag
     /**
      * @param string $name
      * @param mixed $default
-     * @return FormView|mixed
+     * @return ClientFormView|mixed
      */
     public function get($name, $default = null)
     {
@@ -34,10 +34,10 @@ class FormBag
 
     /**
      * @param string $name
-     * @param FormView $view
-     * @return FormView
+     * @param ClientFormView $view
+     * @return ClientFormView
      */
-    public function add($name, FormView $view)
+    public function add($name, ClientFormView $view)
     {
         if (!$this->has($name)) {
             $this->forms[$name] = $view;
@@ -59,7 +59,7 @@ class FormBag
      */
     public function toArray()
     {
-        return array_map(function(FormView $view) {
+        return array_map(function(ClientFormView $view) {
             return $view->toArray();
         }, $this->forms);
     }

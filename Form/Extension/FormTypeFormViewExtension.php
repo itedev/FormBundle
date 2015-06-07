@@ -2,12 +2,13 @@
 
 namespace ITE\FormBundle\Form\Extension;
 
-use ITE\FormBundle\SF\Form\FormViewBuilderInterface;
+use ITE\FormBundle\SF\Form\ClientFormViewBuilderInterface;
 use ITE\FormBundle\SF\SFFormExtensionInterface;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use ITE\FormBundle\Form\FormInterface as ExtendedFormInterface;
 
 /**
  * Class FormTypeFormViewExtension
@@ -22,15 +23,15 @@ class FormTypeFormViewExtension extends AbstractTypeExtension
     protected $sfForm;
 
     /**
-     * @var FormViewBuilderInterface
+     * @var ClientFormViewBuilderInterface
      */
     protected $builder;
 
     /**
      * @param SFFormExtensionInterface $sfForm
-     * @param FormViewBuilderInterface $builder
+     * @param ClientFormViewBuilderInterface $builder
      */
-    public function __construct(SFFormExtensionInterface $sfForm, FormViewBuilderInterface $builder)
+    public function __construct(SFFormExtensionInterface $sfForm, ClientFormViewBuilderInterface $builder)
     {
         $this->sfForm = $sfForm;
         $this->builder = $builder;
@@ -45,8 +46,8 @@ class FormTypeFormViewExtension extends AbstractTypeExtension
             return;
         }
 
-//        $clientView = $this->builder->createView($view, $form);
-//
+//        /** @var ExtendedFormInterface $form */
+//        $clientView = $this->builder->createClientView($view, $form);
 //        $this->sfForm->getFormBag()->add($form->getName(), $clientView);
 //        $a = 1;
     }
