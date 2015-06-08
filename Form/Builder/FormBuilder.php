@@ -121,6 +121,7 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
             ->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event)
             use ($child, $type, $options, $parents, $formModifier, $formAccessor, &$formHashes) {
                 $form = $event->getForm()->getParent();
+                $data = $event->getData();
 
                 $formHash = spl_object_hash($event->getForm());
                 if (in_array($formHash, $formHashes) || $form->isSubmitted()) {
@@ -138,7 +139,7 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
                     $parentDatas[$parentName] = $parentData;
                 }
 
-                $hierarchicalEvent = new HierarchicalEvent($form, $hierarchicalParents, $options);
+                $hierarchicalEvent = new HierarchicalEvent($form, $data, $hierarchicalParents, $options);
 
                 $params = $parentDatas;
                 array_unshift($params, $hierarchicalEvent);
@@ -165,6 +166,7 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
             ->addEventListener(FormEvents::PRE_SUBMIT, function(FormEvent $event)
             use ($child, $type, $options, $parents, $formModifier, $formAccessor, &$formHashes) {
                 $form = $event->getForm()->getParent();
+                $data = $event->getData();
 
                 $formHash = spl_object_hash($event->getForm());
 
@@ -182,7 +184,7 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
                     $parentDatas[$parentName] = $parentData;
                 }
 
-                $hierarchicalEvent = new HierarchicalEvent($form, $hierarchicalParents, $options, true, $originator);
+                $hierarchicalEvent = new HierarchicalEvent($form, $data, $hierarchicalParents, $options, true, $originator);
 
                 $params = $parentDatas;
                 array_unshift($params, $hierarchicalEvent);
