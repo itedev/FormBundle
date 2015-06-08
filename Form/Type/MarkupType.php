@@ -25,10 +25,7 @@ class MarkupType extends AbstractType
 
     public function __construct()
     {
-        $this->propertyAccessor = PropertyAccess::createPropertyAccessorBuilder()
-            ->disableExceptionOnInvalidIndex()
-            ->getPropertyAccessor();
-        ;
+        $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
     }
 
     /**
@@ -36,16 +33,19 @@ class MarkupType extends AbstractType
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'trim' => false,
-            'required' => true,
+            'required' => false,
             'read_only' => true,
             'mapped' => false,
             'error_bubbling' => false,
             'compound' => false,
             'auto_initialize' => false,
             'markup' => null,
-        ));
+        ]);
+        $resolver->setAllowedValues([
+            'mapped' => [false],
+        ]);
     }
 
     /**
@@ -63,14 +63,22 @@ class MarkupType extends AbstractType
      */
     protected function getMarkup(FormInterface $form, array $options)
     {
-        if (isset($options['markup'])) {
-            if (is_callable($options['markup'])) {
-                return call_user_func_array($options['markup'], [$form]);
-            } elseif (is_string($options['markup'])) {
-                return $options['markup'];
-            } else {
-                throw new \InvalidArgumentException('Invalid markup value');
+        $parentForm = $form->getParent();
+        $parentData = $parentForm->getData();
+
+        if (is_callable($options['markup'])) {
+            return call_user_func_array($options['markup'], [$parentForm]);
+        } elseif (is_string($options['markup'])) {
+            return $options['markup'];
+        } else {
+            $empty = null === $parentData || array() === $parentData;
+            $propertyPath = $form->getPropertyPath();
+
+            if (!$empty && null !== $propertyPath) {
+                return (string) $this->propertyAccessor->getValue($parentData, $propertyPath);
             }
+
+            throw new \InvalidArgumentException('Invalid markup value');
         }
     }
 

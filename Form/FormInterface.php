@@ -12,6 +12,14 @@ use Symfony\Component\Form\FormInterface as BaseFormInterface;
 interface FormInterface extends BaseFormInterface
 {
     /**
+     * @param FormInterface|string|int
+     * @param string|null
+     * @param array
+     * @return FormInterface
+     */
+    public function add($child, $type = null, array $options = array());
+
+    /**
      * @param FormInterface|string|int $child
      * @param string|array $parents
      * @param string|null $type

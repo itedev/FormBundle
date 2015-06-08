@@ -54,6 +54,6 @@ class BooleanToStringTransformer implements DataTransformerInterface
             throw new TransformationFailedException('Expected a string.');
         }
 
-        return boolval($value);
+        return (bool) $value;
     }
 }
