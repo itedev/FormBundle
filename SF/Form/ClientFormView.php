@@ -140,6 +140,17 @@ class ClientFormView
     }
 
     /**
+     * @param array $options
+     * @return $this
+     */
+    public function addOptions(array $options)
+    {
+        $this->options = array_merge($this->options, $options);
+
+        return $this;
+    }
+
+    /**
      * @return int
      */
     public function count()

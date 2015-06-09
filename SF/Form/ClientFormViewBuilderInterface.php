@@ -19,11 +19,4 @@ interface ClientFormViewBuilderInterface
      * @return ClientFormView
      */
     public function createClientView(FormView $view, FormInterface $form, ClientFormView $parent = null);
-
-//    /**
-//     * @param FormView $view
-//     * @param FormInterface $form
-//     * @return ClientFormView
-//     */
-//    public function createView(FormView $view, FormInterface $form);
 }

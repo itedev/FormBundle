@@ -3,6 +3,8 @@
 namespace ITE\FormBundle\Form\Type\Plugin\BootstrapDatetimepicker;
 
 use ITE\FormBundle\Form\Type\Plugin\AbstractPluginType;
+use ITE\FormBundle\SF\Form\ClientFormTypeInterface;
+use ITE\FormBundle\SF\Form\ClientFormView;
 use ITE\FormBundle\SF\Plugin\BootstrapDatetimepickerPlugin;
 use ITE\FormBundle\Util\MomentJsUtils;
 use Symfony\Component\Form\FormInterface;
@@ -18,7 +20,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-class TimeType extends AbstractPluginType
+class TimeType extends AbstractPluginType implements ClientFormTypeInterface
 {
     /**
      * {@inheritdoc}
@@ -72,6 +74,29 @@ class TimeType extends AbstractPluginType
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['type'] = 'text';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildClientView(ClientFormView $clientView, FormView $view, FormInterface $form, array $options)
+    {
+        $format = 'HH';
+        if ($options['with_minutes']) {
+            $format .= ':mm';
+        }
+        if ($options['with_seconds']) {
+            $format .= ':ss';
+        }
+
+        $clientView->setOption('plugins', [
+            BootstrapDatetimepickerPlugin::getName() => [
+                'extras' => (object) [],
+                'options' => array_replace_recursive($this->options, $options['plugin_options'], [
+                    'format' => MomentJsUtils::icuToMomentJs($format),
+                ])
+            ]
+        ]);
     }
 
     /**

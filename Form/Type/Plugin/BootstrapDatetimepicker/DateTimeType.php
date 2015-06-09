@@ -3,6 +3,8 @@
 namespace ITE\FormBundle\Form\Type\Plugin\BootstrapDatetimepicker;
 
 use ITE\FormBundle\Form\Type\Plugin\AbstractPluginType;
+use ITE\FormBundle\SF\Form\ClientFormTypeInterface;
+use ITE\FormBundle\SF\Form\ClientFormView;
 use ITE\FormBundle\SF\Plugin\BootstrapDatetimepickerPlugin;
 use ITE\FormBundle\Util\MomentJsUtils;
 use Symfony\Component\Form\FormInterface;
@@ -19,7 +21,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-class DateTimeType extends AbstractPluginType
+class DateTimeType extends AbstractPluginType implements ClientFormTypeInterface
 {
     /**
      * {@inheritdoc}
@@ -66,6 +68,21 @@ class DateTimeType extends AbstractPluginType
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['type'] = 'text';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildClientView(ClientFormView $clientView, FormView $view, FormInterface $form, array $options)
+    {
+        $clientView->setOption('plugins', [
+            BootstrapDatetimepickerPlugin::getName() => [
+                'extras' => (object) [],
+                'options' => array_replace_recursive($this->options, $options['plugin_options'], [
+                    'format' => MomentJsUtils::icuToMomentJs($options['format']),
+                ])
+            ]
+        ]);
     }
 
     /**
