@@ -2,7 +2,7 @@
 
 namespace ITE\FormBundle\Validation\Constraints;
 
-use ITE\FormBundle\Validation\Constraint;
+use ITE\FormBundle\Validation\ClientConstraint;
 
 /**
  * Class True
@@ -15,7 +15,7 @@ use ITE\FormBundle\Validation\Constraint;
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-class True extends Constraint
+class True extends ClientConstraint
 {
     public $message = 'This value should be true.';
 }

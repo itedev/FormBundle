@@ -2,7 +2,7 @@
 
 namespace ITE\FormBundle\Validation\Constraints;
 
-use ITE\FormBundle\Validation\Constraint;
+use ITE\FormBundle\Validation\ClientConstraint;
 use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
 
 /**
@@ -13,7 +13,7 @@ use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-abstract class AbstractComparison extends Constraint
+abstract class AbstractComparison extends ClientConstraint
 {
     public $message;
     public $value;

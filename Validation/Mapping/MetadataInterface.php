@@ -2,7 +2,7 @@
 
 namespace ITE\FormBundle\Validation\Mapping;
 
-use ITE\FormBundle\Validation\Constraint;
+use ITE\FormBundle\Validation\ClientConstraint;
 
 /**
  * A container for validation metadata.
@@ -23,7 +23,7 @@ interface MetadataInterface
     /**
      * Returns all constraints of this element.
      *
-     * @return Constraint[] A list of Constraint instances
+     * @return ClientConstraint[] A list of Constraint instances
      */
     public function getConstraints();
 
@@ -32,7 +32,7 @@ interface MetadataInterface
      *
      * @param string $group The validation group
      *
-     * @return Constraint[] A list of constraint instances
+     * @return ClientConstraint[] A list of constraint instances
      */
     public function findConstraints($group);
 }

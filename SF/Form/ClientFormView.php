@@ -25,6 +25,11 @@ class ClientFormView
     private $children = [];
 
     /**
+     * @var array $attributes
+     */
+    private $attributes = [];
+
+    /**
      * @param ClientFormView $parent
      */
     public function __construct(ClientFormView $parent = null)
@@ -47,7 +52,7 @@ class ClientFormView
      */
     public function getRoot()
     {
-        return null !== $this->parent ? $this->getRoot() : $this;
+        return $this->parent ? $this->parent->getRoot() : $this;
     }
 
     /**
@@ -55,7 +60,7 @@ class ClientFormView
      */
     public function isRoot()
     {
-        return null !== $this->parent;
+        return null === $this->parent;
     }
 
     /**
@@ -90,6 +95,60 @@ class ClientFormView
     {
         $child->setParent($this);
         $this->children[$name] = $child;
+
+        return $this;
+    }
+
+    /**
+     * Get attributes
+     *
+     * @return array
+     */
+    public function getAttributes()
+    {
+        return $this->attributes;
+    }
+
+    /**
+     * Set attributes
+     *
+     * @param array $attributes
+     * @return ClientFormView
+     */
+    public function setAttributes(array $attributes)
+    {
+        $this->attributes = $attributes;
+
+        return $this;
+    }
+
+    /**
+     * @param string $name
+     * @return bool
+     */
+    public function hasAttribute($name)
+    {
+        return array_key_exists($name, $this->attributes);
+    }
+
+    /**
+     * @param string $name
+     * @param mixed $defaultValue
+     * @return null
+     */
+    public function getAttribute($name, $defaultValue = null)
+    {
+        return array_key_exists($name, $this->attributes) ? $this->attributes[$name] : $defaultValue;
+    }
+
+    /**
+     * @param string $name
+     * @param mixed $value
+     * @return $this
+     */
+    public function setAttribute($name, $value)
+    {
+        $this->attributes[$name] = $value;
 
         return $this;
     }

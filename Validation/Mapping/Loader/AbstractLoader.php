@@ -2,7 +2,7 @@
 
 namespace ITE\FormBundle\Validation\Mapping\Loader;
 
-use ITE\FormBundle\Validation\Constraint;
+use ITE\FormBundle\Validation\ClientConstraint;
 use Symfony\Component\Validator\Exception\MappingException;
 
 /**
@@ -58,7 +58,7 @@ abstract class AbstractLoader implements LoaderInterface
      *                        {@link addNamespaceAlias()}.
      * @param mixed  $options The constraint options
      *
-     * @return Constraint
+     * @return ClientConstraint
      *
      * @throws MappingException If the namespace prefix is undefined
      */

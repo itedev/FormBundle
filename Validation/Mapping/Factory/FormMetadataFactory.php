@@ -3,6 +3,7 @@
 namespace ITE\FormBundle\Validation\Mapping\Factory;
 
 use ITE\FormBundle\Util\FormUtils;
+use ITE\FormBundle\Validation\ConstraintManagerInterface;
 use ITE\FormBundle\Validation\Mapping\FormMetadata;
 use Symfony\Component\Validator\Mapping\ClassMetadata as ServerClassMetadata;
 use ITE\FormBundle\Validation\Mapping\ClassMetadata as ClientClassMetadata;
@@ -16,7 +17,7 @@ use Symfony\Component\Form\FormInterface;
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-class FormMetadataFactory
+class FormMetadataFactory implements FormMetadataFactoryInterface
 {
     /**
      * @var MetadataFactoryInterface $serverMetadataFactory
@@ -29,105 +30,103 @@ class FormMetadataFactory
     protected $clientMetadataFactory;
 
     /**
+     * @var ConstraintManagerInterface $constraintManager
+     */
+    protected $constraintManager;
+
+    /**
      * @param MetadataFactoryInterface $serverMetadataFactory
      * @param MetadataFactoryInterface $clientMetadataFactory
+     * @param ConstraintManagerInterface $constraintManager
      */
-    public function __construct(MetadataFactoryInterface $serverMetadataFactory, MetadataFactoryInterface $clientMetadataFactory)
+    public function __construct(MetadataFactoryInterface $serverMetadataFactory,
+        MetadataFactoryInterface $clientMetadataFactory, ConstraintManagerInterface $constraintManager)
     {
         $this->serverMetadataFactory = $serverMetadataFactory;
         $this->clientMetadataFactory = $clientMetadataFactory;
+        $this->constraintManager = $constraintManager;
     }
 
     /**
-     * @param FormInterface $form
-     * @return FormMetadata
+     * {@inheritdoc}
      */
-    public function getMetadataFor(FormInterface $form)
+    public function getMetadataFor(FormInterface $form, $constraintConversion = false)
     {
-        if (!$form->isRoot()) {
-            // error
-        }
-
         $formMetadata = new FormMetadata();
 
-        $serverClassMetadata = null;
-        $clientClassMetadata = null;
         if (null !== $dataClass = $form->getConfig()->getDataClass()) {
-            // get server class constraints from data
-            /** @var ServerClassMetadata $serverClassMetadata */
-            $serverClassMetadata = $this->serverMetadataFactory->getMetadataFor($dataClass);
-            $formMetadata->addServerConstraints($serverClassMetadata->getConstraints());
+            if ($constraintConversion) {
+                // get server class constraints from data
+                /** @var ServerClassMetadata $serverClassMetadata */
+                $serverClassMetadata = $this->serverMetadataFactory->getMetadataFor($dataClass);
+                $formMetadata->addConstraints($this->convertConstraints($serverClassMetadata->getConstraints()));
+            }
 
             // get client class constraints from data
             /** @var ClientClassMetadata $clientClassMetadata */
             $clientClassMetadata = $this->clientMetadataFactory->getMetadataFor($dataClass);
-            $formMetadata->addClientConstraints($clientClassMetadata->getConstraints());
-        }
-        // get server constraints from form
-        $formMetadata->addServerConstraints($form->getConfig()->getOption('constraints'));
-
-        // get client constraints from form
-        $formMetadata->addClientConstraints($form->getConfig()->getOption('client_constraints'));
-
-        $serverMetadataFactory = $this->serverMetadataFactory;
-        $clientMetadataFactory = $this->clientMetadataFactory;
-        FormUtils::formWalkRecursiveWithPrototype($form, function(FormInterface $child,
-            FormMetadata $parentFormMetadata, ServerClassMetadata $parentServerClassMetadata = null,
-            ClientClassMetadata $parentClientClassMetadata = null) use ($serverMetadataFactory, $clientMetadataFactory) {
-            $name = $child->getName();
-
-            $formMetadata = new FormMetadata();
-
-            $serverClassMetadata = null;
-            $clientClassMetadata = null;
-            $mapped = $child->getConfig()->getMapped();
-            if ($mapped) {
-                if (null !== $dataClass = $child->getConfig()->getDataClass()) {
-                    // get server class constraints from data
+            $formMetadata->addConstraints($clientClassMetadata->getConstraints());
+        } else {
+            $mapped = $form->getConfig()->getMapped();
+            $name = $form->getConfig()->getName();
+            $parentForm = $form->getParent();
+            if ($mapped
+                && null !== $parentForm
+                && null !== ($parentDataClass = $parentForm->getConfig()->getDataClass())) {
+                if ($constraintConversion) {
+                    // get server property constraints from data
                     /** @var ServerClassMetadata $serverClassMetadata */
-                    $serverClassMetadata = $serverMetadataFactory->getMetadataFor($dataClass);
-                    $formMetadata->addServerConstraints($serverClassMetadata->getConstraints());
-
-                    // get client class constraints from data
-                    /** @var ClientClassMetadata $clientClassMetadata */
-                    $clientClassMetadata = $clientMetadataFactory->getMetadataFor($dataClass);
-                    $formMetadata->addClientConstraints($clientClassMetadata->getConstraints());
-                }
-
-                // get server property constraints from data
-                if ($parentServerClassMetadata instanceof ServerClassMetadata) {
-                    if ($parentServerClassMetadata->hasPropertyMetadata($name)) {
-                        $propertyMetadatas = $parentServerClassMetadata->getPropertyMetadata($name);
-                        foreach ($propertyMetadatas as $propertyMetadata) {
-                            /** @var ServerPropertyMetadata $propertyMetadata */
-                            $formMetadata->addServerConstraints($propertyMetadata->getConstraints());
+                    $parentServerClassMetadata = $this->serverMetadataFactory->getMetadataFor($parentDataClass);
+                    if ($parentServerClassMetadata instanceof ServerClassMetadata) {
+                        if ($parentServerClassMetadata->hasPropertyMetadata($name)) {
+                            $propertyMetadatas = $parentServerClassMetadata->getPropertyMetadata($name);
+                            foreach ($propertyMetadatas as $propertyMetadata) {
+                                /** @var ServerPropertyMetadata $propertyMetadata */
+                                $formMetadata->addConstraints($this->convertConstraints($propertyMetadata->getConstraints()));
+                            }
                         }
                     }
                 }
 
                 // get client property constraints from data
+                $parentClientClassMetadata = $this->clientMetadataFactory->getMetadataFor($parentDataClass);
                 if ($parentClientClassMetadata instanceof ClientClassMetadata) {
                     if ($parentClientClassMetadata->hasPropertyMetadata($name)) {
                         $propertyMetadatas = $parentClientClassMetadata->getPropertyMetadata($name);
                         foreach ($propertyMetadatas as $propertyMetadata) {
                             /** @var ClientPropertyMetadata $propertyMetadata */
-                            $formMetadata->addClientConstraints($propertyMetadata->getConstraints());
+                            $formMetadata->addConstraints($propertyMetadata->getConstraints());
                         }
                     }
                 }
             }
+        }
 
+        if ($constraintConversion) {
             // get server constraints from form
-            $formMetadata->addServerConstraints($child->getConfig()->getOption('constraints'));
+            $formMetadata->addConstraints($this->convertConstraints($form->getConfig()->getOption('constraints')));
+        }
 
-            // get client constraints from form
-            $formMetadata->addClientConstraints($child->getConfig()->getOption('client_constraints'));
-
-            $parentFormMetadata->addChild($child->getName(), $formMetadata);
-
-            return [$formMetadata, $serverClassMetadata, $clientClassMetadata];
-        }, [$formMetadata, $serverClassMetadata, $clientClassMetadata]);
+        // get client constraints from form
+        $formMetadata->addConstraints($form->getConfig()->getOption('client_constraints'));
 
         return $formMetadata;
+    }
+
+    /**
+     * @param array $constraints
+     * @return array
+     */
+    protected function convertConstraints(array $constraints)
+    {
+        $clientConstraints = [];
+        foreach ($constraints as $constraint) {
+            $clientConstraint = $this->constraintManager->convert($constraint);
+            if ($clientConstraint) {
+                $clientConstraints[] = $clientConstraint;
+            }
+        }
+
+        return $clientConstraints;
     }
 }

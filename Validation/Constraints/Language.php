@@ -2,7 +2,7 @@
 
 namespace ITE\FormBundle\Validation\Constraints;
 
-use ITE\FormBundle\Validation\Constraint;
+use ITE\FormBundle\Validation\ClientConstraint;
 use Symfony\Component\Intl\Intl;
 
 /**
@@ -16,7 +16,7 @@ use Symfony\Component\Intl\Intl;
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-class Language extends Constraint
+class Language extends ClientConstraint
 {
     public $message = 'This value is not a valid language.';
 

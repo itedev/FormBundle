@@ -2,7 +2,7 @@
 
 namespace ITE\FormBundle\Validation\Constraints;
 
-use ITE\FormBundle\Validation\Constraint;
+use ITE\FormBundle\Validation\ClientConstraint;
 
 /**
  * Class Choice
@@ -15,7 +15,7 @@ use ITE\FormBundle\Validation\Constraint;
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-class Choice extends Constraint
+class Choice extends ClientConstraint
 {
     public $choices;
     public $callback;

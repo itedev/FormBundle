@@ -2,7 +2,7 @@
 
 namespace ITE\FormBundle\Validation\Constraints;
 
-use ITE\FormBundle\Validation\Constraint;
+use ITE\FormBundle\Validation\ClientConstraint;
 use Symfony\Component\Validator\Exception\MissingOptionsException;
 
 /**
@@ -16,7 +16,7 @@ use Symfony\Component\Validator\Exception\MissingOptionsException;
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-class Length extends Constraint
+class Length extends ClientConstraint
 {
     public $maxMessage = 'This value is too long. It should have {{ limit }} character or less.|This value is too long. It should have {{ limit }} characters or less.';
     public $minMessage = 'This value is too short. It should have {{ limit }} character or more.|This value is too short. It should have {{ limit }} characters or more.';

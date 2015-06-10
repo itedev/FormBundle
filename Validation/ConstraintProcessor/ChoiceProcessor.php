@@ -3,7 +3,7 @@
 namespace ITE\FormBundle\Validation\ConstraintProcessor;
 
 use ITE\FormBundle\Validation\AbstractConstraintProcessor;
-use ITE\FormBundle\Validation\Constraint;
+use ITE\FormBundle\Validation\ClientConstraint;
 use ITE\FormBundle\Validation\Constraints\Choice;
 
 /**
@@ -16,7 +16,7 @@ class ChoiceProcessor extends AbstractConstraintProcessor
     /**
      * {@inheritdoc}
      */
-    public function supports(Constraint $constraint)
+    public function supports(ClientConstraint $constraint)
     {
         return $constraint instanceof Choice;
     }
@@ -24,7 +24,7 @@ class ChoiceProcessor extends AbstractConstraintProcessor
     /**
      * {@inheritdoc}
      */
-    public function process(Constraint $constraint)
+    public function process(ClientConstraint $constraint)
     {
         /** @var $constraint Choice */
         $constraint->multipleMessage = $this->translate($constraint->multipleMessage);

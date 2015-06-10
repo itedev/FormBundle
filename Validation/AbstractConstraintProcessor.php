@@ -63,16 +63,6 @@ abstract class AbstractConstraintProcessor implements ConstraintProcessorInterfa
     }
 
     /**
-     * {@inheritdoc}
-     */
-    abstract public function supports(Constraint $constraint);
-
-    /**
-     * {@inheritdoc}
-     */
-    abstract public function process(Constraint $constraint);
-
-    /**
      * @param string $message
      * @param array $parameters
      * @param null $plural

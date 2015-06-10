@@ -3,7 +3,7 @@
 namespace ITE\FormBundle\Validation\ConstraintProcessor;
 
 use ITE\FormBundle\Validation\AbstractConstraintProcessor;
-use ITE\FormBundle\Validation\Constraint;
+use ITE\FormBundle\Validation\ClientConstraint;
 
 /**
  * Class DefaultProcessor
@@ -15,7 +15,7 @@ class DefaultProcessor extends AbstractConstraintProcessor
     /**
      * {@inheritdoc}
      */
-    public function supports(Constraint $constraint)
+    public function supports(ClientConstraint $constraint)
     {
         return in_array(get_class($constraint), [
             'ITE\FormBundle\Validation\Constraints\Blank',
@@ -33,7 +33,7 @@ class DefaultProcessor extends AbstractConstraintProcessor
     /**
      * {@inheritdoc}
      */
-    public function process(Constraint $constraint)
+    public function process(ClientConstraint $constraint)
     {
         $constraint->message = $this->translate($constraint->message);
     }

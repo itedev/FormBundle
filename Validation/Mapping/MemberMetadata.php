@@ -2,7 +2,7 @@
 
 namespace ITE\FormBundle\Validation\Mapping;
 
-use ITE\FormBundle\Validation\Constraint;
+use ITE\FormBundle\Validation\ClientConstraint;
 use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
 
 /**
@@ -69,9 +69,9 @@ abstract class MemberMetadata extends GenericMetadata implements PropertyMetadat
     /**
      * {@inheritdoc}
      */
-    public function addConstraint(Constraint $constraint)
+    public function addConstraint(ClientConstraint $constraint)
     {
-        if (!in_array(Constraint::PROPERTY_CONSTRAINT, (array) $constraint->getTargets())) {
+        if (!in_array(ClientConstraint::PROPERTY_CONSTRAINT, (array) $constraint->getTargets())) {
             throw new ConstraintDefinitionException(sprintf(
                 'The constraint %s cannot be put on properties or getters',
                 get_class($constraint)
