@@ -1,5 +1,6 @@
 parameters:
     ite_form.form.type_extension.plugin.form.class:             ITE\FormBundle\Form\Extension\Plugin\FormTypeExtension
+    ite_form.form.type_extension.form.attr_callback.class:      ITE\FormBundle\Form\Extension\FormTypeAttrCallbackExtension
     ite_form.form.type_extension.form.form_view.class:          ITE\FormBundle\Form\Extension\FormTypeFormViewExtension
     ite_form.form.type_extension.collection.form_view.class:    ITE\FormBundle\Form\Extension\CollectionTypeFormViewExtension
     ite_form.form.type_extension.choice.form_view.class:        ITE\FormBundle\Form\Extension\ChoiceTypeFormViewExtension
@@ -7,6 +8,11 @@ parameters:
 services:
     ite_form.form.type_extension.plugin.form:
         class: %ite_form.form.type_extension.plugin.form.class%
+        tags:
+            - { name: form.type_extension, alias: form }
+
+    ite_form.form.type_extension.form.attr_callback:
+        class: %ite_form.form.type_extension.form.attr_callback.class%
         tags:
             - { name: form.type_extension, alias: form }
 
