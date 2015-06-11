@@ -3,21 +3,6 @@
   var rxCheckable = /^(?:checkbox|radio)$/i;
   var rxSelect = /^select$/i;
 
-  $.fn.hierarchical = function(option) {
-    var value;
-    this.each(function() {
-      var $this = $(this);
-
-      if ('active' === option) {
-        value = 'undefined' !== typeof $this.data('hierarchicalJqxhr');
-      } else {
-        $.error('Method with name "' + option + '" does not exist in jQuery.hierarchical');
-      }
-    });
-
-    return ('undefined' === typeof value) ? this : value;
-  };
-
   SF.fn.util = $.extend(SF.fn.util, {
     arrayUnique: function(arr) {
       return $.grep(arr, function(v, k) {
@@ -58,113 +43,110 @@
 
       var element = SF.elements.get(selector);
       var $element = SF.elements.getJQueryElement(selector, context, replacementTokens);
-
-      var originator = SF.util.getFullName($element, element);
-      var originatorData = SF.elements.getElementValue($element, element);
-
-      var eventData = {
-        originator: originator,
-        children: {}
-      };
-      var $childrenElements = {};
-      var childrenCount = 0;
-      $.each(element.getHierarchicalChildren(), function(i, childSelector) {
-        var $childElement = SF.elements.getJQueryElement(childSelector, context, replacementTokens);
-        $childrenElements[childSelector] = $childElement;
-
-        if ($childElement.length) {
-          eventData.children['#' + $childElement.attr('id')] = $childElement.get(0);
-          childrenCount++;
-        }
-      });
-
-      if (!childrenCount) {
-        return;
-      }
-
-      var event = $.Event('ite-before-submit.hierarchical', eventData);
-      $element.trigger(event);
-      if (false === event.result) {
-        return;
-      }
-//
-//      // clear children value
-//      $.each(SF.elements.getHierarchicalChildrenRecursive(selector), function(index, childSelector) {
-//        var $child = SF.elements.getJQueryElement(childSelector, context, replacementTokens);
-//        if (!$child.length) {
-//          return;
-//        }
-//
-//        SF.elements.clearElementValue(SF.elements.get(childSelector), $child);
-//      });
-//
-//      // clear element value
-//      SF.elements.clearElementValue(element, $element);
-
       var $form = $element.closest('form');
-      var jqxhr = $form.data('hierarchicalJqxhr');
-      if (jqxhr) {
-        jqxhr.abort('hierarchicalAbort');
-      }
-      jqxhr = $.ajax({
-        type: $form.attr('method'),
-        url: $form.attr('action'),
-        data: $form.serialize(),
-        dataType: 'html',
-        headers: {
-          'X-SF-Hierarchical': '1',
-          'X-SF-Hierarchical-Originator': originator
-        },
-        success: function(response) {
-          $form.removeData('hierarchicalJqxhr');
 
-          var newContext = $(response);
-          event = $.Event('ite-after-submit.hierarchical', eventData);
-          $element.trigger(event, [newContext]);
-          if (false === event.result) {
-            return;
-          }
+      $form.hierarchical('trigger', [{
+        selector: selector,
+        context: context,
+        replacementTokens: replacementTokens
+      }]);
 
-          $.each(element.getHierarchicalChildren(), function(i, childSelector) {
-            var childElement = SF.elements.get(childSelector);
-            var $childElement = $childrenElements[childSelector];
-            var $newChildElement = SF.elements.getJQueryElement(childSelector, newContext, replacementTokens);
-
-            if (!$childElement.length) {
-              return;
-            }
-
-            // set element value
-            var childEventData = {
-              originator: originator,
-              originatorData: originatorData,
-              relatedTarget: $newChildElement.get(0)
-            };
-            event = $.Event('ite-before-change.hierarchical', childEventData);
-            $childElement.trigger(event, [newContext]);
-            if (false === event.result) {
-              return;
-            }
-
-            SF.elements.setElementValue($childElement, $newChildElement, childElement);
-
-            event = $.Event('ite-after-change.hierarchical', childEventData);
-            $childElement.trigger(event, [newContext]);
-          });
-
-          event = $.Event('ite-after-children-change.hierarchical', eventData);
-          $element.trigger(event, [newContext]);
-        }
-      });
-      jqxhr.fail(function() {
-        if (0 !== jqxhr.readyState || 'hierarchicalAbort' !== jqxhr.statusText) {
-          $form.removeData('hierarchicalJqxhr');
-        }
-
-        event = $.Event('ite-after-submit.hierarchical', eventData);
-        $element.trigger(event);
-      });
-      $form.data('hierarchicalJqxhr', jqxhr);
+    //  var element = SF.elements.get(selector);
+    //  var $element = SF.elements.getJQueryElement(selector, context, replacementTokens);
+    //
+    //  var originator = SF.util.getFullName($element, element);
+    //  var originatorData = SF.elements.getElementValue($element, element);
+    //
+    //  var eventData = {
+    //    originator: originator,
+    //    children: {}
+    //  };
+    //  var $childrenElements = {};
+    //  var childrenCount = 0;
+    //  $.each(element.getHierarchicalChildren(), function(i, childSelector) {
+    //    var $childElement = SF.elements.getJQueryElement(childSelector, context, replacementTokens);
+    //    $childrenElements[childSelector] = $childElement;
+    //
+    //    if ($childElement.length) {
+    //      eventData.children['#' + $childElement.attr('id')] = $childElement.get(0);
+    //      childrenCount++;
+    //    }
+    //  });
+    //
+    //  if (!childrenCount) {
+    //    return;
+    //  }
+    //
+    //  var event = $.Event('ite-before-submit.hierarchical', eventData);
+    //  $element.trigger(event);
+    //  if (false === event.result) {
+    //    return;
+    //  }
+    //
+    //  var $form = $element.closest('form');
+    //  var jqxhr = $form.data('hierarchicalJqxhr');
+    //  if (jqxhr) {
+    //    jqxhr.abort('hierarchicalAbort');
+    //  }
+    //  jqxhr = $.ajax({
+    //    type: $form.attr('method'),
+    //    url: $form.attr('action'),
+    //    data: $form.serialize(),
+    //    dataType: 'html',
+    //    headers: {
+    //      'X-SF-Hierarchical': '1',
+    //      'X-SF-Hierarchical-Originator': originator
+    //    },
+    //    success: function(response) {
+    //      $form.removeData('hierarchicalJqxhr');
+    //
+    //      var newContext = $(response);
+    //      event = $.Event('ite-after-submit.hierarchical', eventData);
+    //      $element.trigger(event, [newContext]);
+    //      if (false === event.result) {
+    //        return;
+    //      }
+    //
+    //      $.each(element.getHierarchicalChildren(), function(i, childSelector) {
+    //        var childElement = SF.elements.get(childSelector);
+    //        var $childElement = $childrenElements[childSelector];
+    //        var $newChildElement = SF.elements.getJQueryElement(childSelector, newContext, replacementTokens);
+    //
+    //        if (!$childElement.length) {
+    //          return;
+    //        }
+    //
+    //        // set element value
+    //        var childEventData = {
+    //          originator: originator,
+    //          originatorData: originatorData,
+    //          relatedTarget: $newChildElement.get(0)
+    //        };
+    //        event = $.Event('ite-before-change.hierarchical', childEventData);
+    //        $childElement.trigger(event, [newContext]);
+    //        if (false === event.result) {
+    //          return;
+    //        }
+    //
+    //        SF.elements.setElementValue($childElement, $newChildElement, childElement);
+    //
+    //        event = $.Event('ite-after-change.hierarchical', childEventData);
+    //        $childElement.trigger(event, [newContext]);
+    //      });
+    //
+    //      event = $.Event('ite-after-children-change.hierarchical', eventData);
+    //      $element.trigger(event, [newContext]);
+    //    }
+    //  });
+    //  jqxhr.fail(function() {
+    //    if (0 !== jqxhr.readyState || 'hierarchicalAbort' !== jqxhr.statusText) {
+    //      $form.removeData('hierarchicalJqxhr');
+    //    }
+    //
+    //    event = $.Event('ite-after-submit.hierarchical', eventData);
+    //    $element.trigger(event);
+    //  });
+    //  $form.data('hierarchicalJqxhr', jqxhr);
     }
   });
 

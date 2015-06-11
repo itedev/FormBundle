@@ -58,7 +58,8 @@ class FormTypeHierarchicalExtension extends AbstractTypeExtension
     {
         $request = $this->requestStack->getMasterRequest();
         if ($request->headers->has('X-SF-Hierarchical')) {
-            $builder->setAttribute('hierarchical_originator', $request->headers->get('X-SF-Hierarchical-Originator'));
+            $originator = explode(',', $request->headers->get('X-SF-Hierarchical-Originator'));
+            $builder->setAttribute('hierarchical_originator', $originator);
 
             $builder->addEventListener(FormEvents::POST_SUBMIT, function(FormEvent $event) {
                 $form = $event->getForm();

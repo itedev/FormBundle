@@ -29,7 +29,7 @@ class HierarchicalParent
     private $form;
 
     /**
-     * @var string $originator
+     * @var bool $originator
      */
     private $originator;
 
@@ -37,9 +37,9 @@ class HierarchicalParent
      * @param string $name
      * @param mixed $data
      * @param FormInterface $form
-     * @param string|null $originator
+     * @param bool $originator
      */
-    public function __construct($name, $data, FormInterface $form = null, $originator = null)
+    public function __construct($name, $data, FormInterface $form = null, $originator = false)
     {
         $this->name = $name;
         $this->data = $data;
@@ -68,7 +68,7 @@ class HierarchicalParent
      */
     public function isOriginator()
     {
-        return $this->originator === FormUtils::getFullName($this->form);
+        return $this->originator;
     }
 
     /**

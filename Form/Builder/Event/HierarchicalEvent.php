@@ -40,7 +40,7 @@ class HierarchicalEvent
     protected $submitted;
 
     /**
-     * @var string
+     * @var array|null
      */
     protected $originator;
 
@@ -65,9 +65,9 @@ class HierarchicalEvent
      * @param array|HierarchicalParent[] $parents
      * @param array $options
      * @param bool $submitted
-     * @param string|null $originator
+     * @param array|null $originator
      */
-    public function __construct(FormInterface $form, $data, array $parents, array $options, $submitted = false, $originator = null)
+    public function __construct(FormInterface $form, $data, array $parents, array $options, $submitted = false, array $originator = null)
     {
         $this->form = $form;
         $this->data = $data;
@@ -100,11 +100,31 @@ class HierarchicalEvent
     /**
      * Get originator
      *
-     * @return string
+     * @return array|null
      */
     public function getOriginator()
     {
         return $this->originator;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getSingleOriginator()
+    {
+        if (!$this->hasOriginator()) {
+            return null;
+        }
+
+        return $this->originator[0];
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasOriginator()
+    {
+        return null !== $this->originator;
     }
 
     /**
@@ -240,14 +260,6 @@ class HierarchicalEvent
     public function getParent($parentName)
     {
         return $this->parents->get($parentName);
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasOriginator()
-    {
-        return null !== $this->originator;
     }
 
     /**

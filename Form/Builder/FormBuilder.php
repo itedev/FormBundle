@@ -179,7 +179,12 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
                     $parentForm = $formAccessor->getForm($form, $parentName);
                     $parentData = $parentForm ? $parentForm->getData() : null;
 
-                    $hierarchicalParent = new HierarchicalParent($parentName, $parentData, $parentForm, $originator);
+                    $parentFullName = FormUtils::getFullName($parentForm);
+                    $isParentOriginator = null !== $originator
+                        ? in_array($parentFullName, $originator)
+                        : false;
+
+                    $hierarchicalParent = new HierarchicalParent($parentName, $parentData, $parentForm, $isParentOriginator);
                     $hierarchicalParents[$parentName] = $hierarchicalParent;
                     $parentDatas[$parentName] = $parentData;
                 }
