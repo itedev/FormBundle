@@ -17,7 +17,7 @@
 
       var hierarchicalOriginator = [];
       var originatorElements = [];
-      var prevented = false;
+      var submit = false;
       $.each(elementDatas, function(i, elementData) {
         var selector = 'string' === typeof elementData ? elementData : elementData.selector;
         var context = 'object' === typeof elementData ? elementData.context : null;
@@ -60,19 +60,18 @@
         hierarchicalOriginator.push(originator);
 
         if (!childrenCount) {
-          prevented = true;
+          submit = false;
           return;
         }
 
         var event = $.Event('ite-before-submit.hierarchical', eventData);
         $element.trigger(event);
-        if (false === event.result && !force) {
-          prevented = true;
-          return;
+        if (false !== event.result) {
+          submit = true;
         }
       });
 
-      if (prevented) {
+      if (!submit && !force) {
         return;
       }
 
