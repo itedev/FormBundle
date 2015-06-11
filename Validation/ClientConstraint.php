@@ -7,7 +7,7 @@ use Symfony\Component\Validator\Exception\InvalidOptionsException;
 use Symfony\Component\Validator\Exception\MissingOptionsException;
 
 /**
- * Class Constraint
+ * Class ClientConstraint
  *
  * @see Symfony\Component\Validator\Constraint
  *
@@ -15,7 +15,7 @@ use Symfony\Component\Validator\Exception\MissingOptionsException;
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-abstract class Constraint
+abstract class ClientConstraint
 {
     /**
      * The name of the group given to all constraints with no explicit group.
@@ -161,7 +161,7 @@ abstract class Constraint
      */
     public function addImplicitGroupName($group)
     {
-        if (in_array(Constraint::DEFAULT_GROUP, $this->groups) && !in_array($group, $this->groups)) {
+        if (in_array(self::DEFAULT_GROUP, $this->groups) && !in_array($group, $this->groups)) {
             $this->groups[] = $group;
         }
     }
@@ -227,7 +227,7 @@ abstract class Constraint
      * Set attributes
      *
      * @param array $attributes
-     * @return Constraint
+     * @return ClientConstraint
      */
     public function setAttributes(array $attributes)
     {
@@ -239,7 +239,7 @@ abstract class Constraint
     /**
      * @param string $name
      * @param mixed $value
-     * @return $this
+     * @return ClientConstraint
      */
     public function setAttribute($name, $value)
     {
@@ -249,9 +249,9 @@ abstract class Constraint
     }
 
     /**
-     * @param $name
-     * @param null $defaultValue
-     * @return null
+     * @param string $name
+     * @param mixed $defaultValue
+     * @return mixed
      */
     public function getAttribute($name, $defaultValue = null)
     {

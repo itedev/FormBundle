@@ -2,7 +2,7 @@
 
 namespace ITE\FormBundle\Validation\Mapping;
 
-use ITE\FormBundle\Validation\Constraint;
+use ITE\FormBundle\Validation\ClientConstraint;
 
 /**
  * A generic container of {@link Constraint} objects.
@@ -16,7 +16,7 @@ use ITE\FormBundle\Validation\Constraint;
 class GenericMetadata implements MetadataInterface
 {
     /**
-     * @var Constraint[]
+     * @var ClientConstraint[]
      *
      * @internal This property is public in order to reduce the size of the
      *           class' serialized representation. Do not access it. Use
@@ -64,11 +64,11 @@ class GenericMetadata implements MetadataInterface
     /**
      * Adds a constraint.
      *
-     * @param Constraint $constraint The constraint to add
+     * @param ClientConstraint $constraint The constraint to add
      *
      * @return GenericMetadata This object
      */
-    public function addConstraint(Constraint $constraint)
+    public function addConstraint(ClientConstraint $constraint)
     {
         $this->constraints[] = $constraint;
 
@@ -82,7 +82,7 @@ class GenericMetadata implements MetadataInterface
     /**
      * Adds an list of constraints.
      *
-     * @param Constraint[] $constraints The constraints to add
+     * @param ClientConstraint[] $constraints The constraints to add
      *
      * @return GenericMetadata This object
      */

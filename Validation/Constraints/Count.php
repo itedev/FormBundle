@@ -2,7 +2,7 @@
 
 namespace ITE\FormBundle\Validation\Constraints;
 
-use ITE\FormBundle\Validation\Constraint;
+use ITE\FormBundle\Validation\ClientConstraint;
 use Symfony\Component\Validator\Exception\MissingOptionsException;
 
 /**
@@ -16,7 +16,7 @@ use Symfony\Component\Validator\Exception\MissingOptionsException;
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-class Count extends Constraint
+class Count extends ClientConstraint
 {
     public $minMessage = 'This collection should contain {{ limit }} element or more.|This collection should contain {{ limit }} elements or more.';
     public $maxMessage = 'This collection should contain {{ limit }} element or less.|This collection should contain {{ limit }} elements or less.';

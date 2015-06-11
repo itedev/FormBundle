@@ -33,5 +33,12 @@ class ConstraintPass implements CompilerPassInterface
         foreach ($serviceIds as $serviceId => $tagAttributes) {
             $definition->addMethodCall('addProcessor', [new Reference($serviceId)]);
         }
+
+        $serviceIds = $container->findTaggedServiceIds('ite_form.validation.constraint_transformer');
+        foreach ($serviceIds as $serviceId => $tags) {
+            foreach ($tags as $attributes) {
+                $definition->addMethodCall('addTransformer', [$attributes['alias'], new Reference($serviceId)]);
+            }
+        }
     }
 }

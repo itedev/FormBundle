@@ -10,13 +10,13 @@ namespace ITE\FormBundle\Validation;
 interface ConstraintProcessorInterface
 {
     /**
-     * @param Constraint $constraint
+     * @param ClientConstraint $constraint
      * @return bool
      */
-    public function supports(Constraint $constraint);
+    public function supports(ClientConstraint $constraint);
 
     /**
-     * @param Constraint $constraint
+     * @param ClientConstraint $constraint
      */
-    public function process(Constraint $constraint);
+    public function process(ClientConstraint $constraint);
 }

@@ -6,28 +6,27 @@
    * ============================== */
 
   var Collection = function(collection) {
-    var $collection = $(collection);
-
-    this.collectionSelector = '#' + $collection.attr('id');
-    this.collectionId = $collection.data('collectionId');
-    this.collectionItemsSelector = this.collectionSelector + ' .collection-items:first';
+    this.collection = $(collection);
+    this.collectionSelector = '#' + this.collection.attr('id');
+    this.collectionId = this.collection.data('collectionId');
+    this.collectionItemsSelector = '.collection-items:first';
     this.collectionItemSelector = this.collectionItemsSelector + ' > .collection-item';
 
-    $(this.collectionItemSelector).each(function(index) {
+    this.collection.find(this.collectionItemSelector).each(function(index) {
       $(this).attr('data-index', index);
     });
 
-    this.show = $collection.data('show-animation');
-    this.hide = $collection.data('hide-animation');
+    this.show = this.collection.data('show-animation');
+    this.hide = this.collection.data('hide-animation');
     this.initialize();
   };
 
   Collection.prototype = {
     constructor: Collection,
     initialize: function() {
-      this.index = $(this.collectionItemSelector).length - 1;
+      this.index = $(this.collection).find(this.collectionItemSelector).length - 1;
     },
-    add: function () {
+    add: function(afterShowCallback) {
       var self = this;
       function afterShow() {
         // apply plugins
@@ -40,31 +39,34 @@
         });
         replacementTokens[prototypeName] = self.index;
 
-        $collection.trigger('ite-add.collection', [$item]);
+        if ($.isFunction(afterShowCallback)) {
+          afterShowCallback.apply(self.collection, [$item]);
+        }
+
+        self.collection.trigger('ite-add.collection', [$item]);
 
         SF.elements.apply($item, replacementTokens);
       }
 
       this.index++;
 
-      var $collection = $(this.collectionSelector);
-      var prototypeName = $collection.data('prototypeName');
+      var prototypeName = self.collection.data('prototypeName');
       if ('undefined' === typeof prototypeName) {
         prototypeName = '__name__';
       }
 
       var re = new RegExp(prototypeName, 'g');
-      var itemHtml = $collection.data('prototype').replace(re, this.index);
+      var itemHtml = self.collection.data('prototype').replace(re, this.index);
       var $item = $(itemHtml).attr('data-index', this.index);
 
       var event = $.Event('ite-before-add.collection');
-      $collection.trigger(event, [$item]);
+      self.collection.trigger(event, [$item]);
       if (false === event.result) {
         return;
       }
 
       $item.hide();
-      $(this.collectionItemsSelector).append($item);
+      self.collection.find(self.collectionItemsSelector).append($item);
 
       var showLength = this.show.length;
       switch (this.show.type.toLowerCase()) {
@@ -82,17 +84,16 @@
           break;
       }
     },
-    remove: function ($item) {
+    remove: function($item) {
+      var self = this;
       function afterHide() {
         $item.remove();
 
-        $collection.trigger('ite-remove.collection', [$item]);
+        self.collection.trigger('ite-remove.collection', [$item]);
       }
 
-      var $collection = $(this.collectionSelector);
-
       var event = $.Event('ite-before-remove.collection');
-      $collection.trigger(event, [$item]);
+      self.collection.trigger(event, [$item]);
       if (false === event.result) {
         return;
       }
@@ -114,22 +115,22 @@
       }
     },
     itemsWrapper: function() {
-      return $(this.collectionItemsSelector);
+      return this.collection.find(this.collectionItemsSelector);
     },
     items: function() {
-      return $(this.collectionItemSelector);
+      return this.collection.find(this.collectionItemSelector);
     },
     isEmpty: function() {
-      return 0 === this.itemsCount();
+      return 0 === this.count();
     },
     clear: function() {
       this.itemsWrapper().empty();
     },
-    itemsCount: function() {
+    count: function() {
       return this.items().length;
     },
     parents: function() {
-      return $(this.collectionSelector).parents('[data-collection-id]');
+      return this.collection.parents('[data-collection-id]');
     },
     parentsCount: function() {
       return this.parents().length;
@@ -170,7 +171,7 @@
 
   $(function () {
     // add
-    $('body').on('click.collection', '[data-collection-add-btn]', function (e) {
+    $('body').on('click.collection', '[data-collection-add-btn]', function(e) {
       var $btn = $(this);
       var $collection = $($btn.data('collectionAddBtn'));
       if (!$collection.length) {
@@ -182,7 +183,7 @@
     });
 
     // remove
-    $('body').on('click.collection', '[data-collection-remove-btn]', function (e) {
+    $('body').on('click.collection', '[data-collection-remove-btn]', function(e) {
       var $btn = $(this);
       var $collection = $($btn.data('collectionRemoveBtn'));
       var $item = $btn.closest('.collection-item');

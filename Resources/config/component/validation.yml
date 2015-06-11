@@ -20,6 +20,8 @@ parameters:
     ite_form.validation.constraint_processor.range.class:               ITE\FormBundle\Validation\ConstraintProcessor\RangeProcessor
     ite_form.validation.constraint_processor.type.class:                ITE\FormBundle\Validation\ConstraintProcessor\TypeProcessor
 
+    ite_form.validation.constraint_transformer.jquery_validation.default.class: ITE\FormBundle\Validation\ConstraintTransformer\JQueryValidation\DefaultTransformer
+
 services:
     ite_form.validation.mapping.class_metadata_factory.factory:
         class: %ite_form.validation.mapping.class_metadata_factory.factory.class%
@@ -30,6 +32,7 @@ services:
 
     ite_form.form.type_extension.component.validation.validation:
         class: %ite_form.form.type_extension.component.validation.validation.class%
+        arguments: [ @ite_form.validation.form_metadata_factory ]
         tags:
             - { name: form.type_extension, alias: form }
 
@@ -38,7 +41,7 @@ services:
 
     ite_form.validation.form_metadata_factory:
         class: %ite_form.validation.form_metadata_factory.class%
-        arguments: [ @validator, @ite_form.validation.mapping.class_metadata_factory ]
+        arguments: [ @validator, @ite_form.validation.mapping.class_metadata_factory, @ite_form.validation.constraint_manager ]
 
     ite_form.validation.constraint_converter.default:
         class: %ite_form.validation.constraint_converter.default.class%
@@ -98,3 +101,8 @@ services:
         parent: ite_form.validation.constraint_processor.base
         tags:
             - { name: ite_form.validation.constraint_processor }
+
+    ite_form.validation.constraint_transformer.jquery_validation.default:
+        class: %ite_form.validation.constraint_transformer.jquery_validation.default.class%
+        tags:
+            - { name: ite_form.validation.constraint_transformer, alias: jquery_validation }

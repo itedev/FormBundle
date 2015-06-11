@@ -3,6 +3,8 @@
 namespace ITE\FormBundle\Form\Type\Plugin\Select2;
 
 use ITE\FormBundle\Form\Type\Plugin\AbstractPluginType;
+use ITE\FormBundle\SF\Form\ClientFormTypeInterface;
+use ITE\FormBundle\SF\Form\ClientFormView;
 use ITE\FormBundle\SF\Plugin\Select2Plugin;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -13,7 +15,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-class AbstractChoiceType extends AbstractPluginType
+class AbstractChoiceType extends AbstractPluginType implements ClientFormTypeInterface
 {
     /**
      * @var string $type
@@ -48,6 +50,19 @@ class AbstractChoiceType extends AbstractPluginType
             0,
             'ite_select2'
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildClientView(ClientFormView $clientView, FormView $view, FormInterface $form, array $options)
+    {
+        $clientView->setOption('plugins', [
+            Select2Plugin::getName() => [
+                'extras' => (object) [],
+                'options' => (object) array_replace_recursive($this->options, $options['plugin_options'])
+            ]
+        ]);
     }
 
     /**

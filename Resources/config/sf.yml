@@ -1,14 +1,14 @@
 parameters:
-    ite_form.sf.extension.form.class:   ITE\FormBundle\SF\SFFormExtension
-    ite_form.twig.extension.sf.class:   ITE\FormBundle\Twig\Extension\SFExtension
-    ite_form.route_loader.class:        ITE\FormBundle\Routing\RouteLoader
+    ite_form.sf.extension.form.class:           ITE\FormBundle\SF\SFFormExtension
+    ite_form.twig.extension.sf.class:           ITE\FormBundle\Twig\Extension\SFExtension
+    ite_form.route_loader.class:                ITE\FormBundle\Routing\RouteLoader
 
-    form.resolved_type_factory.class:   ITE\FormBundle\Form\ResolvedFormTypeFactory
+    form.resolved_type_factory.class:           ITE\FormBundle\Form\ResolvedFormTypeFactory
 
-    ite_form.form_view_builder.class:   ITE\FormBundle\SF\Form\FormViewBuilder
+    ite_form.client_form_view_builder.class:    ITE\FormBundle\SF\Form\ClientFormViewBuilder
 
     # todo: refactor services below
-    ite_form.param_protector.class:     ITE\FormBundle\Service\Security\ParamProtector
+    ite_form.param_protector.class:             ITE\FormBundle\Service\Security\ParamProtector
 
 services:
     ite_form.sf.extension.form:
@@ -28,8 +28,8 @@ services:
         tags:
             - { name: routing.loader }
 
-    ite_form.form_view_builder:
-        class: %ite_form.form_view_builder.class%
+    ite_form.client_form_view_builder:
+        class: %ite_form.client_form_view_builder.class%
 
     ite_form.param_protector:
         class: %ite_form.param_protector.class%

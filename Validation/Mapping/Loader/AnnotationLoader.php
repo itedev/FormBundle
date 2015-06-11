@@ -3,7 +3,7 @@
 namespace ITE\FormBundle\Validation\Mapping\Loader;
 
 use Doctrine\Common\Annotations\Reader;
-use ITE\FormBundle\Validation\Constraint;
+use ITE\FormBundle\Validation\ClientConstraint;
 use ITE\FormBundle\Validation\Mapping\ClassMetadata;
 
 /**
@@ -34,7 +34,7 @@ class AnnotationLoader implements LoaderInterface
         $success = false;
 
         foreach ($this->reader->getClassAnnotations($reflClass) as $constraint) {
-            if ($constraint instanceof Constraint) {
+            if ($constraint instanceof ClientConstraint) {
                 $metadata->addConstraint($constraint);
             }
 
@@ -44,7 +44,7 @@ class AnnotationLoader implements LoaderInterface
         foreach ($reflClass->getProperties() as $property) {
             if ($property->getDeclaringClass()->name == $className) {
                 foreach ($this->reader->getPropertyAnnotations($property) as $constraint) {
-                    if ($constraint instanceof Constraint) {
+                    if ($constraint instanceof ClientConstraint) {
                         $metadata->addPropertyConstraint($property->name, $constraint);
                     }
 

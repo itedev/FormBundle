@@ -85,14 +85,14 @@ Example of usage:
     $('collection_selector').on('ite-add.collection ite-remove.collection', function(e, item) {
       var collection = $(this);
 
-      $('#collection_count').html(collection.collection('itemsCount'));
+      $('#collection_count').html(collection.collection('count'));
     });
 
     // for children collections
     $('root_collection_selector').on('ite-add.collection ite-remove.collection', 'child_collection_selector', function(e, item) {
       var collection = $(this);
 
-      $('#child_collection_count').html(collection.collection('itemsCount'));
+      $('#child_collection_count').html(collection.collection('count'));
 
       e.stopPropagation(); // stop event propagation to parent collections
     });
@@ -112,7 +112,7 @@ Collection plugin methods:
 +----------------+-----------------------------------------+-----------------------------------------------------------------------------------------------------------------------------+
 | items          | None                                    | Return jQuery collection of all collection items.                                                                           |
 +----------------+-----------------------------------------+-----------------------------------------------------------------------------------------------------------------------------+
-| itemsCount     | None                                    | Return number of collection items.                                                                                          |
+| count          | None                                    | Return number of collection items.                                                                                          |
 +----------------+-----------------------------------------+-----------------------------------------------------------------------------------------------------------------------------+
 | parents        | None                                    | Return all parent collection (if exist) (parent elements with ``data-collection-id`` attribute).                            |
 +----------------+-----------------------------------------+-----------------------------------------------------------------------------------------------------------------------------+

@@ -2,7 +2,7 @@
 
 namespace ITE\FormBundle\Validation\Mapping;
 
-use ITE\FormBundle\Validation\Constraint;
+use ITE\FormBundle\Validation\ClientConstraint;
 use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
 
 /**
@@ -119,9 +119,9 @@ class ClassMetadata extends GenericMetadata implements ClassMetadataInterface
     /**
      * {@inheritdoc}
      */
-    public function addConstraint(Constraint $constraint)
+    public function addConstraint(ClientConstraint $constraint)
     {
-        if (!in_array(Constraint::CLASS_CONSTRAINT, (array) $constraint->getTargets())) {
+        if (!in_array(ClientConstraint::CLASS_CONSTRAINT, (array) $constraint->getTargets())) {
             throw new ConstraintDefinitionException(sprintf(
                 'The constraint "%s" cannot be put on classes.',
                 get_class($constraint)
@@ -139,11 +139,11 @@ class ClassMetadata extends GenericMetadata implements ClassMetadataInterface
      * Adds a constraint to the given property.
      *
      * @param string     $property   The name of the property
-     * @param Constraint $constraint The constraint
+     * @param ClientConstraint $constraint The constraint
      *
      * @return ClassMetadata This object
      */
-    public function addPropertyConstraint($property, Constraint $constraint)
+    public function addPropertyConstraint($property, ClientConstraint $constraint)
     {
         if (!isset($this->properties[$property])) {
             $this->properties[$property] = new PropertyMetadata($this->getClassName(), $property);
@@ -160,7 +160,7 @@ class ClassMetadata extends GenericMetadata implements ClassMetadataInterface
 
     /**
      * @param string       $property
-     * @param Constraint[] $constraints
+     * @param ClientConstraint[] $constraints
      *
      * @return ClassMetadata
      */

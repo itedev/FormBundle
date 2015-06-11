@@ -1,6 +1,9 @@
 parameters:
-    ite_form.form.type_extension.plugin.form.class:         ITE\FormBundle\Form\Extension\Plugin\FormTypeExtension
-    ite_form.form.type_extension.form_view.class:           ITE\FormBundle\Form\Extension\FormTypeFormViewExtension
+    ite_form.form.type_extension.plugin.form.class:             ITE\FormBundle\Form\Extension\Plugin\FormTypeExtension
+    ite_form.form.type_extension.form.attr_callback.class:      ITE\FormBundle\Form\Extension\FormTypeAttrCallbackExtension
+    ite_form.form.type_extension.form.form_view.class:          ITE\FormBundle\Form\Extension\FormTypeFormViewExtension
+    ite_form.form.type_extension.collection.form_view.class:    ITE\FormBundle\Form\Extension\CollectionTypeFormViewExtension
+    ite_form.form.type_extension.choice.form_view.class:        ITE\FormBundle\Form\Extension\ChoiceTypeFormViewExtension
 
 services:
     ite_form.form.type_extension.plugin.form:
@@ -8,8 +11,25 @@ services:
         tags:
             - { name: form.type_extension, alias: form }
 
-    ite_form.form.type_extension.form_view:
-        class: %ite_form.form.type_extension.form_view.class%
-        arguments: [ @ite_form.sf.extension.form, @ite_form.form_view_builder ]
+    ite_form.form.type_extension.form.attr_callback:
+        class: %ite_form.form.type_extension.form.attr_callback.class%
         tags:
             - { name: form.type_extension, alias: form }
+
+    ite_form.form.type_extension.form.form_view:
+        class: %ite_form.form.type_extension.form.form_view.class%
+        arguments: [ @ite_form.sf.extension.form, @ite_form.client_form_view_builder ]
+        tags:
+            - { name: form.type_extension, alias: form }
+
+    ite_form.form.type_extension.collection.form_view:
+        class: %ite_form.form.type_extension.collection.form_view.class%
+        arguments: [ @ite_form.client_form_view_builder ]
+        tags:
+            - { name: form.type_extension, alias: collection }
+
+    ite_form.form.type_extension.choice.form_view:
+        class: %ite_form.form.type_extension.choice.form_view.class%
+        arguments: [ @ite_form.client_form_view_builder ]
+        tags:
+            - { name: form.type_extension, alias: choice }
