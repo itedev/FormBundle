@@ -21,7 +21,7 @@
         {# collection item wrapper doesnt need form-group it gets added to childs anyways #}
         {% set widget_form_group_attr = widget_form_group_attr|merge({
             'class': ('collection-item ' ~ widget_form_group_attr.class|default(''))|trim,
-            'id': id
+            'id': id ~ '_collection_item'
         }) %}
         {% set widget_form_group_tag = form.parent.vars.collection_item_tag|default('div') %}
     {% endif %}
