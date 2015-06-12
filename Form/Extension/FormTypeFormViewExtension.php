@@ -48,10 +48,10 @@ class FormTypeFormViewExtension extends AbstractTypeExtension implements ClientF
             return;
         }
 
-//        /** @var ExtendedFormInterface $form */
-//        $clientView = $this->builder->createClientView($view, $form);
-//        $this->sfForm->getFormBag()->add($form->getName(), $clientView);
-//        $a = 1;
+        /** @var ExtendedFormInterface $form */
+        $clientView = $this->builder->createClientView($view, $form);
+        $this->sfForm->getFormBag()->add($form->getName(), $clientView);
+        $a = 1;
     }
 
     /**

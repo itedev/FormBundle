@@ -10,7 +10,7 @@
   Hierarchical.prototype = {
     constructor: Hierarchical,
 
-    trigger: function(elementDatas, force) {
+    trigger: function($elements, force) {
       var self = this;
 
       force = force || false;
@@ -18,16 +18,11 @@
       var hierarchicalOriginator = [];
       var originatorElements = [];
       var submit = false;
-      $.each(elementDatas, function(i, elementData) {
-        var selector = 'string' === typeof elementData ? elementData : elementData.selector;
-        var context = 'object' === typeof elementData ? elementData.context : null;
-        var replacementTokens = 'object' === typeof elementData ? elementData.replacementTokens : {};
+      $.each($elements, function(i, $element) {
+        var view = SF.forms.find($element.attr('id'));
 
-        var element = SF.elements.get(selector);
-        var $element = SF.elements.getJQueryElement(selector, context, replacementTokens);
-
-        var originator = SF.util.getFullName($element, element);
-        var originatorData = SF.elements.getElementValue($element, element);
+        var originator = view.getOption('full_name');
+        var originatorData = view.getElementValue($element, view);
 
         var eventData = {
           originator: originator,
@@ -35,21 +30,20 @@
         };
         var $childrenElements = {};
         var childrenCount = 0;
-        $.each(element.getHierarchicalChildren(), function (i, childSelector) {
-          var $childElement = SF.elements.getJQueryElement(childSelector, context, replacementTokens);
-          $childrenElements[childSelector] = $childElement;
+        var hierarchicalChildren = view.getOption('hierarchical_children', []);
+        $.each(hierarchicalChildren, function (i, hierarchicalChild) {
+          var childView = SF.forms.find(hierarchicalChild);
+          var $childElement = childView.getJQueryElement();
+          $childrenElements[hierarchicalChild] = $childElement;
 
           if ($childElement.length) {
-            eventData.children['#' + $childElement.attr('id')] = $childElement.get(0);
+            eventData.children['#' + hierarchicalChild] = $childElement.get(0);
             childrenCount++;
           }
         });
 
         var originatorElement = {
-          selector: selector,
-          context: context,
-          replacementTokens: replacementTokens,
-          element: element,
+          view: view,
           $element: $element,
           originator: originator,
           originatorData: originatorData,
@@ -100,8 +94,9 @@
               return;
             }
 
-            $.each(originatorElement.element.getHierarchicalChildren(), function(i, childSelector) {
-              var childElement = SF.elements.get(childSelector);
+            var hierarchicalChildren = originatorElement.view.getOption('hierarchical_children', []);
+            $.each(hierarchicalChildren, function(i, hierarchicalChild) {
+              var childElement = SF.forms.find(hierarchicalChild);
               var $childElement = originatorElement.$childrenElements[childSelector];
               var $newChildElement = SF.elements.getJQueryElement(childSelector, newContext, originatorElement.replacementTokens);
 

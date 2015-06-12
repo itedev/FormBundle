@@ -100,6 +100,25 @@ class ClientFormView
     }
 
     /**
+     * @param string $name
+     * @param mixed $defaultValue
+     * @return ClientFormView|null
+     */
+    public function getChild($name, $defaultValue = null)
+    {
+        return $this->hasChild($name) ? $this->children[$name] : $defaultValue;
+    }
+
+    /**
+     * @param string $name
+     * @return bool
+     */
+    public function hasChild($name)
+    {
+        return array_key_exists($name, $this->children);
+    }
+
+    /**
      * Get attributes
      *
      * @return array
@@ -229,7 +248,7 @@ class ClientFormView
 
         $options = [];
         foreach ($this->options as $name => $value) {
-            $options[$name] = 'prototype' === $name
+            $options[$name] = $value instanceof self
                 ? $value->toArray()
                 : $value;
         }

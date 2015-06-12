@@ -2,6 +2,7 @@
 
 namespace ITE\FormBundle\FormAccess;
 
+use ITE\FormBundle\SF\Form\ClientFormView;
 use ITE\FormBundle\Util\FormUtils;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -79,6 +80,42 @@ class FormAccessor implements FormAccessorInterface
                 }
 
                 $current = $current[$element];
+            }
+        }
+
+        return $current;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getClientView(ClientFormView $clientView, $formPath)
+    {
+        if (!$formPath instanceof FormPathInterface) {
+            $formPath = new FormPath($formPath);
+        }
+
+        $current = $formPath->isAbsolute() ? $clientView->getRoot() : $clientView;
+
+        $length = $formPath->getLength();
+        for ($i = 0; $i < $length; $i++) {
+            $isParent = $formPath->isParent($i);
+
+            if ($isParent) {
+                if ($current->isRoot()) {
+                    // error
+                    return null;
+                }
+
+                $current = $current->getParent();
+            } else {
+                $element = $formPath->getElement($i);
+                if (!$current->hasChild($element)) {
+                    // error
+                    return null;
+                }
+
+                $current = $current->getChild($element);
             }
         }
 

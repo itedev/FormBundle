@@ -7,11 +7,11 @@
     this.parent = parent || null;
     this.options = {};
     this.children = {};
-    this.applied = false;
+    this.initialized = false;
 
     var self = this;
     $.each(viewData['options'], function(name, value) {
-      self.options[name] = 'prototype' === name
+      self.options[name] = 'prototype_view' === name
         ? new FormView(value, self)
         : value;
     });
@@ -27,7 +27,7 @@
     },
 
     getRoot: function() {
-      return null !== this.parent ? this.getRoot() : this;
+      return null !== this.parent ? this.parent.getRoot() : this;
     },
 
     isRoot: function() {
@@ -64,10 +64,12 @@
 
     addChild: function(name, view) {
       if (this.hasChild(name)) {
-        return;
+        return this;
       }
 
       this.children[name] = view;
+
+      return this;
     },
 
     toArray: function() {
@@ -77,9 +79,15 @@
       };
 
       $.each(this.options, function(name, value) {
-        result.options[name] = 'prototype' === name
-          ? value.toArray()
-          : value;
+        var newValue;
+        if (value instanceof FormView) {
+          newValue = value.toArray();
+        } else if ($.isPlainObject(value)) {
+          newValue = $.extend(true, {}, value);
+        } else {
+          newValue = value;
+        }
+        result.options[name] = newValue;
       });
       $.each(this.children, function(name, childView) {
         result.children[name] = childView.toArray();
@@ -88,10 +96,8 @@
       return result;
     },
 
-    clone: function(view) {
-      var viewArray = view.toArray();
-
-      return new FormView(viewArray, view.getParent());
+    clone: function() {
+      return new FormView(this.toArray(), this.parent);
     },
 
     findByOption: function(name, value) {
@@ -104,34 +110,126 @@
       $.each(this.children, function(childName, childView) {
         result = childView.findByOption(name, value);
         if (null !== result) {
-          return false;
+          return false; // break
         }
       });
 
       return result;
     },
 
-    addCollectionItem: function(prototypeName) {
-      if (!this.hasOption('prototype')) {
+    find: function(id) {
+      return this.findByOption('id', id);
+    },
+
+    walk: function(callback) {
+      callback.call(this);
+      $.each(this.children, function(name, childView) {
+        childView.walk(callback);
+      });
+
+      return this;
+    },
+
+    addCollectionItem: function(name) {
+      if (!this.hasOption('prototype_view')) {
         return;
       }
 
-      var prototype = this.getOption('prototype');
+      var prototype = this.getOption('prototype_view');
+      var prototypeName = this.getOption('prototype_name');
+
       var collectionItem = prototype.clone();
 
-      //this.addChild(prototypeName, );
+      var replaceStringCallback = function(string) {
+        var re = new RegExp(prototypeName, 'g');
+
+        return string.replace(re, name);
+      };
+      var walkViewCallback = function() {
+        var self = this;
+        $.each(this.options, function(optionName, optionValue) {
+          if (optionValue instanceof FormView) {
+            optionValue.walk(walkViewCallback);
+          } else if ($.isArray(optionValue) || $.isPlainObject(optionValue)) {
+            $.each(optionValue, function(subOptionName, subOptionValue) {
+              if ('string' === typeof subOptionValue) {
+                optionValue[subOptionName] = replaceStringCallback.call(null, subOptionValue);
+              }
+            });
+          } else if ('string' === typeof optionValue) {
+            optionValue = replaceStringCallback.call(null, optionValue);
+          }
+          self.options[optionName] = optionValue;
+        });
+      };
+
+      collectionItem.walk(walkViewCallback);
+
+      this.addChild(name, collectionItem);
+      this.initialize();
+
+      return this;
     },
 
-    isApplied: function() {
-      return this.applied;
+    getJQueryElement: function(context) {
+      return $('#' + this.getOption('id'), context);
     },
 
-    apply: function() {
-      console.log(this.getOption('name'));
-      $.each(this.children, function(name, childView) {
-        childView.apply();
+    isInitialized: function() {
+      return this.initialized;
+    },
+
+    initialize: function(force) {
+      force = force || false;
+
+      if (!this.initialized || force) {
+        this._initialize();
+        this.initialized = true;
+        $.each(this.children, function(name, childView) {
+          childView.initialize(force);
+        });
+      }
+
+      return this;
+    },
+
+    _initialize: function() {
+      var self = this;
+
+      var plugins = this.getOption('plugins', {});
+      $.each(plugins, function(plugin, pluginData) {
+        if ('undefined' === typeof SF.plugins[plugin]) {
+          throw new Error('Plugin "' + plugin + '" is not registered.');
+        }
+
+        if (!$.isFunction(SF.plugins[plugin].isApplied)) {
+          throw new Error('Plugin "' + plugin + '" must implement method "isApplied".');
+        }
+
+        var $element = self.getJQueryElement();
+        if (SF.plugins[plugin].isApplied($element)) {
+          return;
+        }
+
+        if (!$.isFunction(SF.plugins[plugin].apply)) {
+          throw new Error('Plugin "' + plugin + '" must implement method "apply".');
+        }
+
+        var event = $.Event('ite-before-apply.plugin', {
+          plugin: plugin
+        });
+        $element.trigger(event, [pluginData]);
+        if (false === event.result) {
+          return;
+        }
+
+        SF.plugins[plugin].apply($element, pluginData);
+
+        event = $.Event('ite-apply.plugin', {
+          plugin: plugin
+        });
+        $element.trigger(event, [pluginData]);
       });
-      //this.applied = true;
     }
   };
 
@@ -154,10 +252,12 @@
 
     add: function(name, viewData) {
       if (this.has(name)) {
-        return;
+        return this;
       }
 
       this.forms[name] = new FormView(viewData);
+
+      return this;
     },
 
     set: function(forms) {
@@ -165,12 +265,40 @@
       $.each(forms, function(name, viewData) {
         self.add(name, viewData);
       });
+
+      return this;
     },
 
-    apply: function() {
+    initialize: function(force) {
       $.each(this.forms, function(name, view) {
-        view.apply();
+        view.initialize(force);
       });
+
+      return this;
+    },
+
+    findByOption: function(name, value) {
+      var result = null;
+      $.each(this.forms, function(viewName, view) {
+        result = view.findByOption(name, value);
+        if (null !== result) {
+          return false; // break
+        }
+      });
+
+      return result;
+    },
+
+    find: function(id) {
+      var result = null;
+      $.each(this.forms, function(viewName, view) {
+        result = view.find(id);
+        if (null !== result) {
+          return false; // break
+        }
+      });
+
+      return result;
     }
   };
 

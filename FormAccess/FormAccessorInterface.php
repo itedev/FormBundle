@@ -2,6 +2,7 @@
 
 namespace ITE\FormBundle\FormAccess;
 
+use ITE\FormBundle\SF\Form\ClientFormView;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
@@ -25,4 +26,11 @@ interface FormAccessorInterface
      * @return FormView
      */
     public function getView(FormView $view, $formPath);
+
+    /**
+     * @param ClientFormView $clientView
+     * @param string|FormPathInterface $formPath
+     * @return ClientFormView|null
+     */
+    public function getClientView(ClientFormView $clientView, $formPath);
 }

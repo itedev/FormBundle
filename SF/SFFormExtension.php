@@ -99,14 +99,14 @@ class SFFormExtension extends SFExtension implements SFFormExtensionInterface
         $dump = '';
         $dump .= '(function($){$(function(){';
 
-        if ($this->elementBag->count()) {
-            $dump .= 'SF.elements.set(' . json_encode($this->elementBag->peekAll()) . ');';
-            $dump .= 'SF.elements.apply();';
-        }
+//        if ($this->elementBag->count()) {
+//            $dump .= 'SF.elements.set(' . json_encode($this->elementBag->peekAll()) . ');';
+//            $dump .= 'SF.elements.apply();';
+//        }
 
         if ($this->formBag->count()) {
             $dump .= 'SF.forms.set(' . json_encode($this->formBag->toArray()) . ');';
-            $dump .= 'SF.forms.apply();';
+            $dump .= 'SF.forms.initialize();';
         }
 
         $dump .= '});})(jQuery);';

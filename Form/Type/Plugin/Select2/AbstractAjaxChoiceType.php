@@ -2,6 +2,8 @@
 
 namespace ITE\FormBundle\Form\Type\Plugin\Select2;
 
+use ITE\FormBundle\SF\Form\ClientFormTypeInterface;
+use ITE\FormBundle\SF\Form\ClientFormView;
 use ITE\FormBundle\SF\Plugin\Select2Plugin;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
@@ -15,7 +17,7 @@ use Symfony\Component\Routing\RouterInterface;
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-abstract class AbstractAjaxChoiceType extends AbstractType
+abstract class AbstractAjaxChoiceType extends AbstractType implements ClientFormTypeInterface
 {
     /**
      * @var array $options
@@ -103,6 +105,29 @@ abstract class AbstractAjaxChoiceType extends AbstractType
                 'allowClear' => !$options['required'],
             ]),
         ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildClientView(ClientFormView $clientView, FormView $view, FormInterface $form, array $options)
+    {
+        $clientView->setOption('plugins', [
+            Select2Plugin::getName() => [
+                'extras' => [
+                    'ajax' => true,
+                ],
+                'options' => array_replace_recursive($this->options, $options['plugin_options'], [
+                    'ajax' => [
+                        'url' => $options['url'],
+                        'dataType' => 'json',
+                    ],
+                    'multiple' => $options['multiple'],
+                    'placeholder' => $options['placeholder'],
+                    'allowClear' => !$options['required'],
+                ]),
+            ]
+        ]);
     }
 
 }

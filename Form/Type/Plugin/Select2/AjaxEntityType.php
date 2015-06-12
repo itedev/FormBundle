@@ -27,20 +27,6 @@ class AjaxEntityType extends AbstractAjaxChoiceType
     {
         parent::setDefaultOptions($resolver);
 
-        $self = $this;
-
-        $createUrl = function (Options $options) use ($self) {
-            if ($options['allow_create']) {
-                if (isset($options['create_route'])) {
-                    return $self->getRouter()->generate($options['create_route']);
-                }
-
-                throw new RuntimeException('You must specify create_route when using true for allow_create option.');
-            }
-
-            return null;
-        };
-
         $resolver->setDefaults([
             'choice_list' => function (Options $options) {
                 return new AjaxEntityChoiceList(
@@ -49,14 +35,6 @@ class AjaxEntityType extends AbstractAjaxChoiceType
                     $options['property']
                 );
             },
-            'allow_create' => false,
-            'create_url' => $createUrl,
-        ]);
-        $resolver->setAllowedTypes([
-            'allow_create' => ['bool'],
-        ]);
-        $resolver->setOptional([
-            'create_route',
         ]);
     }
 
@@ -75,10 +53,6 @@ class AjaxEntityType extends AbstractAjaxChoiceType
         parent::buildView($view, $form, $options);
 
         $view->vars['attr']['data-property'] = $options['property'];
-
-        $extras =& $view->vars['plugins'][Select2Plugin::getName()]['extras'];
-        $extras['allow_create'] = $options['allow_create'];
-        $extras['create_url'] = $options['create_url'];
     }
 
     /**

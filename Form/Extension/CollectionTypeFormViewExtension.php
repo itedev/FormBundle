@@ -43,7 +43,7 @@ class CollectionTypeFormViewExtension extends AbstractTypeExtension implements C
 
         $prototypeClientView = $this->builder->createClientView($prototypeView, $prototypeForm, $clientView);
 
-        $clientView->setOption('prototype', $prototypeClientView);
+        $clientView->setOption('prototype_view', $prototypeClientView);
         $clientView->setOption('prototype_name', $options['prototype_name']);
     }
 
