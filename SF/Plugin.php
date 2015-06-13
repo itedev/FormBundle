@@ -34,7 +34,7 @@ abstract class Plugin implements ExtensionInterface
         return $node
             ->children()
                 ->variableNode('options')
-                    ->defaultValue(array())
+                    ->defaultValue([])
                 ->end()
         ;
     }
@@ -53,7 +53,7 @@ abstract class Plugin implements ExtensionInterface
      */
     public function addFormResources(ContainerInterface $container)
     {
-        return array();
+        return [];
     }
 
     /**

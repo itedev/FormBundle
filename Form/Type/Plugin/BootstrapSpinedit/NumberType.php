@@ -3,6 +3,8 @@
 namespace ITE\FormBundle\Form\Type\Plugin\BootstrapSpinedit;
 
 use ITE\FormBundle\Form\Type\Plugin\AbstractPluginType;
+use ITE\FormBundle\SF\Form\ClientFormTypeInterface;
+use ITE\FormBundle\SF\Form\ClientFormView;
 use ITE\FormBundle\SF\Plugin\BootstrapSpineditPlugin;
 use ITE\Common\Util\LocaleUtils;
 use Symfony\Component\Form\FormInterface;
@@ -13,19 +15,21 @@ use Symfony\Component\Form\FormView;
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-class NumberType extends AbstractPluginType
+class NumberType extends AbstractPluginType implements ClientFormTypeInterface
 {
     /**
      * {@inheritdoc}
      */
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildClientView(ClientFormView $clientView, FormView $view, FormInterface $form, array $options)
     {
-        $view->vars['plugins'][BootstrapSpineditPlugin::getName()] = [
-            'extras' => (object) [],
-            'options' => (object) array_replace_recursive($this->options, $options['plugin_options'], [
-                'numberOfDecimals' => LocaleUtils::getPrecision($options['precision']),
-            ])
-        ];
+        $clientView->setOption('plugins', [
+            BootstrapSpineditPlugin::getName() => [
+                'extras' => (object) [],
+                'options' => array_replace_recursive($this->options, $options['plugin_options'], [
+                    'numberOfDecimals' => LocaleUtils::getPrecision($options['precision']),
+                ]),
+            ],
+        ]);
     }
 
     /**

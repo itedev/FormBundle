@@ -1,13 +1,11 @@
 (function($) {
   SF.fn.plugins['starrating'] = {
-    isApplied: function(element) {
-      return 'undefined' !== typeof element.data('rating');
+    isInitialized: function($element, view) {
+      return 'undefined' !== typeof $element.find(view.getOption('delegate_selector')).data('rating');
     },
 
-    apply: function(element, elementData) {
-      var options = elementData.options;
-
-      element.rating(options);
+    initialize: function($element, pluginData, view) {
+      $element.find(view.getOption('delegate_selector')).rating(pluginData.options);
     }
   };
 })(jQuery);

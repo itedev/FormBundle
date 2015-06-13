@@ -40,27 +40,6 @@ class BirthdayType extends AbstractPluginType implements ClientFormTypeInterface
     /**
      * {@inheritdoc}
      */
-    public function buildView(FormView $view, FormInterface $form, array $options)
-    {
-        $startDate = \DateTime::createFromFormat('Y-m-d H:i:s', sprintf('%d-01-01 00:00:00', $options['years'][0]));
-        $endDate = \DateTime::createFromFormat('Y-m-d H:i:s', sprintf('%d-12-31 23:59:59', $options['years'][count($options['years']) - 1]));
-
-        $viewTransformers = $form->getConfig()->getViewTransformers();
-        /** @var $dateTimeToLocalizedStringTransformer DateTimeToLocalizedStringTransformer */
-        $dateTimeToLocalizedStringTransformer = $viewTransformers[0];
-
-        $view->vars['plugins'][BootstrapDatetimepickerPlugin::getName()]['options'] = array_replace_recursive(
-            $view->vars['plugins'][BootstrapDatetimepickerPlugin::getName()]['options'], array(
-                'viewMode' => 'days', // days view
-                'minDate' => $dateTimeToLocalizedStringTransformer->transform($startDate),
-                'maxDate' => $dateTimeToLocalizedStringTransformer->transform($endDate),
-            )
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function buildClientView(ClientFormView $clientView, FormView $view, FormInterface $form, array $options)
     {
         $startDate = \DateTime::createFromFormat('Y-m-d H:i:s', sprintf('%d-01-01 00:00:00', $options['years'][0]));
@@ -70,16 +49,15 @@ class BirthdayType extends AbstractPluginType implements ClientFormTypeInterface
         /** @var $dateTimeToLocalizedStringTransformer DateTimeToLocalizedStringTransformer */
         $dateTimeToLocalizedStringTransformer = $viewTransformers[0];
 
-        $clientOptions = $clientView->getOptions();
-        $clientOptions['plugins'][BootstrapDatetimepickerPlugin::getName()]['options'] = array_replace_recursive(
-            $clientOptions['plugins'][BootstrapDatetimepickerPlugin::getName()]['options'], [
-                'viewMode' => 'days', // days view
-                'minDate' => $dateTimeToLocalizedStringTransformer->transform($startDate),
-                'maxDate' => $dateTimeToLocalizedStringTransformer->transform($endDate),
-            ]
-        );
+        $plugins = $clientView->getOption('plugins', []);
+        $pluginsOptions = $plugins[BootstrapDatetimepickerPlugin::getName()]['options'];
 
-        $clientView->setOptions($clientOptions);
+        $pluginsOptions['viewMode'] = 'days';
+        $pluginsOptions['minDate'] = $dateTimeToLocalizedStringTransformer->transform($startDate);
+        $pluginsOptions['maxDate'] = $dateTimeToLocalizedStringTransformer->transform($endDate);
+
+        $plugins[BootstrapDatetimepickerPlugin::getName()]['options'] = $pluginsOptions;
+        $clientView->setOption('plugins', $plugins);
     }
 
     /**

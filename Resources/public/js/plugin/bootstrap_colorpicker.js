@@ -1,13 +1,11 @@
 (function($) {
   SF.fn.plugins['bootstrap_colorpicker'] = {
-    isApplied: function(element) {
-      return 'undefined' !== typeof element.data('colorpicker');
+    isInitialized: function($element) {
+      return 'undefined' !== typeof $element.data('colorpicker');
     },
 
-    apply: function(element, elementData) {
-      var options = elementData.options;
-
-      element.colorpicker(options);
+    initialize: function($element, pluginData) {
+      $element.colorpicker(pluginData.options);
     }
   };
 })(jQuery);

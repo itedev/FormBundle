@@ -27,23 +27,12 @@ class SFFormExtension extends SFExtension implements SFFormExtensionInterface
     protected $plugins = [];
 
     /**
-     * @var ElementBag $elementBag
-     */
-    protected $elementBag;
-
-    /**
      * @var FormBag
      */
     public $formBag;
 
-//    /**
-//     * @var array
-//     */
-//    protected $formErrors = [];
-
     public function __construct()
     {
-        $this->elementBag = new ElementBag();
         $this->formBag = new FormBag();
     }
 
@@ -99,11 +88,6 @@ class SFFormExtension extends SFExtension implements SFFormExtensionInterface
         $dump = '';
         $dump .= '(function($){$(function(){';
 
-//        if ($this->elementBag->count()) {
-//            $dump .= 'SF.elements.set(' . json_encode($this->elementBag->peekAll()) . ');';
-//            $dump .= 'SF.elements.apply();';
-//        }
-
         if ($this->formBag->count()) {
             $dump .= 'SF.forms.set(' . json_encode($this->formBag->toArray()) . ');';
             $dump .= 'SF.forms.initialize();';
@@ -116,9 +100,9 @@ class SFFormExtension extends SFExtension implements SFFormExtensionInterface
 
     public function onAjaxResponse(FilterResponseEvent $event)
     {
-        if ($this->elementBag->count()) {
-            $event->getResponse()->headers->add(['X-SF-Elements' => json_encode($this->elementBag->peekAll())]);
-        }
+//        if ($this->elementBag->count()) {
+//            $event->getResponse()->headers->add(['X-SF-Elements' => json_encode($this->elementBag->peekAll())]);
+//        }
     }
 
 
@@ -161,16 +145,6 @@ class SFFormExtension extends SFExtension implements SFFormExtensionInterface
     }
 
     /**
-     * Get elementBag
-     *
-     * @return ElementBag
-     */
-    public function getElementBag()
-    {
-        return $this->elementBag;
-    }
-
-    /**
      * Get formBag
      *
      * @return FormBag
@@ -179,44 +153,4 @@ class SFFormExtension extends SFExtension implements SFFormExtensionInterface
     {
         return $this->formBag;
     }
-
-//    /**
-//     * @param FormView $form
-//     */
-//    protected function collectFormErrors(FormView $form)
-//    {
-//        $formErrors = array(
-//            'form' => array(),
-//            'children' => array(),
-//        );
-//        $this->processChildrenRecursive($formErrors, $form);
-//        $this->formErrors = $formErrors;
-//    }
-//
-//    /**
-//     * @param $formErrors
-//     * @param FormView $element
-//     */
-//    protected function processChildrenRecursive(&$formErrors, FormView $element)
-//    {
-//        if (count($element->vars['errors'])) {
-//            $value = array(
-//                'error_type' => $element->vars['error_type'],
-//                'errors' => array_map(function($error) {
-//                    /** @var $error FormError */
-//                    return $error->getMessage();
-//                }, $element->vars['errors']),
-//            );
-//
-//            if (!isset($element->parent)) {
-//                $formErrors['form'] = $value;
-//            } else {
-//                $formErrors['children'][$element->vars['full_name']] = $value;
-//            }
-//        }
-//
-//        foreach ($element->children as $child) {
-//            $this->processChildrenRecursive($formErrors, $child);
-//        }
-//    }
 }

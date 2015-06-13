@@ -3,6 +3,8 @@
 namespace ITE\FormBundle\Form\Type\Plugin\Starrating;
 
 use ITE\FormBundle\Form\Type\Plugin\AbstractPluginType;
+use ITE\FormBundle\SF\Form\ClientFormTypeInterface;
+use ITE\FormBundle\SF\Form\ClientFormView;
 use ITE\FormBundle\SF\Plugin\StarratingPlugin;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -13,7 +15,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-class RatingType extends AbstractPluginType
+class RatingType extends AbstractPluginType implements ClientFormTypeInterface
 {
     /**
      * {@inheritdoc}
@@ -33,12 +35,14 @@ class RatingType extends AbstractPluginType
     /**
      * {@inheritdoc}
      */
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildClientView(ClientFormView $clientView, FormView $view, FormInterface $form, array $options)
     {
-        $view->vars['plugins'][StarratingPlugin::getName()] = [
-            'extras' => (object) [],
-            'options' => (object) array_replace_recursive($this->options, $options['plugin_options'])
-        ];
+        $clientView->setOption('plugins', [
+            StarratingPlugin::getName() => [
+                'extras' => (object) [],
+                'options' => (object) array_replace_recursive($this->options, $options['plugin_options']),
+            ],
+        ]);
     }
 
     /**

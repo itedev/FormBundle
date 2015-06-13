@@ -89,27 +89,6 @@ abstract class AbstractAjaxChoiceType extends AbstractType implements ClientForm
     /**
      * {@inheritdoc}
      */
-    public function buildView(FormView $view, FormInterface $form, array $options)
-    {
-        $view->vars['plugins'][Select2Plugin::getName()] = [
-            'extras' => [
-                'ajax' => true,
-            ],
-            'options' => array_replace_recursive($this->options, $options['plugin_options'], [
-                'ajax' => [
-                    'url' => $options['url'],
-                    'dataType' => 'json',
-                ],
-                'multiple' => $options['multiple'],
-                'placeholder' => $options['placeholder'],
-                'allowClear' => !$options['required'],
-            ]),
-        ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function buildClientView(ClientFormView $clientView, FormView $view, FormInterface $form, array $options)
     {
         $clientView->setOption('plugins', [
@@ -126,7 +105,7 @@ abstract class AbstractAjaxChoiceType extends AbstractType implements ClientForm
                     'placeholder' => $options['placeholder'],
                     'allowClear' => !$options['required'],
                 ]),
-            ]
+            ],
         ]);
     }
 

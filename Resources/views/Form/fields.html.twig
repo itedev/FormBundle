@@ -1,167 +1,63 @@
 {% extends ite_parent_form_resource(_self.templateName) %}
 
-{% block ite_form_sf_element_plugins %}
-    {% for plugin, element_data in plugins %}
-        {{ ite_form_sf_add_plugin_element('#' ~ id, plugin, element_data) }}
-    {% endfor %}
-{% endblock %}
-
 {% block ite_select2_widget %}
     {{ block('choice_widget') }}
-    {{ block('ite_form_sf_element_plugins') }}
 {% endblock ite_select2_widget %}
 
 {% block ite_select2_ajax_choice_widget %}
     {{ block('choice_widget') }}
-    {{ block('ite_form_sf_element_plugins') }}
 {% endblock ite_select2_ajax_choice_widget %}
 
 {% block ite_select2_ajax_entity_widget %}
     {{ block('choice_widget') }}
-    {{ block('ite_form_sf_element_plugins') }}
 {% endblock ite_select2_ajax_entity_widget %}
 
 {% block ite_tinymce_textarea_widget %}
     {{ block('textarea_widget') }}
-    {{ block('ite_form_sf_element_plugins') }}
 {% endblock ite_tinymce_textarea_widget %}
 
 {% block ite_bootstrap_colorpicker_text_widget %}
     {{ block('form_widget_simple') }}
-    {{ block('ite_form_sf_element_plugins') }}
 {% endblock ite_bootstrap_colorpicker_text_widget %}
 
 {% block ite_bootstrap_spinedit_number_widget %}
     {{ block('number_widget') }}
-    {{ block('ite_form_sf_element_plugins') }}
 {% endblock ite_bootstrap_spinedit_number_widget %}
 
 {% block ite_bootstrap_spinedit_integer_widget %}
     {{ block('integer_widget') }}
-    {{ block('ite_form_sf_element_plugins') }}
 {% endblock ite_bootstrap_spinedit_integer_widget %}
 
 {% block ite_bootstrap_datetimepicker_widget %}
     {{ block('form_widget_simple') }}
-    {{ block('ite_form_sf_element_plugins') }}
 {% endblock ite_bootstrap_datetimepicker_widget %}
-
-{#{% block ite_bootstrap_datetimepicker2_widget %}#}
-    {#<div id="{{ id }}_bootstrap_datetimepicker2" class="input-append bootstrap-datetimepicker2">#}
-        {#{{ block('form_widget_simple') }}#}
-        {#<span class="add-on">#}
-            {#<i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>#}
-        {#</span>#}
-    {#</div>#}
-    {#{% for plugin, element_data in plugins %}#}
-        {#{{ ite_form_sf_add_plugin_element('#' ~ id ~ '_bootstrap_datetimepicker2', plugin, element_data) }}#}
-    {#{% endfor %}#}
-{#{% endblock ite_bootstrap_datetimepicker2_widget %}#}
-
-{% block ite_fileupload_file_widget %}
-    {% set selector = id %}
-    {% if widget == 'basic' %}
-        <span class="btn btn-success fileinput-button">
-        <i class="icon-plus"></i>
-            Add files...
-            {{ block('form_widget_simple') }}
-        </span>
-    {% elseif widget == 'basic_plus' %}
-
-    {% else %}
-        <div id="{{ id }}_container" data-property-path="{{ full_name }}">
-            <div class="row-fluid fileupload-buttonbar">
-                <div class="span7">
-                <span class="btn btn-success fileinput-button">
-                    <i class="icon-plus"></i>
-                    Add files...
-                    {{ block('form_widget_simple') }}
-                </span>
-                    <button type="submit" class="btn btn-primary start">
-                        <i class="icon-upload"></i>
-                        Start upload
-                    </button>
-                    <button type="reset" class="btn btn-warning cancel">
-                        <i class="icon-ban-circle"></i>
-                        Cancel upload
-                    </button>
-                    <button type="button" class="btn btn-danger delete">
-                        <i class="icon-trash"></i>
-                        Delete
-                    </button>
-                    <input type="checkbox" class="toggle">
-                    <span class="fileupload-process"></span>
-                </div>
-                <div class="span5 fileupload-progress fade">
-                    <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">
-                        <div class="progress-bar progress-bar-success" style="width:0%;"></div>
-                    </div>
-                    <div class="progress-extended">&nbsp;</div>
-                </div>
-            </div>
-            <table role="presentation" class="table table-striped">
-                <tbody class="files"></tbody>
-            </table>
-        </div>
-        {% set selector = id ~ '_container' %}
-    {% endif %}
-    {% for plugin, element_data in plugins %}
-        {{ ite_form_sf_add_plugin_element('#' ~ selector, plugin, element_data) }}
-    {% endfor %}
-{% endblock ite_fileupload_file_widget %}
-
-{% block ite_fineuploader_file_widget %}
-    <div id="{{ id }}_fine_uploader" data-property-path="{{ full_name }}"></div>
-    {{ block('form_widget_simple') }}
-    {% for plugin, element_data in plugins %}
-        {{ ite_form_sf_add_plugin_element('#' ~ id ~ '_fine_uploader', plugin, element_data) }}
-    {% endfor %}
-{% endblock ite_fineuploader_file_widget %}
 
 {% block ite_minicolors_text_widget %}
     {{ block('form_widget_simple') }}
-    {{ block('ite_form_sf_element_plugins') }}
 {% endblock ite_minicolors_text_widget %}
 
 {% block ite_knob_number_widget %}
     {{ block('form_widget_simple') }}
-    {{ block('ite_form_sf_element_plugins') }}
 {% endblock ite_knob_number_widget %}
 
 {% block ite_starrating_rating_widget %}
     <div {{ block('widget_container_attributes') }}>
         {% for child in form %}
             {{ form_widget(child, {'attr': {
-            'class': attr.widget_class|default(''),
-            'title': child.vars.label|trans({}, translation_domain)
+                'class': attr.widget_class|default(''),
+                'title': child.vars.label|trans({}, translation_domain)
             } }) }}
         {% endfor %}
     </div>
-    {% for plugin, element_data in plugins %}
-        {{ ite_form_sf_add_plugin_element('#' ~ id ~ ' input[type="radio"]', plugin, element_data) }}
-    {% endfor %}
 {% endblock ite_starrating_rating_widget %}
 
 {% block ite_ion_range_slider_widget %}
     {{ block('form_widget_simple') }}
-    {{ block('ite_form_sf_element_plugins') }}
 {% endblock ite_ion_range_slider_widget %}
 
 {% block ite_bootstrap_daterangepicker_widget %}
     {{ block('form_widget_simple') }}
-    {{ block('ite_form_sf_element_plugins') }}
 {% endblock ite_bootstrap_daterangepicker_widget %}
-
-{% block form_start %}
-    {% spaceless %}
-        {{ parent() }}
-        {% if plugins is defined %}
-            {% for plugin, element_data in plugins %}
-                {{ ite_form_sf_add_plugin_element('#' ~ attr.id, plugin, element_data) }}
-            {% endfor %}
-        {% endif %}
-    {% endspaceless %}
-{% endblock form_start %}
 
 {%- block simple_widget_attributes -%}
     id="{{ id }}"
@@ -183,6 +79,66 @@
 {% endblock ite_markup_widget %}
 
 {# refactor below #}
+
+{#{% block ite_fileupload_file_widget %}#}
+    {#{% set selector = id %}#}
+    {#{% if widget == 'basic' %}#}
+        {#<span class="btn btn-success fileinput-button">#}
+        {#<i class="icon-plus"></i>#}
+            {#Add files...#}
+            {#{{ block('form_widget_simple') }}#}
+        {#</span>#}
+    {#{% elseif widget == 'basic_plus' %}#}
+
+    {#{% else %}#}
+        {#<div id="{{ id }}_container" data-property-path="{{ full_name }}">#}
+            {#<div class="row-fluid fileupload-buttonbar">#}
+                {#<div class="span7">#}
+                {#<span class="btn btn-success fileinput-button">#}
+                    {#<i class="icon-plus"></i>#}
+                    {#Add files...#}
+                    {#{{ block('form_widget_simple') }}#}
+                {#</span>#}
+                    {#<button type="submit" class="btn btn-primary start">#}
+                        {#<i class="icon-upload"></i>#}
+                        {#Start upload#}
+                    {#</button>#}
+                    {#<button type="reset" class="btn btn-warning cancel">#}
+                        {#<i class="icon-ban-circle"></i>#}
+                        {#Cancel upload#}
+                    {#</button>#}
+                    {#<button type="button" class="btn btn-danger delete">#}
+                        {#<i class="icon-trash"></i>#}
+                        {#Delete#}
+                    {#</button>#}
+                    {#<input type="checkbox" class="toggle">#}
+                    {#<span class="fileupload-process"></span>#}
+                {#</div>#}
+                {#<div class="span5 fileupload-progress fade">#}
+                    {#<div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">#}
+                        {#<div class="progress-bar progress-bar-success" style="width:0%;"></div>#}
+                    {#</div>#}
+                    {#<div class="progress-extended">&nbsp;</div>#}
+                {#</div>#}
+            {#</div>#}
+            {#<table role="presentation" class="table table-striped">#}
+                {#<tbody class="files"></tbody>#}
+            {#</table>#}
+        {#</div>#}
+        {#{% set selector = id ~ '_container' %}#}
+    {#{% endif %}#}
+    {#{% for plugin, element_data in plugins %}#}
+        {#{{ ite_form_sf_add_plugin_element('#' ~ selector, plugin, element_data) }}#}
+    {#{% endfor %}#}
+{#{% endblock ite_fileupload_file_widget %}#}
+
+{#{% block ite_fineuploader_file_widget %}#}
+    {#<div id="{{ id }}_fine_uploader" data-property-path="{{ full_name }}"></div>#}
+    {#{{ block('form_widget_simple') }}#}
+    {#{% for plugin, element_data in plugins %}#}
+        {#{{ ite_form_sf_add_plugin_element('#' ~ id ~ '_fine_uploader', plugin, element_data) }}#}
+    {#{% endfor %}#}
+{#{% endblock ite_fineuploader_file_widget %}#}
 
 {% block ite_input_entity_widget %}
     {% if widget == 'hidden' %}

@@ -11,6 +11,9 @@ use ITE\FormBundle\SF\Form\ClientFormView;
  */
 class FormBag
 {
+    /**
+     * @var array|ClientFormView[]
+     */
     private $forms = [];
 
     /**

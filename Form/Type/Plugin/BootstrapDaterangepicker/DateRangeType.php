@@ -4,6 +4,8 @@ namespace ITE\FormBundle\Form\Type\Plugin\BootstrapDaterangepicker;
 
 use ITE\FormBundle\Form\DataTransformer\RangeToStringTransformer;
 use ITE\FormBundle\Form\Type\Plugin\AbstractPluginType;
+use ITE\FormBundle\SF\Form\ClientFormTypeInterface;
+use ITE\FormBundle\SF\Form\ClientFormView;
 use ITE\FormBundle\SF\Plugin\BootstrapDaterangepickerPlugin;
 use ITE\FormBundle\Util\MomentJsUtils;
 use Symfony\Component\Form\Extension\Core\DataTransformer\DateTimeToLocalizedStringTransformer;
@@ -17,7 +19,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-class DateRangeType extends AbstractPluginType
+class DateRangeType extends AbstractPluginType implements ClientFormTypeInterface
 {
     /**
      * {@inheritdoc}
@@ -49,20 +51,28 @@ class DateRangeType extends AbstractPluginType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $view->vars['plugins'][BootstrapDaterangepickerPlugin::getName()] = [
-            'extras' => (object) [],
-            'options' => (object) array_replace_recursive($this->options, $options['plugin_options'], [
-                'format' => MomentJsUtils::icuToMomentJs($options['format']),
-                'timePicker' => false,
-            ])
-        ];
-
         array_splice(
             $view->vars['block_prefixes'],
             array_search($this->getName(), $view->vars['block_prefixes']),
             0,
             'ite_bootstrap_daterangepicker'
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildClientView(ClientFormView $clientView, FormView $view, FormInterface $form, array $options)
+    {
+        $clientView->setOption('plugins', [
+            BootstrapDaterangepickerPlugin::getName() => [
+                'extras' => (object) [],
+                'options' => array_replace_recursive($this->options, $options['plugin_options'], [
+                    'format' => MomentJsUtils::icuToMomentJs($options['format']),
+                    'timePicker' => false,
+                ]),
+            ],
+        ]);
     }
 
     /**

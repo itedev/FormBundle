@@ -39,11 +39,6 @@ class AbstractChoiceType extends AbstractPluginType implements ClientFormTypeInt
             $view->vars['attr']['data-property'] = $options['property'];
         }
 
-        $view->vars['plugins'][Select2Plugin::getName()] = [
-            'extras' => (object) [],
-            'options' => (object) array_replace_recursive($this->options, $options['plugin_options'])
-        ];
-
         array_splice(
             $view->vars['block_prefixes'],
             array_search($this->getName(), $view->vars['block_prefixes']),
@@ -61,7 +56,7 @@ class AbstractChoiceType extends AbstractPluginType implements ClientFormTypeInt
             Select2Plugin::getName() => [
                 'extras' => (object) [],
                 'options' => (object) array_replace_recursive($this->options, $options['plugin_options'])
-            ]
+            ],
         ]);
     }
 

@@ -75,56 +75,6 @@ class FormTypeHierarchicalExtension extends AbstractTypeExtension implements Cli
         }
     }
 
-//    /**
-//     * {@inheritdoc}
-//     */
-//    public function finishView(FormView $view, FormInterface $form, array $options)
-//    {
-//        if (!isset($options['hierarchical_parents']) && !isset($options['hierarchical_trigger'])) {
-//            return;
-//        }
-//
-//        $selector = FormUtils::generateSelector($view);
-//        $parentSelectors = [];
-//
-//        if (!empty($options['hierarchical_parents'])) {
-//            $parents = $options['hierarchical_parents'];
-//            $ascendantView = $view->parent;
-//
-//            foreach ($parents as $parent) {
-//                $parentView = $this->formAccessor->getView($ascendantView, $parent);
-//                if (null === $parentView) {
-//                    throw new \RuntimeException(sprintf('FormView for parent "%s" not found', $parent));
-//                }
-//
-//                $parentSelector = FormUtils::generateSelector($parentView);
-//                $parentSelectors[] = $parentSelector;
-//            }
-//        }
-//
-//        $elementOptions = [
-//            'compound' => $view->vars['compound'],
-//        ];
-//        if ($options['hierarchical_originator']) {
-//            $elementOptions['hierarchical_originator'] = true;
-//        }
-//        if ($options['hierarchical_trigger_event']) {
-//            $elementOptions['hierarchical_trigger_event'] = $options['hierarchical_trigger_event'];
-//        }
-////        if (1 === count($parentViews)
-////            && FormUtils::isFormTypeChildOf($form, 'choice')
-////            && isset($options['choices'])
-////            && empty($options['choices'])) {
-////            /** @var $firstParent FormView */
-////            $firstParentView = reset($parentViews);
-////            if (FormUtils::isFormViewContainBlockPrefix($firstParentView, 'choice')) {
-////                $elementOptions['hierarchical_auto_initialize'] = true;
-////            }
-////        }
-//
-//        $this->sfForm->getElementBag()->addHierarchicalElement($selector, $parentSelectors, $elementOptions);
-//    }
-
     /**
      * {@inheritdoc}
      */

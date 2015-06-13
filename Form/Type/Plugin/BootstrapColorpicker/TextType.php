@@ -3,6 +3,8 @@
 namespace ITE\FormBundle\Form\Type\Plugin\BootstrapColorpicker;
 
 use ITE\FormBundle\Form\Type\Plugin\AbstractPluginType;
+use ITE\FormBundle\SF\Form\ClientFormTypeInterface;
+use ITE\FormBundle\SF\Form\ClientFormView;
 use ITE\FormBundle\SF\Plugin\BootstrapColorpickerPlugin;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -12,17 +14,19 @@ use Symfony\Component\Form\FormView;
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-class TextType extends AbstractPluginType
+class TextType extends AbstractPluginType implements ClientFormTypeInterface
 {
     /**
      * {@inheritdoc}
      */
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildClientView(ClientFormView $clientView, FormView $view, FormInterface $form, array $options)
     {
-        $view->vars['plugins'][BootstrapColorpickerPlugin::getName()] = [
-            'extras' => (object) [],
-            'options' => (object) array_replace_recursive($this->options, $options['plugin_options'])
-        ];
+        $clientView->setOption('plugins', [
+            BootstrapColorpickerPlugin::getName() => [
+                'extras' => (object) [],
+                'options' => (object) array_replace_recursive($this->options, $options['plugin_options'])
+            ],
+        ]);
     }
 
     /**

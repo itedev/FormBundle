@@ -39,13 +39,6 @@ interface SFFormExtensionInterface extends SFExtensionInterface
     public function getPlugins();
 
     /**
-     * Get elementBag
-     *
-     * @return ElementBag
-     */
-    public function getElementBag();
-
-    /**
      * Get formBag
      *
      * @return FormBag

@@ -23,7 +23,7 @@ class Element
      * @param $selector
      * @param array $options
      */
-    public function __construct($selector, $options = array())
+    public function __construct($selector, $options = [])
     {
         $this->selector = $selector;
         $this->options = $options;

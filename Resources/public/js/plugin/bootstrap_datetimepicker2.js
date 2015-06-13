@@ -1,11 +1,11 @@
 (function($) {
   SF.fn.plugins['bootstrap_datetimepicker2'] = {
-    isApplied: function(element) {
-      return 'undefined' !== typeof element.data('datetimepicker');
+    isInitialized: function($element) {
+      return 'undefined' !== typeof $element.data('datetimepicker');
     },
 
-    apply: function(element, elementData) {
-      element.datetimepicker(elementData.options);
+    initialize: function($element, pluginData) {
+      $element.datetimepicker(pluginData.options);
     }
   };
 })(jQuery);

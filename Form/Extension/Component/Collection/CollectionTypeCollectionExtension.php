@@ -77,14 +77,6 @@ class CollectionTypeCollectionExtension extends AbstractTypeExtension
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $resolver->setDefaults(array(
-          'collection_id' => null,
-          'collection_item_tag' => 'div',
-          'widget_show_animation' => $this->widgetShowAnimation,
-          'widget_hide_animation' => $this->widgetHideAnimation,
-          'prototype_data' => null,
-        ));
-
         $globalWidgetShowAnimation = $this->widgetShowAnimation;
         $widgetShowAnimationNormalizer = function(Options $options, $widgetShowAnimation) use ($globalWidgetShowAnimation) {
             if (!is_array($widgetShowAnimation)) {
@@ -114,9 +106,17 @@ class CollectionTypeCollectionExtension extends AbstractTypeExtension
 
             return $widgetHideAnimation;
         };
+
+        $resolver->setDefaults(array(
+            'collection_id' => null,
+            'collection_item_tag' => 'div',
+            'widget_show_animation' => $this->widgetShowAnimation,
+            'widget_hide_animation' => $this->widgetHideAnimation,
+            'prototype_data' => null,
+        ));
         $resolver->setNormalizers(array(
-          'widget_show_animation' => $widgetShowAnimationNormalizer,
-          'widget_hide_animation' => $widgetHideAnimationNormalizer,
+            'widget_show_animation' => $widgetShowAnimationNormalizer,
+            'widget_hide_animation' => $widgetHideAnimationNormalizer,
         ));
     }
 

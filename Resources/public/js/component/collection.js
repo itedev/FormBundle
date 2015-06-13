@@ -1,136 +1,118 @@
-!function ($) {
+(function($) {
 
-  "use strict";
+  var Collection = function(element) {
+    this.$collection = $(element);
+    this.itemsWrapperSelector = '.collection-items:first';
+    this.$itemsWrapper = this.$collection.find(this.itemsWrapperSelector);
+    this.itemSelector = ' > .collection-item';
 
-  /* Collection PUBLIC CLASS DEFINITION
-   * ============================== */
+    //this.$collection.find(this.collectionItemSelector).each(function(index) {
+    //  $(this).attr('data-index', index);
+    //});
 
-  var Collection = function(collection) {
-    this.collection = $(collection);
-    this.collectionSelector = '#' + this.collection.attr('id');
-    this.collectionId = this.collection.data('collectionId');
-    this.collectionItemsSelector = '.collection-items:first';
-    this.collectionItemSelector = this.collectionItemsSelector + ' > .collection-item';
-
-    this.collection.find(this.collectionItemSelector).each(function(index) {
-      $(this).attr('data-index', index);
-    });
-
-    this.show = this.collection.data('show-animation');
-    this.hide = this.collection.data('hide-animation');
+    this.showAnimation = this.$collection.data('show-animation');
+    this.hideAnimation = this.$collection.data('hide-animation');
     this.initialize();
   };
 
   Collection.prototype = {
     constructor: Collection,
     initialize: function() {
-      this.index = $(this.collection).find(this.collectionItemSelector).length - 1;
+      this.index = this.$collection.find(this.collectionItemSelector).length - 1;
     },
     add: function(afterShowCallback) {
-      var self = this;
-      function afterShow() {
-        // apply plugins
-        var replacementTokens = {};
-        $item.parents('.collection-item').each(function() {
-          var parentCollectionItem = $(this);
-
-          var parentPrototypeName = parentCollectionItem.closest('[data-collection-id]').data('prototypeName');
-          replacementTokens[parentPrototypeName] = parentCollectionItem.data('index');
-        });
-        replacementTokens[prototypeName] = self.index;
-
-        if ($.isFunction(afterShowCallback)) {
-          afterShowCallback.apply(self.collection, [$item]);
-        }
-
-        self.collection.trigger('ite-add.collection', [$item]);
-
-        SF.elements.apply($item, replacementTokens);
-      }
-
-      this.index++;
-
-      var prototypeName = self.collection.data('prototypeName');
+      var prototype = this.$collection.data('prototype');
+      var prototypeName = this.$collection.data('prototypeName');
       if ('undefined' === typeof prototypeName) {
         prototypeName = '__name__';
       }
 
       var re = new RegExp(prototypeName, 'g');
-      var itemHtml = self.collection.data('prototype').replace(re, this.index);
-      var $item = $(itemHtml).attr('data-index', this.index);
+
+      this.index++;
+      var itemHtml = prototype.replace(re, this.index);
+      var $item = $(itemHtml);
 
       var event = $.Event('ite-before-add.collection');
-      self.collection.trigger(event, [$item]);
+      this.$collection.trigger(event, [$item]);
       if (false === event.result) {
         return;
       }
 
       $item.hide();
-      self.collection.find(self.collectionItemsSelector).append($item);
+      this.$itemsWrapper.append($item);
 
-      var showLength = this.show.length;
-      switch (this.show.type.toLowerCase()) {
+      var showLength = this.showAnimation.length;
+      var showMethod;
+      switch (this.showAnimation.type.toLowerCase()) {
         case 'fade':
-          $item.fadeIn(showLength, afterShow);
+          showMethod = 'fadeIn';
           break;
         case 'slide':
-          $item.slideDown(showLength, afterShow);
-          break;
-        case 'show':
-          $item.show(showLength, afterShow);
+          showMethod = 'slideDown';
           break;
         default:
-          $item.show(null, afterShow);
-          break;
+          showMethod = 'show';
+          showLength = 0;
       }
+
+      var self = this;
+      $item[showMethod](showLength, function() {
+        if ($.isFunction(afterShowCallback)) {
+          afterShowCallback.apply(self.$collection, [$item]);
+        }
+
+        self.$collection.trigger('ite-add.collection', [$item]);
+
+        var view = SF.forms.find(self.$collection.attr('id'));
+        view.addCollectionItem(self.index);
+      });
     },
     remove: function($item) {
-      var self = this;
-      function afterHide() {
-        $item.remove();
-
-        self.collection.trigger('ite-remove.collection', [$item]);
-      }
-
       var event = $.Event('ite-before-remove.collection');
-      self.collection.trigger(event, [$item]);
+      this.$collection.trigger(event, [$item]);
       if (false === event.result) {
         return;
       }
 
-      var hideLength = this.hide.length;
-      switch (this.hide.type.toLowerCase()) {
+      var hideLength = this.hideAnimation.length;
+      var hideMethod;
+      switch (this.hideAnimation.type.toLowerCase()) {
         case 'fade':
-          $item.fadeOut(hideLength, afterHide);
+          hideMethod = 'fadeOut';
           break;
         case 'slide':
-          $item.slideUp(hideLength, afterHide);
-          break;
-        case 'hide':
-          $item.hide(hideLength, afterHide);
+          hideMethod = 'slideUp';
           break;
         default:
-          $item.hide(null, afterHide);
-          break;
+          hideMethod = 'hide';
+          hideLength = 0;
       }
+
+      var self = this;
+      $item[hideMethod](hideLength, function() {
+        $item.remove();
+
+        self.$collection.trigger('ite-remove.collection', [$item]);
+      });
     },
     itemsWrapper: function() {
-      return this.collection.find(this.collectionItemsSelector);
+      return this.$itemsWrapper;
     },
     items: function() {
-      return this.collection.find(this.collectionItemSelector);
+      return this.$itemsWrapper.find(this.itemSelector);
     },
     isEmpty: function() {
       return 0 === this.count();
     },
     clear: function() {
-      this.itemsWrapper().empty();
+      this.$itemsWrapper.empty();
     },
     count: function() {
       return this.items().length;
     },
     parents: function() {
-      return this.collection.parents('[data-collection-id]');
+      return this.$collection.parents('[data-collection-id]');
     },
     parentsCount: function() {
       return this.parents().length;
@@ -139,10 +121,6 @@
       return 0 !== this.parentsCount();
     }
   };
-
-
-  /* COLLECTION PLUGIN DEFINITION
-   * ======================== */
 
   $.fn.collection = function(method) {
     var methodArguments = arguments, value;
@@ -165,36 +143,35 @@
 
   $.fn.collection.Constructor = Collection;
 
+  $(function() {
+    $('body')
+      .on('click.ite.collection', '[data-collection-add-btn]', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
 
-  /* COLLECTION DATA-API
-   * =============== */
+        var $btn = $(this);
+        var $collection = $($btn.data('collectionAddBtn'));
+        if (!$collection.length) {
+          return;
+        }
 
-  $(function () {
-    // add
-    $('body').on('click.collection', '[data-collection-add-btn]', function(e) {
-      var $btn = $(this);
-      var $collection = $($btn.data('collectionAddBtn'));
-      if (!$collection.length) {
-        return;
-      }
+        $collection.collection('add');
+      })
+      .on('click.ite.collection', '[data-collection-remove-btn]', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
 
-      $collection.collection('add');
-      e.preventDefault();
-    });
+        var $btn = $(this);
+        var $collection = $($btn.data('collectionRemoveBtn'));
+        var $item = $btn.closest('.collection-item');
 
-    // remove
-    $('body').on('click.collection', '[data-collection-remove-btn]', function(e) {
-      var $btn = $(this);
-      var $collection = $($btn.data('collectionRemoveBtn'));
-      var $item = $btn.closest('.collection-item');
+        if (!$collection.length || !$item.length) {
+          return;
+        }
 
-      if (!$collection.length || !$item.length) {
-        return;
-      }
-
-      $collection.collection('remove', $item);
-      e.preventDefault();
-    });
+        $collection.collection('remove', $item);
+      })
+    ;
   });
 
-}(window.jQuery);
+})(jQuery);

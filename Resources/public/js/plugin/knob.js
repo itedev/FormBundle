@@ -1,17 +1,15 @@
 (function($) {
   SF.fn.plugins['knob'] = {
-    isApplied: function(element) {
-      return 'undefined' !== typeof element.data('kontroled');
+    isInitialized: function($element) {
+      return 'undefined' !== typeof $element.data('kontroled');
     },
 
-    apply: function(element, elementData) {
-      var options = elementData.options;
-
-      element.knob(options);
+    initialize: function($element, elementData) {
+      $element.knob(pluginData.options);
     },
 
-    setValue: function(element) {
-      element.trigger('change');
+    setValue: function($element) {
+      $element.trigger('change');
     }
   };
 })(jQuery);

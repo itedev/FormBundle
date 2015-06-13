@@ -1,26 +1,11 @@
 (function($) {
+  var rxText = /^(?:input|textarea)/i;
+  var rxCheckable = /^(?:checkbox|radio)$/i;
+  var rxSelect = /^select$/i;
+
   SF.fn.plugins = {};
 
   SF.fn.util = $.extend(SF.fn.util, {
-
-    // @todo: refactor (and maybe delete)
-    addGetParameter: function(url, paramName, paramValue) {
-      var urlParts = url.split('?', 2);
-      var baseURL = urlParts[0];
-      var queryString = [];
-      if (urlParts.length > 1) {
-        var parameters = urlParts[1].split('&');
-        for (var i = 0; i < parameters.length; ++i) {
-          if (parameters[i].split('=')[0] != paramName) {
-            queryString.push(parameters[i]);
-          }
-        }
-      }
-      queryString.push(paramName + '=' + encodeURIComponent(paramValue));
-
-      return baseURL + '?' + queryString.join('&');
-    },
-
     strtr: function(str, replacementTokens) {
       if ('object' === typeof replacementTokens) {
         $.each(replacementTokens, function(from, to) {
@@ -83,42 +68,35 @@
     }
   });
 
-  // Element
-  var Element = function(selector, options) {
-    this.selector = selector;
-    this.options = options || {};
+  var FormView = function(viewData, parent) {
+    this.parent = parent || null;
+    this.options = {};
+    this.children = {};
+    this.initialized = false;
+
+    var self = this;
+    $.each(viewData['options'], function(name, value) {
+      self.options[name] = 'prototype_view' === name
+        ? new FormView(value, self)
+        : value;
+    });
+    $.each(viewData['children'], function(name, childViewData) {
+      var childView = new FormView(childViewData, self);
+      self.addChild(name, childView);
+    });
   };
-  Element.prototype = {
-    getSelector: function() {
-      return this.selector;
+
+  FormView.prototype = {
+    getParent: function() {
+      return this.parent;
     },
 
-    getPlugins: function() {
-      var plugins = [];
-
-      if (this.hasPlugins()) {
-        $.each(this.options['plugins'], function(plugin, pluginData) {
-          plugins.push(plugin);
-        });
-      }
-
-      return plugins;
+    getRoot: function() {
+      return null !== this.parent ? this.parent.getRoot() : this;
     },
 
-    hasPlugins: function() {
-      return this.hasOption('plugins') && SF.util.objectLength(this.options['plugins']) > 0;
-    },
-
-    hasPlugin: function(plugin) {
-      return this.hasOption('plugins') && this.options['plugins'].hasOwnProperty(plugin);
-    },
-
-    getPluginData: function(plugin) {
-      if (!this.hasPlugin(plugin)) {
-        return null;
-      }
-
-      return this.options['plugins'][plugin];
+    isRoot: function() {
+      return null === this.parent;
     },
 
     getOptions: function() {
@@ -131,137 +109,397 @@
 
     getOption: function(option, defaultValue) {
       defaultValue = defaultValue || null;
+
       return this.hasOption(option) ? this.options[option] : defaultValue;
-    }
-  };
-
-  Element.prototype.fn = Element.prototype;
-
-  // ElementBag
-  var ElementBag = function() {
-    this.plugins = {};
-    this.elements = {};
-  };
-  ElementBag.prototype = {
-    hasPlugin: function(plugin) {
-      return this.plugins.hasOwnProperty(plugin);
     },
 
-    getPlugins: function() {
-      var plugins = [];
-
-      $.each(this.plugins, function(i, plugin) {
-        plugins.push(plugin);
-      });
-
-      return plugins;
+    getChildren: function() {
+      return this.children;
     },
 
-    getPluginElements: function(plugin) {
-      return this.hasPlugin(plugin) ? this.plugins[plugin] : [];
+    hasChild: function(name) {
+      return this.children.hasOwnProperty(name);
     },
 
-    getElements: function() {
-      var elements = [];
-
-      $.each(this.elements, function(i, element) {
-        elements.push(element);
-      });
-
-      return elements;
-    },
-
-    has: function(selector) {
-      return this.elements.hasOwnProperty(selector);
-    },
-
-    get: function(selector, defaultValue) {
+    getChild: function(name, defaultValue) {
       defaultValue = defaultValue || null;
-      return this.has(selector) ? this.elements[selector] : defaultValue;
+
+      return this.hasChild(name) ? this.children[name] : defaultValue;
     },
 
-    add: function(selector, options) {
-      if (this.has(selector)) {
+    addChild: function(name, view) {
+      if (this.hasChild(name)) {
+        return this;
+      }
+
+      this.children[name] = view;
+
+      return this;
+    },
+
+    toArray: function() {
+      var result = {
+        options: {},
+        children: {}
+      };
+
+      $.each(this.options, function(name, value) {
+        var newValue;
+        if (value instanceof FormView) {
+          newValue = value.toArray();
+        } else if ($.isPlainObject(value)) {
+          newValue = $.extend(true, {}, value);
+        } else {
+          newValue = value;
+        }
+        result.options[name] = newValue;
+      });
+      $.each(this.children, function(name, childView) {
+        result.children[name] = childView.toArray();
+      });
+
+      return result;
+    },
+
+    clone: function() {
+      return new FormView(this.toArray(), this.parent);
+    },
+
+    findByOption: function(name, value) {
+      var currentValue = this.getOption(name);
+      if (currentValue == value) {
+        return this;
+      }
+
+      var result = null;
+      $.each(this.children, function(childName, childView) {
+        result = childView.findByOption(name, value);
+        if (null !== result) {
+          return false; // break
+        }
+      });
+
+      return result;
+    },
+
+    find: function(id) {
+      return this.findByOption('id', id);
+    },
+
+    walkRecursive: function(callback) {
+      callback.call(this);
+      $.each(this.children, function(name, childView) {
+        childView.walkRecursive(callback);
+      });
+
+      return this;
+    },
+
+    addCollectionItem: function(name) {
+      if (!this.hasOption('prototype_view')) {
         return;
       }
 
-      this.beforeAdd(selector, options);
+      var replaceStringCallback = function(string) {
+        var re = new RegExp(prototypeName, 'g');
 
-      this.elements[selector] = new Element(
-        selector,
-        options
-      );
+        return string.replace(re, name);
+      };
+      var walkViewCallback = function() {
+        var self = this;
+        $.each(this.options, function(optionName, optionValue) {
+          if (optionValue instanceof FormView) {
+            optionValue.walkRecursive(walkViewCallback);
+          } else if ($.isArray(optionValue) || $.isPlainObject(optionValue)) {
+            $.each(optionValue, function(subOptionName, subOptionValue) {
+              if ('string' === typeof subOptionValue) {
+                optionValue[subOptionName] = replaceStringCallback(subOptionValue);
+              }
+            });
+          } else if ('string' === typeof optionValue) {
+            optionValue = replaceStringCallback(optionValue);
+          }
+          self.options[optionName] = optionValue;
+        });
+      };
+
+      var prototype = this.getOption('prototype_view');
+      var prototypeName = this.getOption('prototype_name');
+
+      var collectionItem = prototype.clone();
+      collectionItem.walkRecursive(walkViewCallback);
+      this.addChild(name, collectionItem);
+      collectionItem.initializeRecursive();
+
+      return this;
     },
 
-    beforeAdd: function(selector, options) {
-      var self = this;
-      if (options.hasOwnProperty('plugins')) {
-        $.each(options['plugins'], function(plugin, pluginData) {
-          if (!self.hasPlugin(plugin)) {
-            self.plugins[plugin] = [];
-          }
-          self.plugins[plugin].push(selector);
+    getElement: function(context) {
+      return $('#' + this.getOption('id'), context);
+    },
+
+    getForm: function(context) {
+      return this.getRoot().getElement(context);
+    },
+
+    isInitialized: function() {
+      return this.initialized;
+    },
+
+    initializeRecursive: function(force) {
+      force = force || false;
+
+      if (!this.isInitialized() || force) {
+        this.initialize();
+        this.initialized = true;
+        $.each(this.children, function(name, childView) {
+          childView.initializeRecursive(force);
         });
       }
+
+      return this;
     },
 
-    set: function(elements) {
+    initialize: function() {
       var self = this;
 
-      $.each(elements, function(selector, elementData) {
-        self.add(selector, elementData);
-      });
-    },
-
-    getJQueryElement: function(selector, context, replacementTokens) {
-      return $(SF.util.strtr(selector, replacementTokens), context);
-    },
-
-    apply: function(context, replacementTokens) {
-      var self = this;
-      $.each(this.plugins, function(plugin, selectors) {
+      var plugins = this.getOption('plugins', {});
+      $.each(plugins, function(plugin, pluginData) {
         if ('undefined' === typeof SF.plugins[plugin]) {
+          throw new Error('Plugin "' + plugin + '" is not registered.');
+        }
+
+        if (!$.isFunction(SF.plugins[plugin].isInitialized)) {
+          throw new Error('Plugin "' + plugin + '" must implement method "isInitialized".');
+        }
+
+        var $element = self.getElement();
+        if (SF.plugins[plugin].isInitialized($element)) {
           return;
         }
 
-        $.each(selectors, function(index, selector) {
-          var $element = self.getJQueryElement(selector, context, replacementTokens);
-          if (!$element.length) {
-            return;
-          }
+        if (!$.isFunction(SF.plugins[plugin].initialize)) {
+          throw new Error('Plugin "' + plugin + '" must implement method "initialize".');
+        }
 
-          if ('undefined' === typeof SF.plugins[plugin].isApplied) {
-            throw new Error('Plugin "' + plugin + '" must implement method "isApplied"');
-          }
-          if (SF.plugins[plugin].isApplied($element)) {
-            return;
-          }
+        var event = $.Event('ite-before-apply.plugin', {
+          plugin: plugin
+        });
+        $element.trigger(event, [pluginData]);
+        if (false === event.result) {
+          return;
+        }
 
-          if ('undefined' !== typeof SF.plugins[plugin].apply) {
-            var pluginData = self.get(selector).getPluginData(plugin);
-            var event = $.Event('ite-before-apply.plugin');
-            $element.trigger(event, [pluginData, plugin]);
-            if (false === event.result) {
-              return;
-            }
+        SF.plugins[plugin].initialize($element, pluginData, self);
 
-            SF.plugins[plugin].apply($element, pluginData);
-            $element.trigger('ite-apply.plugin', [pluginData, plugin]);
+        event = $.Event('ite-apply.plugin', {
+          plugin: plugin
+        });
+        $element.trigger(event, [pluginData]);
+      });
+    },
+
+    //clearElementValue: function($element) {
+    //  var event = $.Event('ite-before-clear.hierarchical');
+    //  $element.trigger(event);
+    //  if (false === event.result) {
+    //    return;
+    //  }
+    //
+    //  if (element.hasDelegateSelector()) {
+    //    $element.html('');
+    //  } else {
+    //    var node = $element.get(0);
+    //    if (rxText.test(node.nodeName) && !rxCheckable.test(node.type)) {
+    //      $element.val('');
+    //    } else if (rxSelect.test(node.nodeName)) {
+    //      $element.html('');
+    //    }
+    //  }
+    //
+    //  if (element.hasPlugins()) {
+    //    $.each(element.getPlugins(), function(i, plugin) {
+    //      if ('undefined' !== typeof SF.plugins[plugin].clearValue) {
+    //        SF.plugins[plugin].clearValue($element);
+    //      }
+    //    });
+    //  }
+    //
+    //  $element.trigger('ite-clear.hierarchical');
+    //},
+
+    getValue: function($element) {
+      //var $element = this.getElement(context);
+
+      var value;
+      var valueTaken = false;
+
+      // try to get value via plugins
+      if (this.hasOption('plugins')) {
+        var plugins = this.getOption('plugins', {});
+        $.each(plugins, function (plugin, pluginData) {
+          if ($.isFunction(SF.plugins[plugin].getValue)) {
+            value = SF.plugins[plugin].getValue($element);
+            valueTaken = true;
+
+            return false; // break
           }
         });
-      });
+
+        if (valueTaken) {
+          return value;
+        }
+      }
+
+      // get value in regular way
+      if (!valueTaken) {
+        var delegateSelector = this.getOption('delegate_selector', false);
+        if (delegateSelector) {
+          // checkbox or radio
+          value = [];
+
+          $element.find(delegateSelector).filter(function() {
+            return this.checked;
+          }).each(function() {
+            value.push($(this).val());
+          });
+          if ('input[type="radio"]' === delegateSelector) {
+            return value.length ? value[0] : null;
+          }
+
+          return value;
+        } else {
+          // input, textarea or select
+          var element = $element.get(0);
+          if (rxText.test(element.nodeName) || rxSelect.test(element.nodeName)) {
+            return $element.val();
+          }
+        }
+      }
+
+      return $element.html();
+    },
+
+    setValue: function($element, $newElement) {
+      var valueSet = false;
+
+      // try to set value via plugins
+      if (!this.hasOption('plugins')) {
+        var plugins = this.getOption('plugins', {});
+        $.each(plugins, function (plugin, pluginData) {
+          if ($.isFunction(SF.plugins[plugin].setValue)) {
+            SF.plugins[plugin].setValue($element, $newElement);
+            valueSet = true;
+
+            return false; // break
+          }
+        });
+      }
+
+      // set value in regular way
+      if (!valueSet) {
+        if (!this.getOption('compound', false)) {
+          // simple field
+          var element = $element.get(0);
+          if (rxText.test(element.nodeName)) {
+            // input or text
+            $element.val($newElement.val());
+          } else if (rxSelect.test(element.nodeName)) {
+            // select
+            $element
+              .html($newElement.html())
+              .val($newElement.val())
+            ;
+          } else {
+            $element.html($newElement.html());
+          }
+        } else {
+          // compound field
+          $element.html($newElement.html());
+        }
+      }
     }
   };
 
-  ElementBag.prototype.fn = ElementBag.prototype;
+  FormView.prototype.fn = FormView.prototype;
+
+  var FormBag = function() {
+    this.forms = {};
+  };
+
+  FormBag.prototype = {
+    has: function(name) {
+      return this.forms.hasOwnProperty(name);
+    },
+
+    get: function(name, defaultValue) {
+      defaultValue = defaultValue || null;
+
+      return this.has(name) ? this.forms[name] : defaultValue;
+    },
+
+    add: function(name, viewData) {
+      if (this.has(name)) {
+        return this;
+      }
+
+      this.forms[name] = new FormView(viewData);
+
+      return this;
+    },
+
+    set: function(forms) {
+      var self = this;
+      $.each(forms, function(name, viewData) {
+        self.add(name, viewData);
+      });
+
+      return this;
+    },
+
+    initialize: function(force) {
+      $.each(this.forms, function(name, view) {
+        view.initializeRecursive(force);
+      });
+
+      return this;
+    },
+
+    findByOption: function(name, value) {
+      var result = null;
+      $.each(this.forms, function(viewName, view) {
+        result = view.findByOption(name, value);
+        if (null !== result) {
+          return false; // break
+        }
+      });
+
+      return result;
+    },
+
+    find: function(id) {
+      var result = null;
+      $.each(this.forms, function(viewName, view) {
+        result = view.find(id);
+        if (null !== result) {
+          return false; // break
+        }
+      });
+
+      return result;
+    }
+  };
+
+  FormBag.prototype.fn = FormBag.prototype;
 
   SF.fn.classes = $.extend(SF.fn.classes, {
-    Element: Element,
-    ElementBag: ElementBag
+    FormView: FormView,
+    FormBag: FormBag
   });
 
-  SF.fn.elements = new ElementBag();
+  SF.fn.forms = new FormBag();
 
+  // @todo: refactor below
   $(document).on('ite-ajax-after-load.content', function(e, contentData) {
     if (!contentData.hasOwnProperty('_sf_elements')) {
       return;

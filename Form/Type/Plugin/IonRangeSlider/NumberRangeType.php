@@ -4,6 +4,8 @@ namespace ITE\FormBundle\Form\Type\Plugin\IonRangeSlider;
 
 use ITE\FormBundle\Form\DataTransformer\RangeToStringTransformer;
 use ITE\FormBundle\Form\Type\Plugin\AbstractPluginType;
+use ITE\FormBundle\SF\Form\ClientFormTypeInterface;
+use ITE\FormBundle\SF\Form\ClientFormView;
 use ITE\FormBundle\SF\Plugin\IonRangeSliderPlugin;
 use Symfony\Component\Form\Extension\Core\DataTransformer\NumberToLocalizedStringTransformer;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -16,7 +18,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-class NumberRangeType extends AbstractPluginType
+class NumberRangeType extends AbstractPluginType implements ClientFormTypeInterface
 {
     /**
      * {@inheritdoc}
@@ -37,19 +39,27 @@ class NumberRangeType extends AbstractPluginType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $view->vars['plugins'][IonRangeSliderPlugin::getName()] = [
-            'extras' => (object) [],
-            'options' => (object) array_replace_recursive($this->options, $options['plugin_options'], [
-                'type' => 'double',
-            ])
-        ];
-
         array_splice(
             $view->vars['block_prefixes'],
             array_search($this->getName(), $view->vars['block_prefixes']),
             0,
             'ite_ion_range_slider'
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildClientView(ClientFormView $clientView, FormView $view, FormInterface $form, array $options)
+    {
+        $clientView->setOption('plugins', [
+            IonRangeSliderPlugin::getName() => [
+                'extras' => (object) [],
+                'options' => array_replace_recursive($this->options, $options['plugin_options'], [
+                    'type' => 'double',
+                ]),
+            ],
+        ]);
     }
 
     /**

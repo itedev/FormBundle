@@ -1,17 +1,15 @@
 (function($) {
   SF.fn.plugins['ion_range_slider'] = {
-    isApplied: function(element) {
-      return 'undefined' !== typeof element.data('ionRangeSlider');
+    isInitialized: function($element) {
+      return 'undefined' !== typeof $element.data('ionRangeSlider');
     },
 
-    apply: function(element, elementData) {
-      var options = elementData.options;
-
-      element.ionRangeSlider(options);
+    initialize: function($element, pluginData) {
+      $element.ionRangeSlider(pluginData.options);
     },
 
-    setValue: function(element) {
-      element.trigger('change');
+    setValue: function($element) {
+      $element.trigger('change');
     }
   };
 })(jQuery);

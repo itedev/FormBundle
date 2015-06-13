@@ -1,13 +1,13 @@
 (function($) {
   SF.fn.plugins['fineuploader'] = {
-    isApplied: function(element) {
-      return 'undefined' !== typeof element.data('fineuploader');
+    isInitialized: function($element) {
+      return 'undefined' !== typeof $element.data('fineuploader');
     },
 
-    apply: function(element, elementData) {
-      var options = elementData.options;
+    initialize: function($element, pluginData) {
+      var options = pluginData.options;
 
-      var propertyPath = element.data('property-path');
+      var propertyPath = $element.data('property-path');
       var url = SF.util.addGetParameter(options['request']['endpoint'], 'propertyPath', propertyPath);
 
       options = $.extend(true, options, {
@@ -16,7 +16,7 @@
         }
       });
 
-      element.fineUploader(options);
+      $element.fineUploader(options);
     }
   };
 })(jQuery);
