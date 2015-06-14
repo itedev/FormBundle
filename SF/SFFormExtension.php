@@ -3,11 +3,8 @@
 namespace ITE\FormBundle\SF;
 
 use ITE\JsBundle\EventListener\Event\AjaxRequestEvent;
+use ITE\JsBundle\EventListener\Event\AjaxResponseEvent;
 use ITE\JsBundle\SF\SFExtension;
-use Symfony\Component\Form\FormError;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
 
 /**
  * Class SFFormExtension
@@ -98,7 +95,7 @@ class SFFormExtension extends SFExtension implements SFFormExtensionInterface
         return $dump;
     }
 
-    public function onAjaxResponse(FilterResponseEvent $event)
+    public function onAjaxResponse(AjaxResponseEvent $event)
     {
 //        if ($this->elementBag->count()) {
 //            $event->getResponse()->headers->add(['X-SF-Elements' => json_encode($this->elementBag->peekAll())]);

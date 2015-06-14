@@ -499,23 +499,13 @@
 
   SF.fn.forms = new FormBag();
 
-  // @todo: refactor below
-  $(document).on('ite-ajax-after-load.content', function(e, contentData) {
-    if (!contentData.hasOwnProperty('_sf_elements')) {
+  $(document).on('ite-post-ajax-complete', function(e, data) {
+    if (!data.hasOwnProperty('forms')) {
       return;
     }
 
-    SF.elements.set(contentData['_sf_elements']);
-    SF.elements.apply();
-  });
-  $(document).ajaxComplete(function(event, xhr, settings) {
-    var elementsHeader = xhr.getResponseHeader('X-SF-Elements');
-
-    if (elementsHeader) {
-      SF.elements.set($.parseJSON(elementsHeader));
-      SF.elements.apply();
-    }
-
+    //SF.forms.set(data['forms']);
+    //SF.forms.initialize();
   });
 
 })(jQuery);
