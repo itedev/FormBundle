@@ -6,10 +6,6 @@
     this.$itemsWrapper = this.$collection.find(this.itemsWrapperSelector);
     this.itemSelector = ' > .collection-item';
 
-    //this.$collection.find(this.collectionItemSelector).each(function(index) {
-    //  $(this).attr('data-index', index);
-    //});
-
     this.showAnimation = this.$collection.data('show-animation');
     this.hideAnimation = this.$collection.data('hide-animation');
     this.initialize();
@@ -18,7 +14,7 @@
   Collection.prototype = {
     constructor: Collection,
     initialize: function() {
-      this.index = this.$collection.find(this.collectionItemSelector).length - 1;
+      this.index = this.$itemsWrapper.find(this.collectionItemSelector).length - 1;
     },
     add: function(afterShowCallback) {
       var prototype = this.$collection.data('prototype');
@@ -57,7 +53,7 @@
       }
 
       var self = this;
-      $item[showMethod](showLength, 'swing', function() {
+      $item[showMethod](showLength, function() {
         if ($.isFunction(afterShowCallback)) {
           afterShowCallback.apply(self.$collection, [$item]);
         }
@@ -65,7 +61,9 @@
         self.$collection.trigger('ite-add.collection', [$item]);
 
         var view = SF.forms.find(self.$collection.attr('id'));
-        view.addCollectionItem(self.index);
+        if (null !== view) {
+          view.addCollectionItem(self.index);
+        }
       });
     },
     remove: function($item) {
@@ -90,14 +88,7 @@
       }
 
       var self = this;
-
-//      console.log($item);
-//      console.log(hideMethod);
-//      console.log(hideLength);
-//      console.log($item[hideMethod]);
-//      console.log($item.hide);
-
-      $item[hideMethod](hideLength, 'swing', function() {
+      $item[hideMethod](hideLength, function() {
         $item.remove();
 
         self.$collection.trigger('ite-remove.collection', [$item]);
