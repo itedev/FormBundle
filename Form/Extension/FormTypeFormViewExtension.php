@@ -6,6 +6,7 @@ use ITE\FormBundle\SF\Form\ClientFormTypeExtensionInterface;
 use ITE\FormBundle\SF\Form\ClientFormView;
 use ITE\FormBundle\SF\Form\ClientFormViewBuilderInterface;
 use ITE\FormBundle\SF\SFFormExtensionInterface;
+use ITE\FormBundle\Util\FormUtils;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;

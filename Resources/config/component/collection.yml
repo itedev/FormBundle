@@ -1,6 +1,5 @@
 parameters:
     ite_form.form.type_extension.component.collection.collection.collection.class:  ITE\FormBundle\Form\Extension\Component\Collection\CollectionTypeCollectionExtension
-    ite_form.form.type_extension.component.collection.form.collection_item.class:   ITE\FormBundle\Form\Extension\Component\Collection\FormTypeCollectionItemExtension
     ite_form.twig.extension.component.collection.class:                             ITE\FormBundle\Twig\Extension\Component\Collection\CollectionExtension
 
 services:
@@ -9,11 +8,6 @@ services:
         arguments: [ %ite_form.component.collection.widget_show_animation%, %ite_form.component.collection.widget_hide_animation% ]
         tags:
             - { name: form.type_extension, alias: collection }
-
-    ite_form.form.type_extension.component.collection.form.collection_item:
-        class: %ite_form.form.type_extension.component.collection.form.collection_item.class%
-        tags:
-            - { name: form.type_extension, alias: form }
 
     ite_form.twig.extension.component.collection:
         class: %ite_form.twig.extension.component.collection.class%
