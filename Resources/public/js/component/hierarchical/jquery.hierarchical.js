@@ -40,6 +40,9 @@
         var hierarchicalChildren = view.getOption('hierarchical_children', []);
         $.each(hierarchicalChildren, function(i, hierarchicalChild) {
           var childView = SF.forms.find(hierarchicalChild);
+          if (null === childView) {
+            return;
+          }
           var $childElement = childView.getElement();
           childrenDatas[hierarchicalChild] = {
             view: childView,

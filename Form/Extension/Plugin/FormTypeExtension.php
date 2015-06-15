@@ -60,19 +60,6 @@ class FormTypeExtension extends AbstractTypeExtension
     /**
      * {@inheritdoc}
      */
-    public function buildView(FormView $view, FormInterface $form, array $options)
-    {
-        if (!$form->isRoot()) {
-            return;
-        }
-        if (!isset($view->vars['attr']['id'])) {
-            $view->vars['attr']['id'] = $view->vars['id'] . '_form';
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getExtendedType()
     {
         return 'form';

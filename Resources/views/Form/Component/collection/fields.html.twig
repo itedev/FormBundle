@@ -21,7 +21,7 @@
         {# collection item wrapper doesnt need form-group it gets added to childs anyways #}
         {% set widget_form_group_attr = widget_form_group_attr|merge({
             'class': ('collection-item ' ~ widget_form_group_attr.class|default(''))|trim,
-            'id': id ~ '_collection_item'
+            'id': id
         }) %}
         {% set widget_form_group_tag = form.parent.vars.collection_item_tag|default('div') %}
     {% endif %}
@@ -188,90 +188,3 @@
 {% endspaceless %}
 {% endif %}
 {% endblock form_label %}
-
-{#############################################################################################}
-
-{#{% block form_rows_visible %}#}
-    {#{% spaceless %}#}
-        {#{% if form_errors(form) %}#}
-            {#<div class="symfony-form-errors">#}
-                {#{{ form_errors(form) }}#}
-            {#</div>#}
-        {#{% endif %}#}
-        {#{% for index, child in form %} &#123;&#35; add index &#35;&#125;#}
-            {#{% if 'hidden' not in child.vars.block_prefixes %} &#123;&#35; smbdy: why do we not add the hiddens of childs? 131024 phiamo: i think form rest should do this !? it was afaik removed because it cause side effekts &#35;&#125;#}
-                {#{% if 'collection' in form.vars.block_prefixes and not omit_collection_item %}#}
-                    {#<{{ collection_item_tag }} class="collection-item {{ widget_items_attr.class|default('') }}" data-index="{{ index }}"> &#123;&#35; add collection_item_tag and "data-index" &#35;&#125;#}
-                {#{% endif %}#}
-                {#{{ form_row(child) }}#}
-                {#{% if 'collection' in form.vars.block_prefixes and not omit_collection_item %}#}
-                    {#</{{ collection_item_tag }}> &#123;&#35; add collection_item_tag &#35;&#125;#}
-                {#{% endif %}#}
-            {#{% endif %}#}
-        {#{% endfor %}#}
-    {#{% endspaceless %}#}
-{#{% endblock form_rows_visible %}#}
-
-{#{% block widget_form_group_start %}#}
-    {#{% if widget_form_group|default(false) or form.parent == null %}#}
-        {#{% if prototype is defined %}#}
-            {#{% set data_prototype_name = form.vars.form.vars.prototype.vars.name|default('__name__') %}#}
-            {#{% set data_prototype = 'collection' in form.vars.block_prefixes and not omit_collection_item ? '<' ~ collection_item_tag ~ ' class="collection-item ' ~ widget_items_attr.class|default('') ~ '">' ~ form_row(prototype) ~ '</' ~ collection_item_tag ~ '>' : form_row(prototype) %} &#123;&#35; add collection_item_tag &#35;&#125;#}
-            {#{% set widget_form_group_attr = widget_form_group_attr|merge({'data-prototype': data_prototype, 'data-prototype-name': data_prototype_name})|merge(attr) %}#}
-        {#{% endif %}#}
-        {#&#123;&#35; collection item adds class to form-group &#35;&#125;#}
-        {#{% set widget_form_group_attr = widget_form_group_attr|merge({'id': id ~ '_form_group', 'class': widget_form_group_attr.class ~ ' ' ~ id ~ '_form_group'}) %}#}
-        {#{% if errors|length > 0 %}#}
-            {#{% set widget_form_group_attr = widget_form_group_attr|merge({'class': widget_form_group_attr.class|default('') ~ ' has-error'}) %}#}
-        {#{% endif %}#}
-        {#{% if 'collection' in form.vars.block_prefixes and attr.class is defined %}#}
-            {#{% set widget_form_group_attr = widget_form_group_attr|merge({'class': widget_form_group_attr.class|default('row') ~ ' ' ~ attr.class}) %}#}
-        {#{% endif %}#}
-        {#<div{% if help_widget_popover.title is not sameas(null) %}{{ block('help_widget_popover') }}{% endif %} {% for attrname,attrvalue in widget_form_group_attr %} {{attrname}}="{{attrvalue}}"{% endfor %}>#}
-        {#&#123;&#35; a form item containing the field in block_prefixes is a near subform or a field directly &#35;&#125;#}
-        {#{% if (form|length > 0 and form.parent != null)#}
-        {#and 'field' not in form.vars.block_prefixes %}#}
-            {#{% if show_child_legend%}#}
-                {#{{ block('form_legend') }}#}
-            {#{% elseif label_render %}#}
-                {#{{ form_label(form, label|default(null)) }}#}
-            {#{% endif %}#}
-        {#{% else %}#}
-            {#{% if label_render %}#}
-                {#{{ form_label(form, label|default(null)) }}#}
-            {#{% endif %}#}
-        {#{% endif %}#}
-    {#{% else %}#}
-        {#{% if label_render %}#}
-            {#{{ form_label(form, label|default(null)) }}#}
-        {#{% endif %}#}
-    {#{% endif %}#}
-{#{% endblock widget_form_group_start %}#}
-
-{#{% block collection_widget %}#}
-{#{% spaceless %}#}
-    {#&#123;&#35; Add row by default use attr.class to change&#35;&#125;#}
-	{#{% if 'collection' in form.vars.block_prefixes and attr.class is defined %}#}
-		{#{% set widget_form_group_attr = widget_form_group_attr|merge({'class': widget_form_group_attr.class|default('row') ~ ' ' ~ attr.class}) %}#}
-	{#{% endif %}#}
-    {#&#123;&#35; collection item adds class {form_id}_form-group  too &#35;&#125;#}
-    {#{% set widget_form_group_attr = widget_form_group_attr|merge({'class': widget_form_group_attr.class ~ ' ' ~ id ~ '_form_group'}) %}#}
-
-    {#<div {% for attrname,attrvalue in widget_form_group_attr %} {{attrname}}="{{attrvalue}}"{% endfor %}>#}
-    {#&#123;&#35; Add initial prototype form &#35;&#125;#}
-    {#{% if form.vars.value|length == 0 and prototype is defined %}#}
-        {#{% for name in prototype_names %}#}
-            {#{{ prototype_markup|replace({'__name__': name})|raw }}#}
-        {#{% endfor %}#}
-    {#{% endif %}#}
-        {#&#123;&#35; new code begin &#35;&#125;#}
-        {#<div class="collection-items">#}
-            {#{{ block('form_widget') }}#}
-        {#</div>#}
-        {#{% if 'collection' in form.vars.block_prefixes and widget_add_btn|default(null) %}#}
-            {#{{ block('form_widget_add_btn') }}#}
-        {#{% endif %}#}
-        {#&#123;&#35; new code end &#35;&#125;#}
-    {#</div>#}
-{#{% endspaceless %}#}
-{#{% endblock collection_widget %}#}

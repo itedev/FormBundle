@@ -48,10 +48,15 @@ class FormTypeFormViewExtension extends AbstractTypeExtension implements ClientF
             return;
         }
 
+        $id = isset($view->vars['attr']['id']) ? $view->vars['attr']['id'] : $view->vars['id'];
+        $newId = $id . '_form';
+
+        $view->vars['attr']['id'] = $newId;
+        $view->vars['id'] = $newId;
+
         /** @var ExtendedFormInterface $form */
         $clientView = $this->builder->createClientView($view, $form);
         $this->sfForm->getFormBag()->add($form->getName(), $clientView);
-        $a = 1;
     }
 
     /**

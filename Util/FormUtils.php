@@ -104,6 +104,8 @@ class FormUtils
     /**
      * @param FormView $view
      * @return string
+     *
+     * @deprecated
      */
     public static function generateSelector(FormView $view)
     {

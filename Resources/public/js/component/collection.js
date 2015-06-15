@@ -57,7 +57,7 @@
       }
 
       var self = this;
-      $item[showMethod](showLength, function() {
+      $item[showMethod](showLength, 'swing', function() {
         if ($.isFunction(afterShowCallback)) {
           afterShowCallback.apply(self.$collection, [$item]);
         }
@@ -90,7 +90,14 @@
       }
 
       var self = this;
-      $item[hideMethod](hideLength, function() {
+
+//      console.log($item);
+//      console.log(hideMethod);
+//      console.log(hideLength);
+//      console.log($item[hideMethod]);
+//      console.log($item.hide);
+
+      $item[hideMethod](hideLength, 'swing', function() {
         $item.remove();
 
         self.$collection.trigger('ite-remove.collection', [$item]);
