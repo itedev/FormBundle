@@ -14,7 +14,7 @@
   Collection.prototype = {
     constructor: Collection,
     initialize: function() {
-      this.index = this.$itemsWrapper.find(this.collectionItemSelector).length - 1;
+      this.index = this.$itemsWrapper.find(this.itemSelector).length - 1;
     },
     add: function(afterShowCallback) {
       var prototype = this.$collection.data('prototype');
