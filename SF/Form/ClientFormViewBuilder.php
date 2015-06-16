@@ -2,6 +2,7 @@
 
 namespace ITE\FormBundle\SF\Form;
 
+use ITE\Common\Util\ReflectionUtils;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\ResolvedFormTypeInterface;
@@ -83,7 +84,11 @@ class ClientFormViewBuilder implements ClientFormViewBuilderInterface
             $innerType->buildClientView($clientView, $view, $form, $options);
         }
 
-        foreach ($type->getTypeExtensions() as $extension) {
+        // @todo: remove code below
+        $proxiedType = ReflectionUtils::getValue($type, 'proxiedType');
+        $typeExtensions = ReflectionUtils::getValue($proxiedType, 'typeExtensions');
+//        $typeExtensions = $type->getTypeExtensions();
+        foreach ($typeExtensions as $extension) {
             if ($extension instanceof ClientFormTypeExtensionInterface) {
                 $extension->buildClientView($clientView, $view, $form, $options);
             }
