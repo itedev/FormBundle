@@ -3,6 +3,7 @@
 namespace ITE\FormBundle\SF\Form;
 
 use ITE\Common\Util\ReflectionUtils;
+use Symfony\Component\Form\Extension\DataCollector\Proxy\ResolvedTypeDataCollectorProxy;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\ResolvedFormTypeInterface;
@@ -85,7 +86,10 @@ class ClientFormViewBuilder implements ClientFormViewBuilderInterface
         }
 
         // @todo: remove code below
-        $proxiedType = ReflectionUtils::getValue($type, 'proxiedType');
+        $proxiedType = $type;
+        if ($type instanceof ResolvedTypeDataCollectorProxy) {
+            $proxiedType = ReflectionUtils::getValue($proxiedType, 'proxiedType');
+        }
         $typeExtensions = ReflectionUtils::getValue($proxiedType, 'typeExtensions');
 //        $typeExtensions = $type->getTypeExtensions();
         foreach ($typeExtensions as $extension) {
