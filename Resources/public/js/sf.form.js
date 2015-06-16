@@ -72,7 +72,6 @@
     this.parent = parent || null;
     this.options = {};
     this.children = {};
-    this.initialized = false;
 
     var self = this;
     $.each(viewData['options'], function(name, value) {
@@ -113,6 +112,18 @@
       return this.hasOption(option) ? this.options[option] : defaultValue;
     },
 
+    getId: function() {
+      return this.getOption('id');
+    },
+
+    getName: function() {
+      return this.getOption('name');
+    },
+
+    getFullName: function() {
+      return this.getOption('full_name');
+    },
+
     getChildren: function() {
       return this.children;
     },
@@ -132,7 +143,18 @@
         return this;
       }
 
+      view.parent = this;
       this.children[name] = view;
+
+      return this;
+    },
+
+    removeChild: function(name) {
+      if (!this.hasChild(name)) {
+        return this;
+      }
+
+      delete this.children[name];
 
       return this;
     },
@@ -235,32 +257,49 @@
     },
 
     getElement: function(context) {
-      return $('#' + this.getOption('id'), context);
+      return $('#' + this.getId(), context);
     },
 
     getForm: function(context) {
       return this.getRoot().getElement(context);
     },
 
-    isInitialized: function() {
-      return this.initialized;
+    isInitialized: function($element) {
+      return 'undefined' !== typeof $element.data('sfInitialized');
+    },
+
+    isInitializable: function() {
+      return this.hasOption('plugins');
+    },
+
+    setInitialized: function($element) {
+      $element.data('sfInitialized', 1);
     },
 
     initializeRecursive: function(force) {
       force = force || false;
 
-      if (!this.isInitialized() || force) {
-        this.initialize();
-        this.initialized = true;
-        $.each(this.children, function(name, childView) {
-          childView.initializeRecursive(force);
-        });
+      if (this.isInitializable()) {
+        // view is initializable
+        var $element = this.getElement();
+        if (0 !== $element.length) {
+          // element exists
+          if (!this.isInitialized($element) || force) {
+            this.initialize($element);
+            this.setInitialized($element);
+          }
+        } else {
+          // element does not exist
+        }
       }
+      $.each(this.children, function(name, childView) {
+        childView.initializeRecursive(force);
+      });
 
       return this;
     },
 
-    initialize: function() {
+    initialize: function($element) {
       var self = this;
 
       var plugins = this.getOption('plugins', {});
@@ -273,7 +312,6 @@
           throw new Error('Plugin "' + plugin + '" must implement method "isInitialized".');
         }
 
-        var $element = self.getElement();
         if (SF.plugins[plugin].isInitialized($element)) {
           return;
         }
@@ -418,6 +456,37 @@
           $element.html($newElement.html());
         }
       }
+    },
+
+    mergeRecursive: function(view) {
+      this.merge(view);
+
+      var self = this;
+      $.each(this.children, function(childName, childView) {
+        if (view.hasChild(childName)) {
+          // merge intersected child
+          childView.mergeRecursive(view.getChild(childName));
+        } else {
+          // remove existing child
+          self.removeChild(childName);
+        }
+      });
+      $.each(view.getChildren(), function(childName, childView) {
+        if (!self.hasChild(childName)) {
+          // add new child
+          self.addChild(childName, childView);
+        }
+      });
+    },
+
+    merge: function(view) {
+//      var frozenOptions = {
+//        id: this.options['id'],
+//        name: this.options['name'],
+//        full_name: this.options['full_name']
+//      };
+//      this.options = $.extend(true, {}, this.options, view.getOptions(), frozenOptions);
+      $.extend(this.options, view.getOptions());
     }
   };
 
@@ -439,11 +508,14 @@
     },
 
     add: function(name, viewData) {
+      var view = new FormView(viewData);
       if (this.has(name)) {
+        this.forms[name].mergeRecursive(view);
+
         return this;
       }
 
-      this.forms[name] = new FormView(viewData);
+      this.forms[name] = view;
 
       return this;
     },
@@ -499,13 +571,21 @@
 
   SF.fn.forms = new FormBag();
 
-  $(document).on('ite-post-ajax-complete', function(e, data) {
-    if (!data.hasOwnProperty('forms')) {
-      return;
-    }
+  $(document)
+    .on('ite-pre-ajax-complete', function(e, data) {
+      if (!data.hasOwnProperty('forms')) {
+        return;
+      }
 
-    //SF.forms.set(data['forms']);
-    //SF.forms.initialize();
-  });
+      SF.forms.set(data['forms']);
+    })
+    .on('ite-post-ajax-complete', function(e, data) {
+      if (!data.hasOwnProperty('forms')) {
+        return;
+      }
+
+      SF.forms.initialize();
+    })
+  ;
 
 })(jQuery);

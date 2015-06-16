@@ -95,11 +95,14 @@ class SFFormExtension extends SFExtension implements SFFormExtensionInterface
         return $dump;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function onAjaxResponse(AjaxResponseEvent $event)
     {
-//        if ($this->elementBag->count()) {
-//            $event->getResponse()->headers->add(['X-SF-Elements' => json_encode($this->elementBag->peekAll())]);
-//        }
+        if ($this->formBag->count()) {
+            $event->getAjaxDataBag()->addBodyData('forms', $this->formBag->toArray());
+        }
     }
 
 

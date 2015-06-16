@@ -18,10 +18,17 @@
     }
   });
 
+  var baseIsInitializable = SF.fn.classes.FormView.prototype.isInitializable;
   var baseInitialize = SF.fn.classes.FormView.prototype.initialize;
   SF.fn.classes.FormView.prototype = $.extend(SF.fn.classes.FormView.prototype, {
-    initialize: function() {
-      baseInitialize.call(this);
+    isInitializable: function() {
+      var initializable = baseIsInitializable.call(this);
+
+      return initializable || this.hasOption('hierarchical_children') || this.hasOption('hierarchical_originator');
+    },
+
+    initialize: function($element) {
+      baseInitialize.call(this, $element);
 
       var hierarchicalChildren = this.getOption('hierarchical_children', []);
       var isHierarchicalOriginator = this.getOption('hierarchical_originator', false);
@@ -30,8 +37,7 @@
         return;
       }
 
-      var $element = this.getElement();
-      if (!$element.length || 'undefined' !== typeof $element.data('hierarchical')) {
+      if ('undefined' !== typeof $element.data('hierarchical')) {
         return;
       }
 

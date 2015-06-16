@@ -60,9 +60,9 @@
 
         self.$collection.trigger('ite-add.collection', [$item]);
 
-        var view = SF.forms.find(self.$collection.attr('id'));
-        if (null !== view) {
-          view.addCollectionItem(self.index);
+        var collectionView = SF.forms.find(self.$collection.attr('id'));
+        if (null !== collectionView) {
+          collectionView.addCollectionItem(self.index);
         }
       });
     },
@@ -92,6 +92,12 @@
         $item.remove();
 
         self.$collection.trigger('ite-remove.collection', [$item]);
+
+        var collectionView = SF.forms.find(self.$collection.attr('id'));
+        var itemView = SF.forms.find($item.attr('id'));
+        if (null !== collectionView && null !== itemView) {
+          collectionView.removeChild(itemView.getName());
+        }
       });
     },
     itemsWrapper: function() {
