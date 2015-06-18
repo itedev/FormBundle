@@ -22,65 +22,92 @@
       }
       force = force || false;
 
-      var originators = [];
       var originatorDatas = [];
-      var submit = false;
       $.each($elements, function(i, $element) {
         var view = SF.forms.find($element.attr('id'));
-
-        var originator = view.getOption('full_name');
-        var originatorValue = view.getValue($element);
+        var fullName = view.getFullName();
 
         var eventData = {
-          originator: originator,
+          originator: fullName,
           children: {}
         };
         var childrenDatas = {};
         var childrenCount = 0;
         var hierarchicalChildren = view.getOption('hierarchical_children', []);
-        $.each(hierarchicalChildren, function(i, hierarchicalChild) {
-          var childView = SF.forms.find(hierarchicalChild);
+        $.each(hierarchicalChildren, function(i, childId) {
+          var childView = SF.forms.find(childId);
           if (null === childView) {
             return;
           }
           var $childElement = childView.getElement();
-          childrenDatas[hierarchicalChild] = {
+
+          var childData = {
             view: childView,
             $element: $childElement
           };
-
           if ($childElement.length) {
-            eventData.children[hierarchicalChild] = $childElement.get(0);
+            eventData.children[childId] = {
+              submit: true,
+              element: $childElement.get(0)
+            };
             childrenCount++;
           }
+          childrenDatas[childId] = childData;
         });
 
+        var submit = true;
+        if (!childrenCount) {
+          // if there are no any child DOM element - don't submit the form
+          submit = false;
+        }
+        if (submit) {
+          var event = $.Event('ite-before-submit.hierarchical', eventData);
+          $element.trigger(event);
+          if (false === event.result) {
+            // if any listener return false - don't submit the form
+            submit = false;
+          }
+        }
+        if (submit) {
+          // if all child elements set corresponding submit flag to false - don't submit the form
+          submit = false;
+          $.each(event.children, function(childId, child) {
+            if (true === child['submit']) {
+              submit = true;
+
+              return false; // break
+            }
+          });
+        }
+
+        var originatorValue = view.getValue($element);
         var originatorData = {
           view: view,
           $element: $element,
-          originator: originator,
+          fullName: fullName,
           originatorValue: originatorValue,
           eventData: eventData,
+          submit: submit,
           childrenDatas: childrenDatas
         };
         originatorDatas.push(originatorData);
-        originators.push(originator);
+      });
 
-        if (!childrenCount) {
-          submit = false;
-          return;
-        }
-
-        var event = $.Event('ite-before-submit.hierarchical', eventData);
-        $element.trigger(event);
-        if (false !== event.result) {
+      var submit = false;
+      var originators = [];
+      $.each(originatorDatas, function(i, originatorData) {
+        if (true === originatorData.submit) {
           submit = true;
+          originators.push(originatorData.fullName);
         }
       });
 
       if (!submit && !force) {
         return;
       }
+
+      console.log('ite-submit.hierarchical trigger');
+      this.$form.trigger('ite-submit.hierarchical');
 
       var jqxhr = this.$form.data('hierarchicalJqxhr');
       if (jqxhr) {
@@ -96,12 +123,10 @@
           'X-SF-Hierarchical-Originator': originators.join(',')
         },
         success: function(response) {
-          self.$form.removeData('hierarchicalJqxhr');
-
           var $newContext = $(response);
 
           $.each(originatorDatas, function(i, originatorData) {
-            var event = $.Event('ite-after-submit.hierarchical', originatorData.eventData);
+            var event = $.Event('ite-before-children-change.hierarchical', originatorData.eventData);
             originatorData.$element.trigger(event, [$newContext]);
             if (false === event.result) {
               return;
@@ -142,15 +167,10 @@
           });
         }
       });
-      jqxhr.fail(function() {
-        if (0 !== jqxhr.readyState || 'hierarchicalAbort' !== jqxhr.statusText) {
-          self.$form.removeData('hierarchicalJqxhr');
-        }
-
-        $.each(originatorDatas, function(i, originatorData) {
-          var event = $.Event('ite-after-submit.hierarchical', originatorData.eventData);
-          originatorData.$element.trigger(event);
-        });
+      jqxhr.always(function() {
+        self.$form.removeData('hierarchicalJqxhr');
+        console.log('ite-after-submit.hierarchical trigger');
+        self.$form.trigger('ite-after-submit.hierarchical');
       });
       this.$form.data('hierarchicalJqxhr', jqxhr);
     },

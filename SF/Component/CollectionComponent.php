@@ -30,7 +30,7 @@ class CollectionComponent extends Component
                 ->children()
                     ->enumNode('type')
                         ->defaultValue('show')
-                        ->values(array('show', 'slide', 'fade'))
+                        ->values(['show', 'slide', 'fade'])
                     ->end()
                     ->integerNode('length')
                         ->defaultValue(0)
@@ -44,7 +44,7 @@ class CollectionComponent extends Component
             ->info('animation for hiding collection items')
                 ->children()
                     ->enumNode('type')
-                        ->values(array('hide', 'slide', 'fade'))
+                        ->values(['hide', 'slide', 'fade'])
                         ->defaultValue('hide')
                     ->end()
                     ->integerNode('length')
@@ -73,7 +73,7 @@ class CollectionComponent extends Component
      */
     public function addFormResources(ContainerInterface $container)
     {
-        return array('ITEFormBundle:Form/Component/collection:fields.html.twig');
+        return ['ITEFormBundle:Form/Component/collection:fields.html.twig'];
     }
 
     /**
@@ -81,7 +81,7 @@ class CollectionComponent extends Component
      */
     public function getJavascripts()
     {
-        return array('@ITEFormBundle/Resources/public/js/component/collection.js');
+        return ['@ITEFormBundle/Resources/public/js/component/Collection/jquery.collection.js'];
     }
 
     /**

@@ -18,8 +18,8 @@ class HierarchicalComponent extends Component
     public function getJavascripts()
     {
         return [
-            '@ITEFormBundle/Resources/public/js/component/hierarchical/jquery.hierarchical.js',
-            '@ITEFormBundle/Resources/public/js/component/hierarchical/hierarchical.js',
+            '@ITEFormBundle/Resources/public/js/component/Hierarchical/jquery.hierarchical.js',
+            '@ITEFormBundle/Resources/public/js/component/Hierarchical/hierarchical.js',
         ];
     }
 
