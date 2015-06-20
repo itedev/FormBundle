@@ -5,11 +5,11 @@ namespace ITE\FormBundle\Validation;
 use Symfony\Component\Validator\Constraint;
 
 /**
- * Class ConstraintManager
+ * Class ClientConstraintManager
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-class ConstraintManager implements ConstraintManagerInterface
+class ClientConstraintManager implements ClientConstraintManagerInterface
 {
     /**
      * @var array|ConstraintConverterInterface[] $converters
@@ -43,12 +43,12 @@ class ConstraintManager implements ConstraintManagerInterface
     }
 
     /**
-     * @param string $name
+     * @param string $validator
      * @param ConstraintTransformerInterface $transformer
      */
-    public function addTransformer($name, ConstraintTransformerInterface $transformer)
+    public function addTransformer($validator, ConstraintTransformerInterface $transformer)
     {
-        $this->transformers[$name][] = $transformer;
+        $this->transformers[$validator][] = $transformer;
     }
 
     /**
@@ -88,16 +88,16 @@ class ConstraintManager implements ConstraintManagerInterface
     }
 
     /**
-     * @param string $name
+     * @param string $validator
      * @param ClientConstraint $constraint
      * @return array|null
      */
-    public function transform($name, ClientConstraint $constraint)
+    public function transform($validator, ClientConstraint $constraint)
     {
-        if ($this->hasTransformers($name)) {
-            throw new \RuntimeException(sprintf('No transformers for "%s" name.', $name));
+        if ($this->hasTransformers($validator)) {
+            throw new \RuntimeException(sprintf('No transformers for "%s" validator.', $validator));
         }
-        foreach ($this->transformers[$name] as $transformer) {
+        foreach ($this->transformers[$validator] as $transformer) {
             if ($transformer->supports($constraint)) {
                 return $transformer->transform($constraint);
             }

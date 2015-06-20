@@ -4,6 +4,7 @@
   var rxSelect = /^select$/i;
 
   SF.fn.plugins = {};
+  SF.fn.validators = {};
 
   SF.fn.util = $.extend(SF.fn.util, {
     strtr: function(str, replacementTokens) {

@@ -4,6 +4,8 @@ namespace ITE\FormBundle\Form\Extension\Component\Validation;
 
 use ITE\FormBundle\SF\Form\ClientFormTypeExtensionInterface;
 use ITE\FormBundle\SF\Form\ClientFormView;
+use ITE\FormBundle\Validation\ClientConstraint;
+use ITE\FormBundle\Validation\ClientConstraintManagerInterface;
 use ITE\FormBundle\Validation\Mapping\Factory\FormMetadataFactoryInterface;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormInterface;
@@ -24,11 +26,18 @@ class FormTypeValidationExtension extends AbstractTypeExtension implements Clien
     protected $metadataFactory;
 
     /**
-     * @param FormMetadataFactoryInterface $metadataFactory
+     * @var ClientConstraintManagerInterface
      */
-    public function __construct(FormMetadataFactoryInterface $metadataFactory)
+    protected $clientConstraintManager;
+
+    /**
+     * @param FormMetadataFactoryInterface $metadataFactory
+     * @param ClientConstraintManagerInterface $clientConstraintManager
+     */
+    public function __construct(FormMetadataFactoryInterface $metadataFactory, ClientConstraintManagerInterface $clientConstraintManager)
     {
         $this->metadataFactory = $metadataFactory;
+        $this->clientConstraintManager = $clientConstraintManager;
     }
 
     /**
@@ -76,8 +85,11 @@ class FormTypeValidationExtension extends AbstractTypeExtension implements Clien
         if ($clientValidation) {
             $formMetadata = $this->metadataFactory->getMetadataFor($form, $constraintConversion);
             $constraints = $formMetadata->getConstraints();
+            if (!empty($constraints)) {
 
-            $clientView->setOption('constraints', $constraints);
+
+                $clientView->setOption('constraints', $constraints);
+            }
         }
     }
 

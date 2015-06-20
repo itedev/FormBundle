@@ -5,11 +5,11 @@ namespace ITE\FormBundle\Validation;
 use Symfony\Component\Validator\Constraint;
 
 /**
- * Interface ConstraintManagerInterface
+ * Interface ClientConstraintManagerInterface
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-interface ConstraintManagerInterface
+interface ClientConstraintManagerInterface
 {
     /**
      * @param ConstraintConverterInterface $converter

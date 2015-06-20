@@ -23,11 +23,23 @@ class DefaultTransformer implements ConstraintTransformerInterface
         $result = [];
         if ($constraint instanceof ClientAssert\Range) {
             if (null !== $constraint->min && null !== $constraint->max) {
-                $result['range'] = [$constraint->min, $constraint->max];
+                // range
+                $result['range'] = [
+                    'params' => [$constraint->min, $constraint->max],
+                    'message' => $constraint->message,
+                ];
             } elseif (null !== $constraint->min) {
-
+                // min
+                $result['min'] = [
+                    'params' => $constraint->min,
+                    'message' => $constraint->minMessage,
+                ];
             } else {
-
+                // max
+                $result['max'] = [
+                    'params' => $constraint->max,
+                    'message' => $constraint->maxMessage,
+                ];
             }
         }
 

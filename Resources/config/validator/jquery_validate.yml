@@ -1,0 +1,8 @@
+parameters:
+    ite_form.validation.constraint_transformer.validator.jquery_validation.default.class: ITE\FormBundle\Validation\ConstraintTransformer\JQueryValidation\DefaultTransformer
+
+services:
+    ite_form.validation.constraint_transformer.validator.jquery_validation.default:
+        class: %ite_form.validation.constraint_transformer.validator.jquery_validation.default.class%
+        tags:
+            - { name: ite_form.validation.constraint_transformer, validator: jquery_validation }

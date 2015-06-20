@@ -69,6 +69,8 @@ class ValidationComponent extends Component
             }
         }
 
+        $loader->load('validator/jquery_validate.yml');
+
 //        if (isset($config['cache'])) {
 //            $container->setParameter(
 //                'validator.mapping.cache.prefix',

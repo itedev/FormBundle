@@ -21,6 +21,7 @@ class Range extends ClientConstraint
     public $minMessage = 'This value should be {{ limit }} or more.';
     public $maxMessage = 'This value should be {{ limit }} or less.';
     public $invalidMessage = 'This value should be a valid number.';
+    public $message = 'This value should be between {{ min }} and {{ max }}.';
     public $min;
     public $max;
 

@@ -27,12 +27,16 @@ class RangeProcessor extends AbstractConstraintProcessor
     public function process(ClientConstraint $constraint)
     {
         /** @var $constraint Range */
-        $constraint->invalidMessage = $this->translate($constraint->invalidMessage);
-        $constraint->maxMessage = $this->translate($constraint->maxMessage, [
-            '{{ limit }}' => $this->formatValue($constraint->max, self::PRETTY_DATE)
-        ]);
         $constraint->minMessage = $this->translate($constraint->minMessage, [
-            '{{ limit }}' => $this->formatValue($constraint->min, self::PRETTY_DATE)
+            '{{ limit }}' => $this->formatValue($constraint->min, self::PRETTY_DATE),
+        ]);
+        $constraint->maxMessage = $this->translate($constraint->maxMessage, [
+            '{{ limit }}' => $this->formatValue($constraint->max, self::PRETTY_DATE),
+        ]);
+        $constraint->invalidMessage = $this->translate($constraint->invalidMessage);
+        $constraint->message = $this->translate($constraint->message, [
+            '{{ min }}' => $this->formatValue($constraint->min, self::PRETTY_DATE),
+            '{{ max }}' => $this->formatValue($constraint->max, self::PRETTY_DATE),
         ]);
     }
 

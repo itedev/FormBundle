@@ -3,7 +3,7 @@
 namespace ITE\FormBundle\Validation\Mapping\Factory;
 
 use ITE\FormBundle\Util\FormUtils;
-use ITE\FormBundle\Validation\ConstraintManagerInterface;
+use ITE\FormBundle\Validation\ClientConstraintManagerInterface;
 use ITE\FormBundle\Validation\Mapping\FormMetadata;
 use Symfony\Component\Validator\Mapping\ClassMetadata as ServerClassMetadata;
 use ITE\FormBundle\Validation\Mapping\ClassMetadata as ClientClassMetadata;
@@ -30,21 +30,21 @@ class FormMetadataFactory implements FormMetadataFactoryInterface
     protected $clientMetadataFactory;
 
     /**
-     * @var ConstraintManagerInterface $constraintManager
+     * @var ClientConstraintManagerInterface $clientConstraintManager
      */
-    protected $constraintManager;
+    protected $clientConstraintManager;
 
     /**
      * @param MetadataFactoryInterface $serverMetadataFactory
      * @param MetadataFactoryInterface $clientMetadataFactory
-     * @param ConstraintManagerInterface $constraintManager
+     * @param ClientConstraintManagerInterface $clientConstraintManager
      */
     public function __construct(MetadataFactoryInterface $serverMetadataFactory,
-        MetadataFactoryInterface $clientMetadataFactory, ConstraintManagerInterface $constraintManager)
+        MetadataFactoryInterface $clientMetadataFactory, ClientConstraintManagerInterface $clientConstraintManager)
     {
         $this->serverMetadataFactory = $serverMetadataFactory;
         $this->clientMetadataFactory = $clientMetadataFactory;
-        $this->constraintManager = $constraintManager;
+        $this->clientConstraintManager = $clientConstraintManager;
     }
 
     /**
@@ -121,12 +121,22 @@ class FormMetadataFactory implements FormMetadataFactoryInterface
     {
         $clientConstraints = [];
         foreach ($constraints as $constraint) {
-            $clientConstraint = $this->constraintManager->convert($constraint);
+            $clientConstraint = $this->clientConstraintManager->convert($constraint);
             if ($clientConstraint) {
                 $clientConstraints[] = $clientConstraint;
             }
         }
 
         return $clientConstraints;
+    }
+
+    /**
+     * @param array $clientConstraints
+     */
+    protected function processConstraints(array $clientConstraints)
+    {
+        foreach ($clientConstraints as $clientConstraint) {
+            $this->clientConstraintManager->process($clientConstraint);
+        }
     }
 }
