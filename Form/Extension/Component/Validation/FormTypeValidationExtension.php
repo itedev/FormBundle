@@ -73,16 +73,17 @@ class FormTypeValidationExtension extends AbstractTypeExtension implements Clien
         if ($clientView->isRoot()) {
             if (isset($options['client_validation'])) {
                 $clientView->setAttribute('client_validation', $options['client_validation']);
-            }
-            if (isset($options['constraint_conversion'])) {
-                $clientView->setAttribute('constraint_conversion', $options['constraint_conversion']);
+
+                if (isset($options['constraint_conversion'])) {
+                    $clientView->setAttribute('constraint_conversion', $options['constraint_conversion']);
+                }
             }
         }
 
         $rootClientView = $clientView->getRoot();
         $clientValidation = $rootClientView->getAttribute('client_validation', null);
-        $constraintConversion = $rootClientView->getAttribute('constraint_conversion', false);
         if ($clientValidation) {
+            $constraintConversion = $rootClientView->getAttribute('constraint_conversion', false);
             $formMetadata = $this->metadataFactory->getMetadataFor($form, $constraintConversion);
             $constraints = $formMetadata->getConstraints();
             if (!empty($constraints)) {
