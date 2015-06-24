@@ -106,6 +106,9 @@
     items: function() {
       return this.$itemsWrapper.find(this.itemSelector);
     },
+    currentIndex: function() {
+      return this.index;
+    },
     isEmpty: function() {
       return 0 === this.count();
     },
