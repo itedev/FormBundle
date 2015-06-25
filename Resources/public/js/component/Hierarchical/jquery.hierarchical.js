@@ -17,53 +17,56 @@
     trigger: function($elements, force) {
       var self = this;
 
+      // @todo: what if radio/checkbox?
       if (!$.isArray($elements)) {
         $elements = [$elements];
       }
       force = force || false;
 
-      var originatorDatas = [];
+      var originatorInfoList = [];
       $.each($elements, function(i, $element) {
-        var view = SF.forms.find($element.attr('id'));
+        var id = $element.attr('id');
+        
+        var view = SF.forms.find(id);
         var fullName = view.getFullName();
-
+        
+        var childrenInfoMap = {};
         var eventData = {
           originator: fullName,
           children: {}
         };
-        var childrenDatas = {};
-        var childrenCount = 0;
         var hierarchicalChildren = view.getOption('hierarchical_children', []);
         $.each(hierarchicalChildren, function(i, childId) {
           var childView = SF.forms.find(childId);
           if (null === childView) {
             return;
           }
-          var $childElement = childView.getElement();
 
-          var childData = {
+          var $childElement = childView.getElement();
+          if (0 === $childElement.length) {
+            return;
+          }
+
+          var childInfo = {
             view: childView,
             $element: $childElement
           };
-          if ($childElement.length) {
-            eventData.children[childId] = {
-              submit: true,
-              element: $childElement.get(0)
-            };
-            childrenCount++;
-          }
-          childrenDatas[childId] = childData;
+          eventData.children[childId] = {
+            submit: true,
+            element: $childElement.get(0)
+          };
+          childrenInfoMap[childId] = childInfo;
         });
 
         var submit = true;
-        if (!childrenCount) {
+        if (0 === SF.util.objectLength(childrenInfoMap)) {
           // if there are no any child DOM element - don't submit the form
           submit = false;
         }
         if (submit) {
-          var event = $.Event('ite-before-submit.hierarchical', eventData);
-          $element.trigger(event);
-          if (false === event.result) {
+          var parentEvent = $.Event('ite-parent-before-submit.hierarchical', eventData);
+          $element.trigger(parentEvent);
+          if (false === parentEvent.result) {
             // if any listener return false - don't submit the form
             submit = false;
           }
@@ -71,7 +74,7 @@
         if (submit) {
           // if all child elements set corresponding submit flag to false - don't submit the form
           submit = false;
-          $.each(event.children, function(childId, child) {
+          $.each(parentEvent.children, function(childId, child) {
             if (true === child['submit']) {
               submit = true;
 
@@ -79,26 +82,42 @@
             }
           });
         }
+        if (submit) {
+          // if all child elements listeners return false - don't submit the form
+          submit = false;
+          var childEventData = {
+            originator: fullName
+          };
+          $.each(childrenInfoMap, function(childId, childInfo) {
+            var $childElement = childInfo.$element;
+
+            var childEvent = $.Event('ite-child-before-submit.hierarchical', childEventData);
+            $childElement.trigger(childEvent);
+            if (false !== childEvent.result) {
+              submit = true;
+            }
+          });
+        }
 
         var originatorValue = view.getValue($element);
-        var originatorData = {
+        var originatorInfo = {
           view: view,
           $element: $element,
           fullName: fullName,
           originatorValue: originatorValue,
           eventData: eventData,
           submit: submit,
-          childrenDatas: childrenDatas
+          childrenInfoMap: childrenInfoMap
         };
-        originatorDatas.push(originatorData);
+        originatorInfoList.push(originatorInfo);
       });
 
       var submit = false;
       var originators = [];
-      $.each(originatorDatas, function(i, originatorData) {
-        if (true === originatorData.submit) {
+      $.each(originatorInfoList, function(i, originatorInfo) {
+        if (true === originatorInfo.submit) {
           submit = true;
-          originators.push(originatorData.fullName);
+          originators.push(originatorInfo.fullName);
         }
       });
 
@@ -106,7 +125,6 @@
         return;
       }
 
-      console.log('ite-submit.hierarchical trigger');
       this.$form.trigger('ite-submit.hierarchical');
 
       var jqxhr = this.$form.data('hierarchicalJqxhr');
@@ -125,16 +143,16 @@
         success: function(response) {
           var $newContext = $(response);
 
-          $.each(originatorDatas, function(i, originatorData) {
-            var event = $.Event('ite-before-children-change.hierarchical', originatorData.eventData);
-            originatorData.$element.trigger(event, [$newContext]);
+          $.each(originatorInfoList, function(i, originatorInfo) {
+            var event = $.Event('ite-before-children-change.hierarchical', originatorInfo.eventData);
+            originatorInfo.$element.trigger(event, [$newContext]);
             if (false === event.result) {
               return;
             }
 
-            $.each(originatorData.childrenDatas, function(i, childData) {
-              var childView = childData.view;
-              var $childElement = childData.$element;
+            $.each(originatorInfo.childrenInfoMap, function(i, childInfo) {
+              var childView = childInfo.view;
+              var $childElement = childInfo.$element;
               var $newChildElement = childView.getElement($newContext);
 
               if (!$childElement.length) {
@@ -143,8 +161,8 @@
 
               // set element value
               var childEventData = {
-                originator: originatorData.originator,
-                originatorValue: originatorData.originatorValue,
+                originator: originatorInfo.originator,
+                originatorValue: originatorInfo.originatorValue,
                 relatedTarget: $newChildElement.get(0)
               };
               event = $.Event('ite-before-change.hierarchical', childEventData);
@@ -162,14 +180,13 @@
               $childElement.trigger(event, [$newContext]);
             });
 
-            event = $.Event('ite-after-children-change.hierarchical', originatorData.eventData);
-            originatorData.$element.trigger(event, [$newContext]);
+            event = $.Event('ite-after-children-change.hierarchical', originatorInfo.eventData);
+            originatorInfo.$element.trigger(event, [$newContext]);
           });
         }
       });
       jqxhr.always(function() {
         self.$form.removeData('hierarchicalJqxhr');
-        console.log('ite-after-submit.hierarchical trigger');
         self.$form.trigger('ite-after-submit.hierarchical');
       });
       this.$form.data('hierarchicalJqxhr', jqxhr);

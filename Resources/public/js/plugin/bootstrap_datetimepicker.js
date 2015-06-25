@@ -6,6 +6,9 @@
 
     initialize: function($element, pluginData) {
       $element.datetimepicker(pluginData.options);
+      $element.on('dp.change', function() {
+        $element.trigger('change.ite.hierarchical');
+      });
     }
   };
 })(jQuery);

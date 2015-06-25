@@ -3,8 +3,7 @@
   var Collection = function(element) {
     this.$collection = $(element);
     this.itemsWrapperSelector = '.collection-items:first';
-    this.$itemsWrapper = this.$collection.find(this.itemsWrapperSelector);
-    this.itemSelector = ' > .collection-item';
+    this.itemSelector = this.itemsWrapperSelector + ' > .collection-item';
 
     this.showAnimation = this.$collection.data('show-animation');
     this.hideAnimation = this.$collection.data('hide-animation');
@@ -14,7 +13,7 @@
   Collection.prototype = {
     constructor: Collection,
     initialize: function() {
-      this.index = this.$itemsWrapper.find(this.itemSelector).length - 1;
+      this.index = this.$collection.find(this.itemSelector).length - 1;
     },
     add: function(afterShowCallback) {
       var prototype = this.$collection.data('prototype');
@@ -36,7 +35,7 @@
       }
 
       $item.hide();
-      this.$itemsWrapper.append($item);
+      this.$collection.find(this.itemsWrapperSelector).append($item);
 
       var showLength = this.showAnimation.length;
       var showMethod;
@@ -101,10 +100,10 @@
       });
     },
     itemsWrapper: function() {
-      return this.$itemsWrapper;
+      return this.$collection.find(this.itemsWrapperSelector);
     },
     items: function() {
-      return this.$itemsWrapper.find(this.itemSelector);
+      return this.$collection.find(this.itemSelector);
     },
     currentIndex: function() {
       return this.index;
@@ -113,7 +112,11 @@
       return 0 === this.count();
     },
     clear: function() {
-      this.$itemsWrapper.empty();
+      this.$collection.find(this.itemsWrapperSelector).empty();
+      var collectionView = SF.forms.find(this.$collection.attr('id'));
+      if (null !== collectionView) {
+        collectionView.clearChildren();
+      }
     },
     count: function() {
       return this.items().length;

@@ -160,6 +160,12 @@
       return this;
     },
 
+    clearChildren: function() {
+      this.children = {};
+
+      return this;
+    },
+
     toArray: function() {
       var result = {
         options: {},
