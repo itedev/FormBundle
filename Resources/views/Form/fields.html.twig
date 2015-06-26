@@ -78,6 +78,11 @@
     <p {{ block('simple_widget_attributes') }}>{{ markup|trans({}, translation_domain)|raw }}</p>
 {% endblock ite_markup_widget %}
 
+{% block ite_hidden_markup_widget %}
+    {{ block('ite_markup_widget') }}
+    {{ block('hidden_widget') }}
+{% endblock ite_hidden_markup_widget %}
+
 {# refactor below #}
 
 {#{% block ite_fileupload_file_widget %}#}

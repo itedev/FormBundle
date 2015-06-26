@@ -1,6 +1,6 @@
 <?php
 
-namespace ITE\FormBundle\Form\Type;
+namespace ITE\FormBundle\Form\Type\Hidden;
 
 use ITE\FormBundle\Form\DataTransformer\BooleanToStringTransformer;
 use Symfony\Component\Form\AbstractType;
