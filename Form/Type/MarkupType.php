@@ -75,7 +75,7 @@ class MarkupType extends AbstractType
             $propertyPath = $form->getPropertyPath();
 
             if (!$empty && null !== $propertyPath) {
-                return (string) $this->propertyAccessor->getValue($parentData, $propertyPath);
+                return $this->propertyAccessor->getValue($parentData, $propertyPath);
             }
 
             throw new \InvalidArgumentException('Invalid markup value');

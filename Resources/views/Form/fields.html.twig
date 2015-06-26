@@ -75,7 +75,7 @@
 
 {% block ite_markup_widget %}
     {% set attr = attr|merge({'class': (attr.class|default('') ~ ' form-control-static')|trim}) %}
-    <p {{ block('simple_widget_attributes') }}>{{ markup|raw }}</p>
+    <p {{ block('simple_widget_attributes') }}>{{ markup|trans({}, translation_domain)|raw }}</p>
 {% endblock ite_markup_widget %}
 
 {# refactor below #}
