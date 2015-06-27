@@ -1,0 +1,50 @@
+parameters:
+    ite_form.form.type.boolean_hidden.class:        ITE\FormBundle\Form\Type\Hidden\BooleanHiddenType
+    ite_form.form.type.date_hidden.class:           ITE\FormBundle\Form\Type\Hidden\DateHiddenType
+    ite_form.form.type.time_hidden.class:           ITE\FormBundle\Form\Type\Hidden\TimeHiddenType
+    ite_form.form.type.datetime_hidden.class:       ITE\FormBundle\Form\Type\Hidden\DateTimeHiddenType
+    ite_form.form.type.money_hidden.class:          ITE\FormBundle\Form\Type\Hidden\MoneyHiddenType
+    ite_form.form.type.integer_hidden.class:        ITE\FormBundle\Form\Type\Hidden\IntegerHiddenType
+    ite_form.form.type.number_hidden.class:         ITE\FormBundle\Form\Type\Hidden\NumberHiddenType
+    ite_form.form.type.percent_hidden.class:        ITE\FormBundle\Form\Type\Hidden\PercentHiddenType
+
+services:
+    ite_form.form.type.boolean_hidden:
+        class: %ite_form.form.type.boolean_hidden.class%
+        tags:
+            - { name: form.type, alias: ite_boolean_hidden }
+
+    ite_form.form.type.date_hidden:
+        class: %ite_form.form.type.date_hidden.class%
+        tags:
+            - { name: form.type, alias: ite_date_hidden }
+
+    ite_form.form.type.time_hidden:
+        class: %ite_form.form.type.time_hidden.class%
+        tags:
+            - { name: form.type, alias: ite_time_hidden }
+
+    ite_form.form.type.datetime_hidden:
+        class: %ite_form.form.type.datetime_hidden.class%
+        tags:
+            - { name: form.type, alias: ite_datetime_hidden }
+
+    ite_form.form.type.money_hidden:
+        class: %ite_form.form.type.money_hidden.class%
+        tags:
+            - { name: form.type, alias: ite_money_hidden }
+
+    ite_form.form.type.integer_hidden:
+        class: %ite_form.form.type.integer_hidden.class%
+        tags:
+            - { name: form.type, alias: ite_integer_hidden }
+
+    ite_form.form.type.number_hidden:
+        class: %ite_form.form.type.number_hidden.class%
+        tags:
+            - { name: form.type, alias: ite_number_hidden }
+
+    ite_form.form.type.percent_hidden:
+        class: %ite_form.form.type.percent_hidden.class%
+        tags:
+            - { name: form.type, alias: ite_percent_hidden }

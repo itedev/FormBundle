@@ -1,10 +1,9 @@
 <?php
 
-namespace ITE\FormBundle\Form\Type;
+namespace ITE\FormBundle\Form\Type\Range;
 
 use ITE\FormBundle\Form\DataTransformer\RangeToArrayTransformer;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**

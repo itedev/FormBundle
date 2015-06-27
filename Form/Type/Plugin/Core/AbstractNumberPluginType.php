@@ -1,18 +1,16 @@
 <?php
 
-namespace ITE\FormBundle\Form\Type\Plugin;
+namespace ITE\FormBundle\Form\Type\Plugin\Core;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * Class AbstractPluginType
+ * Class AbstractNumberPluginType
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-abstract class AbstractPluginType extends AbstractType
+abstract class AbstractNumberPluginType extends NumberType
 {
     /**
      * @var array $options
@@ -32,6 +30,7 @@ abstract class AbstractPluginType extends AbstractType
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
+        parent::setDefaultOptions($resolver);
         $resolver->setDefaults([
             'plugin_options' => [],
         ]);
@@ -39,5 +38,4 @@ abstract class AbstractPluginType extends AbstractType
             'plugin_options' => ['array'],
         ]);
     }
-
 }

@@ -1,0 +1,14 @@
+parameters:
+    ite_form.form.type.range.class:                 ITE\FormBundle\Form\Type\Range\RangeType
+    ite_form.form.type.simple_range.class:          ITE\FormBundle\Form\Type\Range\SimpleRangeType
+
+services:
+    ite_form.form.type.range:
+        class: %ite_form.form.type.range.class%
+        tags:
+            - { name: form.type, alias: ite_range }
+
+    ite_form.form.type.simple_range:
+        class: %ite_form.form.type.simple_range.class%
+        tags:
+            - { name: form.type, alias: ite_simple_range }

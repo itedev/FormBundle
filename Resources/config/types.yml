@@ -2,11 +2,6 @@ parameters:
     ite_form.form.type.ajax_choice.class:           ITE\FormBundle\Form\Type\AjaxChoiceType
     ite_form.form.type.ajax_entity.class:           ITE\FormBundle\Form\Type\AjaxEntityType
     ite_form.form.type.google_font.class:           ITE\FormBundle\Form\Type\GoogleFontType
-    ite_form.form.type.range.class:                 ITE\FormBundle\Form\Type\RangeType
-    ite_form.form.type.simple_range.class:          ITE\FormBundle\Form\Type\SimpleRangeType
-    ite_form.form.type.boolean_hidden.class:        ITE\FormBundle\Form\Type\Hidden\BooleanHiddenType
-    ite_form.form.type.date_hidden.class:           ITE\FormBundle\Form\Type\Hidden\DateHiddenType
-    ite_form.form.type.money_hidden.class:          ITE\FormBundle\Form\Type\Hidden\MoneyHiddenType
 
     # todo: refactor types below
     ite_form.form.input_entity_type.class:          ITE\FormBundle\Form\Type\InputEntityType
@@ -30,16 +25,6 @@ services:
         tags:
             - { name: form.type, alias: ite_google_font }
 
-    ite_form.form.type.range:
-        class: %ite_form.form.type.range.class%
-        tags:
-            - { name: form.type, alias: ite_range }
-
-    ite_form.form.type.simple_range:
-        class: %ite_form.form.type.simple_range.class%
-        tags:
-            - { name: form.type, alias: ite_simple_range }
-
     ite_form.form.input_entity_type:
         class: %ite_form.form.input_entity_type.class%
         arguments: [ @doctrine.orm.entity_manager ]
@@ -50,18 +35,3 @@ services:
         class: %ite_form.form.markup_type.class%
         tags:
             - { name: form.type, alias: ite_markup }
-
-    ite_form.form.type.boolean_hidden:
-        class: %ite_form.form.type.boolean_hidden.class%
-        tags:
-            - { name: form.type, alias: ite_boolean_hidden }
-
-    ite_form.form.type.date_hidden:
-        class: %ite_form.form.type.date_hidden.class%
-        tags:
-            - { name: form.type, alias: ite_date_hidden }
-
-    ite_form.form.type.money_hidden:
-        class: %ite_form.form.type.money_hidden.class%
-        tags:
-            - { name: form.type, alias: ite_money_hidden }

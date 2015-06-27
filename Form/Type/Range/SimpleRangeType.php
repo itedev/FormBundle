@@ -1,6 +1,6 @@
 <?php
 
-namespace ITE\FormBundle\Form\Type;
+namespace ITE\FormBundle\Form\Type\Range;
 
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 

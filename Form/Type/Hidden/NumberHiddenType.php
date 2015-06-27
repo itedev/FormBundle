@@ -2,14 +2,14 @@
 
 namespace ITE\FormBundle\Form\Type\Hidden;
 
-use ITE\FormBundle\Form\Type\Core\AbstractDateType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 
 /**
- * Class DateHiddenType
+ * Class NumberHiddenType
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-class DateHiddenType extends AbstractDateType
+class NumberHiddenType extends NumberType
 {
     /**
      * {@inheritdoc}
@@ -24,6 +24,6 @@ class DateHiddenType extends AbstractDateType
      */
     public function getName()
     {
-        return 'ite_date_hidden';
+        return 'ite_number_hidden';
     }
 }

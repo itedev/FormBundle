@@ -1,25 +1,24 @@
 <?php
 
-namespace ITE\FormBundle\Form\Type\Plugin\BootstrapDaterangepicker;
+namespace ITE\FormBundle\Form\Type\Plugin\IonRangeSlider;
 
 use ITE\FormBundle\Form\DataTransformer\RangeToStringTransformer;
-use ITE\FormBundle\Form\Type\Plugin\Core\AbstractDatePluginType;
+use ITE\FormBundle\Form\Type\Plugin\Core\AbstractMoneyPluginType;
 use ITE\FormBundle\SF\Form\ClientFormTypeInterface;
 use ITE\FormBundle\SF\Form\ClientFormView;
-use ITE\FormBundle\SF\Plugin\BootstrapDaterangepickerPlugin;
-use ITE\FormBundle\Util\MomentJsUtils;
+use ITE\FormBundle\SF\Plugin\IonRangeSliderPlugin;
+use ITE\FormBundle\Util\MoneyUtils;
 use Symfony\Component\Form\Extension\Core\DataTransformer\DataTransformerChain;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * Class DateRangeType
+ * Class MoneyRangeType
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-class DateRangeType extends AbstractDatePluginType implements ClientFormTypeInterface
+class MoneyRangeType extends AbstractMoneyPluginType implements ClientFormTypeInterface
 {
     /**
      * {@inheritdoc}
@@ -33,11 +32,7 @@ class DateRangeType extends AbstractDatePluginType implements ClientFormTypeInte
         $builder->resetViewTransformers();
         $builder->resetModelTransformers();
 
-        $separator = isset($options['plugin_options']['separator'])
-            ? $options['plugin_options']['separator']
-            : ' - ';
-
-        $builder->addViewTransformer(new RangeToStringTransformer($options['class'], $separator, $partViewTransformer));
+        $builder->addViewTransformer(new RangeToStringTransformer($options['class'], ';', $partViewTransformer));
     }
 
     /**
@@ -45,20 +40,14 @@ class DateRangeType extends AbstractDatePluginType implements ClientFormTypeInte
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
+        parent::buildView($view, $form, $options);
+
         array_splice(
             $view->vars['block_prefixes'],
             array_search($this->getName(), $view->vars['block_prefixes']),
             0,
-            'ite_bootstrap_daterangepicker'
+            'ite_ion_range_slider'
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function finishView(FormView $view, FormInterface $form, array $options)
-    {
-        // don't call parent method!
     }
 
     /**
@@ -66,26 +55,28 @@ class DateRangeType extends AbstractDatePluginType implements ClientFormTypeInte
      */
     public function buildClientView(ClientFormView $clientView, FormView $view, FormInterface $form, array $options)
     {
+        $parsedMoneyPattern = MoneyUtils::parseMoneyPattern($view->vars['money_pattern']);
+
+        $predefinedOptions = [];
+        if ('prefix' === $parsedMoneyPattern['position']) {
+            $predefinedOptions['prefix'] = $parsedMoneyPattern['symbol'];
+        } elseif ('suffix' === $parsedMoneyPattern['position']) {
+            $predefinedOptions['postfix'] = $parsedMoneyPattern['symbol'];
+        }
+        $predefinedOptions['step'] = 1 / pow(10, $options['precision']);
+
         $clientView->setOption('plugins', [
-            BootstrapDaterangepickerPlugin::getName() => [
+            IonRangeSliderPlugin::getName() => [
                 'extras' => (object) [],
-                'options' => array_replace_recursive($this->options, $options['plugin_options'], [
-                    'format' => MomentJsUtils::icuToMomentJs($options['format']),
-                    'timePicker' => false,
-                ]),
+                'options' => array_replace_recursive(
+                    $this->options,
+                    $predefinedOptions,
+                    $options['plugin_options'],
+                    [
+                        'type' => 'double',
+                    ]
+                ),
             ],
-        ]);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
-    {
-        parent::setDefaultOptions($resolver);
-
-        $resolver->setDefaults([
-            'class' => 'ITE\FormBundle\Form\Data\DateRange',
         ]);
     }
 
@@ -102,6 +93,6 @@ class DateRangeType extends AbstractDatePluginType implements ClientFormTypeInte
      */
     public function getName()
     {
-        return 'ite_bootstrap_daterangepicker_date_range';
+        return 'ite_ion_range_slider_money_range';
     }
 }

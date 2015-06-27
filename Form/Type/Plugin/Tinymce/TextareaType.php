@@ -2,7 +2,7 @@
 
 namespace ITE\FormBundle\Form\Type\Plugin\Tinymce;
 
-use ITE\FormBundle\Form\Type\Plugin\AbstractPluginType;
+use ITE\FormBundle\Form\Type\Plugin\Core\AbstractPluginType;
 use ITE\FormBundle\SF\Form\ClientFormTypeInterface;
 use ITE\FormBundle\SF\Form\ClientFormView;
 use ITE\FormBundle\SF\Plugin\TinymcePlugin;
