@@ -44,4 +44,10 @@ interface FormBuilderInterface extends BaseFormBuilderInterface
      */
     public function addDataAware($child, $type = null, $formModifier = null);
 
+    /**
+     * @param string $name
+     * @param array $options
+     * @return FormBuilderInterface
+     */
+    public function replaceOptions($name, array $options);
 }

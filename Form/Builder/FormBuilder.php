@@ -239,22 +239,20 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
      */
     public function replaceType($name, $type)
     {
-        $field = $this->get($name);
-        $options = $field->getOptions();
+        $child = $this->get($name);
+        $options = $child->getOptions();
 
         return $this->add($name, $type, $options);
     }
 
     /**
-     * @param $name
-     * @param $options
-     * @return $this|FormBuilderInterface
+     * {@inheritdoc}
      */
-    public function replaceOptions($name, $options)
+    public function replaceOptions($name, array $options)
     {
-        $field = $this->get($name);
-        $currentOptions = $field->getOptions();
-        $type = $field->getType()->getName();
+        $child = $this->get($name);
+        $currentOptions = $child->getOptions();
+        $type = $child->getType()->getName();
 
         $options = array_replace_recursive($currentOptions, $options);
 
