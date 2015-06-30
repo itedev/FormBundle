@@ -115,13 +115,13 @@
       var submit = false;
       var originators = [];
       $.each(originatorInfoList, function(i, originatorInfo) {
-        if (true === originatorInfo.submit) {
+        if (true === originatorInfo.submit || force) {
           submit = true;
           originators.push(originatorInfo.fullName);
         }
       });
 
-      if (!submit && !force) {
+      if (!submit) {
         return;
       }
 
