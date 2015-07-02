@@ -79,7 +79,10 @@
 {% endblock ite_markup_widget %}
 
 {% block ite_hidden_markup_widget %}
+    {% set attr_copy = attr %}
+    {% set attr = markup_attr %}
     {{ block('ite_markup_widget') }}
+    {% set attr = attr_copy %}
     {{ block('hidden_widget') }}
 {% endblock ite_hidden_markup_widget %}
 

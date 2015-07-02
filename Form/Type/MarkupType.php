@@ -68,7 +68,7 @@ class MarkupType extends AbstractType
 
         if (is_callable($options['markup'])) {
             return call_user_func_array($options['markup'], [$parentForm]);
-        } elseif (is_string($options['markup'])) {
+        } elseif (is_scalar($options['markup'])) {
             return $options['markup'];
         } else {
             $empty = null === $parentData || array() === $parentData;
@@ -78,7 +78,7 @@ class MarkupType extends AbstractType
                 return $this->propertyAccessor->getValue($parentData, $propertyPath);
             }
 
-            throw new \InvalidArgumentException('Invalid markup value');
+            return null;
         }
     }
 

@@ -33,6 +33,10 @@ class HiddenTypeMarkupExtension extends AbstractTypeExtension
     {
         $resolver->setOptional([
             'markup',
+            'markup_attr',
+        ]);
+        $resolver->setAllowedTypes([
+            'markup_attr' => ['array'],
         ]);
     }
 
@@ -44,7 +48,9 @@ class HiddenTypeMarkupExtension extends AbstractTypeExtension
         if (!isset($options['markup'])) {
             return;
         }
+
         $view->vars['markup'] = $this->getMarkup($form, $options);
+        $view->vars['markup_attr'] = isset($options['markup_attr']) ? $options['markup_attr'] : [];
         array_splice(
             $view->vars['block_prefixes'],
             array_search($this->getExtendedType(), $view->vars['block_prefixes']) + 1,
@@ -75,7 +81,7 @@ class HiddenTypeMarkupExtension extends AbstractTypeExtension
                 return $this->propertyAccessor->getValue($parentData, $propertyPath);
             }
 
-            throw new \InvalidArgumentException('Invalid markup value');
+            return null;
         }
     }
 
