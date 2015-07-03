@@ -41,7 +41,7 @@
       }
 
       // create
-      if ('allow_create' in extras && extras.allow_create === true) {
+      if (extras.hasOwnProperty('allow_create') && extras.allow_create === true) {
         options = $.extend(true, options, {
           tags: true,
           createTag: function(params) {
@@ -50,14 +50,14 @@
               return {
                 id: params.term,
                 text: params.term,
-                new: true
+                isNew: true
               };
             }
           }
         });
         $element.on('select2:selecting', function(e) {
           var selection = e.params.args.data;
-          if (!selection.hasOwnProperty('new')) {
+          if (!selection.hasOwnProperty('isNew')) {
             return;
           }
 
@@ -69,7 +69,7 @@
             },
             dataType: 'dataType' in options.ajax ? options.ajax.dataType : 'json',
             success: function(response) {
-              if ($.isPlainObject(response) && 'id' in response && 'text' in response) {
+              if ($.isPlainObject(response) && response.hasOwnProperty('id') && response.hasOwnProperty('text')) {
                 $element
                   .html('<option value="' + response.id + '">' + response.text + '</option>')
                   .val(response.id)
@@ -91,7 +91,10 @@
     },
 
     clearValue: function($element) {
-      $element.select2('val', '');
+      $element
+        .html('')
+        .val('')
+      ;
     },
 
     setValue: function($element, $newElement) {
