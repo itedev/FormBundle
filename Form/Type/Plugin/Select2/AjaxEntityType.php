@@ -3,6 +3,7 @@
 namespace ITE\FormBundle\Form\Type\Plugin\Select2;
 
 use ITE\FormBundle\Form\ChoiceList\AjaxEntityChoiceList;
+use ITE\FormBundle\SF\Form\ClientFormView;
 use ITE\FormBundle\SF\Plugin\Select2Plugin;
 use RuntimeException;
 use Symfony\Component\Form\AbstractType;
@@ -27,6 +28,22 @@ class AjaxEntityType extends AbstractAjaxChoiceType
     {
         parent::setDefaultOptions($resolver);
 
+        $self = $this;
+
+        $createUrlNormalizer = function (Options $options, $createUrl) use ($self) {
+            if (!$options['allow_create']) {
+                return $createUrl;
+            }
+
+            if (!empty($options['create_route'])) {
+                return $self->getRouter()->generate($options['create_route'], $options['create_route_parameters']);
+            } elseif (!empty($createUrl)) {
+                return $createUrl;
+            } else {
+                throw new \RuntimeException('You must specify "create_route" or "create_url" option.');
+            }
+        };
+
         $resolver->setDefaults([
             'choice_list' => function (Options $options) {
                 return new AjaxEntityChoiceList(
@@ -35,6 +52,22 @@ class AjaxEntityType extends AbstractAjaxChoiceType
                     $options['property']
                 );
             },
+            'allow_create' => false,
+            'create_route' => null,
+            'create_route_parameters' => [],
+            'create_url' => null,
+        ]);
+        $resolver->setNormalizers([
+            'create_url' => $createUrlNormalizer,
+        ]);
+        $resolver->setAllowedTypes([
+            'allow_create' => ['bool'],
+            'create_route' => ['null', 'string'],
+            'create_route_parameters' => ['array'],
+            'create_url' => ['null', 'string'],
+        ]);
+        $resolver->setOptional([
+            'create_route',
         ]);
     }
 
@@ -53,6 +86,27 @@ class AjaxEntityType extends AbstractAjaxChoiceType
         parent::buildView($view, $form, $options);
 
         $view->vars['attr']['data-property'] = $options['property'];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildClientView(ClientFormView $clientView, FormView $view, FormInterface $form, array $options)
+    {
+        parent::buildClientView($clientView, $view, $form, $options);
+
+        if (!$options['allow_create']) {
+            return;
+        }
+
+        $plugins = $clientView->getOption('plugins', []);
+        $pluginsExtras = $plugins[Select2Plugin::getName()]['extras'];
+
+        $pluginsExtras['allow_create'] = true;
+        $pluginsExtras['create_url'] = $options['create_url'];
+
+        $plugins[Select2Plugin::getName()]['extras'] = $pluginsExtras;
+        $clientView->setOption('plugins', $plugins);
     }
 
     /**

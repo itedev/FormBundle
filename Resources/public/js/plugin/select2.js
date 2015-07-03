@@ -40,6 +40,53 @@
         });
       }
 
+      // create
+      if ('allow_create' in extras && extras.allow_create === true) {
+        options = $.extend(true, options, {
+          tags: true,
+          createTag: function(params) {
+            var results = arguments.callee.caller.arguments[0].results;
+            if (0 === results.length) {
+              return {
+                id: params.term,
+                text: params.term,
+                new: true
+              };
+            }
+          }
+        });
+        $element.on('select2:selecting', function(e) {
+          var selection = e.params.args.data;
+          if (!selection.hasOwnProperty('new')) {
+            return;
+          }
+
+          $.ajax({
+            type: 'post',
+            url: extras.create_url,
+            data: {
+              text: selection.text
+            },
+            dataType: 'dataType' in options.ajax ? options.ajax.dataType : 'json',
+            success: function(response) {
+              if ($.isPlainObject(response) && 'id' in response && 'text' in response) {
+                $element
+                  .html('<option value="' + response.id + '">' + response.text + '</option>')
+                  .val(response.id)
+                ;
+              } else {
+                $element
+                  .html('')
+                  .val('')
+                ;
+              }
+            }
+          }).fail(function() {
+            $element.val('');
+          });
+        });
+      }
+
       $element.select2(options);
     },
 

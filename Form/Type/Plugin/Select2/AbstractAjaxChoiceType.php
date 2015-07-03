@@ -65,6 +65,7 @@ abstract class AbstractAjaxChoiceType extends AbstractType implements ClientForm
                 throw new \RuntimeException('You must specify "route" or "url" option.');
             }
         };
+
         $resolver->setDefaults([
             'choices' => [],
             'allow_modify' => true,
@@ -78,6 +79,9 @@ abstract class AbstractAjaxChoiceType extends AbstractType implements ClientForm
         ]);
         $resolver->setAllowedTypes([
             'plugin_options' => ['array'],
+            'route' => ['null', 'string'],
+            'route_parameters' => ['array'],
+            'url' => ['null', 'string'],
         ]);
         $resolver->setAllowedValues([
             'allow_modify' => [true],
