@@ -4,6 +4,7 @@ parameters:
     ite_form.component.ajax_file_upload.class:  ITE\FormBundle\SF\Component\AjaxFileUploadComponent
     ite_form.component.hierarchical.class:      ITE\FormBundle\SF\Component\HierarchicalComponent
     ite_form.component.editable.class:          ITE\FormBundle\SF\Component\EditableComponent
+    ite_form.component.ajax_submit.class:       ITE\FormBundle\SF\Component\AjaxSubmitComponent
     ite_form.component.validation.class:        ITE\FormBundle\SF\Component\ValidationComponent
     ite_form.component.debug.class:             ITE\FormBundle\SF\Component\DebugComponent
 
@@ -32,6 +33,11 @@ services:
         class: %ite_form.component.editable.class%
         tags:
             - { name: ite_form.component, alias: editable }
+
+    ite_form.component.ajax_submit:
+        class: %ite_form.component.ajax_submit.class%
+        tags:
+            - { name: ite_form.component, alias: ajax_submit }
 
     ite_form.component.validation:
         class: %ite_form.component.validation.class%

@@ -46,7 +46,7 @@ abstract class Component implements ExtensionInterface
      */
     public function addFormResources(ContainerInterface $container)
     {
-        return array();
+        return [];
     }
 
     /**
@@ -73,7 +73,7 @@ abstract class Component implements ExtensionInterface
      */
     public function getStylesheets()
     {
-        return array();
+        return [];
     }
 
     /**
@@ -81,7 +81,7 @@ abstract class Component implements ExtensionInterface
      */
     public function getJavascripts()
     {
-        return array();
+        return [];
     }
 
 } 

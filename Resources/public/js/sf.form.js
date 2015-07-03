@@ -5,6 +5,7 @@
 
   SF.fn.plugins = {};
   SF.fn.validators = {};
+  SF.fn.submitters = {};
 
   SF.fn.util = $.extend(SF.fn.util, {
     strtr: function(str, replacementTokens) {
