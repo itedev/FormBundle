@@ -2,8 +2,9 @@
 
 namespace ITE\FormBundle\Service\Validation;
 
-use ITE\FormBundle\Util\FormAccessor;
-use Symfony\Component\Form\Extension\Validator\Constraints\FormValidator;
+use ITE\FormBundle\FormAccess\FormAccess;
+use ITE\FormBundle\FormAccess\FormAccessor;
+use Symfony\Component\Form\Extension\Validator\Constraints\FormValidator as BaseValidator;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\ClassBasedInterface;
 use Symfony\Component\Validator\Constraint;
@@ -233,14 +234,15 @@ class ExecutionContext implements ExecutionContextInterface
     {
         foreach ($constraints as $constraint) {
             $validator = $this->globalContext->getValidatorFactory()->getInstance($constraint);
-            if ($validator instanceof FormValidator) {
+            if ($validator instanceof BaseValidator) {
                 $validator->initialize($this);
                 $validator->validate($value, $constraint);
                 continue;
             }
 
             $globalContext = $this->globalContext;
-            if (null !== $form = FormAccessor::get($globalContext->getRoot(), $this->getPropertyPath())) {
+            $accessor = FormAccess::createFormAccessor();
+            if (null !== $form = $accessor->getForm($globalContext->getRoot(), $this->getPropertyPath())) {
                 if (null !== $constraintMetadata = $globalContext->getConstraintMetadataFactory()
                         ->getMetadataForConstraint($constraint)) {
                     $formConstraint = new FormConstraint($form, $constraintMetadata);
