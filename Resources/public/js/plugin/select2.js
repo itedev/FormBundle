@@ -98,8 +98,11 @@
     },
 
     setValue: function($element, $newElement) {
-      $element.html($newElement.html());
-      $element.val($newElement.val());
+      $element
+        .html($newElement.html())
+        .val($newElement.val())
+        .triggerHandler('change.select2')
+      ;
     }
   };
 })(jQuery);

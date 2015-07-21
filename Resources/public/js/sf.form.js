@@ -430,7 +430,7 @@
       var valueSet = false;
 
       // try to set value via plugins
-      if (!this.hasOption('plugins')) {
+      if (this.hasOption('plugins')) {
         var plugins = this.getOption('plugins', {});
         $.each(plugins, function (plugin, pluginData) {
           if ($.isFunction(SF.plugins[plugin].setValue)) {
