@@ -2,6 +2,7 @@
 
 namespace ITE\FormBundle\Form\Builder;
 
+use ITE\Common\Util\ReflectionUtils;
 use ITE\FormBundle\Form\Builder\Event\HierarchicalEvent;
 use ITE\FormBundle\Form\Builder\Event\Model\HierarchicalParent;
 use ITE\FormBundle\Form\Form;
@@ -115,7 +116,15 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
 
         parent::add($child, $type, $options);
 
+//        $children = array_keys(ReflectionUtils::getValue($this, 'children'));
+//        $index = array_search($child, $children);
+//        $reference = (0 !== $index)
+//            ? $this->get($children[$index - 1])
+//            : $this;
+
         // FormEvents::PRE_SET_DATA
+//        $reference
+//          ->addEventListener(FormEvents::POST_SET_DATA, function(FormEvent $event)
         $this
             ->get($child)
             ->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event)
@@ -161,6 +170,8 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
         ;
 
         // FormEvents::PRE_SUBMIT
+//        $reference
+//          ->addEventListener(FormEvents::POST_SUBMIT, function(FormEvent $event)
         $this
             ->get($child)
             ->addEventListener(FormEvents::PRE_SUBMIT, function(FormEvent $event)

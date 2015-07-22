@@ -33,7 +33,8 @@
         var childrenInfoMap = {};
         var eventData = {
           originator: fullName,
-          children: {}
+          children: {},
+          force: force
         };
         var hierarchicalChildren = view.getOption('hierarchical_children', []);
         $.each(hierarchicalChildren, function(i, childId) {
