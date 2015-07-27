@@ -15,6 +15,7 @@ parameters:
     ite_form.plugin.form.class:                         ITE\FormBundle\SF\Plugin\FormPlugin
     ite_form.plugin.bootstrap_daterangepicker.class:    ITE\FormBundle\SF\Plugin\BootstrapDaterangepickerPlugin
     ite_form.plugin.ion_range_slider.class:             ITE\FormBundle\SF\Plugin\IonRangeSliderPlugin
+    ite_form.plugin.icheck.class:                       ITE\FormBundle\SF\Plugin\ICheckPlugin
 
 services:
     ite_form.plugin.select2:
@@ -96,3 +97,8 @@ services:
         class: %ite_form.plugin.ion_range_slider.class%
         tags:
             - { name: ite_form.plugin, alias: ion_range_slider }
+
+    ite_form.plugin.icheck:
+        class: %ite_form.plugin.icheck.class%
+        tags:
+            - { name: ite_form.plugin, alias: icheck }

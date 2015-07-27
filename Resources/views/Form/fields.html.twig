@@ -155,3 +155,47 @@
         {{ block('form_widget_simple') }}
     {% endif %}
 {% endblock ite_input_entity_widget %}
+
+{# @todo: move to separate mopa layout #}
+{% block choice_widget_expanded %}
+    {% spaceless %}
+        <div id="{{ id }}">
+            {% set label_attr = label_attr|merge({'class': (label_attr.class|default(''))}) %}
+            {% set label_attr = label_attr|merge({'class': (label_attr.class ~ ' ' ~ (widget_type != '' ? (multiple ? 'checkbox' : 'radio') ~ '-' ~ widget_type : ''))}) %}
+            {% if expanded %}
+                {% set attr = attr|merge({'class': attr.class|default('') ~ ' ' ~ horizontal_input_wrapper_class}) %}
+            {% endif %}
+            {% if widget_type == 'inline-btn' %}
+                <div class="btn-group" data-toggle="buttons">
+            {% endif %}
+            {% for child in form %}
+                {% if widget_type not in ['inline', 'inline-btn'] %}
+                    <div class="{{ multiple ? 'checkbox' : 'radio' }}"
+                    {%- if widget_type == 'inline-btn' %} class="btn-group" data-toggle="buttons"{% endif %}>
+                {% endif %}
+                {% if widget_type == 'inline-btn' %}
+                    {% set label_attr = label_attr|default({})|merge({'class': 'btn ' ~ label_attr.class|default('')}) %}
+                {% endif %}
+                {% if child.vars.checked and widget_type == 'inline-btn' %}
+                    {% set label_attr_copy = label_attr|default({})|merge({'class': 'active ' ~ label_attr.class|default('')}) %}
+                {% else %}
+                    {% set label_attr_copy = label_attr|default({}) %}
+                {% endif %}
+                <label{% for attrname, attrvalue in label_attr_copy %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>
+                {{ form_widget(child, {'horizontal_label_class': horizontal_label_class, 'horizontal_input_wrapper_class': horizontal_input_wrapper_class, 'attr': {'class': attr.widget_class|default('') }}) }}
+                {% if widget_type == 'inline-btn' or widget_checkbox_label == 'widget'%}
+                    {{ child.vars.label|trans({}, translation_domain)|raw }}
+                {% else %}
+                    {{ child.vars.label|trans({}, translation_domain) }}
+                {% endif %}
+                </label>
+                {% if widget_type not in ['inline', 'inline-btn'] %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+            {% if widget_type == 'inline-btn' %}
+                </div>
+            {% endif %}
+        </div>
+    {% endspaceless %}
+{% endblock choice_widget_expanded %}

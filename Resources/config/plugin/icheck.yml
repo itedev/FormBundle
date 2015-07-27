@@ -1,0 +1,8 @@
+parameters:
+    ite_form.form.type.plugin.icheck.abstract.class:    ITE\FormBundle\Form\Type\Plugin\ICheck\AbstractChoiceType
+
+services:
+    ite_form.form.type.plugin.icheck.abstract:
+        class: %ite_form.form.type.plugin.icheck.abstract.class%
+        arguments: [ %ite_form.plugin.icheck.options% ]
+        abstract: true
