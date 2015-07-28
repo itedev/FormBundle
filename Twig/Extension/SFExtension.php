@@ -2,6 +2,7 @@
 
 namespace ITE\FormBundle\Twig\Extension;
 
+use ITE\Common\Util\ReflectionUtils;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
@@ -45,6 +46,7 @@ class SFExtension extends Twig_Extension
             new \Twig_SimpleFunction('ite_last_form_resource', [$this, 'lastFormResource']),
             new \Twig_SimpleFunction('ite_uniqid', [$this, 'uniqId']),
             new \Twig_SimpleFunction('ite_set_attribute', [$this, 'setAttribute']),
+            new \Twig_SimpleFunction('ite_set_not_rendered', [$this, 'setNotRendered']),
             new \Twig_SimpleFunction('ite_dynamic_form_widget', [$this, 'dynamicFormWidget'], ['is_safe' => ['html'], 'needs_environment' => true]),
             new \Twig_SimpleFunction('ite_dynamic_form_row', [$this, 'dynamicFormRow'], ['is_safe' => ['html'], 'needs_environment' => true]),
         ];
@@ -91,6 +93,14 @@ class SFExtension extends Twig_Extension
     public function setAttribute($object, $attributeName, $attributeValue)
     {
         $this->accessor->setValue($object, $attributeName, $attributeValue);
+    }
+
+    /**
+     * @param FormView $view
+     */
+    public function setNotRendered(FormView $view)
+    {
+        ReflectionUtils::setValue($view, 'rendered', false);
     }
 
     /**
