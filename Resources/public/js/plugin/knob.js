@@ -4,7 +4,7 @@
       return 'undefined' !== typeof $element.data('kontroled');
     },
 
-    initialize: function($element, elementData) {
+    initialize: function($element, pluginData) {
       $element.knob(pluginData.options);
     },
 
