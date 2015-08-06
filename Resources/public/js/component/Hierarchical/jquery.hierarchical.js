@@ -186,9 +186,11 @@
           });
         }
       });
-      jqxhr.always(function() {
-        self.$form.removeData('hierarchicalJqxhr');
-        self.$form.trigger('ite-after-submit.hierarchical');
+      jqxhr.always(function(xhr, reason) {
+        if (reason !== 'hierarchicalAbort') {
+          self.$form.removeData('hierarchicalJqxhr');
+          self.$form.trigger('ite-after-submit.hierarchical');
+        }
       });
       this.$form.data('hierarchicalJqxhr', jqxhr);
     },
