@@ -100,7 +100,6 @@ class EntityHiddenType extends AbstractType
         ]);
         $resolver->setAllowedTypes([
             'em' => ['null', 'string', 'Doctrine\Common\Persistence\ObjectManager'],
-            'query_builder' => ['null', 'Doctrine\ORM\QueryBuilder', 'Closure'],
             'loader' => ['null', 'Symfony\Bridge\Doctrine\Form\ChoiceList\EntityLoaderInterface'],
             'multiple' => ['bool'],
             'separator' => ['string'],

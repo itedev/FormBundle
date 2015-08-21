@@ -67,7 +67,7 @@ class EntityToIdTransformer implements DataTransformerInterface
 
         $this->classMetadata = $this->em->getClassMetadata($class);
         $this->class = $this->classMetadata->getName();
-        $this->idField = current($this->classMetadata->getIdentifierFieldNames());
+        $this->idField = $this->classMetadata->getSingleIdentifierFieldName();
     }
 
     /**
