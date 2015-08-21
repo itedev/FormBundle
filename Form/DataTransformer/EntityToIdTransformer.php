@@ -2,15 +2,12 @@
 
 namespace ITE\FormBundle\Form\DataTransformer;
 
+use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\NoResultException;
-use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Mapping\ClassMetadata;
+use Symfony\Bridge\Doctrine\Form\ChoiceList\EntityLoaderInterface;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
-use Symfony\Component\Form\Exception\UnexpectedTypeException;
-use Symfony\Component\Form\FormError;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\PropertyAccess\PropertyPath;
 
 /**
  * Class EntityToIdTransformer
@@ -19,121 +16,146 @@ use Symfony\Component\PropertyAccess\PropertyPath;
  */
 class EntityToIdTransformer implements DataTransformerInterface
 {
+    /**
+     * @var EntityManager
+     */
     private $em;
+
+    /**
+     * @var string
+     */
     private $class;
-    private $property;
-    private $queryBuilder;
+
+    /**
+     * @var EntityLoaderInterface
+     */
+    private $loader;
+
+    /**
+     * @var bool
+     */
     private $multiple;
 
-    private $unitOfWork;
+    /**
+     * @var ClassMetadata
+     */
+    private $classMetadata;
 
-    public function __construct(EntityManager $em, $class, $property, $queryBuilder, $multiple)
+    /**
+     * @var string
+     */
+    private $idField;
+
+    /**
+     * @var string
+     */
+    private $separator;
+
+    /**
+     * @param EntityManager $em
+     * @param string $class
+     * @param EntityLoaderInterface $loader
+     * @param bool $multiple
+     * @param string $separator
+     */
+    public function __construct(EntityManager $em, $class, EntityLoaderInterface $loader, $multiple, $separator)
     {
-        if (!(null === $queryBuilder || $queryBuilder instanceof QueryBuilder || $queryBuilder instanceof \Closure)) {
-            throw new UnexpectedTypeException($queryBuilder, 'Doctrine\ORM\QueryBuilder or \Closure');
-        }
-
-        if (null == $class) {
-            throw new UnexpectedTypeException($class, 'string');
-        }
-
         $this->em = $em;
-        $this->unitOfWork = $this->em->getUnitOfWork();
-        $this->class = $class;
-        $this->queryBuilder = $queryBuilder;
+        $this->loader = $loader;
         $this->multiple = $multiple;
+        $this->separator = $separator;
 
-        if ($property) {
-            $this->property = $property;
-        }
+        $this->classMetadata = $this->em->getClassMetadata($class);
+        $this->class = $this->classMetadata->getName();
+        $this->idField = current($this->classMetadata->getIdentifierFieldNames());
     }
 
-    public function transform($data)
+    /**
+     * {@inheritdoc}
+     */
+    public function transform($value)
     {
-        if (null === $data) {
-            return null;
+        if (null === $value) {
+            return;
         }
 
-        if (!$this->multiple) {
-            return $this->transformSingleEntity($data);
-        }
-
-        $return = array();
-
-        foreach ($data as $element) {
-            $return[] = $this->transformSingleEntity($element);
-        }
-
-        return implode(', ', $return);
-    }
-
-    protected function splitData($data)
-    {
-        return explode(',', $data);
-    }
-
-
-    protected function transformSingleEntity($data)
-    {
-        if (!$this->unitOfWork->isInIdentityMap($data)) {
-            throw new FormException('Entities passed to the choice field must be managed');
-        }
-
-        if ($this->property) {
-            $propertyPath = new PropertyPath($this->property);
-            return $propertyPath->getValue($data);
-        }
-
-        return current($this->unitOfWork->getEntityIdentifier($data));
-    }
-
-    public function reverseTransform($data)
-    {
-        if (!$data) {
-            return null;
-        }
-
-        if (!$this->multiple) {
-            return $this->reverseTransformSingleEntity($data);
-        }
-
-        $return = array();
-
-        foreach ($this->splitData($data) as $element) {
-            $return[] = $this->reverseTransformSingleEntity($element);
-        }
-
-        return $return;
-    }
-
-    protected function reverseTransformSingleEntity($data)
-    {
-        $em = $this->em;
-        $class = $this->class;
-        $repository = $em->getRepository($class);
-
-        if ($qb = $this->queryBuilder) {
-            if ($qb instanceof \Closure) {
-                $qb = $qb($repository, $data);
+        $ids = [];
+        if ($this->multiple) {
+            if (!is_array($value)) {
+                throw new TransformationFailedException('Expected an array.');
             }
-
-            try {
-                $result = $qb->getQuery()->getSingleResult();
-            } catch (NoResultException $e) {
-                $result = null;
+            foreach ($value as $entity) {
+                $ids[] = $this->getIdentifierValue($entity);
             }
         } else {
-            if ($this->property) {
-                $result = $repository->findOneBy(array($this->property => $data));
-            } else {
-                $result = $repository->find($data);
+            $ids[] = $this->getIdentifierValue($value);
+        }
+
+        return implode($this->separator, $ids);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function reverseTransform($value)
+    {
+        if (null === $value || '' === $value) {
+            return $this->multiple ? [] : null;
+        }
+        if (!is_string($value)) {
+            throw new TransformationFailedException('Expected a string.');
+        }
+
+        $ids = explode($this->separator, $value);
+        if (empty($ids)) {
+            return $this->multiple ? [] : null;
+        }
+
+        $unorderedEntities = $this->loader->getEntitiesByIds($this->idField, $ids);
+
+        $entitiesById = [];
+        $entities = [];
+        foreach ($unorderedEntities as $entity) {
+            $id = $this->getIdentifierValue($entity);
+            $entitiesById[$id] = $entity;
+        }
+        foreach ($ids as $i => $id) {
+            if (isset($entitiesById[$id])) {
+                $entities[$i] = $entitiesById[$id];
             }
         }
 
-        if (!$result) {
-            throw new TransformationFailedException('Can not find entity');
+        if (count($ids) !== count($entities)) {
+            throw new TransformationFailedException('Could not find all matching entities for the given ids');
         }
 
-        return $result;
+        if (!$this->multiple) {
+            return $entities[0];
+        } else {
+            return $entities;
+        }
+    }
+
+    /**
+     * @param object $entity
+     * @return string
+     */
+    private function getIdentifierValue($entity)
+    {
+//        if (!$this->em->contains($entity)) {
+//            throw new TransformationFailedException(
+//                'Entities passed to the choice field must be managed. Maybe '.
+//                'persist them in the entity manager?'
+//            );
+//        }
+//
+//        $this->em->initializeObject($entity);
+
+        $entityClass = ClassUtils::getRealClass(get_class($entity));
+        if ($entityClass !== $this->class) {
+            throw new TransformationFailedException(sprintf('Expected instance of "%s", instance of "%s" given', $this->class, $entityClass));
+        }
+
+        return (string) current($this->classMetadata->getIdentifierValues($entity));
     }
 }

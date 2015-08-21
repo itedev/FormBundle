@@ -7,6 +7,7 @@ parameters:
     ite_form.form.type.integer_hidden.class:        ITE\FormBundle\Form\Type\Hidden\IntegerHiddenType
     ite_form.form.type.number_hidden.class:         ITE\FormBundle\Form\Type\Hidden\NumberHiddenType
     ite_form.form.type.percent_hidden.class:        ITE\FormBundle\Form\Type\Hidden\PercentHiddenType
+    ite_form.form.type.entity_hidden.class:         ITE\FormBundle\Form\Type\Hidden\EntityHiddenType
 
 services:
     ite_form.form.type.boolean_hidden:
@@ -48,3 +49,9 @@ services:
         class: %ite_form.form.type.percent_hidden.class%
         tags:
             - { name: form.type, alias: ite_percent_hidden }
+
+    ite_form.form.type.entity_hidden:
+        class: %ite_form.form.type.entity_hidden.class%
+        arguments: [ @doctrine ]
+        tags:
+            - { name: form.type, alias: ite_entity_hidden }

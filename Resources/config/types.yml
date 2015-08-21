@@ -4,7 +4,6 @@ parameters:
     ite_form.form.type.google_font.class:           ITE\FormBundle\Form\Type\GoogleFontType
 
     # todo: refactor types below
-    ite_form.form.input_entity_type.class:          ITE\FormBundle\Form\Type\InputEntityType
     ite_form.form.markup_type.class:                ITE\FormBundle\Form\Type\MarkupType
 
 services:
@@ -24,12 +23,6 @@ services:
         class: %ite_form.form.type.google_font.class%
         tags:
             - { name: form.type, alias: ite_google_font }
-
-    ite_form.form.input_entity_type:
-        class: %ite_form.form.input_entity_type.class%
-        arguments: [ @doctrine.orm.entity_manager ]
-        tags:
-            - { name: form.type, alias: ite_input_entity }
 
     ite_form.form.markup_type:
         class: %ite_form.form.markup_type.class%

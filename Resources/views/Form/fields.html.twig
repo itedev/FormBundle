@@ -148,14 +148,6 @@
     {#{% endfor %}#}
 {#{% endblock ite_fineuploader_file_widget %}#}
 
-{% block ite_input_entity_widget %}
-    {% if widget == 'hidden' %}
-        {{ block('hidden_widget') }}
-    {% else %}
-        {{ block('form_widget_simple') }}
-    {% endif %}
-{% endblock ite_input_entity_widget %}
-
 {# @todo: move to separate mopa layout #}
 {% block choice_widget_expanded %}
     {% spaceless %}
