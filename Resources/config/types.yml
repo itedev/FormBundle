@@ -2,6 +2,7 @@ parameters:
     ite_form.form.type.ajax_choice.class:           ITE\FormBundle\Form\Type\AjaxChoiceType
     ite_form.form.type.ajax_entity.class:           ITE\FormBundle\Form\Type\AjaxEntityType
     ite_form.form.type.mixed_entity.class:          ITE\FormBundle\Form\Type\MixedEntityType
+    ite_form.form.type.ajax_mixed_entity.class:     ITE\FormBundle\Form\Type\AjaxMixedEntityType
     ite_form.form.type.google_font.class:           ITE\FormBundle\Form\Type\GoogleFontType
 
     # todo: refactor types below
@@ -30,6 +31,12 @@ services:
         arguments: [ @doctrine ]
         tags:
             - { name: form.type, alias: ite_mixed_entity }
+
+    ite_form.form.type.ajax_mixed_entity:
+        class: %ite_form.form.type.ajax_mixed_entity.class%
+        arguments: [ @doctrine ]
+        tags:
+            - { name: form.type, alias: ite_ajax_mixed_entity }
 
     ite_form.form.markup_type:
         class: %ite_form.form.markup_type.class%

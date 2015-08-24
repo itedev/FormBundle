@@ -4,12 +4,14 @@ namespace ITE\FormBundle\Form\Type;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use ITE\FormBundle\Form\ChoiceList\MixedEntityChoiceList;
+use ITE\FormBundle\Form\DataTransformer\MixedEntityToIdTransformer;
 use Symfony\Bridge\Doctrine\Form\ChoiceList\EntityChoiceList;
 use Symfony\Bridge\Doctrine\Form\ChoiceList\EntityLoaderInterface;
 use Symfony\Bridge\Doctrine\Form\ChoiceList\ORMQueryBuilderLoader;
 use Symfony\Component\Form\Exception\RuntimeException;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\DataTransformer\ChoicesToValuesTransformer;
 use Symfony\Component\Form\Extension\Core\DataTransformer\ChoiceToValueTransformer;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
@@ -26,7 +28,7 @@ use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-class MixedEntityType extends AbstractType
+class AjaxMixedEntityType extends AbstractType
 {
     /**
      * @var ManagerRegistry
@@ -37,16 +39,6 @@ class MixedEntityType extends AbstractType
      * @var PropertyAccessorInterface
      */
     private $propertyAccessor;
-
-    /**
-     * @var array
-     */
-    private $entityChoiceListCache = [];
-
-    /**
-     * @var array
-     */
-    private $mixedEntityChoiceListCache = [];
 
     /**
      * @param ManagerRegistry $registry
@@ -63,7 +55,21 @@ class MixedEntityType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->addViewTransformer(new ChoiceToValueTransformer($options['choice_list']));
+        if ('choice' === $options['widget']) {
+            // choice
+            if ($options['multiple']) {
+                $builder->addViewTransformer(new ChoicesToValuesTransformer($options['choice_list']));
+            } else {
+                $builder->addViewTransformer(new ChoiceToValueTransformer($options['choice_list']));
+            }
+        } else {
+            // hidden
+            $builder->addViewTransformer(new MixedEntityToIdTransformer(
+                $options['options'],
+                $options['multiple'],
+                $options['separator']
+            ));
+        }
     }
 
     /**
@@ -71,43 +77,49 @@ class MixedEntityType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        array_splice(
-            $view->vars['block_prefixes'],
-            array_search($this->getName(), $view->vars['block_prefixes']),
-            0,
-            [
-                'choice',
-                'entity'
-            ]
-        );
+        if ('choice' === $options['widget']) {
+            // choice
+            array_splice(
+                $view->vars['block_prefixes'],
+                array_search($this->getName(), $view->vars['block_prefixes']),
+                0,
+                [
+                    'choice',
+                    'entity'
+                ]
+            );
 
-        $view->vars = array_replace($view->vars, array(
-            'multiple' => false,
-            'expanded' => false,
-            'preferred_choices' => $options['choice_list']->getPreferredViews(),
-            'choices' => $options['choice_list']->getRemainingViews(),
-            'separator' => '-------------------',
-            'placeholder' => null,
-        ));
+            $view->vars = array_replace($view->vars, array(
+                'multiple' => false,
+                'expanded' => false,
+                'preferred_choices' => [],
+                'choices' => $options['choice_list']->getRemainingViews(),
+                'separator' => '-------------------',
+                'placeholder' => null,
+            ));
 
-        $view->vars['is_selected'] = function($choice, $value) {
-            return $choice === $value;
-        };
+            if ($options['multiple']) {
+                $view->vars['is_selected'] = function ($choice, array $values) {
+                    return in_array($choice, $values, true);
+                };
+            } else {
+                $view->vars['is_selected'] = function ($choice, $value) {
+                    return $choice === $value;
+                };
+            }
 
-        // Check if the choices already contain the empty value
-        $view->vars['placeholder_in_choices'] = false; // 0 !== count($options['choice_list']->getChoicesForValues(['']));
+            // Check if the choices already contain the empty value
+            $view->vars['placeholder_in_choices'] = 0 !== count($options['choice_list']->getChoicesForValues(['']));
 
-        // Only add the empty value option if this is not the case
-        if (null !== $options['placeholder'] && !$view->vars['placeholder_in_choices']) {
-            $view->vars['placeholder'] = $options['placeholder'];
+            // Only add the empty value option if this is not the case
+            if (null !== $options['placeholder'] && !$view->vars['placeholder_in_choices']) {
+                $view->vars['placeholder'] = $options['placeholder'];
+            }
+
+            if ($options['multiple']) {
+                $view->vars['full_name'] .= '[]';
+            }
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function finishView(FormView $view, FormInterface $form, array $options)
-    {
     }
 
     /**
@@ -115,87 +127,8 @@ class MixedEntityType extends AbstractType
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $entityChoiceListCache = &$this->entityChoiceListCache;
-        $mixedEntityChoiceListCache = &$this->mixedEntityChoiceListCache;
         $registry = $this->registry;
-        $propertyAccessor = $this->propertyAccessor;
         $type = $this;
-
-        $choiceList = function(Options $options) use (&$entityChoiceListCache, &$mixedEntityChoiceListCache, $type, $propertyAccessor) {
-            $entitiesOptions = $options['options'];
-
-            $entityChoicesLists = [];
-            $entityLabels = [];
-            $entityChoiceListHashes = [];
-            foreach ($entitiesOptions as $alias => $entityOptions) {
-                $em = $entityOptions['em'];
-                $class = $entityOptions['class'];
-                $loader = $entityOptions['loader'];
-                $property = $entityOptions['property'];
-                $label = $entityOptions['label'];
-                $choices = $entityOptions['choices'];
-                $preferredChoices = $entityOptions['preferred_choices'];
-
-                $propertyHash = is_object($property)
-                    ? spl_object_hash($property)
-                    : $property;
-
-                $choiceHashes = [];
-                if (is_array($choices) || $choices instanceof \Traversable) {
-                    foreach ($choices as $value) {
-                        $choiceHashes[] = spl_object_hash($value);
-                    }
-                }
-
-                $preferredChoiceHashes = [];
-                if (is_array($preferredChoices)) {
-                    foreach ($preferredChoices as $value) {
-                        $preferredChoiceHashes[] = spl_object_hash($value);
-                    }
-                }
-
-                $loaderHash = is_object($loader)
-                    ? spl_object_hash($loader)
-                    : $loader;
-
-                $entityChoiceListHash = hash('sha256', json_encode([
-                    spl_object_hash($em),
-                    $class,
-                    $propertyHash,
-                    $loaderHash,
-                    $choiceHashes,
-                    $preferredChoiceHashes
-                ]));
-
-                if (!isset($entityChoiceListCache[$entityChoiceListHash])) {
-                    $entityChoiceListCache[$entityChoiceListHash] = new EntityChoiceList(
-                        $em,
-                        $class,
-                        $property,
-                        $loader,
-                        $choices,
-                        $preferredChoices,
-                        null,
-                        $propertyAccessor
-                    );
-                }
-
-                $entityChoiceListHashes[] = $entityChoiceListHash;
-
-                $entityChoicesLists[$alias] = $entityChoiceListCache[$entityChoiceListHash];
-                $entityLabels[$alias] = $label;
-            }
-
-            $mixedEntityChoiceListHash = implode(',', $entityChoiceListHashes);
-            if (!isset($mixedEntityChoiceListCache[$mixedEntityChoiceListHash])) {
-                $mixedEntityChoiceListCache[$mixedEntityChoiceListHash] = new MixedEntityChoiceList(
-                    $entityChoicesLists,
-                    $entityLabels
-                );
-            }
-
-            return $mixedEntityChoiceListCache[$mixedEntityChoiceListHash];
-        };
 
         $placeholder = function(Options $options) {
             return $options['required'] ? null : '';
@@ -282,21 +215,26 @@ class MixedEntityType extends AbstractType
 
         $resolver->setDefaults([
             'options' => [],
-            'choice_list' => $choiceList,
             'placeholder' => $placeholder,
             'data_class' => null,
             'multiple' => false,
+            'widget' => 'choice',
+            'separator' => ',',
             'compound' => false,
         ]);
-
         $resolver->setNormalizers([
             'options' => $optionsNormalizers,
             'placeholder' => $placeholderNormalizer,
         ]);
-
         $resolver->setAllowedTypes([
             'options' => ['array'],
             'multiple' => ['bool'],
+        ]);
+        $resolver->setAllowedValues([
+            'widget' => [
+                'choice',
+                'hidden',
+            ],
         ]);
     }
 
@@ -305,7 +243,7 @@ class MixedEntityType extends AbstractType
      */
     public function getName()
     {
-        return 'ite_mixed_entity';
+        return 'ite_ajax_mixed_entity';
     }
 
     /**

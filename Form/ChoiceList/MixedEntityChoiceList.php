@@ -2,6 +2,7 @@
 
 namespace ITE\FormBundle\Form\ChoiceList;
 
+use ITE\FormBundle\Util\MixedEntityUtils;
 use Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceList as CoreChoiceList;
 use Symfony\Bridge\Doctrine\Form\ChoiceList\EntityChoiceList as CoreEntityChoiceList;
 use Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceListInterface;
@@ -95,7 +96,7 @@ class MixedEntityChoiceList extends CoreChoiceList implements ChoiceListInterfac
     {
         $choices = [];
         foreach ($this->entityChoiceLists as $alias => $entityChoiceList) {
-            $unwrappedValues = $this->unwrapValues($values, $alias);
+            $unwrappedValues = MixedEntityUtils::unwrapValues($values, $alias);
 
             $choices = array_merge($choices, $entityChoiceList->getChoicesForValues($unwrappedValues));
         }
@@ -111,7 +112,7 @@ class MixedEntityChoiceList extends CoreChoiceList implements ChoiceListInterfac
         $values = [];
         foreach ($this->entityChoiceLists as $alias => $entityChoiceList) {
             $unwrappedValues = $entityChoiceList->getValuesForChoices($choices);
-            $wrappedValues = $this->wrapValues($unwrappedValues, $alias);
+            $wrappedValues = MixedEntityUtils::wrapValues($unwrappedValues, $alias);
 
             $values = array_merge($values, $wrappedValues);
         }
@@ -130,10 +131,10 @@ class MixedEntityChoiceList extends CoreChoiceList implements ChoiceListInterfac
             $unwrappedPreferredViews = $entityChoiceList->getPreferredViews();
             $unwrappedRemainingViews = $entityChoiceList->getRemainingViews();
 
-            $wrappedChoices = $this->wrapIndices($unwrappedChoices, $alias);
-            $wrappedValues = $this->wrapValues($unwrappedValues, $alias, true);
-            $wrappedPreferredViews = $this->wrapChoiceViews($unwrappedPreferredViews, $alias, true);
-            $wrappedRemainingViews = $this->wrapChoiceViews($unwrappedRemainingViews, $alias, true);
+            $wrappedChoices = MixedEntityUtils::wrapIndices($unwrappedChoices, $alias);
+            $wrappedValues = MixedEntityUtils::wrapValues($unwrappedValues, $alias, true);
+            $wrappedPreferredViews = MixedEntityUtils::wrapChoiceViews($unwrappedPreferredViews, $alias, true);
+            $wrappedRemainingViews = MixedEntityUtils::wrapChoiceViews($unwrappedRemainingViews, $alias, true);
 
             $choices = array_merge($choices, $wrappedChoices);
             $values = array_merge($values, $wrappedValues);
@@ -148,76 +149,4 @@ class MixedEntityChoiceList extends CoreChoiceList implements ChoiceListInterfac
         $this->loaded = true;
     }
 
-    /**
-     * @param array $values
-     * @param string $alias
-     * @return array
-     */
-    private function unwrapValues(array $values, $alias)
-    {
-        $unwrappedValues = [];
-        foreach ($values as $value) {
-            if (preg_match(sprintf('~^%s_(.+)$~', preg_quote($alias, '~')), $value, $matches)) {
-                $unwrappedValues[] = $matches[1];
-            }
-        }
-
-        return $unwrappedValues;
-    }
-
-    /**
-     * @param array $array
-     * @param $alias
-     * @return array
-     */
-    private function wrapIndices(array $array, $alias)
-    {
-        $wrappedArray = [];
-        foreach ($array as $index => $value) {
-            $wrappedIndex = sprintf('%s_%s', $alias, $index);
-            $wrappedArray[$wrappedIndex] = $value;
-        }
-
-        return $wrappedArray;
-    }
-
-    /**
-     * @param array $values
-     * @param $alias
-     * @param bool $withIndices
-     * @return array
-     */
-    private function wrapValues(array $values, $alias, $withIndices = false)
-    {
-        $wrappedValues = array_map(function($value) use ($alias) {
-            return sprintf('%s_%s', $alias, $value);
-        }, $values);
-
-        if ($withIndices) {
-            return $this->wrapIndices($wrappedValues, $alias);
-        }
-
-        return $wrappedValues;
-    }
-
-    /**
-     * @param array $choiceViews
-     * @param $alias
-     * @param bool $withIndices
-     * @return array
-     */
-    private function wrapChoiceViews(array $choiceViews, $alias, $withIndices = false)
-    {
-        $wrappedChoiceViews = array_map(function($choiceView) use ($alias) {
-            $wrappedValue = sprintf('%s_%s', $alias, $choiceView->value);
-
-            return new ChoiceView($choiceView->data, $wrappedValue, $choiceView->label);
-        }, $choiceViews);
-
-        if ($withIndices) {
-            return $this->wrapIndices($wrappedChoiceViews, $alias);
-        }
-
-        return $wrappedChoiceViews;
-    }
 }

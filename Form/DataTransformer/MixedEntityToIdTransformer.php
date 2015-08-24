@@ -4,7 +4,7 @@ namespace ITE\FormBundle\Form\DataTransformer;
 
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Mapping\ClassMetadata;
+use ITE\FormBundle\Util\MixedEntityUtils;
 use Symfony\Bridge\Doctrine\Form\ChoiceList\EntityLoaderInterface;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
@@ -14,22 +14,12 @@ use Symfony\Component\Form\Exception\TransformationFailedException;
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-class EntityToIdTransformer implements DataTransformerInterface
+class MixedEntityToIdTransformer implements DataTransformerInterface
 {
     /**
-     * @var EntityManager
+     * @var array
      */
-    private $em;
-
-    /**
-     * @var string
-     */
-    private $class;
-
-    /**
-     * @var EntityLoaderInterface
-     */
-    private $loader;
+    private $options;
 
     /**
      * @var bool
@@ -37,37 +27,41 @@ class EntityToIdTransformer implements DataTransformerInterface
     private $multiple;
 
     /**
-     * @var ClassMetadata
-     */
-    private $classMetadata;
-
-    /**
-     * @var string
-     */
-    private $identifierFieldName;
-
-    /**
      * @var string
      */
     private $separator;
 
     /**
-     * @param EntityManager $em
-     * @param string $class
-     * @param EntityLoaderInterface $loader
+     * @var array
+     */
+    private $aliases;
+
+    /**
+     * @param array $options
      * @param bool $multiple
      * @param string $separator
      */
-    public function __construct(EntityManager $em, $class, EntityLoaderInterface $loader, $multiple, $separator)
+    public function __construct($options, $multiple, $separator)
     {
-        $this->em = $em;
-        $this->loader = $loader;
+        foreach ($options as $alias => $entityOptions) {
+            /** @var EntityManager $em */
+            $em = $entityOptions['em'];
+            $class = $entityOptions['class'];
+
+            $classMetadata = $em->getClassMetadata($class);
+            $class = $classMetadata->getName();
+            $identifierFieldName = $classMetadata->getSingleIdentifierFieldName();
+
+            $options[$alias]['class'] = $class;
+            $options[$alias]['classMetadata'] = $classMetadata;
+            $options[$alias]['identifierFieldName'] = $identifierFieldName;
+
+            $this->aliases[$class] = $alias;
+        }
+        $this->options = $options;
+
         $this->multiple = $multiple;
         $this->separator = $separator;
-
-        $this->classMetadata = $this->em->getClassMetadata($class);
-        $this->class = $this->classMetadata->getName();
-        $this->identifierFieldName = $this->classMetadata->getSingleIdentifierFieldName();
     }
 
     /**
@@ -111,7 +105,16 @@ class EntityToIdTransformer implements DataTransformerInterface
             return $this->multiple ? [] : null;
         }
 
-        $unorderedEntities = $this->loader->getEntitiesByIds($this->identifierFieldName, $ids);
+        $unorderedEntities = [];
+        foreach ($this->options as $alias => $entityOptions) {
+            $entityIds = MixedEntityUtils::unwrapValues($ids, $alias);
+
+            /** @var EntityLoaderInterface $loader */
+            $loader = $entityOptions['loader'];
+            $identifierFieldName = $entityOptions['identifierFieldName'];
+
+            $unorderedEntities = array_merge($unorderedEntities, $loader->getEntitiesByIds($identifierFieldName, $entityIds));
+        }
 
         $entitiesById = [];
         $entities = [];
@@ -119,9 +122,9 @@ class EntityToIdTransformer implements DataTransformerInterface
             $id = $this->getIdentifierValue($entity);
             $entitiesById[$id] = $entity;
         }
-        foreach ($ids as $i => $id) {
+        foreach ($ids as $index => $id) {
             if (isset($entitiesById[$id])) {
-                $entities[$i] = $entitiesById[$id];
+                $entities[$index] = $entitiesById[$id];
             }
         }
 
@@ -152,14 +155,18 @@ class EntityToIdTransformer implements DataTransformerInterface
 //        $this->em->initializeObject($entity);
 
         $class = ClassUtils::getRealClass(get_class($entity));
-        if ($class !== $this->class) {
+        if (!array_key_exists($class, $this->aliases)) {
             throw new TransformationFailedException(sprintf(
                 'Expected instance of "%s", instance of "%s" given',
-                $this->class,
+                implode(', ', array_keys($this->aliases)),
                 $class
             ));
         }
 
-        return (string) current($this->classMetadata->getIdentifierValues($entity));
+        $alias = $this->aliases[$class];
+
+        $id = (string) current($this->options[$alias]['classMetadata']->getIdentifierValues($entity));
+
+        return MixedEntityUtils::wrapValue($id, $alias);
     }
 }
