@@ -290,6 +290,7 @@ class MixedEntityType extends AbstractType
             'choice_list' => $choiceList,
             'placeholder' => $placeholder,
             'data_class' => null,
+            'compound' => false,
         ]);
 
         $resolver->setNormalizers([
