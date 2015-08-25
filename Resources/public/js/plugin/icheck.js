@@ -10,10 +10,11 @@
       } else {
         $element.iCheck(pluginData.options);
       }
-    }
+    },
 
-//    setValue: function($element) {
-//      $element.trigger('change');
-//    }
+    setValue: function($element, $newElement) {
+      $element.html($newElement.html());
+      $element.removeData('sfInitialized');
+    }
   };
 })(jQuery);
