@@ -11,8 +11,8 @@ interface ConverterInterface
 {
     /**
      * @param array $entities
-     * @param null $labelPath
+     * @param array $options
      * @return array
      */
-    public function convert($entities, $labelPath = null);
+    public function convert($entities, array $options = []);
 }

@@ -1,10 +1,11 @@
 parameters:
-    ite_form.form.type.plugin.select2.abstract.class:       ITE\FormBundle\Form\Type\Plugin\Select2\AbstractChoiceType
-    ite_form.form.type.plugin.select2.google_font.class:    ITE\FormBundle\Form\Type\Plugin\Select2\GoogleFontType
-    ite_form.form.type.plugin.select2.ajax_entity.class:    ITE\FormBundle\Form\Type\Plugin\Select2\AjaxEntityType
-    ite_form.form.type.plugin.select2.ajax_choice.class:    ITE\FormBundle\Form\Type\Plugin\Select2\AjaxChoiceType
-    ite_form.form.type.plugin.select2.mixed_entity.class:   ITE\FormBundle\Form\Type\Plugin\Select2\MixedEntityType
-    ite_form.entity_converter.select2.class:                ITE\FormBundle\EntityConverter\Plugin\Select2\Select2Converter
+    ite_form.form.type.plugin.select2.abstract.class:           ITE\FormBundle\Form\Type\Plugin\Select2\AbstractChoiceType
+    ite_form.form.type.plugin.select2.google_font.class:        ITE\FormBundle\Form\Type\Plugin\Select2\GoogleFontType
+    ite_form.form.type.plugin.select2.ajax_entity.class:        ITE\FormBundle\Form\Type\Plugin\Select2\AjaxEntityType
+    ite_form.form.type.plugin.select2.ajax_choice.class:        ITE\FormBundle\Form\Type\Plugin\Select2\AjaxChoiceType
+    ite_form.form.type.plugin.select2.mixed_entity.class:       ITE\FormBundle\Form\Type\Plugin\Select2\MixedEntityType
+    ite_form.form.type.plugin.select2.ajax_mixed_entity.class:  ITE\FormBundle\Form\Type\Plugin\Select2\AjaxMixedEntityType
+    ite_form.entity_converter.select2.class:                    ITE\FormBundle\EntityConverter\Plugin\Select2\Select2Converter
 
 services:
     ite_form.form.type.plugin.select2.abstract:
@@ -35,6 +36,11 @@ services:
         arguments: [ %ite_form.plugin.select2.options% ]
         tags:
             - { name: form.type, alias: ite_select2_mixed_entity }
+
+    ite_form.form.type.plugin.select2.ajax_mixed_entity:
+        class: %ite_form.form.type.plugin.select2.ajax_mixed_entity.class%
+        tags:
+            - { name: form.type, alias: ite_select2_ajax_mixed_entity }
 
     ite_form.entity_converter.select2:
         class: %ite_form.entity_converter.select2.class%

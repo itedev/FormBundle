@@ -34,7 +34,7 @@ services:
 
     ite_form.form.type.ajax_mixed_entity:
         class: %ite_form.form.type.ajax_mixed_entity.class%
-        arguments: [ @doctrine ]
+        arguments: [ @doctrine, @router ]
         tags:
             - { name: form.type, alias: ite_ajax_mixed_entity }
 

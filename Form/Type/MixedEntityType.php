@@ -288,12 +288,10 @@ class MixedEntityType extends AbstractType
             'multiple' => false,
             'compound' => false,
         ]);
-
         $resolver->setNormalizers([
             'options' => $optionsNormalizers,
             'placeholder' => $placeholderNormalizer,
         ]);
-
         $resolver->setAllowedTypes([
             'options' => ['array'],
             'multiple' => ['bool'],

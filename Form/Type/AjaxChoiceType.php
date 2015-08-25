@@ -2,7 +2,10 @@
 
 namespace ITE\FormBundle\Form\Type;
 
+use ITE\FormBundle\Form\ChoiceList\AjaxChoiceList;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\DataTransformer\ChoicesToValuesTransformer;
+use Symfony\Component\Form\Extension\Core\DataTransformer\ChoiceToValueTransformer;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -45,6 +48,68 @@ class AjaxChoiceType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        if ('choice' === $options['widget']) {
+            // choice
+            if ($options['multiple']) {
+                $builder->addViewTransformer(new ChoicesToValuesTransformer($options['choice_list']));
+            } else {
+                $builder->addViewTransformer(new ChoiceToValueTransformer($options['choice_list']));
+            }
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildView(FormView $view, FormInterface $form, array $options)
+    {
+        if ('choice' === $options['widget']) {
+            // choice
+            $data = $form->getData();
+            $empty = null === $data || [] === $data;
+            if (!$empty) {
+                $options['choice_list']->setData($data);
+            }
+
+            array_splice(
+                $view->vars['block_prefixes'],
+                array_search($this->getName(), $view->vars['block_prefixes']),
+                0,
+                [
+                    'choice',
+                ]
+            );
+
+            $view->vars = array_replace($view->vars, array(
+                'multiple' => $options['multiple'],
+                'expanded' => false,
+                'preferred_choices' => $options['choice_list']->getPreferredViews(),
+                'choices' => $options['choice_list']->getRemainingViews(),
+                'separator' => '-------------------',
+                'placeholder' => null,
+            ));
+
+            if ($options['multiple']) {
+                $view->vars['is_selected'] = function($choice, array $values) {
+                    return in_array($choice, $values, true);
+                };
+            } else {
+                $view->vars['is_selected'] = function($choice, $value) {
+                    return $choice === $value;
+                };
+            }
+
+            $view->vars['placeholder_in_choices'] = 0 !== count($options['choice_list']->getChoicesForValues(['']));
+
+            // Only add the empty value option if this is not the case
+            if (null !== $options['placeholder'] && !$view->vars['placeholder_in_choices']) {
+                $view->vars['placeholder'] = $options['placeholder'];
+            }
+
+            if ($options['multiple']) {
+                $view->vars['full_name'] .= '[]';
+            }
+        }
     }
 
     /**
@@ -54,24 +119,23 @@ class AjaxChoiceType extends AbstractType
     {
         $self = $this;
 
-        $emptyData = function (Options $options) {
+        $choiceList = function(Options $options) {
+            return new AjaxChoiceList();
+        };
+
+        $emptyData = function(Options $options) {
             if ($options['multiple']) {
-                return array();
+                return [];
             }
 
             return '';
         };
 
-        $emptyValue = function (Options $options) {
+        $placeholder = function(Options $options) {
             return $options['required'] ? null : '';
         };
 
-        // for BC with the "empty_value" option
-        $placeholder = function (Options $options) {
-            return $options['empty_value'];
-        };
-
-        $placeholderNormalizer = function (Options $options, $placeholder) {
+        $placeholderNormalizer = function(Options $options, $placeholder) {
             if ($options['multiple']) {
                 // never use an empty value for this case
                 return;
@@ -84,7 +148,7 @@ class AjaxChoiceType extends AbstractType
             return $placeholder;
         };
 
-        $urlNormalizer = function (Options $options, $url) use ($self) {
+        $urlNormalizer = function(Options $options, $url) use ($self) {
             if (!empty($options['route'])) {
                 return $self->getRouter()->generate($options['route'], $options['route_parameters']);
             } elseif (!empty($url)) {
@@ -94,41 +158,31 @@ class AjaxChoiceType extends AbstractType
             }
         };
 
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'multiple' => false,
+            'choice_list' => $choiceList,
             'empty_data' => $emptyData,
-            'empty_value' => $emptyValue,
             'placeholder' => $placeholder,
             'error_bubbling' => false,
+            'compound' => false,
+            'data_class' => null,
             'route' => null,
-            'route_parameters' => array(),
+            'route_parameters' => [],
             'url' => null,
             'choice_label' => null,
-        ));
-
-        $resolver->setNormalizers(array(
-            'empty_value' => $placeholderNormalizer,
+            'separator' => ',',
+            'widget' => 'choice',
+        ]);
+        $resolver->setNormalizers([
             'placeholder' => $placeholderNormalizer,
             'url' => $urlNormalizer,
-        ));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function buildView(FormView $view, FormInterface $form, array $options)
-    {
-        $view->vars = array_replace($view->vars, array(
-            'multiple' => $options['multiple'],
-            'placeholder' => null,
-        ));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function finishView(FormView $view, FormInterface $form, array $options)
-    {
+        ]);
+        $resolver->setAllowedValues([
+            'widget' => [
+                'choice',
+                'hidden',
+            ],
+        ]);
     }
 
     /**

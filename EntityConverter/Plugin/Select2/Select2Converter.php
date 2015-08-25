@@ -14,16 +14,34 @@ class Select2Converter extends DefaultConverter
     /**
      * {@inheritdoc}
      */
-    public function convert($entities, $labelPath = null)
+    public function convert($entities, array $options = [])
     {
-        $options = parent::convert($entities, $labelPath);
+        $choices = parent::convert($entities, $options);
 
-        return array_map(function($option) {
-            return array(
-                'id' => $option['value'],
-                'text' => $option['label'],
-            );
-        }, $options);
+        $convertedChoices = [];
+        foreach ($choices as $group => $groupChoices) {
+            if (is_array($groupChoices) && !isset($groupChoices['value'])) {
+                $children = [];
+                foreach ($groupChoices as $choice) {
+                    $children[] = [
+                        'id' => $choice['value'],
+                        'text' => $choice['label'],
+                    ];
+                }
+
+                $convertedChoices[] = [
+                    'text' => $group,
+                    'children' => $children,
+                ];
+            } else {
+                $convertedChoices[] = [
+                    'id' => $groupChoices['value'],
+                    'text' => $groupChoices['label'],
+                ];
+            }
+        }
+
+        return $convertedChoices;
     }
 
 }

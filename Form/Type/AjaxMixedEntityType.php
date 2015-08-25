@@ -3,7 +3,9 @@
 namespace ITE\FormBundle\Form\Type;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use ITE\FormBundle\Form\ChoiceList\AjaxMixedEntityChoiceList;
 use ITE\FormBundle\Form\ChoiceList\MixedEntityChoiceList;
+use ITE\FormBundle\Form\ChoiceList\AjaxEntityChoiceList;
 use ITE\FormBundle\Form\DataTransformer\MixedEntityToIdTransformer;
 use Symfony\Bridge\Doctrine\Form\ChoiceList\EntityChoiceList;
 use Symfony\Bridge\Doctrine\Form\ChoiceList\EntityLoaderInterface;
@@ -22,6 +24,7 @@ use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
+use Symfony\Component\Routing\RouterInterface;
 
 /**
  * Class MixedEntityType
@@ -36,17 +39,24 @@ class AjaxMixedEntityType extends AbstractType
     private $registry;
 
     /**
+     * @var RouterInterface
+     */
+    private $router;
+
+    /**
      * @var PropertyAccessorInterface
      */
     private $propertyAccessor;
 
     /**
      * @param ManagerRegistry $registry
+     * @param RouterInterface $router
      * @param PropertyAccessorInterface|null $propertyAccessor
      */
-    public function __construct(ManagerRegistry $registry, PropertyAccessorInterface $propertyAccessor = null)
+    public function __construct(ManagerRegistry $registry, RouterInterface $router, PropertyAccessorInterface $propertyAccessor = null)
     {
         $this->registry = $registry;
+        $this->router = $router;
         $this->propertyAccessor = $propertyAccessor ?: PropertyAccess::createPropertyAccessor();
     }
 
@@ -79,6 +89,13 @@ class AjaxMixedEntityType extends AbstractType
     {
         if ('choice' === $options['widget']) {
             // choice
+
+            $data = $form->getData();
+            $empty = null === $data || [] === $data;
+            if (!$empty) {
+                $options['choice_list']->setData($data);
+            }
+
             array_splice(
                 $view->vars['block_prefixes'],
                 array_search($this->getName(), $view->vars['block_prefixes']),
@@ -128,13 +145,44 @@ class AjaxMixedEntityType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $registry = $this->registry;
-        $type = $this;
+        $router = $this->router;
+        $propertyAccessor = $this->propertyAccessor;
+        $self = $this;
+
+        $choiceList = function(Options $options) use ($propertyAccessor) {
+            $entitiesOptions = $options['options'];
+
+            $entityChoicesLists = [];
+            $entityLabels = [];
+            foreach ($entitiesOptions as $alias => $entityOptions) {
+                $em = $entityOptions['em'];
+                $class = $entityOptions['class'];
+                $loader = $entityOptions['loader'];
+                $property = $entityOptions['property'];
+                $label = $entityOptions['label'];
+
+                $entityChoicesLists[$alias] = new AjaxEntityChoiceList(
+                    $em,
+                    $class,
+                    $property,
+                    $loader,
+                    $propertyAccessor
+                );
+                $entityLabels[$alias] = $label;
+            }
+
+            return new AjaxMixedEntityChoiceList(
+                $entitiesOptions,
+                $entityChoicesLists,
+                $entityLabels
+            );
+        };
 
         $placeholder = function(Options $options) {
             return $options['required'] ? null : '';
         };
 
-        $optionsNormalizers = function(Options $options, $entitiesOptions) use ($registry, $type) {
+        $optionsNormalizers = function(Options $options, $entitiesOptions) use ($registry, $self) {
             $normalizedOptions = [];
             foreach ($entitiesOptions as $alias => $entityOptions) {
                 if (!isset($entityOptions['class'])) {
@@ -183,7 +231,7 @@ class AjaxMixedEntityType extends AbstractType
                     ? $queryBuilder
                     : $em->getRepository($class)->createQueryBuilder('e');
 
-                $defaultLoader = $type->getLoader($em, $qb, $class);
+                $defaultLoader = $self->getLoader($em, $qb, $class);
                 $loader = isset($loader) ? $loader : $defaultLoader;
 
                 $normalizedOptions[$alias] = [
@@ -213,10 +261,24 @@ class AjaxMixedEntityType extends AbstractType
             return $placeholder;
         };
 
+        $urlNormalizer = function(Options $options, $url) use ($router) {
+            if (!empty($options['route'])) {
+                return $router->generate($options['route'], $options['route_parameters']);
+            } elseif (!empty($url)) {
+                return $url;
+            } else {
+                throw new \RuntimeException('You must specify "route" or "url" option.');
+            }
+        };
+
         $resolver->setDefaults([
             'options' => [],
+            'choice_list' => $choiceList,
             'placeholder' => $placeholder,
             'data_class' => null,
+            'route' => null,
+            'route_parameters' => [],
+            'url' => null,
             'multiple' => false,
             'widget' => 'choice',
             'separator' => ',',
@@ -225,6 +287,7 @@ class AjaxMixedEntityType extends AbstractType
         $resolver->setNormalizers([
             'options' => $optionsNormalizers,
             'placeholder' => $placeholderNormalizer,
+            'url' => $urlNormalizer,
         ]);
         $resolver->setAllowedTypes([
             'options' => ['array'],

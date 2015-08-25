@@ -2,7 +2,6 @@
 
 namespace ITE\FormBundle\Form\Type\Plugin\Select2;
 
-use ITE\FormBundle\Form\ChoiceList\AjaxEntityChoiceList;
 use ITE\FormBundle\SF\Form\ClientFormView;
 use ITE\FormBundle\SF\Plugin\Select2Plugin;
 use RuntimeException;
@@ -30,7 +29,7 @@ class AjaxEntityType extends AbstractAjaxChoiceType
 
         $self = $this;
 
-        $createUrlNormalizer = function (Options $options, $createUrl) use ($self) {
+        $createUrlNormalizer = function(Options $options, $createUrl) use ($self) {
             if (!$options['allow_create']) {
                 return $createUrl;
             }
@@ -45,13 +44,6 @@ class AjaxEntityType extends AbstractAjaxChoiceType
         };
 
         $resolver->setDefaults([
-            'choice_list' => function (Options $options) {
-                return new AjaxEntityChoiceList(
-                    $options['em'],
-                    $options['class'],
-                    $options['property']
-                );
-            },
             'allow_create' => false,
             'create_route' => null,
             'create_route_parameters' => [],
@@ -74,17 +66,8 @@ class AjaxEntityType extends AbstractAjaxChoiceType
     /**
      * {@inheritdoc}
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        parent::buildView($view, $form, $options);
-
         $view->vars['attr']['data-property'] = $options['property'];
     }
 
@@ -114,7 +97,7 @@ class AjaxEntityType extends AbstractAjaxChoiceType
      */
     public function getParent()
     {
-        return 'entity';
+        return 'ite_ajax_entity';
     }
 
     /**

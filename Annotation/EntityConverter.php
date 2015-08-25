@@ -16,9 +16,9 @@ class EntityConverter extends ConfigurationAnnotation
     protected $alias = 'default';
 
     /**
-     * @var string|null $labelPath
+     * @var array
      */
-    protected $labelPath = null;
+    protected $options = [];
 
     /**
      * Get alias
@@ -44,24 +44,24 @@ class EntityConverter extends ConfigurationAnnotation
     }
 
     /**
-     * Get labelPath
+     * Get options
      *
-     * @return null
+     * @return array
      */
-    public function getLabelPath()
+    public function getOptions()
     {
-        return $this->labelPath;
+        return $this->options;
     }
 
     /**
-     * Set labelPath
+     * Set Options
      *
-     * @param null $labelPath
+     * @param array $options
      * @return EntityConverter
      */
-    public function setLabelPath($labelPath)
+    public function setOptions(array $options)
     {
-        $this->labelPath = $labelPath;
+        $this->options = $options;
 
         return $this;
     }

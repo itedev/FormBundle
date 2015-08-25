@@ -41,7 +41,7 @@ class KernelListener
 
         $converter = $this->converterManager->getConverter($annotation->getAlias());
         $entities = $event->getControllerResult();
-        $convertedResult = $converter->convert($entities, $annotation->getLabelPath());
+        $convertedResult = $converter->convert($entities, $annotation->getOptions());
 
         $event->setControllerResult($convertedResult);
     }
