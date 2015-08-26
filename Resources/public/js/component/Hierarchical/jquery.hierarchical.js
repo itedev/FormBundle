@@ -173,8 +173,8 @@
               }
 
               childView.setValue($childElement, $newChildElement);
-              if (childView.getOption('hierarchical_trigger_event', false)) {
-                $childElement.trigger(childView.getOption('hierarchical_trigger_event'));
+              if (childView.hasOption('hierarchical_trigger_event')) {
+                childView.triggerEvent($childElement, childView.getOption('hierarchical_trigger_event'));
               }
 
               event = $.Event('ite-after-change.hierarchical', childEventData);

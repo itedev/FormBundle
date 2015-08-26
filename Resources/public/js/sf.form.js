@@ -409,7 +409,7 @@
           }).each(function() {
             value.push($(this).val());
           });
-          if ('input[type="radio"]' === delegateSelector) {
+          if (':radio' === delegateSelector) {
             return value.length ? value[0] : null;
           }
 
@@ -463,6 +463,20 @@
           // compound field
           $element.html($newElement.html());
         }
+      }
+    },
+
+    triggerEvent: function($element, event) {
+      var delegateSelector = this.getOption('delegate_selector', false);
+      if (delegateSelector) {
+        var $checkedChildren = $element.find(delegateSelector).filter(function() {
+          return this.checked;
+        });
+        if ($checkedChildren.length) {
+          $checkedChildren.first().trigger(event);
+        }
+      } else {
+        $element.trigger(event);
       }
     },
 

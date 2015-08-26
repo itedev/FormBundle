@@ -7,6 +7,8 @@ parameters:
 
     ite_form.client_form_view_builder.class:    ITE\FormBundle\SF\Form\ClientFormViewBuilder
 
+    ite_form.form_data_transformer.class:       ITE\FormBundle\DataTransformer\FormDataTransformer
+
     # todo: refactor services below
     ite_form.param_protector.class:             ITE\FormBundle\Service\Security\ParamProtector
 
@@ -30,6 +32,10 @@ services:
 
     ite_form.client_form_view_builder:
         class: %ite_form.client_form_view_builder.class%
+
+    ite_form.form_data_transformer:
+        class: %ite_form.form_data_transformer.class%
+        arguments: [ @form.factory ]
 
     ite_form.param_protector:
         class: %ite_form.param_protector.class%

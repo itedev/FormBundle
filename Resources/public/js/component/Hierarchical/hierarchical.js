@@ -9,7 +9,7 @@
 
   SF.fn.callbacks = $.extend(SF.fn.callbacks, {
     hierarchicalChange: function(e) {
-      var $element = $(this);
+      var $element = $(e.delegateTarget);
 
       var view = SF.forms.find($element.attr('id'));
       var $form = view.getForm();

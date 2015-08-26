@@ -38,7 +38,7 @@ class ChoiceTypeFormViewExtension extends AbstractTypeExtension implements Clien
             return;
         }
 
-        $clientView->setOption('delegate_selector', sprintf('input[type="%s"]', $options['multiple'] ? 'checkbox' : 'radio'));
+        $clientView->setOption('delegate_selector', $options['multiple'] ? ':checkbox' : ':radio');
     }
 
     /**

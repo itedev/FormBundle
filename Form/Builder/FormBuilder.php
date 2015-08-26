@@ -116,10 +116,10 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
 
         parent::add($child, $type, $options);
 
-//        $children = array_keys(ReflectionUtils::getValue($this, 'children'));
-//        $index = array_search($child, $children);
+//        $childrenIndices = array_keys(ReflectionUtils::getValue($this, 'children'));
+//        $index = array_search($child, $childrenIndices);
 //        $reference = (0 !== $index)
-//            ? $this->get($children[$index - 1])
+//            ? $this->get($childrenIndices[$index - 1])
 //            : $this;
 
         // FormEvents::PRE_SET_DATA
