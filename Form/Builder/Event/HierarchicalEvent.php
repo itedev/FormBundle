@@ -25,11 +25,6 @@ class HierarchicalEvent
     protected $form;
 
     /**
-     * @var mixed $data
-     */
-    protected $data;
-
-    /**
      * @var HierarchicalParentCollection
      */
     protected $parents;
@@ -61,16 +56,14 @@ class HierarchicalEvent
 
     /**
      * @param FormInterface $form
-     * @param mixed $data
      * @param array|HierarchicalParent[] $parents
      * @param array $options
      * @param bool $submitted
      * @param array|null $originator
      */
-    public function __construct(FormInterface $form, $data, array $parents, array $options, $submitted = false, array $originator = null)
+    public function __construct(FormInterface $form, array $parents, array $options, $submitted = false, array $originator = null)
     {
         $this->form = $form;
-        $this->data = $data;
         $this->parents = new HierarchicalParentCollection($parents);
         $this->options = $options;
         $this->submitted = $submitted;
@@ -85,16 +78,6 @@ class HierarchicalEvent
     public function getForm()
     {
         return $this->form;
-    }
-
-    /**
-     * Get data
-     *
-     * @return mixed
-     */
-    public function getData()
-    {
-        return $this->data;
     }
 
     /**
@@ -221,7 +204,10 @@ class HierarchicalEvent
      */
     public function setData($data)
     {
-        return $this->setOption('data', $data);
+        return $this
+            ->setOption('data', $data)
+            ->setOption('hierarchical_data', $data)
+        ;
     }
 
     /**

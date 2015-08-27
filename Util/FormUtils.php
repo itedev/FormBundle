@@ -2,7 +2,9 @@
 
 namespace ITE\FormBundle\Util;
 
+use ITE\Common\Util\ReflectionUtils;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\ImmutableEventDispatcher;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\ResolvedFormTypeInterface;
@@ -328,6 +330,60 @@ class FormUtils
         $internalEd->addListener($eventName, $listener, $priority);
 
         $refProp->setAccessible(false);
+    }
+
+    /**
+     * @param FormInterface $form
+     * @param mixed $data
+     */
+    public static function setData(FormInterface $form, $data)
+    {
+        if ($data === $form->getData()) {
+            return;
+        }
+//        if ('' === $data && null === $form->getData()) {
+//            return;
+//        }
+//        if (null === $data) {
+//            return;
+//        }
+//        if ($data instanceof \Doctrine\Common\Collections\ArrayCollection
+//        && $data->isEmpty()
+//        && $form->getData() instanceof \Doctrine\Common\Collections\ArrayCollection
+//        && $form->getData()->isEmpty()) {
+//            return;
+//        }
+
+        $formFactory = $form->getConfig()->getFormFactory();
+        $name = $form->getConfig()->getName();
+        $type = $form->getConfig()->getType();
+        $options = $form->getConfig()->getOptions();
+
+        if (isset($options['data'])) {
+            unset($options['data']);
+        }
+        if (isset($options['hierarchical_data'])) {
+            unset($options['hierarchical_data']);
+        }
+
+        $newForm = $formFactory->createNamed($name, $type, $data, $options);
+        $newForm->initialize();
+
+        $submitted = ReflectionUtils::getValue($form, 'submitted');
+
+        $modelData = ReflectionUtils::getValue($newForm, 'modelData');
+        $normData = ReflectionUtils::getValue($newForm, 'normData');
+        $viewData = ReflectionUtils::getValue($newForm, 'viewData');
+        $children = ReflectionUtils::getValue($newForm, 'children');
+
+        foreach ($children as $child) {
+            ReflectionUtils::setValue($child, 'parent', $form);
+            ReflectionUtils::setValue($child, 'submitted', $submitted);
+        }
+        ReflectionUtils::setValue($form, 'modelData', $modelData);
+        ReflectionUtils::setValue($form, 'normData', $normData);
+        ReflectionUtils::setValue($form, 'viewData', $viewData);
+        ReflectionUtils::setValue($form, 'children', $children);
     }
 
     /**
