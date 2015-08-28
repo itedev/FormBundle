@@ -204,10 +204,7 @@ class HierarchicalEvent
      */
     public function setData($data)
     {
-        return $this
-            ->setOption('data', $data)
-            ->setOption('hierarchical_data', $data)
-        ;
+        return $this->setOption('hierarchical_data', $data);
     }
 
     /**
