@@ -1,6 +1,6 @@
 <?php
 
-namespace ITE\FormBundle\Form\EventListener;
+namespace ITE\FormBundle\Form\EventListener\Component\Hierarchical;
 
 use ITE\FormBundle\Form\Builder\Event\HierarchicalEvent;
 use ITE\FormBundle\Form\Builder\Event\Model\HierarchicalParent;
@@ -14,11 +14,11 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 
 /**
- * Class HierarchicalReferenceSubscriber
+ * Class HierarchicalAddChildSubscriber
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-class HierarchicalReferenceSubscriber implements EventSubscriberInterface
+class HierarchicalAddChildSubscriber implements EventSubscriberInterface
 {
     /**
      * @var string $child

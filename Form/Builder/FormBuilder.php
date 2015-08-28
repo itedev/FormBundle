@@ -2,10 +2,8 @@
 
 namespace ITE\FormBundle\Form\Builder;
 
-use ITE\Common\Util\ReflectionUtils;
-use ITE\FormBundle\Form\Builder\Event\HierarchicalEvent;
-use ITE\FormBundle\Form\Builder\Event\Model\HierarchicalParent;
-use ITE\FormBundle\Form\EventListener\HierarchicalReferenceSubscriber;
+use ITE\FormBundle\Form\EventListener\Component\Hierarchical\HierarchicalSetDataSubscriber;
+use ITE\FormBundle\Form\EventListener\Component\Hierarchical\HierarchicalAddChildSubscriber;
 use ITE\FormBundle\Form\Form;
 use ITE\FormBundle\FormAccess\FormAccess;
 use ITE\FormBundle\FormAccess\FormAccessorInterface;
@@ -17,7 +15,6 @@ use Symfony\Component\Form\FormBuilder as BaseFormBuilder;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
@@ -112,33 +109,12 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
 
         parent::add($child, $type, $options);
 
-        $this
-            ->get($child)
-            ->addEventListener(FormEvents::POST_SUBMIT, function(FormEvent $event) {
-                $form = $event->getForm();
-
-                if (null === $data = $form->getConfig()->getOption('hierarchical_data')) {
-                    return;
-                }
-
-                FormUtils::setData($form, $data);
-            }, -511) // priority should be greater than HierarchicalReferenceSubscriber::postSubmit priority
-        ;
+        $this->get($child)->addEventSubscriber(new HierarchicalSetDataSubscriber());
 
         // evaluate reference point
-        $childrenIndices = array_keys(ReflectionUtils::getValue($this, 'children'));
-        $index = array_search($child, $childrenIndices);
-        if (0 !== $index) {
-            // it is not first child in parent form - so take previous sibling as reference point
-            $reference = $this->get($childrenIndices[$index - 1]);
-            $referenceLevelUp = false;
-        } else {
-            // it is first child in parent form - so take parent ($this) as reference point
-            $reference = $this;
-            $referenceLevelUp = true;
-        }
-
-        $reference->addEventSubscriber(new HierarchicalReferenceSubscriber(
+        $referenceLevelUp = false;
+        $reference = FormUtils::getBuilderReference($this, $child, $referenceLevelUp);
+        $reference->addEventSubscriber(new HierarchicalAddChildSubscriber(
             $child,
             $type,
             $options,

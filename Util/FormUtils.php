@@ -4,7 +4,9 @@ namespace ITE\FormBundle\Util;
 
 use ITE\Common\Util\ReflectionUtils;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\ImmutableEventDispatcher;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\ResolvedFormTypeInterface;
@@ -310,26 +312,75 @@ class FormUtils
 
     /**
      * @param FormInterface $form
-     * @param $eventName
-     * @param $listener
+     * @param EventSubscriberInterface $subscriber
+     */
+    public static function addEventSubscriber(FormInterface $form, $subscriber)
+    {
+        $ed = $form->getConfig()->getEventDispatcher();
+        $rawEd = EventDispatcherUtils::getRawEventDispatcher($ed);
+
+        $rawEd->addSubscriber($subscriber);
+    }
+
+    /**
+     * @param FormInterface $form
+     * @param string $eventName
+     * @param callable $listener
      * @param int $priority
      */
     public static function addEventListener(FormInterface $form, $eventName, $listener, $priority = 0)
     {
         $ed = $form->getConfig()->getEventDispatcher();
+        $rawEd = EventDispatcherUtils::getRawEventDispatcher($ed);
 
-        $refClass = new \ReflectionClass($ed);
-        while (!$refClass->hasProperty('dispatcher')) {
-            $refClass = $refClass->getParentClass();
+        $rawEd->addListener($eventName, $listener, $priority);
+    }
+
+    /**
+     * @param FormBuilderInterface $parent
+     * @param string $child
+     * @param bool|false $referenceLevelUp
+     * @return mixed
+     */
+    public static function getBuilderReference(FormBuilderInterface $parent, $child, &$referenceLevelUp = false)
+    {
+//        $children = array_keys($parent->all());
+        $children = array_keys(ReflectionUtils::getValue($parent, 'children'));
+        $index = array_search($child, $children);
+        if (0 !== $index) {
+            // this is not first child in parent form - so take previous sibling as reference point
+            $reference = $parent->get($children[$index - 1]);
+            $referenceLevelUp = false;
+        } else {
+            // this is first child in parent form - so take parent as reference point
+            $reference = $parent;
+            $referenceLevelUp = true;
         }
-        $refProp = $refClass->getProperty('dispatcher');
-        $refProp->setAccessible(true);
 
-        /** @var EventDispatcherInterface $internalEd */
-        $internalEd = $refProp->getValue($ed);
-        $internalEd->addListener($eventName, $listener, $priority);
+        return $reference;
+    }
 
-        $refProp->setAccessible(false);
+    /**
+     * @param FormInterface $parent
+     * @param string $child
+     * @param bool|false $referenceLevelUp
+     * @return FormInterface
+     */
+    public static function getFormReference(FormInterface $parent, $child, &$referenceLevelUp = false)
+    {
+        $children = array_keys($parent->all());
+        $index = array_search($child, $children);
+        if (0 !== $index) {
+            // this is not first child in parent form - so take previous sibling as reference point
+            $reference = $parent->get($children[$index - 1]);
+            $referenceLevelUp = false;
+        } else {
+            // this is first child in parent form - so take parent as reference point
+            $reference = $parent;
+            $referenceLevelUp = true;
+        }
+
+        return $reference;
     }
 
     /**
@@ -341,18 +392,6 @@ class FormUtils
         if ($data === $form->getData()) {
             return;
         }
-//        if ('' === $data && null === $form->getData()) {
-//            return;
-//        }
-//        if (null === $data) {
-//            return;
-//        }
-//        if ($data instanceof \Doctrine\Common\Collections\ArrayCollection
-//        && $data->isEmpty()
-//        && $form->getData() instanceof \Doctrine\Common\Collections\ArrayCollection
-//        && $form->getData()->isEmpty()) {
-//            return;
-//        }
 
         $formFactory = $form->getConfig()->getFormFactory();
         $name = $form->getConfig()->getName();
