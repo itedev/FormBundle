@@ -70,6 +70,123 @@
     }
   });
 
+  var FormPath = function(formPath) {
+    if ('string' !== typeof formPath) {
+      throw new Error('String expected.');
+    }
+    if ('' === formPath) {
+      throw new Error('The form path should not be empty.');
+    }
+    if ('/' === formPath.slice(-1)) {
+      throw new Error('The form path must not end with "/" symbol.');
+    }
+
+    this.pathAsString = formPath;
+    this.absolute = false;
+    if ('/' === formPath.charAt(0)) {
+      formPath = formPath.substring(1);
+      this.absolute = true;
+    }
+
+    var self = this;
+    var elements = formPath.split('/');
+    this.elements = [];
+    this.parents = [];
+    $.each(elements, function(i, element) {
+      self.elements.push(element);
+      self.parents.push('..' === element);
+    });
+
+    this.length = this.elements.length;
+  };
+
+  FormPath.prototype = {
+    getLength: function() {
+      return this.length;
+    },
+
+    getElements: function() {
+      return this.elements;
+    },
+
+    isAbsolute: function() {
+      return this.absolute;
+    },
+
+    isRelative: function() {
+      return !this.absolute;
+    },
+
+    getElement: function(index) {
+      if ('undefined' === typeof this.elements[index]) {
+        throw new Error('The index "' + index + '" is not within the form path.');
+      }
+
+      return this.elements[index];
+    },
+
+    isParent: function(index) {
+      if ('undefined' === typeof this.parents[index]) {
+        throw new Error('The index "' + index + '" is not within the form path.');
+      }
+
+      return this.parents[index];
+    },
+
+    getPathAsString: function() {
+      return this.pathAsString;
+    }
+  };
+
+  FormPath.prototype.fn = FormPath.prototype;
+
+  var FormAccessor = function() {};
+
+  FormAccessor.prototype = {
+    getView: function(view, formPath) {
+      if (!(formPath instanceof FormPath)) {
+        formPath = new FormPath(formPath);
+      }
+
+      var current = formPath.isAbsolute() ? view.getRoot() : view;
+      var length = formPath.getLength();
+      for (var i = 0; i < length; i++) {
+        var isParent = formPath.isParent(i);
+        if (isParent) {
+          if (view.isRoot()) {
+            // error
+          }
+          current = current.getParent();
+        } else {
+          var element = formPath.getElement(i);
+          if (!current.hasChild(element)) {
+            // error
+          }
+          current = current.getChild(element)
+        }
+      }
+
+      return current;
+    },
+
+    getReverseFormPath: function(parentView, childView) {
+      var elements = [];
+      var current = childView;
+      while (null !== current && current !== parentView) {
+        elements.push(current.getName());
+        current = current.getParent();
+      }
+
+      if (0 === elements.length) {
+        return null;
+      }
+
+      return new FormPath(elements.reverse().join('/'));
+    }
+  };
+
+  FormAccessor.prototype.fn = FormAccessor.prototype;
+
   var FormView = function(viewData, parent) {
     this.parent = parent || null;
     this.options = {};
@@ -264,6 +381,67 @@
       return this;
     },
 
+    isCollection: function() {
+      return this.hasOption('prototype_view');
+    },
+
+    isCollectionItem: function() {
+      return !this.isRoot() && this.parent.isCollection();
+    },
+
+    getClosestCollection: function() {
+      return !this.isRoot()
+        ? (this.parent.isCollection() ? this.parent : this.parent.getClosestCollection())
+        : null;
+    },
+
+    getClosestCollectionItem: function() {
+      return !this.isRoot()
+        ? (this.parent.isCollectionItem() ? this.parent : this.parent.getClosestCollectionItem())
+        : null;
+    },
+
+    isInsideCollectionItem: function() {
+      return null !== this.getClosestCollectionItem();
+    },
+
+    findClosestCollectionSiblings: function() {
+      var closestCollectionItemView = this.getClosestCollectionItem();
+      if (null === closestCollectionItemView) {
+        return [];
+      }
+
+      var closestCollectionView = closestCollectionItemView.getParent();
+
+      var formAccessor = SF.services.get('form_accessor');
+      var formPath = formAccessor.getReverseFormPath(closestCollectionItemView, this);
+
+      var closestCollectionSiblingViews = [];
+      $.each(closestCollectionView.getChildren(), function(childName, childView) {
+        if (closestCollectionItemView !== childView) {
+          var collectionSiblingView = formAccessor.getView(childView, formPath);
+          closestCollectionSiblingViews.push(collectionSiblingView)
+        }
+      });
+
+      return closestCollectionSiblingViews;
+    },
+
+    getClosestCollectionSiblingsData: function() {
+      var siblings = this.findClosestCollectionSiblings();
+      var data = [];
+      $.each(siblings, function(i, sibling) {
+        var $element = sibling.getElement();
+        if (!$element.length) {
+          return;
+        }
+
+        data.push(sibling.getData($element));
+      });
+
+      return data;
+    },
+
     getElement: function(context) {
       return $('#' + this.getId(), context);
     },
@@ -373,6 +551,56 @@
     //
     //  $element.trigger('ite-clear.hierarchical');
     //},
+
+    getData: function($element) {
+      var value;
+      var valueTaken = false;
+
+      // try to get value via plugins
+      if (this.hasOption('plugins')) {
+        var plugins = this.getOption('plugins', {});
+        $.each(plugins, function (plugin, pluginData) {
+          if ($.isFunction(SF.plugins[plugin].getValue)) {
+            value = SF.plugins[plugin].getValue($element);
+            valueTaken = true;
+
+            return false; // break
+          }
+        });
+
+        if (valueTaken) {
+          return value;
+        }
+      }
+
+      // get value in regular way
+      if (!valueTaken) {
+        var delegateSelector = this.getOption('delegate_selector', false);
+        if (delegateSelector) {
+          // checkbox or radio
+          value = [];
+
+          $element.find(delegateSelector).filter(function() {
+            return this.checked;
+          }).each(function() {
+            value.push($(this).val());
+          });
+          if (':radio' === delegateSelector) {
+            return value.length ? value[0] : null;
+          }
+
+          return value;
+        } else {
+          // input, textarea or select
+          var element = $element.get(0);
+          if (rxText.test(element.nodeName) || rxSelect.test(element.nodeName)) {
+            return $element.val();
+          }
+        }
+      }
+
+      return $element.html();
+    },
 
     getValue: function($element) {
       //var $element = this.getElement(context);
@@ -587,11 +815,15 @@
   FormBag.prototype.fn = FormBag.prototype;
 
   SF.fn.classes = $.extend(SF.fn.classes, {
+    FormPath: FormPath,
+    FormAccessor: FormAccessor,
     FormView: FormView,
     FormBag: FormBag
   });
 
   SF.fn.forms = new FormBag();
+
+  SF.services.set('form_accessor', new FormAccessor());
 
   $(document)
     .on('ite-pre-ajax-complete', function(e, data) {

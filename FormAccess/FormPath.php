@@ -17,7 +17,7 @@ class FormPath implements FormPathInterface
     /**
      * @var array
      */
-    private $isParent = [];
+    private $parents = [];
 
     /**
      * @var int
@@ -41,10 +41,11 @@ class FormPath implements FormPathInterface
     {
         if ($formPath instanceof FormPath) {
             /* @var FormPath $formPath */
-            $this->elements = $formPath->elements;
-            $this->length = $formPath->length;
-            $this->relative = $formPath->relative;
+            $this->absolute = $formPath->absolute;
             $this->pathAsString = $formPath->pathAsString;
+            $this->elements = $formPath->elements;
+            $this->parents = $formPath->parents;
+            $this->length = $formPath->length;
 
             return;
         }
@@ -70,7 +71,7 @@ class FormPath implements FormPathInterface
         $elements = explode('/', $formPath);
         foreach ($elements as $i => $element) {
             $this->elements[] = $element;
-            $this->isParent[] = '..' === $element;
+            $this->parents[] = '..' === $element;
         }
 
         $this->length = count($this->elements);
@@ -125,11 +126,11 @@ class FormPath implements FormPathInterface
      */
     public function isParent($index)
     {
-        if (!isset($this->isParent[$index])) {
+        if (!isset($this->parents[$index])) {
             throw new \OutOfBoundsException(sprintf('The index %s is not within the form path', $index));
         }
 
-        return $this->isParent[$index];
+        return $this->parents[$index];
     }
 
     /**
