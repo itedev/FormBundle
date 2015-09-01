@@ -660,9 +660,10 @@
       // try to set value via plugins
       if (this.hasOption('plugins')) {
         var plugins = this.getOption('plugins', {});
+        var self = this;
         $.each(plugins, function (plugin, pluginData) {
           if ($.isFunction(SF.plugins[plugin].setValue)) {
-            SF.plugins[plugin].setValue($element, $newElement);
+            SF.plugins[plugin].setValue($element, $newElement, self);
             valueSet = true;
 
             return false; // break

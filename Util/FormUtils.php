@@ -408,7 +408,7 @@ class FormUtils
         $newForm = $formFactory->createNamed($name, $type, $data, $options);
         $newForm->initialize();
 
-        $submitted = ReflectionUtils::getValue($form, 'submitted');
+        $submitted = $form->isSubmitted();
 
         $modelData = ReflectionUtils::getValue($newForm, 'modelData');
         $normData = ReflectionUtils::getValue($newForm, 'normData');
