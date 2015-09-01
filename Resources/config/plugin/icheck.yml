@@ -1,8 +1,15 @@
 parameters:
     ite_form.form.type.plugin.icheck.abstract.class:    ITE\FormBundle\Form\Type\Plugin\ICheck\AbstractChoiceType
+    ite_form.form.type.plugin.icheck.checkbox.class:    ITE\FormBundle\Form\Type\Plugin\ICheck\CheckboxType
 
 services:
     ite_form.form.type.plugin.icheck.abstract:
         class: %ite_form.form.type.plugin.icheck.abstract.class%
         arguments: [ %ite_form.plugin.icheck.options% ]
         abstract: true
+
+    ite_form.form.type.plugin.icheck.checkbox:
+        class: %ite_form.form.type.plugin.icheck.checkbox.class%
+        arguments: [ %ite_form.plugin.icheck.options% ]
+        tags:
+            - { name: form.type, alias: ite_icheck_checkbox }
