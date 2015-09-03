@@ -27,11 +27,11 @@ class HierarchicalSetDataSubscriber implements EventSubscriberInterface
     public function postSetData(FormEvent $event)
     {
         $form = $event->getForm();
-
-        if (null === $data = $form->getConfig()->getOption('hierarchical_data')) {
+        if (!$form->getConfig()->hasOption('hierarchical_data')) {
             return;
         }
 
+        $data = $form->getConfig()->getOption('hierarchical_data');
         FormUtils::setData($form, $data);
         $this->dispatchSetDataEventRecursive($form);
     }
@@ -42,11 +42,11 @@ class HierarchicalSetDataSubscriber implements EventSubscriberInterface
     public function postSubmit(FormEvent $event)
     {
         $form = $event->getForm();
-
-        if (null === $data = $form->getConfig()->getOption('hierarchical_data')) {
+        if (!$form->getConfig()->hasOption('hierarchical_data')) {
             return;
         }
 
+        $data = $form->getConfig()->getOption('hierarchical_data');
         FormUtils::setData($form, $data);
         $this->dispatchSetDataEventRecursive($form);
     }
