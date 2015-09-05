@@ -20,11 +20,12 @@
 
       // ajax
       if (extras.hasOwnProperty('ajax')) {
-        var property = $element.data('property');
 
         options = $.extend(true, options, {
           ajax: {
             data: function(params) {
+              var property = $element.data('property');
+
               return {
                 term: params.term,
                 page: params.page,
