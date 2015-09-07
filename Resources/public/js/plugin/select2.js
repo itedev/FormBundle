@@ -20,25 +20,27 @@
 
       // ajax
       if (extras.hasOwnProperty('ajax')) {
+        var property = $element.data('property');
 
-        options = $.extend(true, options, {
-          ajax: {
-            data: function(params) {
-              var property = $element.data('property');
+        if (typeof options.ajax == 'undefined') {
+          options = $.extend(true, options, {
+            ajax: {
+              data: function (params) {
 
-              return {
-                term: params.term,
-                page: params.page,
-                property: property
-              };
-            },
-            processResults: function(data) {
-              return {
-                results: data
-              };
+                return {
+                  term: params.term,
+                  page: params.page,
+                  property: property
+                };
+              },
+              processResults: function (data) {
+                return {
+                  results: data
+                };
+              }
             }
-          }
-        });
+          });
+        }
       }
 
       // create
