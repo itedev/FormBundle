@@ -54,7 +54,7 @@ class EntityHiddenType extends AbstractType
         $registry = $this->registry;
         $type = $this;
 
-        $loader = function(Options $options) use ($type) {
+        $loader = function (Options $options) use ($type) {
             $queryBuilder = (null !== $options['query_builder'])
                 ? $options['query_builder']
                 : $options['em']->getRepository($options['class'])->createQueryBuilder('e');
@@ -62,7 +62,7 @@ class EntityHiddenType extends AbstractType
             return $type->getLoader($options['em'], $queryBuilder, $options['class']);
         };
 
-        $emNormalizer = function(Options $options, $em) use ($registry) {
+        $emNormalizer = function (Options $options, $em) use ($registry) {
             /* @var ManagerRegistry $registry */
             if (null !== $em) {
                 if ($em instanceof ObjectManager) {
@@ -90,6 +90,7 @@ class EntityHiddenType extends AbstractType
             'query_builder' => null,
             'loader' => $loader,
             'multiple' => false,
+            'data_class' => null,
             'separator' => ',',
         ]);
         $resolver->setRequired([
