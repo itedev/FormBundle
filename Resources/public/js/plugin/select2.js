@@ -40,6 +40,32 @@
               }
             }
           });
+        } else {
+          if (typeof options.ajax.data == 'undefined') {
+            options = $.extend(true, options, {
+              ajax: {
+                data: function (params) {
+
+                  return {
+                    term: params.term,
+                    page: params.page,
+                    property: property
+                  };
+                }
+              }
+            });
+          }
+          if (typeof options.ajax.processResults == 'undefined') {
+            options = $.extend(true, options, {
+              ajax: {
+                processResults: function (data) {
+                  return {
+                    results: data
+                  };
+                }
+              }
+            });
+          }
         }
       }
 
