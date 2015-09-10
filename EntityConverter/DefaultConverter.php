@@ -146,6 +146,12 @@ class DefaultConverter implements ConverterInterface
     protected function getAlias($entity, $aliases)
     {
         $class = ClassUtils::getRealClass(get_class($entity));
+        if (!isset($aliases[$class])) {
+            $classMetadata = $this->em->getClassMetadata(get_class($entity));
+
+            $class = $classMetadata->rootEntityName;
+        }
+
         $alias = $aliases[$class];
 
         return $alias;
