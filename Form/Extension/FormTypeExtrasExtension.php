@@ -20,8 +20,8 @@ class FormTypeExtrasExtension extends AbstractTypeExtension
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        if (isset($options['attributes_extras'])) {
-            foreach ($options['attributes_extras'] as $name => $value) {
+        if (isset($options['extra_attributes'])) {
+            foreach ($options['extra_attributes'] as $name => $value) {
                 $builder->setAttribute($name, $value);
             }
         }
@@ -32,8 +32,10 @@ class FormTypeExtrasExtension extends AbstractTypeExtension
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        if (isset($options['view_extras'])) {
-            $view->vars['extras'] = $options['view_extras'];
+        if (isset($options['extra_view_vars'])) {
+            foreach ($options['extra_view_vars'] as $name => $value) {
+                $view->vars[$name] = $value;
+            }
         }
     }
 
@@ -43,12 +45,14 @@ class FormTypeExtrasExtension extends AbstractTypeExtension
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setOptional([
-            'attributes_extras',
-            'view_extras',
+            'extra_options',
+            'extra_attributes',
+            'extra_view_vars',
         ]);
         $resolver->setAllowedTypes([
-            'attributes_extras' => ['array'],
-            'view_extras' => ['array'],
+            'extra_options' => ['array'],
+            'extra_attributes' => ['array'],
+            'extra_view_vars' => ['array'],
         ]);
     }
 
