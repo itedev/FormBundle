@@ -117,6 +117,7 @@
       if (null !== collectionView) {
         collectionView.clearChildren();
       }
+      this.$collection.trigger('ite-clear.collection');
     },
     count: function() {
       return this.items().length;
@@ -173,7 +174,10 @@
 
         var $btn = $(this);
         var $collection = $($btn.data('collectionRemoveBtn'));
-        var $item = $btn.closest('.collection-item');
+
+        var $item = 'undefined' !== typeof $btn.data('collectionItem')
+          ? $($btn.data('collectionItem'))
+          : $btn.closest('.collection-item');
 
         if (!$collection.length || !$item.length) {
           return;
