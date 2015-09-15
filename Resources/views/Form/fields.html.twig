@@ -1,44 +1,6 @@
-{% extends ite_parent_form_resource(_self.templateName) %}
-
-{% block ite_select2_widget %}
-    {{ block('choice_widget') }}
-{% endblock ite_select2_widget %}
-
-{% block ite_select2_ajax_choice_widget %}
-    {{ block('choice_widget') }}
-{% endblock ite_select2_ajax_choice_widget %}
-
-{% block ite_select2_ajax_entity_widget %}
-    {{ block('choice_widget') }}
-{% endblock ite_select2_ajax_entity_widget %}
-
-{% block ite_tinymce_textarea_widget %}
-    {{ block('textarea_widget') }}
-{% endblock ite_tinymce_textarea_widget %}
-
-{% block ite_bootstrap_colorpicker_text_widget %}
-    {{ block('form_widget_simple') }}
-{% endblock ite_bootstrap_colorpicker_text_widget %}
-
-{% block ite_bootstrap_spinedit_number_widget %}
-    {{ block('number_widget') }}
-{% endblock ite_bootstrap_spinedit_number_widget %}
-
-{% block ite_bootstrap_spinedit_integer_widget %}
-    {{ block('integer_widget') }}
-{% endblock ite_bootstrap_spinedit_integer_widget %}
-
 {% block ite_bootstrap_datetimepicker_widget %}
     {{ block('form_widget_simple') }}
 {% endblock ite_bootstrap_datetimepicker_widget %}
-
-{% block ite_minicolors_text_widget %}
-    {{ block('form_widget_simple') }}
-{% endblock ite_minicolors_text_widget %}
-
-{% block ite_knob_number_widget %}
-    {{ block('form_widget_simple') }}
-{% endblock ite_knob_number_widget %}
 
 {% block ite_starrating_rating_widget %}
     <div {{ block('widget_container_attributes') }}>
@@ -59,32 +21,20 @@
     {{ block('form_widget_simple') }}
 {% endblock ite_bootstrap_daterangepicker_widget %}
 
-{%- block simple_widget_attributes -%}
-    id="{{ id }}"
-    {%- for attrname, attrvalue in attr -%}
-        {{- " " -}}
-        {%- if attrname in ['placeholder', 'title'] -%}
-            {{- attrname }}="{{ attrvalue|trans({}, translation_domain) }}"
-        {%- elseif attrvalue is sameas(true) -%}
-            {{- attrname }}="{{ attrname }}"
-        {%- elseif attrvalue is not sameas(false) -%}
-            {{- attrname }}="{{ attrvalue }}"
-        {%- endif -%}
-    {%- endfor -%}
-{%- endblock simple_widget_attributes -%}
-
 {% block ite_markup_widget %}
-    {% set attr = attr|merge({'class': (attr.class|default('') ~ ' form-control-static')|trim}) %}
-    <p {{ block('simple_widget_attributes') }}>{{ markup|trans({}, translation_domain)|raw }}</p>
+    <p {{ block('widget_container_attributes') }}>{{ markup|trans({}, translation_domain)|raw }}</p>
 {% endblock ite_markup_widget %}
 
-{% block ite_hidden_markup_widget %}
+{% block ite_markup_hidden_widget %}
+    {% set id_copy = id %}
     {% set attr_copy = attr %}
     {% set attr = markup_attr %}
+    {% set id = attr.id|default(id ~ '_markup') %}
     {{ block('ite_markup_widget') }}
+    {% set id = id_copy %}
     {% set attr = attr_copy %}
     {{ block('hidden_widget') }}
-{% endblock ite_hidden_markup_widget %}
+{% endblock ite_markup_hidden_widget %}
 
 {# refactor below #}
 
@@ -147,47 +97,3 @@
         {#{{ ite_form_sf_add_plugin_element('#' ~ id ~ '_fine_uploader', plugin, element_data) }}#}
     {#{% endfor %}#}
 {#{% endblock ite_fineuploader_file_widget %}#}
-
-{# @todo: move to separate mopa layout #}
-{% block choice_widget_expanded %}
-    {% spaceless %}
-        <div id="{{ id }}">
-            {% set label_attr = label_attr|merge({'class': (label_attr.class|default(''))}) %}
-            {% set label_attr = label_attr|merge({'class': (label_attr.class ~ ' ' ~ (widget_type != '' ? (multiple ? 'checkbox' : 'radio') ~ '-' ~ widget_type : ''))}) %}
-            {% if expanded %}
-                {% set attr = attr|merge({'class': attr.class|default('') ~ ' ' ~ horizontal_input_wrapper_class}) %}
-            {% endif %}
-            {% if widget_type == 'inline-btn' %}
-                <div class="btn-group" data-toggle="buttons">
-            {% endif %}
-            {% for child in form %}
-                {% if widget_type not in ['inline', 'inline-btn'] %}
-                    <div class="{{ multiple ? 'checkbox' : 'radio' }}"
-                    {%- if widget_type == 'inline-btn' %} class="btn-group" data-toggle="buttons"{% endif %}>
-                {% endif %}
-                {% if widget_type == 'inline-btn' %}
-                    {% set label_attr = label_attr|default({})|merge({'class': 'btn ' ~ label_attr.class|default('')}) %}
-                {% endif %}
-                {% if child.vars.checked and widget_type == 'inline-btn' %}
-                    {% set label_attr_copy = label_attr|default({})|merge({'class': 'active ' ~ label_attr.class|default('')}) %}
-                {% else %}
-                    {% set label_attr_copy = label_attr|default({}) %}
-                {% endif %}
-                <label{% for attrname, attrvalue in label_attr_copy %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>
-                {{ form_widget(child, {'horizontal_label_class': horizontal_label_class, 'horizontal_input_wrapper_class': horizontal_input_wrapper_class, 'attr': {'class': attr.widget_class|default('') }}) }}
-                {% if widget_type == 'inline-btn' or widget_checkbox_label == 'widget'%}
-                    {{ child.vars.label|trans({}, translation_domain)|raw }}
-                {% else %}
-                    {{ child.vars.label|trans({}, translation_domain) }}
-                {% endif %}
-                </label>
-                {% if widget_type not in ['inline', 'inline-btn'] %}
-                    </div>
-                {% endif %}
-            {% endfor %}
-            {% if widget_type == 'inline-btn' %}
-                </div>
-            {% endif %}
-        </div>
-    {% endspaceless %}
-{% endblock choice_widget_expanded %}

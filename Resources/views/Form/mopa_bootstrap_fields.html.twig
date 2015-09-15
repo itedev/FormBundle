@@ -1,0 +1,200 @@
+{% use 'MopaBootstrapBundle:Form:fields.html.twig' with form_widget_add_btn as parent_form_widget_add_btn, form_widget_remove_btn as parent_form_widget_remove_btn %}
+
+{% block ite_markup_widget %}
+    {% set attr = attr|merge({'class': (attr.class|default('') ~ ' form-control-static')|trim}) %}
+    <p {{ block('widget_container_attributes') }}>{{ markup|trans({}, translation_domain)|raw }}</p>
+{% endblock ite_markup_widget %}
+
+{# choice must be wrapped in div with id #}
+{% block choice_widget_expanded %}
+    {% spaceless %}
+        <div id="{{ id }}">
+            {% set label_attr = label_attr|merge({'class': (label_attr.class|default(''))}) %}
+            {% set label_attr = label_attr|merge({'class': (label_attr.class ~ ' ' ~ (widget_type != '' ? (multiple ? 'checkbox' : 'radio') ~ '-' ~ widget_type : ''))}) %}
+            {% if expanded %}
+                {% set attr = attr|merge({'class': attr.class|default('') ~ ' ' ~ horizontal_input_wrapper_class}) %}
+            {% endif %}
+            {% if widget_type == 'inline-btn' %}
+            <div class="btn-group" data-toggle="buttons">
+                {% endif %}
+                {% for child in form %}
+                    {% if widget_type not in ['inline', 'inline-btn'] %}
+                        <div class="{{ multiple ? 'checkbox' : 'radio' }}"
+                        {%- if widget_type == 'inline-btn' %} class="btn-group" data-toggle="buttons"{% endif %}>
+                    {% endif %}
+                    {% if widget_type == 'inline-btn' %}
+                        {% set label_attr = label_attr|default({})|merge({'class': 'btn ' ~ label_attr.class|default('')}) %}
+                    {% endif %}
+                    {% if child.vars.checked and widget_type == 'inline-btn' %}
+                        {% set label_attr_copy = label_attr|default({})|merge({'class': 'active ' ~ label_attr.class|default('')}) %}
+                    {% else %}
+                        {% set label_attr_copy = label_attr|default({}) %}
+                    {% endif %}
+                    <label{% for attrname, attrvalue in label_attr_copy %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>
+                    {{ form_widget(child, {'horizontal_label_class': horizontal_label_class, 'horizontal_input_wrapper_class': horizontal_input_wrapper_class, 'attr': {'class': attr.widget_class|default('') }}) }}
+                    {% if widget_type == 'inline-btn' or widget_checkbox_label == 'widget'%}
+                        {{ child.vars.label|trans({}, translation_domain)|raw }}
+                    {% else %}
+                        {{ child.vars.label|trans({}, translation_domain) }}
+                    {% endif %}
+                    </label>
+                    {% if widget_type not in ['inline', 'inline-btn'] %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+                {% if widget_type == 'inline-btn' %}
+            </div>
+            {% endif %}
+        </div>
+    {% endspaceless %}
+{% endblock choice_widget_expanded %}
+
+{% block widget_form_group_start %}
+    {% if widget_form_group|default(false) or form.parent == null %}
+        {% set widget_form_group_tag = 'div' %}
+        {% if form.parent is not null and 'collection' in form.parent.vars.block_prefixes %} {# i am a collection child #}
+            {# collection item wrapper doesnt need form-group it gets added to childs anyways #}
+            {% if not compound %}
+                {% set id = id ~ '_item' %}
+                {% set attr = attr|merge({'id': attr.id|default(id)}) %}
+            {% endif %}
+            {% set widget_form_group_attr = widget_form_group_attr|merge({
+            'class': ('collection-item ' ~ widget_form_group_attr.class|default(''))|trim,
+            'id': id
+            }) %}
+            {% set widget_form_group_tag = form.parent.vars.collection_item_tag|default('div') %}
+        {% endif %}
+        {% if errors|length > 0 %}
+            {# Add Error Class to Widget Wrapper#}
+            {% set widget_form_group_attr = widget_form_group_attr|merge({'class': widget_form_group_attr.class|default('') ~ ' has-error'}) %}
+        {% endif %}
+        {% if help_widget_popover.selector is sameas(null) %}
+            {% set help_widget_popover = help_widget_popover|merge({'selector': '#' ~ id }) %}
+        {% endif %}
+        <{{ widget_form_group_tag }}{% if help_widget_popover.title is not sameas(null) %}{{ block('help_widget_popover') }}{% endif %} {% for attrname,attrvalue in widget_form_group_attr %} {{attrname}}="{{attrvalue}}"{% endfor %}>
+        {# a form item containing the field in block_prefixes is a near subform or a field directly #}
+        {% if (form|length > 0 and form.parent != null)
+        and 'field' not in form.vars.block_prefixes
+        and 'date' not in form.vars.block_prefixes %}
+            {% if show_child_legend%}
+                {{ block('form_legend') }}
+            {% elseif label_render %}
+                {{ form_label(form, label|default(null)) }}
+            {% else %}
+            {% endif %}
+        {% else %}
+            {% if label_render %}
+                {{ form_label(form, label|default(null)) }}
+            {% endif %}
+        {% endif %}
+    {% else %}
+        {% if label_render %}
+            {{ form_label(form, label|default(null)) }}
+        {% endif %}
+    {% endif %}
+{% endblock widget_form_group_start %}
+
+{% block widget_form_group_end %}
+{% spaceless %}
+    {% set widget_form_group_tag = 'div' %}
+    {% if widget_form_group|default(false) or form.parent == null %}
+        {% if form.parent is not null and 'collection' in form.parent.vars.block_prefixes and not omit_collection_item %}
+            {% set widget_form_group_tag = form.parent.vars.collection_item_tag|default('div') %}
+        {% endif %}
+        </{{ widget_form_group_tag }}>
+    {% endif %}
+{% endspaceless %}
+{% endblock widget_form_group_end %}
+
+{% block collection_widget %}
+    {% spaceless %}
+        <div {{ block('collection_attributes') }}>
+            {# Add initial prototype form #}
+            {% if form.vars.value|length == 0 and prototype is defined %}
+                {% for name in prototype_names %}
+                    {{ prototype_markup|replace({'__name__': name})|raw }}
+                {% endfor %}
+            {% endif %}
+            <div class="collection-items">
+                {{ block('form_widget') }}
+            </div>
+            {% if 'collection' in form.vars.block_prefixes and widget_add_btn|default(null) %}
+                {{ block('form_widget_add_btn') }}
+            {% endif %}
+        </div>
+    {% endspaceless %}
+{% endblock collection_widget %}
+
+{% block form_widget_add_btn %}
+    {% spaceless %}
+        {% if widget_add_btn|default(null) %}
+            {% set collection_id = id %}
+        {% endif %}
+        {{ block('parent_form_widget_add_btn') }}
+    {% endspaceless %}
+{% endblock form_widget_add_btn %}
+
+{% block form_widget_remove_btn %}
+    {% spaceless %}
+        {% if widget_remove_btn|default(null) %}
+            {% set collection_id = form.parent.vars.id %}
+        {% endif %}
+        {% if form.vars['remove_btn_rendered'] is not defined %}
+            {{ block('parent_form_widget_remove_btn') }}
+            {{ ite_set_attribute(form, 'vars[remove_btn_rendered]', true) }}
+        {% endif %}
+
+    {% endspaceless %}
+{% endblock form_widget_remove_btn %}
+
+{% block collection_button %}
+    <a {% for attrname,attrvalue in button_values.attr %} {{attrname}}="{{attrvalue}}"{% endfor %} data-collection-{{ button_type }}-btn="#{{ collection_id }}">
+    {% if button_values.icon is not null %}
+        {{ mopa_bootstrap_icon(button_values.icon, button_values.icon_inverted|default(false)) }}
+    {% endif %}
+    {% if button_values.label is defined %}
+        {{ button_values.label|trans({}, translation_domain) }}
+    {% endif %}
+    </a>
+{% endblock collection_button %}
+
+{% block form_label %}
+{% if 'checkbox' not in block_prefixes or widget_checkbox_label in ['label', 'both'] %}
+{% spaceless %}
+    {% if label is not sameas(false) %}
+        {% if label is empty %}
+            {%- if label_format is defined and label_format is not empty -%}
+                {% set label = label_format|replace({
+                '%name%': name,
+                '%id%': id,
+                }) %}
+            {%- else -%}
+                {% set label = name|humanize %}
+            {%- endif -%}
+        {% endif %}
+        {% if not compound %}
+            {% set label_attr = label_attr|merge({'for': id}) %}
+        {% endif %}
+        {% set label_attr_class = '' %}
+        {% if horizontal %}
+            {% set label_attr_class = 'control-label ' ~ label_attr_class ~ horizontal_label_class %}
+        {% endif %}
+        {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ " " ~ label_attr_class ~ (required ? ' required' : ' optional'))|trim }) %}
+        <label{% for attrname,attrvalue in label_attr %} {{attrname}}="{{attrvalue}}"{% endfor %}>
+        {{ label|trans({}, translation_domain) }}
+        {{- block('label_asterisk') }}
+        {# remove 'form_widget_add_btn' block call  #}
+        {% if help_label %}
+            {{ block('help_label') }}
+        {% endif %}
+        {% if help_label_tooltip.title %}
+            {{ block('help_label_tooltip') }}
+        {% endif %}
+        {% if help_label_popover.title %}
+            {{ block('help_label_popover') }}
+        {% endif %}
+        </label>
+    {% endif %}
+{% endspaceless %}
+{% endif %}
+{% endblock form_label %}

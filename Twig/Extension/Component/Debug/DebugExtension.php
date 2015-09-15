@@ -14,13 +14,13 @@ use Twig_Template;
 class DebugExtension extends Twig_Extension
 {
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function getFunctions()
     {
-        return array(
-            new \Twig_SimpleFunction('ite_debug', array($this, 'debug'), array('needs_context' => true, 'needs_environment' => true)),
-        );
+        return [
+            new \Twig_SimpleFunction('ite_debug', [$this, 'debug'], ['needs_context' => true, 'needs_environment' => true]),
+        ];
     }
 
     /**
@@ -47,7 +47,7 @@ class DebugExtension extends Twig_Extension
             }
         }
 
-        call_user_func(function() use ($variables) {
+        call_user_func(function () use ($variables) {
             if (function_exists('xdebug_break')) {
                 xdebug_break();
             }
@@ -61,5 +61,4 @@ class DebugExtension extends Twig_Extension
     {
         return 'ite_form.twig.debug_extension';
     }
-
 }

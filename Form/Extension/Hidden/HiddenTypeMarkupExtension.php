@@ -34,9 +34,11 @@ class HiddenTypeMarkupExtension extends AbstractTypeExtension
         $resolver->setOptional([
             'markup',
             'markup_attr',
+            'markup_property_path',
         ]);
         $resolver->setAllowedTypes([
             'markup_attr' => ['array'],
+            'markup_property_path' => ['string'],
         ]);
     }
 
@@ -51,11 +53,16 @@ class HiddenTypeMarkupExtension extends AbstractTypeExtension
 
         $view->vars['markup'] = $this->getMarkup($form, $options);
         $view->vars['markup_attr'] = isset($options['markup_attr']) ? $options['markup_attr'] : [];
+
+        $typeName = $form->getConfig()->getType()->getName();
+        $offset = array_search($this->getExtendedType(), $view->vars['block_prefixes']);
+        $limit = array_search($typeName, $view->vars['block_prefixes']) - $offset + 1;
+
         array_splice(
             $view->vars['block_prefixes'],
-            array_search($this->getExtendedType(), $view->vars['block_prefixes']) + 1,
-            0,
-            'ite_hidden_markup'
+            $offset,
+            $limit,
+            'ite_markup_hidden'
         );
     }
 
@@ -75,7 +82,9 @@ class HiddenTypeMarkupExtension extends AbstractTypeExtension
             return $options['markup'];
         } else {
             $empty = null === $parentData || array() === $parentData;
-            $propertyPath = $form->getPropertyPath();
+            $propertyPath = isset($options['markup_property_path'])
+                ? $options['markup_property_path']
+                : $form->getPropertyPath();
 
             if (!$empty && null !== $propertyPath) {
                 return $this->propertyAccessor->getValue($parentData, $propertyPath);
@@ -92,5 +101,4 @@ class HiddenTypeMarkupExtension extends AbstractTypeExtension
     {
         return 'hidden';
     }
-
 }
