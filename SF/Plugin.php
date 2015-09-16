@@ -90,5 +90,4 @@ abstract class Plugin implements ExtensionInterface
     {
         return [sprintf('@ITEFormBundle/Resources/public/js/plugin/%s.js', static::getName())];
     }
-
-} 
+}

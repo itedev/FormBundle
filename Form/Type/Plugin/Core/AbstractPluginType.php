@@ -39,5 +39,4 @@ abstract class AbstractPluginType extends AbstractType
             'plugin_options' => ['array'],
         ]);
     }
-
 }

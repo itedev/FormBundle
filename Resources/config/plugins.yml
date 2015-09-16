@@ -17,6 +17,7 @@ parameters:
     ite_form.plugin.ion_range_slider.class:             ITE\FormBundle\SF\Plugin\IonRangeSliderPlugin
     ite_form.plugin.icheck.class:                       ITE\FormBundle\SF\Plugin\ICheckPlugin
     ite_form.plugin.inputmask.class:                    ITE\FormBundle\SF\Plugin\InputmaskPlugin
+    ite_form.plugin.typeahead.class:                    ITE\FormBundle\SF\Plugin\TypeaheadPlugin
 
 services:
     ite_form.plugin.select2:
@@ -108,3 +109,8 @@ services:
         class: %ite_form.plugin.inputmask.class%
         tags:
             - { name: ite_form.plugin, alias: inputmask }
+
+    ite_form.plugin.typeahead:
+        class: %ite_form.plugin.typeahead.class%
+        tags:
+            - { name: ite_form.plugin, alias: typeahead }

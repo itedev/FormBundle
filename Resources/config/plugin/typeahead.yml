@@ -1,0 +1,9 @@
+parameters:
+    ite_form.form.type.plugin.typeahead.text.class:     ITE\FormBundle\Form\Type\Plugin\Typeahead\TextType
+
+services:
+    ite_form.form.type.plugin.typeahead.text:
+        class: %ite_form.form.type.plugin.typeahead.text.class%
+        arguments: [ %ite_form.plugin.typeahead.options%, @router ]
+        tags:
+            - { name: form.type, alias: ite_typeahead_text }

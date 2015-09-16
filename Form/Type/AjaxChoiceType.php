@@ -90,11 +90,11 @@ class AjaxChoiceType extends AbstractType
             ));
 
             if ($options['multiple']) {
-                $view->vars['is_selected'] = function($choice, array $values) {
+                $view->vars['is_selected'] = function ($choice, array $values) {
                     return in_array($choice, $values, true);
                 };
             } else {
-                $view->vars['is_selected'] = function($choice, $value) {
+                $view->vars['is_selected'] = function ($choice, $value) {
                     return $choice === $value;
                 };
             }
@@ -119,11 +119,11 @@ class AjaxChoiceType extends AbstractType
     {
         $self = $this;
 
-        $choiceList = function(Options $options) {
+        $choiceList = function (Options $options) {
             return new AjaxChoiceList();
         };
 
-        $emptyData = function(Options $options) {
+        $emptyData = function (Options $options) {
             if ($options['multiple']) {
                 return [];
             }
@@ -131,11 +131,11 @@ class AjaxChoiceType extends AbstractType
             return '';
         };
 
-        $placeholder = function(Options $options) {
+        $placeholder = function (Options $options) {
             return $options['required'] ? null : '';
         };
 
-        $placeholderNormalizer = function(Options $options, $placeholder) {
+        $placeholderNormalizer = function (Options $options, $placeholder) {
             if ($options['multiple']) {
                 // never use an empty value for this case
                 return;
@@ -148,7 +148,7 @@ class AjaxChoiceType extends AbstractType
             return $placeholder;
         };
 
-        $urlNormalizer = function(Options $options, $url) use ($self) {
+        $urlNormalizer = function (Options $options, $url) use ($self) {
             if (!empty($options['route'])) {
                 return $self->getRouter()->generate($options['route'], $options['route_parameters']);
             } elseif (!empty($url)) {
@@ -192,4 +192,4 @@ class AjaxChoiceType extends AbstractType
     {
         return 'ite_ajax_choice';
     }
-} 
+}

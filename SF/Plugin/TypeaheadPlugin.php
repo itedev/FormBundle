@@ -5,17 +5,17 @@ namespace ITE\FormBundle\SF\Plugin;
 use ITE\FormBundle\SF\Plugin;
 
 /**
- * Class KnobPlugin
+ * Class TypeaheadPlugin
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-class KnobPlugin extends Plugin
+class TypeaheadPlugin extends Plugin
 {
     /**
      * {@inheritdoc}
      */
     public static function getName()
     {
-        return 'knob';
+        return 'typeahead';
     }
 }
