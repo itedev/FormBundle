@@ -65,7 +65,7 @@
           submit = false;
         }
         if (submit) {
-          var parentEvent = $.Event('ite-parent-before-submit.hierarchical', eventData);
+          var parentEvent = $.Event('before-parent-submit.ite.hierarchical', eventData);
           $element.trigger(parentEvent);
           if (false === parentEvent.result) {
             // if any listener return false - don't submit the form
@@ -92,7 +92,7 @@
           $.each(childrenInfoMap, function(childId, childInfo) {
             var $childElement = childInfo.$element;
 
-            var childEvent = $.Event('ite-child-before-submit.hierarchical', childEventData);
+            var childEvent = $.Event('before-child-submit.ite.hierarchical', childEventData);
             $childElement.trigger(childEvent);
             if (false !== childEvent.result) {
               submit = true;
@@ -126,7 +126,7 @@
         return;
       }
 
-      this.$form.trigger('ite-submit.hierarchical');
+      this.$form.trigger('form-submit.ite.hierarchical');
 
       var jqxhr = this.$form.data('hierarchicalJqxhr');
       if (jqxhr) {
@@ -145,7 +145,7 @@
           var $newContext = $(response);
 
           $.each(originatorInfoList, function(i, originatorInfo) {
-            var event = $.Event('ite-before-children-change.hierarchical', originatorInfo.eventData);
+            var event = $.Event('before-children-change.ite.hierarchical', originatorInfo.eventData);
             originatorInfo.$element.trigger(event, [$newContext]);
             if (false === event.result) {
               return;
@@ -166,7 +166,7 @@
                 originatorValue: originatorInfo.originatorValue,
                 relatedTarget: $newChildElement.get(0)
               };
-              event = $.Event('ite-before-change.hierarchical', childEventData);
+              event = $.Event('before-change.ite.hierarchical', childEventData);
               $childElement.trigger(event, [$newContext]);
               if (false === event.result) {
                 return;
@@ -177,11 +177,11 @@
                 childView.triggerEvent($childElement, childView.getOption('hierarchical_trigger_event'));
               }
 
-              event = $.Event('ite-after-change.hierarchical', childEventData);
+              event = $.Event('after-change.ite.hierarchical', childEventData);
               $childElement.trigger(event, [$newContext]);
             });
 
-            event = $.Event('ite-after-children-change.hierarchical', originatorInfo.eventData);
+            event = $.Event('after-children-change.ite.hierarchical', originatorInfo.eventData);
             originatorInfo.$element.trigger(event, [$newContext]);
           });
         }
@@ -189,7 +189,7 @@
       jqxhr.always(function(xhr, reason) {
         if (reason !== 'hierarchicalAbort') {
           self.$form.removeData('hierarchicalJqxhr');
-          self.$form.trigger('ite-after-submit.hierarchical');
+          self.$form.trigger('after-submit.ite.hierarchical');
         }
       });
       this.$form.data('hierarchicalJqxhr', jqxhr);
