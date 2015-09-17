@@ -4,6 +4,10 @@ parameters:
 services:
     ite_form.form.type.plugin.typeahead.text:
         class: %ite_form.form.type.plugin.typeahead.text.class%
-        arguments: [ %ite_form.plugin.typeahead.options%, @router ]
+        arguments:
+            - %ite_form.plugin.typeahead.options%
+            - %ite_form.plugin.typeahead.dataset_options%
+            - %ite_form.plugin.typeahead.engine_options%
+            - @router
         tags:
             - { name: form.type, alias: ite_typeahead_text }
