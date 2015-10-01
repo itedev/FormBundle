@@ -70,12 +70,11 @@ class HierarchicalSetDataSubscriber implements EventSubscriberInterface
      */
     public static function getSubscribedEvents()
     {
-        // priority should be greater than HierarchicalReferenceSubscriber priority
+        // priority should be greater than HierarchicalAddChildSubscriber priority
 
         return [
             FormEvents::POST_SET_DATA => ['postSetData', -511],
             FormEvents::POST_SUBMIT => ['postSubmit', -511],
         ];
     }
-
 }

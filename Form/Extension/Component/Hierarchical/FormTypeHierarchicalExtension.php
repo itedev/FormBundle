@@ -63,7 +63,7 @@ class FormTypeHierarchicalExtension extends AbstractTypeExtension implements Cli
             $originator = explode(',', $request->headers->get('X-SF-Hierarchical-Originator'));
             $builder->setAttribute('hierarchical_originator', $originator);
 
-            $builder->addEventListener(FormEvents::POST_SUBMIT, function(FormEvent $event) {
+            $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
                 $form = $event->getForm();
                 if (!$form->isRoot()) {
                     return;
@@ -116,7 +116,7 @@ class FormTypeHierarchicalExtension extends AbstractTypeExtension implements Cli
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $hierarchicalParentsNormalizer = function(Options $options, $hierarchicalParents) {
+        $hierarchicalParentsNormalizer = function (Options $options, $hierarchicalParents) {
             if (empty($hierarchicalParents)) {
                 return null;
             }
@@ -151,4 +151,4 @@ class FormTypeHierarchicalExtension extends AbstractTypeExtension implements Cli
     {
         return 'form';
     }
-} 
+}

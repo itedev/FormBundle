@@ -340,7 +340,7 @@ class FormUtils
      * @param FormBuilderInterface $parent
      * @param string $child
      * @param bool|false $referenceLevelUp
-     * @return mixed
+     * @return FormBuilderInterface
      */
     public static function getBuilderReference(FormBuilderInterface $parent, $child, &$referenceLevelUp = false)
     {

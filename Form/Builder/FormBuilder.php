@@ -7,6 +7,7 @@ use ITE\FormBundle\Form\EventListener\Component\Hierarchical\HierarchicalAddChil
 use ITE\FormBundle\Form\Form;
 use ITE\FormBundle\FormAccess\FormAccess;
 use ITE\FormBundle\FormAccess\FormAccessorInterface;
+use ITE\FormBundle\Util\EventDispatcherUtils;
 use ITE\FormBundle\Util\FormUtils;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Exception\BadMethodCallException;
@@ -25,6 +26,9 @@ use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
  */
 class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
 {
+    const HIERARCHICAL_ADD_CHILD_SUBSCRIBER_CLASS = 'ITE\FormBundle\Form\EventListener\Component\Hierarchical\HierarchicalAddChildSubscriber';
+    const HIERARCHICAL_SET_DATA_SUBSCRIBER_CLASS = 'ITE\FormBundle\Form\EventListener\Component\Hierarchical\HierarchicalSetDataSubscriber';
+
     /**
      * @var PropertyAccessorInterface $propertyAccessor
      */
@@ -38,10 +42,13 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
     /**
      * {@inheritdoc}
      */
-    public function __construct($name, $dataClass, EventDispatcherInterface $dispatcher, FormFactoryInterface $factory,
+    public function __construct(
+        $name,
+        $dataClass,
+        EventDispatcherInterface $dispatcher,
+        FormFactoryInterface $factory,
         array $options = []
-    )
-    {
+    ) {
         parent::__construct($name, $dataClass, $dispatcher, $factory, $options);
 
         $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
@@ -62,7 +69,9 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
     public function getForm()
     {
         if ($this->locked) {
-            throw new BadMethodCallException('FormBuilder methods cannot be accessed anymore once the builder is turned into a FormConfigInterface instance.');
+            throw new BadMethodCallException(
+                'FormBuilder methods cannot be accessed anymore once the builder is turned into a FormConfigInterface instance.'
+            );
         }
 
         $children = $this->all();
@@ -103,26 +112,31 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
             throw new \InvalidArgumentException('The form modifier handler must be a valid PHP callable.');
         }
 
-        $options = array_merge($options, [
-            'hierarchical_parents' => $parents,
-        ]);
+        $options = array_merge(
+            $options,
+            [
+                'hierarchical_parents' => $parents,
+            ]
+        );
 
-        parent::add($child, $type, $options);
+        $this->add($child, $type, $options);
 
         $this->get($child)->addEventSubscriber(new HierarchicalSetDataSubscriber());
 
         // evaluate reference point
         $referenceLevelUp = false;
         $reference = FormUtils::getBuilderReference($this, $child, $referenceLevelUp);
-        $reference->addEventSubscriber(new HierarchicalAddChildSubscriber(
-            $child,
-            $type,
-            $options,
-            $parents,
-            $formModifier,
-            $referenceLevelUp,
-            $this->formAccessor
-        ));
+        $reference->addEventSubscriber(
+            new HierarchicalAddChildSubscriber(
+                $child,
+                $type,
+                $options,
+                $parents,
+                $formModifier,
+                $referenceLevelUp,
+                $this->formAccessor
+            )
+        );
 
         return $this;
     }
@@ -135,15 +149,40 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
         if (!is_callable($formModifier)) {
             throw new \InvalidArgumentException('The form modifier handler must be a valid PHP callable.');
         }
-        $this->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event) use ($child, $type, $formModifier) {
-            $form = $event->getForm();
-            $data = $event->getData();
+        $this->addEventListener(
+            FormEvents::PRE_SET_DATA,
+            function (FormEvent $event) use ($child, $type, $formModifier) {
+                $form = $event->getForm();
+                $data = $event->getData();
 
-            $options = call_user_func($formModifier, $data);
-            $form->add($child, $type, $options);
-        });
+                $options = call_user_func($formModifier, $data);
+                $form->add($child, $type, $options);
+            }
+        );
 
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function add($child, $type = null, array $options = [])
+    {
+        if ($this->has($child)) {
+            $this->resetHierarchicalSubscribers($child);
+        }
+
+        return parent::add($child, $type, $options);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function remove($name)
+    {
+        $this->resetHierarchicalSubscribers($name);
+
+        return parent::remove($name);
     }
 
     /**
@@ -173,4 +212,31 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
         return $this->add($name, $type, $options);
     }
 
+    /**
+     * @param string $name
+     */
+    protected function resetHierarchicalSubscribers($name)
+    {
+        $child = $this->get($name);
+
+        $isHierarchical = $child->hasOption('hierarchical_parents');
+        if ($isHierarchical) {
+            $referenceLevelUp = false;
+            $reference = FormUtils::getBuilderReference($this, $name, $referenceLevelUp);
+
+            $rawEd = EventDispatcherUtils::getRawEventDispatcher($reference->getFormConfig()->getEventDispatcher());
+            $listeners = EventDispatcherUtils::getRawListeners($rawEd);
+            foreach ($listeners as $eventName => $priorityListeners) {
+                foreach ($priorityListeners as $priority => $eventListeners) {
+                    foreach ($eventListeners as $i => $eventListener) {
+                        if (is_array($eventListener)
+                            && is_object($eventListener[0])
+                            && self::HIERARCHICAL_ADD_CHILD_SUBSCRIBER_CLASS === get_class($eventListener[0])) {
+                            $rawEd->removeSubscriber($eventListener[0]);
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

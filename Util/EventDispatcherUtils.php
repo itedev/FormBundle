@@ -4,6 +4,7 @@ namespace ITE\FormBundle\Util;
 
 use ITE\Common\Util\ReflectionUtils;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\ImmutableEventDispatcher;
 
 /**
@@ -42,14 +43,7 @@ class EventDispatcherUtils
     public static function getRawEventDispatcher(EventDispatcherInterface $ed)
     {
         if ($ed instanceof ImmutableEventDispatcher) {
-            $refClass = new \ReflectionClass($ed);
-
-            $refProp = $refClass->getProperty('dispatcher');
-            $refProp->setAccessible(true);
-            $dispatcher = $refProp->getValue($ed);
-            $refProp->setAccessible(false);
-
-            return $dispatcher;
+            return ReflectionUtils::getValue($ed, 'dispatcher');
         }
 
         return $ed;
@@ -110,5 +104,26 @@ class EventDispatcherUtils
         }
 
         return null;
+    }
+
+    /**
+     * @param EventDispatcherInterface $ed
+     * @param string $eventName
+     * @param callable $listener
+     */
+    public static function removeListener(EventDispatcherInterface $ed, $eventName, $listener)
+    {
+        $rawEd = self::getRawEventDispatcher($ed);
+        $rawEd->removeListener($eventName, $listener);
+    }
+
+    /**
+     * @param EventDispatcherInterface $ed
+     * @param EventSubscriberInterface $subscriber
+     */
+    public static function removeSubscriber(EventDispatcherInterface $ed, EventSubscriberInterface $subscriber)
+    {
+        $rawEd = self::getRawEventDispatcher($ed);
+        $rawEd->removeSubscriber($subscriber);
     }
 }

@@ -36,7 +36,7 @@ class HierarchicalAddChildSubscriber implements EventSubscriberInterface
     private $options;
 
     /**
-     * @var array|string[] $parents
+     * @var array $parents
      */
     private $parents;
 
@@ -69,9 +69,15 @@ class HierarchicalAddChildSubscriber implements EventSubscriberInterface
      * @param bool $referenceLevelUp
      * @param FormAccessorInterface|null $formAccessor
      */
-    public function __construct($child, $type, array $options, array $parents, $formModifier, $referenceLevelUp,
-        FormAccessorInterface $formAccessor = null)
-    {
+    public function __construct(
+        $child,
+        $type,
+        array $options,
+        array $parents,
+        $formModifier,
+        $referenceLevelUp,
+        FormAccessorInterface $formAccessor = null
+    ) {
         $this->child = $child;
         $this->type = $type;
         $this->options = $options;
@@ -88,6 +94,10 @@ class HierarchicalAddChildSubscriber implements EventSubscriberInterface
     {
         /** @var FormInterface $form */
         $form = $this->referenceLevelUp ? $event->getForm() : $event->getForm()->getParent();
+
+        if (!$form->has($this->child)) {
+            return;
+        }
 
         $formHash = spl_object_hash($form->get($this->child));
         if (in_array($formHash, $this->formHashes) || $form->isSubmitted()) {
@@ -133,6 +143,10 @@ class HierarchicalAddChildSubscriber implements EventSubscriberInterface
     {
         /** @var FormInterface $form */
         $form = $this->referenceLevelUp ? $event->getForm() : $event->getForm()->getParent();
+
+        if (!$form->has($this->child)) {
+            return;
+        }
 
         $formHash = spl_object_hash($form->get($this->child));
 
@@ -186,5 +200,4 @@ class HierarchicalAddChildSubscriber implements EventSubscriberInterface
             FormEvents::POST_SUBMIT => ['postSubmit', -512],
         ];
     }
-
 }
