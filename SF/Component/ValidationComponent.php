@@ -2,9 +2,7 @@
 
 namespace ITE\FormBundle\SF\Component;
 
-use ITE\FormBundle\SF\Component;
-use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
-use Symfony\Component\Config\Definition\Builder\NodeBuilder;
+use ITE\FormBundle\SF\AbstractComponent;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\FileLoader;
@@ -15,28 +13,32 @@ use Symfony\Component\DependencyInjection\Reference;
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-class ValidationComponent extends Component
+class ValidationComponent extends AbstractComponent
 {
     /**
      * {@inheritdoc}
      */
-    public function addConfiguration(ArrayNodeDefinition $rootNode, ContainerBuilder $container)
+    public function addConfiguration(ContainerBuilder $container)
     {
-        /** @var $node NodeBuilder */
-        $node = parent::addConfiguration($rootNode, $container);
-
-        return $node
-            ->booleanNode('enable_annotations')->defaultTrue()->end()
-            ->arrayNode('static_method')
-                ->defaultValue(['loadValidatorMetadata'])
-                ->prototype('scalar')->end()
-                ->treatFalseLike([])
-                ->validate()
-                    ->ifTrue(function ($v) { return !is_array($v); })
-                    ->then(function ($v) { return (array) $v; })
+        $rootNode = parent::addConfiguration($container);
+        $rootNode
+            ->children()
+                ->booleanNode('enable_annotations')
+                    ->defaultTrue()
+                ->end()
+                ->arrayNode('static_method')
+                    ->defaultValue(['loadValidatorMetadata'])
+                    ->prototype('scalar')->end()
+                    ->treatFalseLike([])
+                    ->validate()
+                        ->ifTrue(function ($v) { return !is_array($v); })
+                        ->then(function ($v) { return (array) $v; })
+                    ->end()
                 ->end()
             ->end()
         ;
+
+        return $rootNode;
     }
 
     /**

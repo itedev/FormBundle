@@ -3,8 +3,7 @@
 namespace ITE\FormBundle\SF;
 
 use Doctrine\Common\Inflector\Inflector;
-use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
-use Symfony\Component\Config\Definition\Builder\NodeBuilder;
+use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Loader\Loader;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -12,25 +11,25 @@ use Symfony\Component\DependencyInjection\Loader\FileLoader;
 use Symfony\Component\Routing\RouteCollection;
 
 /**
- * Class Component
+ * Class AbstractComponent
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-abstract class Component implements ExtensionInterface
+abstract class AbstractComponent implements ExtensionInterface
 {
     /**
      * {@inheritdoc}
      */
-    public function addConfiguration(ArrayNodeDefinition $rootNode, ContainerBuilder $container)
+    public function addConfiguration(ContainerBuilder $container)
     {
-        /** @var $node NodeBuilder */
-        return $rootNode
-            ->children()
-                ->arrayNode(static::getName())
-                    ->canBeUnset()
-                    ->canBeEnabled()
-                    ->children()
+        $treeBuilder = new TreeBuilder();
+        $rootNode = $treeBuilder->root(static::getName());
+        $rootNode
+            ->canBeUnset()
+            ->canBeEnabled()
         ;
+
+        return $rootNode;
     }
 
     /**
@@ -83,5 +82,4 @@ abstract class Component implements ExtensionInterface
     {
         return [];
     }
-
-} 
+}

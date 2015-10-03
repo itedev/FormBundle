@@ -2,31 +2,34 @@
 
 namespace ITE\FormBundle\SF\Component;
 
-use ITE\FormBundle\SF\Component;
-use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
-use Symfony\Component\Config\Definition\Builder\NodeBuilder;
-use Symfony\Component\Config\Resource\FileResource;
+use ITE\FormBundle\SF\AbstractComponent;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\FileLoader;
-use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * Class AjaxSubmitComponent
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-class AjaxSubmitComponent extends Component
+class AjaxSubmitComponent extends AbstractComponent
 {
     /**
      * {@inheritdoc}
      */
-    public function addConfiguration(ArrayNodeDefinition $rootNode, ContainerBuilder $container)
+    public function addConfiguration(ContainerBuilder $container)
     {
-        $node = parent::addConfiguration($rootNode, $container);
+        $rootNode = parent::addConfiguration($container);
 
-        return $node
-            ->scalarNode('default_submitter')->cannotBeEmpty()->isRequired()->end()
+        $rootNode
+            ->children()
+                ->scalarNode('default_submitter')
+                    ->cannotBeEmpty()
+                    ->isRequired()
+                ->end()
+            ->end()
         ;
+
+        return $rootNode;
     }
 
     /**

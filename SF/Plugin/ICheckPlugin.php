@@ -3,7 +3,7 @@
 namespace ITE\FormBundle\SF\Plugin;
 
 use ITE\FormBundle\SF\ChoicePlugin;
-use ITE\FormBundle\SF\Plugin;
+use ITE\FormBundle\SF\AbstractPlugin;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\FileLoader;
 

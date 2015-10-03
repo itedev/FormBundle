@@ -2,8 +2,7 @@
 
 namespace ITE\FormBundle\SF\Component;
 
-use ITE\FormBundle\SF\Component;
-use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+use ITE\FormBundle\SF\AbstractComponent;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\FileLoader;
 
@@ -12,19 +11,27 @@ use Symfony\Component\DependencyInjection\Loader\FileLoader;
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-class AjaxFileUploadComponent extends Component
+class AjaxFileUploadComponent extends AbstractComponent
 {
     /**
      * {@inheritdoc}
      */
-    public function addConfiguration(ArrayNodeDefinition $rootNode, ContainerBuilder $container)
+    public function addConfiguration(ContainerBuilder $container)
     {
-        $node = parent::addConfiguration($rootNode, $container);
-
-        return $node
-            ->scalarNode('web_root')->defaultValue('%kernel.root_dir%/../web')->end()
-            ->scalarNode('tmp_prefix')->cannotBeEmpty()->isRequired()->end()
+        $rootNode = parent::addConfiguration($container);
+        $rootNode
+            ->children()
+                ->scalarNode('web_root')
+                    ->defaultValue('%kernel.root_dir%/../web')
+                ->end()
+                ->scalarNode('tmp_prefix')
+                    ->cannotBeEmpty()
+                    ->isRequired()
+                ->end()
+            ->end()
         ;
+
+        return $rootNode;
     }
 
     /**
@@ -45,5 +52,4 @@ class AjaxFileUploadComponent extends Component
     {
         return 'ajax_file_upload';
     }
-
 }

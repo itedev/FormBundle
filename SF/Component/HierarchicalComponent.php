@@ -2,7 +2,7 @@
 
 namespace ITE\FormBundle\SF\Component;
 
-use ITE\FormBundle\SF\Component;
+use ITE\FormBundle\SF\AbstractComponent;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -10,7 +10,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-class HierarchicalComponent extends Component
+class HierarchicalComponent extends AbstractComponent
 {
     /**
      * {@inheritdoc}

@@ -2,8 +2,7 @@
 
 namespace ITE\FormBundle\SF;
 
-use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
-use Symfony\Component\Config\Definition\Builder\NodeBuilder;
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Loader\Loader;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -18,11 +17,10 @@ use Symfony\Component\Routing\RouteCollection;
 interface ExtensionInterface
 {
     /**
-     * @param ArrayNodeDefinition $pluginsNode
      * @param ContainerBuilder $container
-     * @return NodeBuilder
+     * @return NodeDefinition
      */
-    public function addConfiguration(ArrayNodeDefinition $pluginsNode, ContainerBuilder $container);
+    public function addConfiguration(ContainerBuilder $container);
 
     /**
      * @param FileLoader $loader
@@ -58,4 +56,4 @@ interface ExtensionInterface
      * @return string
      */
     public static function getName();
-} 
+}

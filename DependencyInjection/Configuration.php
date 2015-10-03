@@ -63,7 +63,8 @@ class Configuration implements ConfigurationInterface
         foreach ($serviceIds as $serviceId => $tags) {
             /** @var $component ExtensionInterface */
             $component = $this->container->get($serviceId);
-            $component->addConfiguration($componentsNode, $this->container);
+            $componentNode = $component->addConfiguration($this->container);
+            $componentsNode->append($componentNode);
         }
     }
 
@@ -82,7 +83,8 @@ class Configuration implements ConfigurationInterface
         foreach ($serviceIds as $serviceId => $tags) {
             /** @var $plugin ExtensionInterface */
             $plugin = $this->container->get($serviceId);
-            $plugin->addConfiguration($pluginsNode, $this->container);
+            $pluginNode = $plugin->addConfiguration($this->container);
+            $pluginsNode->append($pluginNode);
         }
     }
 

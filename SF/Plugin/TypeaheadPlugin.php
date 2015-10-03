@@ -2,7 +2,8 @@
 
 namespace ITE\FormBundle\SF\Plugin;
 
-use ITE\FormBundle\SF\Plugin;
+use ITE\Common\CdnJs\CdnAssetReference;
+use ITE\FormBundle\SF\AbstractPlugin;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\FileLoader;
@@ -12,23 +13,26 @@ use Symfony\Component\DependencyInjection\Loader\FileLoader;
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-class TypeaheadPlugin extends Plugin
+class TypeaheadPlugin extends AbstractPlugin
 {
     /**
      * {@inheritdoc}
      */
-    public function addConfiguration(ArrayNodeDefinition $rootNode, ContainerBuilder $container)
+    public function addConfiguration(ContainerBuilder $container)
     {
-        $node = parent::addConfiguration($rootNode, $container);
-
-        return $node
-            ->variableNode('dataset_options')
-                ->defaultValue([])
+        $rootNode = parent::addConfiguration($container);
+        $rootNode
+            ->children()
+                ->variableNode('dataset_options')
+                    ->defaultValue([])
+                ->end()
+                ->variableNode('engine_options')
+                    ->defaultValue([])
+                ->end()
             ->end()
-            ->variableNode('engine_options')
-                ->defaultValue([])
-            ->end()            
         ;
+
+        return $rootNode;
     }
 
     /**
@@ -38,7 +42,38 @@ class TypeaheadPlugin extends Plugin
     {
         $container->setParameter(sprintf('ite_form.plugin.%s.dataset_options', static::getName()), $config['dataset_options']);
         $container->setParameter(sprintf('ite_form.plugin.%s.engine_options', static::getName()), $config['engine_options']);
+
         parent::loadConfiguration($loader, $config, $container);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCdnName()
+    {
+        return 'typeahead.js';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDefaultCdnVersion()
+    {
+        return '0.11.1';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCdnJavascripts($debug)
+    {
+        return [
+            new CdnAssetReference(
+                $this->getCdnName(),
+                $this->getCdnVersion(),
+                $debug ? 'typeahead.bundle.js' : 'typeahead.bundle.min.js'
+            ),
+        ];
     }
 
     /**

@@ -2,8 +2,7 @@
 
 namespace ITE\FormBundle\SF\Plugin;
 
-use ITE\FormBundle\SF\Plugin;
-use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+use ITE\FormBundle\SF\AbstractPlugin;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\FileLoader;
 
@@ -12,20 +11,23 @@ use Symfony\Component\DependencyInjection\Loader\FileLoader;
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-class FileuploadPlugin extends Plugin
+class FileuploadPlugin extends AbstractPlugin
 {
     /**
      * {@inheritdoc}
      */
-    public function addConfiguration(ArrayNodeDefinition $rootNode, ContainerBuilder $container)
+    public function addConfiguration(ContainerBuilder $container)
     {
-        $node = parent::addConfiguration($rootNode, $container);
-
-        return $node
-            ->variableNode('file_manager')
-                ->defaultValue(array())
+        $rootNode = parent::addConfiguration($container);
+        $rootNode
+            ->children()
+                ->variableNode('file_manager')
+                    ->defaultValue([])
+                ->end()
             ->end()
         ;
+
+        return $rootNode;
     }
 
     /**
@@ -45,5 +47,4 @@ class FileuploadPlugin extends Plugin
     {
         return 'fileupload';
     }
-
 }

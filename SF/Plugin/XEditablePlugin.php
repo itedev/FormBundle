@@ -2,14 +2,14 @@
 
 namespace ITE\FormBundle\SF\Plugin;
 
-use ITE\FormBundle\SF\Plugin;
+use ITE\FormBundle\SF\AbstractPlugin;
 
 /**
  * Class XEditablePlugin
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-class XEditablePlugin extends Plugin
+class XEditablePlugin extends AbstractPlugin
 {
     /**
      * {@inheritdoc}

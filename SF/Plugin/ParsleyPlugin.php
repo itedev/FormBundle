@@ -2,14 +2,14 @@
 
 namespace ITE\FormBundle\SF\Plugin;
 
-use ITE\FormBundle\SF\Plugin;
+use ITE\FormBundle\SF\AbstractPlugin;
 
 /**
  * Class ParsleyPlugin
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-class ParsleyPlugin extends Plugin
+class ParsleyPlugin extends AbstractPlugin
 {
     /**
      * {@inheritdoc}

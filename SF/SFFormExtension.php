@@ -38,21 +38,17 @@ class SFFormExtension extends SFExtension implements SFFormExtensionInterface
      */
     public function getStylesheets()
     {
-        $inputs = [];
-
-        // add component css
+        $stylesheets = [];
         foreach ($this->getComponents() as $component) {
             /** @var $component ExtensionInterface */
-            $inputs = array_merge($inputs, $component->getStylesheets());
+            $stylesheets = array_merge($stylesheets, $component->getStylesheets());
         }
-
-        // add plugin css
         foreach ($this->getPlugins() as $plugin) {
             /** @var $plugin ExtensionInterface */
-            $inputs = array_merge($inputs, $plugin->getStylesheets());
+            $stylesheets = array_merge($stylesheets, $plugin->getStylesheets());
         }
 
-        return $inputs;
+        return $stylesheets;
     }
 
     /**
@@ -60,30 +56,57 @@ class SFFormExtension extends SFExtension implements SFFormExtensionInterface
      */
     public function getJavascripts()
     {
-        $inputs = ['@ITEFormBundle/Resources/public/js/sf.form.js'];
-
-        // add component js
+        $javascripts = ['@ITEFormBundle/Resources/public/js/sf.form.js'];
         foreach ($this->getComponents() as $component) {
             /** @var $component ExtensionInterface */
-            $inputs = array_merge($inputs, $component->getJavascripts());
+            $javascripts = array_merge($javascripts, $component->getJavascripts());
         }
-
-        // add plugin js
         foreach ($this->getPlugins() as $plugin) {
             /** @var $plugin ExtensionInterface */
-            $inputs = array_merge($inputs, $plugin->getJavascripts());
+            $javascripts = array_merge($javascripts, $plugin->getJavascripts());
         }
 
-        return $inputs;
+        return $javascripts;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getInlineJavascripts()
+    public function getCdnStylesheets($debug)
+    {
+        $stylesheets = [];
+        foreach ($this->getPlugins() as $plugin) {
+            /** @var $plugin ExtensionInterface */
+            if ($plugin->isCdnEnabled()) {
+                $stylesheets = array_merge($stylesheets, $plugin->getCdnStylesheets($debug));
+            }
+        }
+
+        return $stylesheets;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCdnJavascripts($debug)
+    {
+        $javascripts = [];
+        foreach ($this->getPlugins() as $plugin) {
+            /** @var $plugin ExtensionInterface */
+            if ($plugin->isCdnEnabled()) {
+                $javascripts = array_merge($javascripts, $plugin->getCdnJavascripts($debug));
+            }
+        }
+
+        return $javascripts;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function dump()
     {
         $dump = '';
-
         if ($this->formBag->count()) {
             $dump .= 'SF.forms.set(' . json_encode($this->formBag->toArray()) . ');';
             $dump .= '(function($){$(function(){';

@@ -2,14 +2,14 @@
 
 namespace ITE\FormBundle\SF\Plugin;
 
-use ITE\FormBundle\SF\Plugin;
+use ITE\FormBundle\SF\AbstractPlugin;
 
 /**
  * Class BootstrapSpineditPlugin
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-class BootstrapSpineditPlugin extends Plugin
+class BootstrapSpineditPlugin extends AbstractPlugin
 {
     /**
      * {@inheritdoc}

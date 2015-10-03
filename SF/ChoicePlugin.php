@@ -10,7 +10,7 @@ use Symfony\Component\DependencyInjection\DefinitionDecorator;
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-abstract class ChoicePlugin extends Plugin
+abstract class ChoicePlugin extends AbstractPlugin
 {
     /**
      * @param $serviceId

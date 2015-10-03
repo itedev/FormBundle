@@ -8,11 +8,11 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
 /**
- * Class SFFromExtensionPass
+ * Class SFFormExtensionPass
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-class SFFromExtensionPass implements CompilerPassInterface
+class SFFormExtensionPass implements CompilerPassInterface
 {
     /**
      * {@inheritdoc}
@@ -40,7 +40,7 @@ class SFFromExtensionPass implements CompilerPassInterface
                 $alias = $tag['alias'];
                 $enabled = $container->getParameter(sprintf('ite_form.component.%s.enabled', $alias));
                 if ($enabled) {
-                    $definition->addMethodCall('addComponent', array($alias, new Reference($serviceId)));
+                    $definition->addMethodCall('addComponent', [$alias, new Reference($serviceId)]);
                 }
             }
         }
@@ -58,7 +58,14 @@ class SFFromExtensionPass implements CompilerPassInterface
                 $alias = $tag['alias'];
                 $enabled = $container->getParameter(sprintf('ite_form.plugin.%s.enabled', $alias));
                 if ($enabled) {
-                    $definition->addMethodCall('addPlugin', array($alias, new Reference($serviceId)));
+                    $cdnParameter = sprintf('ite_form.plugin.%s.cdn', $alias);
+                    if ($container->hasParameter($cdnParameter)) {
+                        $pluginDefinition = $container->getDefinition($serviceId);
+                        $cdn = $container->getParameter($cdnParameter);
+                        $pluginDefinition->addMethodCall('setCdn', [$cdn]);
+                    }
+
+                    $definition->addMethodCall('addPlugin', [$alias, new Reference($serviceId)]);
                 }
             }
         }

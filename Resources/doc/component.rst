@@ -31,16 +31,16 @@ Available components
 
 Add new component
 -----------------
-Create new class that extends ``ITE\FormBundle\SF\Component`` class or implements
+Create new class that extends ``ITE\FormBundle\SF\AbstractComponent`` class or implements
 ``ITE\FormBundle\SF\ExtensionInterface``.
 
 .. code-block:: php
 
     namespace Acme\DemoBundle\SF\Form\Component;
 
-    use ITE\FormBundle\SF\Component;
+    use ITE\FormBundle\SF\AbstractComponent;
 
-    class FooComponent extends Component
+    class FooComponent extends AbstractComponent
     {
         public function loadConfiguration(FileLoader $loader, array $config, ContainerBuilder $container)
         {

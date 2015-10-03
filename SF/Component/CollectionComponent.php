@@ -2,9 +2,7 @@
 
 namespace ITE\FormBundle\SF\Component;
 
-use ITE\FormBundle\SF\Component;
-use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
-use Symfony\Component\Config\Definition\Builder\NodeBuilder;
+use ITE\FormBundle\SF\AbstractComponent;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Loader\FileLoader;
@@ -14,47 +12,50 @@ use Symfony\Component\DependencyInjection\Loader\FileLoader;
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-class CollectionComponent extends Component
+class CollectionComponent extends AbstractComponent
 {
     /**
      * {@inheritdoc}
      */
-    public function addConfiguration(ArrayNodeDefinition $rootNode, ContainerBuilder $container)
+    public function addConfiguration(ContainerBuilder $container)
     {
-        /** @var $node NodeBuilder */
-        $node = parent::addConfiguration($rootNode, $container);
-        $node
-            ->arrayNode('widget_show_animation')
-                ->addDefaultsIfNotSet()
-                ->info('animation for showing new collection items')
-                ->children()
-                    ->enumNode('type')
-                        ->defaultValue('show')
-                        ->values(['show', 'slide', 'fade'])
-                    ->end()
-                    ->integerNode('length')
-                        ->defaultValue(0)
-                        ->min(0)
-                        ->info('time in ms')
+        $rootNode = parent::addConfiguration($container);
+        $rootNode
+            ->children()
+                ->arrayNode('widget_show_animation')
+                    ->addDefaultsIfNotSet()
+                    ->info('animation for showing new collection items')
+                    ->children()
+                        ->enumNode('type')
+                            ->defaultValue('show')
+                            ->values(['show', 'slide', 'fade'])
+                        ->end()
+                        ->integerNode('length')
+                            ->defaultValue(0)
+                            ->min(0)
+                            ->info('time in ms')
+                        ->end()
                     ->end()
                 ->end()
-            ->end()
-            ->arrayNode('widget_hide_animation')
-                ->addDefaultsIfNotSet()
-            ->info('animation for hiding collection items')
-                ->children()
-                    ->enumNode('type')
-                        ->values(['hide', 'slide', 'fade'])
-                        ->defaultValue('hide')
-                    ->end()
-                    ->integerNode('length')
-                        ->defaultValue(0)
-                        ->min(0)
-                        ->info('time in ms')
+                ->arrayNode('widget_hide_animation')
+                    ->addDefaultsIfNotSet()
+                ->info('animation for hiding collection items')
+                    ->children()
+                        ->enumNode('type')
+                            ->values(['hide', 'slide', 'fade'])
+                            ->defaultValue('hide')
+                        ->end()
+                        ->integerNode('length')
+                            ->defaultValue(0)
+                            ->min(0)
+                            ->info('time in ms')
+                        ->end()
                     ->end()
                 ->end()
             ->end()
         ;
+
+        return $rootNode;
     }
 
     /**

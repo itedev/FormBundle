@@ -44,16 +44,16 @@ Available plugins
 
 Add new plugin
 --------------
-Create new class that extends ``ITE\FormBundle\SF\Plugin`` class or implements
+Create new class that extends ``ITE\FormBundle\SF\AbstractPlugin`` class or implements
 ``ITE\FormBundle\SF\ExtensionInterface``.
 
 .. code-block:: php
 
     namespace Acme\DemoBundle\SF\Form\Plugin;
 
-    use ITE\FormBundle\SF\Plugin;
+    use ITE\FormBundle\SF\AbstractPlugin;
 
-    class FooPlugin extends Plugin
+    class FooPlugin extends AbstractPlugin
     {
         public function loadConfiguration(FileLoader $loader, array $config, ContainerBuilder $container)
         {
