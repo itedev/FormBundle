@@ -81,7 +81,7 @@ class EntityToIdTransformer implements DataTransformerInterface
 
         $ids = [];
         if ($this->multiple) {
-            if (!is_array($value)) {
+            if (!is_array($value) && !$value instanceof \Traversable) {
                 throw new TransformationFailedException('Expected an array.');
             }
             foreach ($value as $entity) {
