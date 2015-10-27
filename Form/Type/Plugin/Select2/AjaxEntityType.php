@@ -21,6 +21,31 @@ use Symfony\Component\Routing\RouterInterface;
 class AjaxEntityType extends AbstractAjaxChoiceType
 {
     /**
+     * @var RouterInterface $router
+     */
+    private $router;
+
+    /**
+     * @param array $options
+     * @param RouterInterface $router
+     */
+    public function __construct(array $options, RouterInterface $router)
+    {
+        parent::__construct($options);
+        $this->router = $router;
+    }
+
+    /**
+     * Get router
+     *
+     * @return RouterInterface
+     */
+    public function getRouter()
+    {
+        return $this->router;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
@@ -29,7 +54,7 @@ class AjaxEntityType extends AbstractAjaxChoiceType
 
         $self = $this;
 
-        $createUrlNormalizer = function(Options $options, $createUrl) use ($self) {
+        $createUrlNormalizer = function (Options $options, $createUrl) use ($self) {
             if (!$options['allow_create']) {
                 return $createUrl;
             }

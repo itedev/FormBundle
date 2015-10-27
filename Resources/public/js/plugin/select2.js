@@ -42,30 +42,33 @@
 
       // create
       if (extras.hasOwnProperty('allow_create') && extras.allow_create === true) {
-        options = $.extend(true, options, {
+        options = $.extend(true, {
           tags: true,
-          createTag: function(params) {
-            var results = arguments.callee.caller.arguments[0].results;
-            if (0 === results.length) {
+          createTag: function (params) {
+            //var results = arguments.callee.caller.arguments[0].results;
+            //if (0 === results.length) {
               return {
                 id: params.term,
                 text: params.term,
                 isNew: true
               };
-            }
+            //}
           }
-        });
+        }, options);
         $element.on('select2:selecting', function(e) {
           var selection = e.params.args.data;
           if (!selection.hasOwnProperty('isNew')) {
             return;
           }
 
+          $element.select2('close');
+          e.preventDefault();
+
           $.ajax({
             type: 'post',
             url: extras.create_url,
             data: {
-              text: selection.text
+              text: selection.id
             },
             dataType: 'dataType' in options.ajax ? options.ajax.dataType : 'json',
             success: function(response) {
@@ -73,16 +76,10 @@
                 $element
                   .html('<option value="' + response.id + '">' + response.text + '</option>')
                   .val(response.id)
-                ;
-              } else {
-                $element
-                  .html('')
-                  .val('')
+                  .trigger('change')
                 ;
               }
             }
-          }).fail(function() {
-            $element.val('');
           });
         });
       }
