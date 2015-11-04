@@ -406,7 +406,8 @@ class FormUtils
         }
 
         $newForm = $formFactory->createNamed($name, $type, $data, $options);
-        $newForm->initialize();
+        $newForm->setParent($form->getParent());
+        $newForm->setData($newForm->getConfig()->getData()); // emulate Form::initialize()
 
         $submitted = $form->isSubmitted();
 

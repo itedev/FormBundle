@@ -1,7 +1,7 @@
 (function($) {
   SF.fn.plugins['select2'] = {
     isInitialized: function($element) {
-      return 'undefined' !== typeof $element.data('select2');
+      return 'SELECT' !== $element.prop('tagName') || 'undefined' !== typeof $element.data('select2');
     },
 
     initialize: function($element, pluginData) {
