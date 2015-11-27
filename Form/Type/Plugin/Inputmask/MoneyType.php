@@ -25,9 +25,7 @@ class MoneyType extends AbstractPluginType implements ClientFormTypeInterface
         $pluginOptions = [
             'digits' => $options['precision'],
         ];
-        if (!$options['grouping']) {
-            $pluginOptions['autoUnmask'] = true;
-        } else {
+        if ($options['grouping']) {
             $pluginOptions['autoGroup'] = true;
             $pluginOptions['groupSize'] = LocaleUtils::getGroupingSize();
             $pluginOptions['groupSeparator'] = LocaleUtils::getGroupingSeparatorSymbol();
@@ -43,6 +41,7 @@ class MoneyType extends AbstractPluginType implements ClientFormTypeInterface
                         'digitsOptional' => true,
                         'rightAlign' => false,
                         'allowPlus' => false,
+                        'autoUnmask' => true,
                     ],
                     $this->options,
                     $options['plugin_options'],
