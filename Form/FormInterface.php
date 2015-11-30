@@ -17,7 +17,21 @@ interface FormInterface extends BaseFormInterface
      * @param array
      * @return FormInterface
      */
-    public function add($child, $type = null, array $options = array());
+    public function add($child, $type = null, array $options = []);
+
+    /**
+     * @param string $name
+     * @param string $type
+     * @return FormInterface
+     */
+    public function replaceType($name, $type);
+
+    /**
+     * @param string $name
+     * @param array $options
+     * @return FormInterface
+     */
+    public function replaceOptions($name, array $options);
 
     /**
      * @param FormInterface|string|int $child
@@ -27,5 +41,5 @@ interface FormInterface extends BaseFormInterface
      * @param null $formModifier
      * @return FormInterface
      */
-    public function addHierarchical($child, $parents, $type = null, array $options = array(), $formModifier = null);
+    public function addHierarchical($child, $parents, $type = null, array $options = [], $formModifier = null);
 }
