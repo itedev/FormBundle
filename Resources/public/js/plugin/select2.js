@@ -55,33 +55,51 @@
             //}
           }
         }, options);
-        $element.on('select2:selecting', function(e) {
-          var selection = e.params.args.data;
-          if (!selection.hasOwnProperty('isNew')) {
-            return;
-          }
+        if (extras.hasOwnProperty('create_url')) {
+          $element.on('select2:selecting', function(e) {
+            var selection = e.params.args.data;
+            if (!selection.hasOwnProperty('isNew')) {
+              return;
+            }
 
-          $element.select2('close');
-          e.preventDefault();
+            $element.select2('close');
+            e.preventDefault();
 
-          $.ajax({
-            type: 'post',
-            url: extras.create_url,
-            data: {
-              text: selection.id
-            },
-            dataType: 'dataType' in options.ajax ? options.ajax.dataType : 'json',
-            success: function(response) {
-              if ($.isPlainObject(response) && response.hasOwnProperty('id') && response.hasOwnProperty('text')) {
-                $element
-                  .html('<option value="' + response.id + '">' + response.text + '</option>')
-                  .val(response.id)
-                  .trigger('change')
-                ;
+            $.ajax({
+              type: 'post',
+              url: extras.create_url,
+              data: {
+                text: selection.id
+              },
+              dataType: 'dataType' in options.ajax ? options.ajax.dataType : 'json',
+              success: function(response) {
+                if ($.isPlainObject(response) && response.hasOwnProperty('id') && response.hasOwnProperty('text')) {
+                  $element
+                    .html('<option value="' + response.id + '">' + response.text + '</option>')
+                    .val(response.id)
+                    .trigger('change')
+                  ;
+                }
               }
+            });
+          });
+        } else {
+          $element.on('select2:select', function(e) {
+            var $this = $(this);
+            var selection = e.params.data;
+
+            if (selection.isNew) {
+              var term = selection.id;
+              $this
+                .find('[value="' + term + '"]')
+                  .replaceWith('<option value="' + term + '">' + term + '</option>')
+                .end()
+                .val(term)
+                .triggerHandler('change.select2')
+              ;
             }
           });
-        });
+        }
       }
 
       $element.select2(options);
