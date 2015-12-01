@@ -25,9 +25,7 @@
 
       var originatorInfoList = [];
       $.each($elements, function(i, $element) {
-        var id = $element.attr('id');
-        
-        var view = SF.forms.find(id);
+        var view = $element.formView();
         var fullName = view.getFullName();
         
         var childrenInfoMap = {};

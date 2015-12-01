@@ -11,7 +11,7 @@
     hierarchicalChange: function(e) {
       var $element = $(e.delegateTarget);
 
-      var view = SF.forms.find($element.attr('id'));
+      var view = $element.formView();
       var $form = view.getForm();
 
       $form.hierarchical('trigger', [$element]);

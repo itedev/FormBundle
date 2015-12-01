@@ -7,6 +7,16 @@
   SF.fn.validators = {};
   SF.fn.submitters = {};
 
+  $.fn.formView = function() {
+    if (1 !== this.length) {
+      $.error('jQuery.formView can be called only for 1 element.');
+    }
+
+    var id = this.attr('id');
+
+    return SF.forms.find(id);
+  };
+
   SF.fn.util = $.extend(SF.fn.util, {
     strtr: function(str, replacementTokens) {
       if ('object' === typeof replacementTokens) {

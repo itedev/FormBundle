@@ -59,7 +59,7 @@
 
         self.$collection.trigger('ite-add.collection', [$item]);
 
-        var collectionView = SF.forms.find(self.$collection.attr('id'));
+        var collectionView = self.$collection.formView();
         if (null !== collectionView) {
           collectionView.addCollectionItem(self.index);
         }
@@ -92,8 +92,8 @@
 
         self.$collection.trigger('ite-remove.collection', [$item]);
 
-        var collectionView = SF.forms.find(self.$collection.attr('id'));
-        var itemView = SF.forms.find($item.attr('id'));
+        var collectionView = self.$collection.formView();
+        var itemView = $item.formView();
         if (null !== collectionView && null !== itemView) {
           collectionView.removeChild(itemView.getName());
         }
@@ -113,7 +113,7 @@
     },
     clear: function() {
       this.$collection.find(this.itemsWrapperSelector).empty();
-      var collectionView = SF.forms.find(this.$collection.attr('id'));
+      var collectionView = this.$collection.formView();
       if (null !== collectionView) {
         collectionView.clearChildren();
       }
