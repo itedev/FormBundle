@@ -1,5 +1,5 @@
 (function($) {
-  SF.fn.plugins['ion_range_slider'] = {
+  SF.fn.plugins['ion_range_slider'] = new SF.classes.Plugin({
     isInitialized: function($element) {
       return 'undefined' !== typeof $element.data('ionRangeSlider');
     },
@@ -10,6 +10,8 @@
 
     setValue: function($element) {
       $element.trigger('change');
+
+      return true;
     }
-  };
+  });
 })(jQuery);

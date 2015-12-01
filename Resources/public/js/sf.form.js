@@ -70,6 +70,33 @@
     }
   });
 
+  var Plugin = function(methods) {
+    methods = methods || {};
+
+    var self = this;
+    $.each(methods, function(methodName, method) {
+      self[methodName] = method;
+    });
+  };
+
+  Plugin.prototype = {
+    isInitialized: function($element) {
+      return false;
+    },
+
+    initialize: function($element, pluginData) {
+      throw new Error('Method is not implemented.');
+    },
+
+    clearValue: function($element) {},
+
+    getValue: function($element, $newElement) {},
+
+    setValue: function($element, $newElement) {}
+  };
+
+  Plugin.prototype.fn = Plugin.prototype;
+
   var FormPath = function(formPath) {
     if ('string' !== typeof formPath) {
       throw new Error('String expected.');
@@ -382,7 +409,7 @@
     },
 
     isCollection: function() {
-      return this.hasOption('prototype_view');
+      return this.hasOption('prototype_view'); // @todo: collection may be without prototype
     },
 
     isCollectionItem: function() {
@@ -459,7 +486,7 @@
     },
 
     setInitialized: function($element) {
-      $element.data('sfInitialized', 1);
+      $element.data('sfInitialized', true);
     },
 
     initializeRecursive: function(force) {
@@ -490,20 +517,12 @@
 
       var plugins = this.getOption('plugins', {});
       $.each(plugins, function(plugin, pluginData) {
-        if ('undefined' === typeof SF.plugins[plugin]) {
+        if ('undefined' === typeof SF.plugins[plugin] || !(SF.plugins[plugin] instanceof Plugin)) {
           throw new Error('Plugin "' + plugin + '" is not registered.');
-        }
-
-        if (!$.isFunction(SF.plugins[plugin].isInitialized)) {
-          throw new Error('Plugin "' + plugin + '" must implement method "isInitialized".');
         }
 
         if (SF.plugins[plugin].isInitialized($element)) {
           return;
-        }
-
-        if (!$.isFunction(SF.plugins[plugin].initialize)) {
-          throw new Error('Plugin "' + plugin + '" must implement method "initialize".');
         }
 
         var event = $.Event('ite-before-apply.plugin', {
@@ -560,8 +579,8 @@
       if (this.hasOption('plugins')) {
         var plugins = this.getOption('plugins', {});
         $.each(plugins, function (plugin, pluginData) {
-          if ($.isFunction(SF.plugins[plugin].getValue)) {
-            value = SF.plugins[plugin].getValue($element);
+          value = SF.plugins[plugin].getValue($element);
+          if ('undefined' !== typeof value) {
             valueTaken = true;
 
             return false; // break
@@ -612,8 +631,8 @@
       if (this.hasOption('plugins')) {
         var plugins = this.getOption('plugins', {});
         $.each(plugins, function (plugin, pluginData) {
-          if ($.isFunction(SF.plugins[plugin].getValue)) {
-            value = SF.plugins[plugin].getValue($element);
+          value = SF.plugins[plugin].getValue($element);
+          if ('undefined' !== typeof value) {
             valueTaken = true;
 
             return false; // break
@@ -662,13 +681,17 @@
         var plugins = this.getOption('plugins', {});
         var self = this;
         $.each(plugins, function (plugin, pluginData) {
-          if ($.isFunction(SF.plugins[plugin].setValue)) {
-            SF.plugins[plugin].setValue($element, $newElement, self);
+          var result = SF.plugins[plugin].setValue($element, $newElement, self);
+          if ('undefined' !== typeof result) {
             valueSet = true;
 
             return false; // break
           }
         });
+
+        if (valueSet) {
+          return;
+        }
       }
 
       // set value in regular way
@@ -816,6 +839,7 @@
   FormBag.prototype.fn = FormBag.prototype;
 
   SF.fn.classes = $.extend(SF.fn.classes, {
+    Plugin: Plugin,
     FormPath: FormPath,
     FormAccessor: FormAccessor,
     FormView: FormView,

@@ -1,5 +1,5 @@
 (function($) {
-  SF.fn.plugins['tinymce'] = {
+  SF.fn.plugins['tinymce'] = new SF.classes.Plugin({
     isInitialized: function($element) {
       return 'undefined' !== typeof window.tinyMCE
         && 'undefined' !== typeof window.tinyMCE.get($element.attr('id'));
@@ -9,5 +9,5 @@
     initialize: function($element, pluginData) {
       $element.tinymce(pluginData.options);
     }
-  };
+  });
 })(jQuery);

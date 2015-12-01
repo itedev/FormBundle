@@ -1,5 +1,5 @@
 (function($) {
-  SF.fn.plugins['x_editable'] = {
+  SF.fn.plugins['x_editable'] = new SF.classes.Plugin({
     isApplied: function(element) {
       return false;
     },
@@ -64,5 +64,5 @@
 
       element.editable(options);
     }
-  };
+  });
 })(jQuery);

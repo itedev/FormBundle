@@ -1,5 +1,5 @@
 (function($) {
-  SF.fn.plugins['typeahead'] = {
+  SF.fn.plugins['typeahead'] = new SF.classes.Plugin({
     isInitialized: function($element) {
       return 'undefined' !== typeof $element.data('tt-typeahead');
     },
@@ -27,5 +27,5 @@
 
       $element.typeahead(pluginData.options, datasetOptions);
     }
-  };
+  });
 })(jQuery);

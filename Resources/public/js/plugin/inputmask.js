@@ -1,5 +1,5 @@
 (function($) {
-  SF.fn.plugins['inputmask'] = {
+  SF.fn.plugins['inputmask'] = new SF.classes.Plugin({
     isInitialized: function($element) {
       return 'undefined' !== typeof $element.data('_inputmask');
     },
@@ -11,5 +11,5 @@
     //setValue: function($element) {
     //  $element.trigger('change');
     //}
-  };
+  });
 })(jQuery);

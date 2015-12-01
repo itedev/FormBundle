@@ -1,5 +1,5 @@
 (function($) {
-  SF.fn.plugins['knob'] = {
+  SF.fn.plugins['knob'] = new SF.classes.Plugin({
     isInitialized: function($element) {
       return 'undefined' !== typeof $element.data('kontroled');
     },
@@ -10,6 +10,8 @@
 
     setValue: function($element) {
       $element.trigger('change');
+
+      return true;
     }
-  };
+  });
 })(jQuery);

@@ -1,5 +1,5 @@
 (function($) {
-  SF.fn.plugins['form'] = {
+  SF.fn.plugins['form'] = new SF.classes.Plugin({
     isApplied: function(element) {
       return SF.util.hasEvent(element, 'submit.form-plugin');
     },
@@ -57,5 +57,5 @@
 
       form.find('.sf-error').remove();
     }
-  };
+  });
 })(jQuery);

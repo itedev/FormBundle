@@ -1,5 +1,5 @@
 (function($) {
-  SF.fn.plugins['parsley'] = {
+  SF.fn.plugins['parsley'] = new SF.classes.Plugin({
     isApplied: function(element) {
       return 'undefined' !== typeof element.data('parsleyForm');
     },
@@ -21,5 +21,5 @@
 
       element.parsley(options);
     }
-  };
+  });
 })(jQuery);

@@ -1,5 +1,5 @@
 (function($) {
-  SF.fn.plugins['select2'] = {
+  SF.fn.plugins['select2'] = new SF.classes.Plugin({
     isInitialized: function($element) {
       return 'SELECT' !== $element.prop('tagName') || 'undefined' !== typeof $element.data('select2');
     },
@@ -10,12 +10,12 @@
 
       // google fonts
       if (extras.hasOwnProperty('google_fonts')) {
-        options = $.extend(true, options, {
+        options = $.extend(true, {
           formatResult: function(state) {
             var option = $(state.element);
             return '<div style="height: 28px; background: url(/bundles/iteform/img/google_fonts.png); background-position: 0 -' + ((option.index() * 30) - 2) + 'px;"></div>';
           }
-        });
+        }, options);
       }
 
       // ajax
@@ -45,14 +45,11 @@
         options = $.extend(true, {
           tags: true,
           createTag: function (params) {
-            //var results = arguments.callee.caller.arguments[0].results;
-            //if (0 === results.length) {
-              return {
-                id: params.term,
-                text: params.term,
-                isNew: true
-              };
-            //}
+            return {
+              id: params.term,
+              text: params.term,
+              isNew: true
+            };
           }
         }, options);
         if (extras.hasOwnProperty('create_url')) {
@@ -85,19 +82,19 @@
           });
         } else {
           $element.on('select2:select', function(e) {
-            var $this = $(this);
             var selection = e.params.data;
-
-            if (selection.isNew) {
-              var term = selection.id;
-              $this
-                .find('[value="' + term + '"]')
-                  .replaceWith('<option value="' + term + '">' + term + '</option>')
-                .end()
-                .val(term)
-                .triggerHandler('change.select2')
-              ;
+            if (!selection.hasOwnProperty('isNew')) {
+              return;
             }
+
+            var term = selection.id;
+            $element
+              .find('[value="' + term + '"]')
+                .replaceWith('<option value="' + term + '">' + term + '</option>')
+              .end()
+              .val(term)
+              .triggerHandler('change.select2')
+            ;
           });
         }
       }
@@ -109,7 +106,10 @@
       $element
         .html('')
         .val('')
+        .triggerHandler('change.select2')
       ;
+
+      return true;
     },
 
     setValue: function($element, $newElement) {
@@ -118,6 +118,8 @@
         .val($newElement.val())
         .triggerHandler('change.select2')
       ;
+
+      return true;
     }
-  };
+  });
 })(jQuery);

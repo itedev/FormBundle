@@ -1,5 +1,5 @@
 (function($) {
-  SF.fn.plugins['fineuploader'] = {
+  SF.fn.plugins['fineuploader'] = new SF.classes.Plugin({
     isInitialized: function($element) {
       return 'undefined' !== typeof $element.data('fineuploader');
     },
@@ -18,5 +18,5 @@
 
       $element.fineUploader(options);
     }
-  };
+  });
 })(jQuery);

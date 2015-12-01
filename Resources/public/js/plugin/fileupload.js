@@ -1,5 +1,5 @@
 (function($) {
-  SF.fn.plugins['fileupload'] = {
+  SF.fn.plugins['fileupload'] = new SF.classes.Plugin({
     isInitialized: function($element) {
       return $element.data('blueimp-fileupload');
     },
@@ -24,5 +24,5 @@
 
       $element.fileupload(options);
     }
-  };
+  });
 })(jQuery);

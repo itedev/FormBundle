@@ -1,5 +1,5 @@
 (function($) {
-  SF.fn.plugins['icheck'] = {
+  SF.fn.plugins['icheck'] = new SF.classes.Plugin({
     isInitialized: function($element) {
       return !$element.is($element.icheck('data'));
     },
@@ -17,6 +17,8 @@
       } else {
         $element.icheck($newElement.prop('checked') ? 'checked' : 'unchecked');
       }
+
+      return true;
     }
-  };
+  });
 })(jQuery);
