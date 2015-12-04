@@ -61,8 +61,13 @@ class HierarchicalEvent
      * @param bool $submitted
      * @param array|null $originator
      */
-    public function __construct(FormInterface $form, array $parents, array $options, $submitted = false, array $originator = null)
-    {
+    public function __construct(
+        FormInterface $form,
+        array $parents,
+        array $options,
+        $submitted = false,
+        array $originator = null
+    ) {
         $this->form = $form;
         $this->parents = new HierarchicalParentCollection($parents);
         $this->options = $options;
@@ -243,6 +248,15 @@ class HierarchicalEvent
     public function getParent($parentName)
     {
         return $this->parents->get($parentName);
+    }
+
+    /**
+     * @param string $parentName
+     * @return bool
+     */
+    public function hasParent($parentName)
+    {
+        return $this->parents->has($parentName);
     }
 
     /**
