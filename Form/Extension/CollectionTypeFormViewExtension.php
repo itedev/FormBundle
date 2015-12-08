@@ -54,5 +54,4 @@ class CollectionTypeFormViewExtension extends AbstractTypeExtension implements C
     {
         return 'collection';
     }
-
 }

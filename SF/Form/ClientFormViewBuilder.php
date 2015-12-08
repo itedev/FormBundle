@@ -71,9 +71,13 @@ class ClientFormViewBuilder implements ClientFormViewBuilderInterface
      * @param FormInterface $form
      * @param array $options
      */
-    protected function buildClientView(ResolvedFormTypeInterface $type, ClientFormView $clientView, FormView $view,
-        FormInterface $form, array $options)
-    {
+    protected function buildClientView(
+        ResolvedFormTypeInterface $type,
+        ClientFormView $clientView,
+        FormView $view,
+        FormInterface $form,
+        array $options
+    ) {
         /** @var ResolvedFormTypeInterface $parent */
         $parentType = $type->getParent();
         if (null !== $parentType) {
@@ -98,5 +102,4 @@ class ClientFormViewBuilder implements ClientFormViewBuilderInterface
             }
         }
     }
-
 }

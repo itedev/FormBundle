@@ -22,11 +22,14 @@ class FormTypeAttrCallbackExtension extends AbstractTypeExtension
         $resolver->setOptional([
             'attr_callback',
         ]);
-        $resolver->setAllowedTypes(array(
+        $resolver->setAllowedTypes([
             'attr_callback' => ['callable'],
-        ));
+        ]);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         if (!isset($options['attr_callback'])) {

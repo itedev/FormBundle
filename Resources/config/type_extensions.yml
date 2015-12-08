@@ -6,6 +6,7 @@ parameters:
     ite_form.form.type_extension.collection.form_view.class:    ITE\FormBundle\Form\Extension\CollectionTypeFormViewExtension
     ite_form.form.type_extension.choice.form_view.class:        ITE\FormBundle\Form\Extension\ChoiceTypeFormViewExtension
     ite_form.form.type_extension.hidden.markup.class:           ITE\FormBundle\Form\Extension\Hidden\HiddenTypeMarkupExtension
+    ite_form.form.type_extension.entity.sort.class:             ITE\FormBundle\Form\Extension\EntityTypeSortExtension
 
 services:
     ite_form.form.type_extension.plugin.form:
@@ -37,7 +38,6 @@ services:
 
     ite_form.form.type_extension.choice.form_view:
         class: %ite_form.form.type_extension.choice.form_view.class%
-        arguments: [ @ite_form.client_form_view_builder ]
         tags:
             - { name: form.type_extension, alias: choice }
 
@@ -45,3 +45,8 @@ services:
         class: %ite_form.form.type_extension.hidden.markup.class%
         tags:
             - { name: form.type_extension, alias: hidden }
+
+    ite_form.form.type_extension.entity.sort:
+        class: %ite_form.form.type_extension.entity.sort.class%
+        tags:
+            - { name: form.type_extension, alias: entity }
