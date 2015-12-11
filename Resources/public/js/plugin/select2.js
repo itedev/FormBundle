@@ -45,9 +45,13 @@
         options = $.extend(true, {
           tags: true,
           createTag: function (params) {
+            var createOptionText = (extras.hasOwnProperty('create_option_format') && 'string' === typeof extras['create_option_format'])
+              ? extras['create_option_format'].replace('%term%', params.term)
+              : params.term;
+
             return {
               id: params.term,
-              text: params.term,
+              text: createOptionText,
               isNew: true
             };
           }

@@ -56,7 +56,7 @@ class AjaxEntityType extends AbstractAjaxChoiceType
 
         $createUrlNormalizer = function (Options $options, $createUrl) use ($self) {
             if (!$options['allow_create']) {
-                return $createUrl;
+                return null;
             }
 
             if (!empty($options['create_route'])) {
@@ -73,6 +73,7 @@ class AjaxEntityType extends AbstractAjaxChoiceType
             'create_route' => null,
             'create_route_parameters' => [],
             'create_url' => null,
+            'create_option_format' => null, // available placeholders: %term%
         ]);
         $resolver->setNormalizers([
             'create_url' => $createUrlNormalizer,
@@ -82,6 +83,7 @@ class AjaxEntityType extends AbstractAjaxChoiceType
             'create_route' => ['null', 'string'],
             'create_route_parameters' => ['array'],
             'create_url' => ['null', 'string'],
+            'create_option_format' => ['null', 'string'],
         ]);
         $resolver->setOptional([
             'create_route',
@@ -112,6 +114,7 @@ class AjaxEntityType extends AbstractAjaxChoiceType
 
         $pluginsExtras['allow_create'] = true;
         $pluginsExtras['create_url'] = $options['create_url'];
+        $pluginsExtras['create_option_format'] = $options['create_option_format'];
 
         $plugins[Select2Plugin::getName()]['extras'] = $pluginsExtras;
         $clientView->setOption('plugins', $plugins);

@@ -69,7 +69,7 @@ class AjaxEntityType extends AbstractType
         $propertyAccessor = $this->propertyAccessor;
         $self = $this;
 
-        $loader = function(Options $options) use ($self) {
+        $loader = function (Options $options) use ($self) {
             $queryBuilder = (null !== $options['query_builder'])
                 ? $options['query_builder']
                 : $options['em']->getRepository($options['class'])->createQueryBuilder('e');
@@ -77,7 +77,7 @@ class AjaxEntityType extends AbstractType
             return $self->getLoader($options['em'], $queryBuilder, $options['class']);
         };
 
-        $choiceList = function(Options $options) use ($propertyAccessor) {
+        $choiceList = function (Options $options) use ($propertyAccessor) {
             return new AjaxEntityChoiceList(
                 $options['em'],
                 $options['class'],
@@ -91,7 +91,7 @@ class AjaxEntityType extends AbstractType
             'choice_list' => $choiceList,
         ]);
 
-        $emNormalizer = function(Options $options, $em) use ($registry) {
+        $emNormalizer = function (Options $options, $em) use ($registry) {
             /* @var ManagerRegistry $registry */
             if (null !== $em) {
                 if ($em instanceof ObjectManager) {
