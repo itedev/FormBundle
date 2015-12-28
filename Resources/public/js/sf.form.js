@@ -492,7 +492,7 @@
     },
 
     isInitializable: function() {
-      return this.hasOption('plugins');
+      return this.isRoot() || this.hasOption('plugins');
     },
 
     setInitialized: function($element) {
@@ -518,6 +518,10 @@
       $.each(this.children, function(name, childView) {
         childView.initializeRecursive(force);
       });
+
+      if ($element) {
+        $element.trigger('post-initialize.ite.form');
+      }
 
       return this;
     },
