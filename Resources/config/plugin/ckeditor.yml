@@ -1,0 +1,9 @@
+parameters:
+    ite_form.form.type.plugin.ckeditor.textarea.class:  ITE\FormBundle\Form\Type\Plugin\CKEditor\TextareaType
+
+services:
+    ite_form.form.type.plugin.ckeditor.textarea:
+        class: %ite_form.form.type.plugin.ckeditor.textarea.class%
+        arguments: [ %ite_form.plugin.ckeditor.options% ]
+        tags:
+            - { name: form.type, alias: ite_ckeditor_textarea }
