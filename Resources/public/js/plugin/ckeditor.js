@@ -10,6 +10,7 @@
 
     initialize: function($element, pluginData, view) {
       $element.ckeditor(pluginData.options);
+      //CKEDITOR.replace($element.attr('id'), pluginData.options);
     },
 
     setValue: function($element, $newElement, view) {
