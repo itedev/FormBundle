@@ -186,14 +186,16 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
     }
 
     /**
-     * @param $name
-     * @param $type
-     * @return $this|FormBuilderInterface
+     * {@inheritdoc}
      */
-    public function replaceType($name, $type)
+    public function replaceType($name, $type, $modifier = null)
     {
         $child = $this->get($name);
         $options = $child->getOptions();
+
+        if (is_callable($modifier)) {
+            $options = call_user_func($modifier, $options);
+        }
 
         return $this->add($name, $type, $options);
     }
@@ -201,13 +203,15 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
     /**
      * {@inheritdoc}
      */
-    public function replaceOptions($name, array $options)
+    public function replaceOptions($name, $modifier)
     {
         $child = $this->get($name);
-        $currentOptions = $child->getOptions();
+        $options = $child->getOptions();
         $type = $child->getType()->getName();
 
-        $options = array_replace_recursive($currentOptions, $options);
+        if (is_callable($modifier)) {
+            $options = call_user_func($modifier, $options);
+        }
 
         return $this->add($name, $type, $options);
     }

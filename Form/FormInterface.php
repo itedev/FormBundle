@@ -22,16 +22,17 @@ interface FormInterface extends BaseFormInterface
     /**
      * @param string $name
      * @param string $type
+     * @param callable|null $modifier
      * @return FormInterface
      */
-    public function replaceType($name, $type);
+    public function replaceType($name, $type, $modifier = null);
 
     /**
      * @param string $name
-     * @param array $options
+     * @param callable $modifier
      * @return FormInterface
      */
-    public function replaceOptions($name, array $options);
+    public function replaceOptions($name, $modifier);
 
     /**
      * @param FormInterface|string|int $child

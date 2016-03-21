@@ -46,8 +46,16 @@ interface FormBuilderInterface extends BaseFormBuilderInterface
 
     /**
      * @param string $name
-     * @param array $options
+     * @param string $type
+     * @param callable|null $modifier
      * @return FormBuilderInterface
      */
-    public function replaceOptions($name, array $options);
+    public function replaceType($name, $type, $modifier = null);
+
+    /**
+     * @param string $name
+     * @param callable $modifier
+     * @return FormBuilderInterface
+     */
+    public function replaceOptions($name, $modifier);
 }

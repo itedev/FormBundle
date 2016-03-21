@@ -68,10 +68,14 @@ class Form extends BaseForm implements FormInterface
     /**
      * {@inheritdoc}
      */
-    public function replaceType($name, $type)
+    public function replaceType($name, $type, $modifier = null)
     {
         $child = $this->get($name);
         $options = $child->getConfig()->getOptions();
+
+        if (is_callable($modifier)) {
+            $options = call_user_func($modifier, $options);
+        }
 
         return $this->add($name, $type, $options);
     }
@@ -79,13 +83,15 @@ class Form extends BaseForm implements FormInterface
     /**
      * {@inheritdoc}
      */
-    public function replaceOptions($name, array $options)
+    public function replaceOptions($name, $modifier)
     {
         $child = $this->get($name);
-        $currentOptions = $child->getConfig()->getOptions();
+        $options = $child->getConfig()->getOptions();
         $type = $child->getConfig()->getType()->getName();
 
-        $options = array_replace_recursive($currentOptions, $options);
+        if (is_callable($modifier)) {
+            $options = call_user_func($modifier, $options);
+        }
 
         return $this->add($name, $type, $options);
     }
