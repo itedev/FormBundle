@@ -774,7 +774,8 @@
 //        full_name: this.options['full_name']
 //      };
 //      this.options = $.extend(true, {}, this.options, view.getOptions(), frozenOptions);
-      $.extend(this.options, view.getOptions());
+      this.options = view.getOptions();
+      //$.extend(this.options, view.getOptions());
     }
   };
 

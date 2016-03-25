@@ -443,4 +443,18 @@ class FormUtils
         $refProp->setValue($config, $ed);
         $refProp->setAccessible(false);
     }
-} 
+
+    /**
+     * @param FormInterface $form
+     * @param string $optionName
+     * @param mixed $optionValue
+     */
+    public static function setOption(FormInterface $form, $optionName, $optionValue)
+    {
+        $config = $form->getConfig();
+
+        $options = $config->getOptions();
+        $options[$optionName] = $optionValue;
+        ReflectionUtils::setValue($config, 'options', $options);
+    }
+}

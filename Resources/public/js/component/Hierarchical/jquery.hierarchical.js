@@ -158,6 +158,10 @@
                 return;
               }
 
+              if (!childView.getOption('hierarchical_changed', true)) {
+                return;
+              }
+
               // set element value
               var childEventData = {
                 originator: originatorInfo.originator,

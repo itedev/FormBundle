@@ -178,6 +178,8 @@ class HierarchicalAddChildSubscriber implements EventSubscriberInterface
             // save old form hash
             $this->formHashes[] = $formHash;
 
+            FormUtils::setOption($form->get($this->child), 'hierarchical_changed', false);
+
             return;
         }
 

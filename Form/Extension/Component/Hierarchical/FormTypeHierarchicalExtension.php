@@ -104,6 +104,9 @@ class FormTypeHierarchicalExtension extends AbstractTypeExtension implements Cli
             if (isset($options['hierarchical_trigger_event'])) {
                 $clientView->setOption('hierarchical_trigger_event', $options['hierarchical_trigger_event']);
             }
+            if (isset($options['hierarchical_changed'])) {
+                $clientView->setOption('hierarchical_changed', $options['hierarchical_changed']);
+            }
         }
 
         if ($isHierarchicalOriginator) {
@@ -133,6 +136,7 @@ class FormTypeHierarchicalExtension extends AbstractTypeExtension implements Cli
             'hierarchical_originator',
             'hierarchical_trigger_event',
             'hierarchical_data',
+            'hierarchical_changed',
         ]);
         $resolver->setNormalizers([
             'hierarchical_parents' => $hierarchicalParentsNormalizer,
@@ -141,6 +145,7 @@ class FormTypeHierarchicalExtension extends AbstractTypeExtension implements Cli
             'hierarchical_parents' => ['string', 'array'],
             'hierarchical_originator' => ['bool'],
             'hierarchical_trigger_event' => ['string'],
+            'hierarchical_changed' => ['bool'],
         ]);
     }
 
