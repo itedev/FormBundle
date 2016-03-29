@@ -64,7 +64,8 @@ class AjaxEntityType extends AbstractAjaxChoiceType
             } elseif (!empty($createUrl)) {
                 return $createUrl;
             } else {
-                throw new \RuntimeException('You must specify "create_route" or "create_url" option.');
+                return null;
+                //throw new \RuntimeException('You must specify "create_route" or "create_url" option.');
             }
         };
 
