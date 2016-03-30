@@ -56,7 +56,8 @@
             };
           }
         }, options);
-        if (extras.hasOwnProperty('create_url')) {
+
+        if (extras.hasOwnProperty('create_url') && 'string' === typeof extras['create_url']) {
           $element.on('select2:selecting', function(e) {
             var selection = e.params.args.data;
             if (!selection.hasOwnProperty('isNew')) {
@@ -65,6 +66,14 @@
 
             $element.select2('close');
             e.preventDefault();
+
+            var event = $.Event('before-create-option.ite.plugin.select2', {
+              text: selection.id
+            });
+            $element.trigger(event);
+            if (false === event.result) {
+              return;
+            }
 
             $.ajax({
               type: 'post',
@@ -91,10 +100,18 @@
               return;
             }
 
+            var event = $.Event('before-create-option.ite.plugin.select2', {
+              text: selection.id
+            });
+            $element.trigger(event);
+            if (false === event.result) {
+              return;
+            }
+
             var term = selection.id;
             $element
               .find('[value="' + term + '"]')
-                .replaceWith('<option value="' + term + '">' + term + '</option>')
+              .replaceWith('<option value="' + term + '">' + term + '</option>')
               .end()
               .val(term)
               .triggerHandler('change.select2')

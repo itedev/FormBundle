@@ -38,5 +38,4 @@ abstract class AbstractAjaxChoiceType extends AbstractPluginType implements Clie
             ],
         ]);
     }
-
 }
