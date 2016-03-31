@@ -1,0 +1,16 @@
+parameters:
+    ite_form.proxy_dir: %kernel.cache_dir%/ite_form/proxy
+    ite_form.proxy_factory.class: ITE\FormBundle\Proxy\ProxyFactory
+    ite_form.cache_warmer.proxy.class: ITE\FormBundle\CacheWarmer\ProxyCacheWarmer
+
+services:
+    ite_form.proxy_factory:
+        class: %ite_form.proxy_factory.class%
+        arguments: [ @filesystem, %ite_form.proxy_dir% ]
+
+    ite_form.cache_warmer.proxy:
+        class: %ite_form.cache_warmer.proxy.class%
+        arguments: [ @ite_form.proxy_factory ]
+        public: false
+        tags:
+            - { name: kernel.cache_warmer }

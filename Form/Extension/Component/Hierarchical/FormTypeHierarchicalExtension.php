@@ -133,6 +133,7 @@ class FormTypeHierarchicalExtension extends AbstractTypeExtension implements Cli
 
         $resolver->setOptional([
             'hierarchical_parents',
+            'hierarchical_modifier',
             'hierarchical_originator',
             'hierarchical_trigger_event',
             'hierarchical_data',
@@ -143,6 +144,7 @@ class FormTypeHierarchicalExtension extends AbstractTypeExtension implements Cli
         ]);
         $resolver->setAllowedTypes([
             'hierarchical_parents' => ['string', 'array'],
+            'hierarchical_modifier' => ['callable'],
             'hierarchical_originator' => ['bool'],
             'hierarchical_trigger_event' => ['string'],
             'hierarchical_changed' => ['bool'],

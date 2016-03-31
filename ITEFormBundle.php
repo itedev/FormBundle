@@ -21,6 +21,17 @@ class ITEFormBundle extends Bundle
     /**
      * {@inheritdoc}
      */
+    public function boot()
+    {
+        $proxyFactory = $this->container->get('ite_form.proxy_factory');
+        spl_autoload_register($proxyFactory->getProxyAutoloader());
+
+        parent::boot();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function build(ContainerBuilder $container)
     {
         $container->addCompilerPass(new SFFormExtensionPass());

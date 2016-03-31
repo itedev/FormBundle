@@ -1,0 +1,7 @@
+parameters:
+    form.resolved_type_factory.class: ITE\FormBundle\Form\ResolvedFormTypeFactory
+
+services:
+    form.resolved_type_factory:
+        class: %form.resolved_type_factory.class%
+        arguments: [ @ite_form.proxy_factory ]

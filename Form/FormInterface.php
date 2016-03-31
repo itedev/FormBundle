@@ -2,6 +2,7 @@
 
 namespace ITE\FormBundle\Form;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface as BaseFormInterface;
 
 /**
@@ -11,6 +12,75 @@ use Symfony\Component\Form\FormInterface as BaseFormInterface;
  */
 interface FormInterface extends BaseFormInterface
 {
+    /**
+     * @return mixed
+     */
+    public function getRawModelData();
+
+    /**
+     * @param mixed $modelData
+     * @return $this
+     */
+    public function setRawModelData($modelData);
+
+    /**
+     * @return mixed
+     */
+    public function getRawNormData();
+
+    /**
+     * @param mixed $normData
+     * @return $this
+     */
+    public function setRawNormData($normData);
+
+    /**
+     * @return mixed
+     */
+    public function getRawViewData();
+
+    /**
+     * @param mixed $viewData
+     * @return $this
+     */
+    public function setRawViewData($viewData);
+
+    /**
+     * @return FormInterface[]
+     */
+    public function getRawChildren();
+
+    /**
+     * @param FormInterface[] $children
+     * @return $this
+     */
+    public function setRawChildren($children);
+
+    /**
+     * @param FormInterface|null $parent
+     * @return $this
+     */
+    public function setRawParent(FormInterface $parent = null);
+
+    /**
+     * @param bool $submitted
+     * @return $this
+     */
+    public function setRawSubmitted($submitted);
+
+    /**
+     * @param string $optionName
+     * @param mixed $optionValue
+     * @return $this
+     */
+    public function setRawOption($optionName, $optionValue);
+
+    ///**
+    // * @param EventDispatcherInterface $ed
+    // * @return $this
+    // */
+    //public function setRawEventDispatcher(EventDispatcherInterface $ed);
+
     /**
      * @param FormInterface|string|int
      * @param string|null
