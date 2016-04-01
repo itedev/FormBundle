@@ -3,12 +3,7 @@
 namespace ITE\FormBundle\Form;
 
 use ITE\Common\Util\ReflectionUtils;
-use ITE\FormBundle\Form\Builder\FormBuilder;
-use ITE\FormBundle\Form\EventListener\Component\Hierarchical\HierarchicalAddChildSubscriber;
-use ITE\FormBundle\Form\EventListener\Component\Hierarchical\HierarchicalSetDataSubscriber;
-use ITE\FormBundle\Util\FormUtils;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Form as BaseForm;
 
 /**
@@ -18,11 +13,6 @@ use Symfony\Component\Form\Form as BaseForm;
  */
 class Form extends BaseForm implements FormInterface
 {
-    /**
-     * @var bool $lockSetData2
-     */
-    private $lockSetData2 = false;
-
     /**
      * {@inheritdoc}
      */
@@ -128,6 +118,23 @@ class Form extends BaseForm implements FormInterface
 
         return $this;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function unsetRawOption($optionName)
+    {
+        $config = $this->getConfig();
+
+        $options = $config->getOptions();
+        if (isset($options[$optionName])) {
+            unset($options[$optionName]);
+        }
+        ReflectionUtils::setValue($config, 'options', $options);
+
+        return $this;
+    }
+
     //
     ///**
     // * {@inheritdoc}
@@ -151,7 +158,25 @@ class Form extends BaseForm implements FormInterface
     /**
      * {@inheritdoc}
      */
-    public function addHierarchical($child, $parents, $type = null, array $options = [], $formModifier = null)
+    public function add($child, $type = null, array $options = [])
+    {
+        $originalOptions = $options;
+        // @todo: rid of this
+        if (isset($originalOptions['hierarchical_processed'])) {
+            unset($originalOptions['hierarchical_processed']);
+        }
+        $options = array_merge($options, [
+            'original_type' => $type,
+            'original_options' => $originalOptions,
+        ]);
+
+        return parent::add($child, $type, $options);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addHierarchical($child, $parents, $type = null, array $options = [], $callback = null)
     {
         if (!is_string($child)) {
             throw new UnexpectedTypeException($child, 'string');
@@ -165,34 +190,15 @@ class Form extends BaseForm implements FormInterface
         if (!is_array($parents)) {
             $parents = array($parents);
         }
-        if (!is_callable($formModifier)) {
+        if (!is_callable($callback)) {
             throw new \InvalidArgumentException('The form modifier handler must be a valid PHP callable.');
         }
 
         $options = array_merge($options, [
             'hierarchical_parents' => $parents,
+            'hierarchical_callback' => $callback,
         ]);
-
-        /** @var FormBuilder $config */
-        $config = $this->getConfig();
-        $formAccessor = $config->getFormAccessor();
-
-        parent::add($child, $type, $options);
-
-        FormUtils::addEventSubscriber($this->get($child), new HierarchicalSetDataSubscriber());
-
-        // evaluate reference point
-        $referenceLevelUp = false;
-        $reference = FormUtils::getFormReference($this, $child, $referenceLevelUp);
-        FormUtils::addEventSubscriber($reference, new HierarchicalAddChildSubscriber(
-            $child,
-            $type,
-            $options,
-            $parents,
-            $formModifier,
-            $referenceLevelUp,
-            $formAccessor
-        ));
+        $this->add($child, $type, $options);
 
         return $this;
     }

@@ -395,8 +395,8 @@ class FormUtils
 
         $formFactory = $form->getConfig()->getFormFactory();
         $name = $form->getConfig()->getName();
-        $type = $form->getConfig()->getType();
-        $options = $form->getConfig()->getOptions();
+        $type = $form->getConfig()->getOption('original_type');
+        $options = $form->getConfig()->getOption('original_options');
 
         if (isset($options['data'])) {
             unset($options['data']);
@@ -406,7 +406,9 @@ class FormUtils
         }
 
         /** @var FormInterface $newForm */
-        $newForm = $formFactory->createNamed($name, $type, $data, $options);
+        $newForm = $formFactory->createNamed($name, $type, $data, array_merge($options, [
+            'hierarchical_processed' => true,
+        ]));
         $newForm->setParent($form->getParent());
         $newForm->setData($newForm->getConfig()->getData()); // emulate Form::initialize()
 

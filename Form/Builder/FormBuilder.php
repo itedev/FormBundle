@@ -5,16 +5,12 @@ namespace ITE\FormBundle\Form\Builder;
 use ITE\Common\Util\ReflectionUtils;
 use ITE\FormBundle\Form\Builder\Event\HierarchicalEvent;
 use ITE\FormBundle\Form\Builder\Event\Model\HierarchicalParent;
-use ITE\FormBundle\Form\EventListener\Component\Hierarchical\HierarchicalSetDataSubscriber;
-use ITE\FormBundle\Form\EventListener\Component\Hierarchical\HierarchicalAddChildSubscriber;
 use ITE\FormBundle\Form\Form;
 use ITE\FormBundle\Form\FormInterface;
 use ITE\FormBundle\FormAccess\FormAccess;
 use ITE\FormBundle\FormAccess\FormAccessorInterface;
 use ITE\FormBundle\Proxy\ProxyFactory;
-use ITE\FormBundle\Util\EventDispatcherUtils;
 use ITE\FormBundle\Util\FormUtils;
-use ProxyManager\Configuration;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Exception\BadMethodCallException;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
@@ -22,8 +18,6 @@ use Symfony\Component\Form\FormBuilder as BaseFormBuilder;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 /**
  * Class FormBuilder
@@ -32,28 +26,15 @@ use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
  */
 class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
 {
-    const HIERARCHICAL_ADD_CHILD_SUBSCRIBER_CLASS = 'ITE\FormBundle\Form\EventListener\Component\Hierarchical\HierarchicalAddChildSubscriber';
-    const HIERARCHICAL_SET_DATA_SUBSCRIBER_CLASS = 'ITE\FormBundle\Form\EventListener\Component\Hierarchical\HierarchicalSetDataSubscriber';
-
     /**
      * @var ProxyFactory $proxyFactory
      */
     protected $proxyFactory;
 
     /**
-     * @var PropertyAccessorInterface $propertyAccessor
-     */
-    protected $propertyAccessor;
-
-    /**
      * @var FormAccessorInterface
      */
     protected $formAccessor;
-
-    /**
-     * @var array $formHashes
-     */
-    protected $formHashes = [];
 
     /**
      * {@inheritdoc}
@@ -69,7 +50,6 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
         parent::__construct($name, $dataClass, $dispatcher, $factory, $options);
 
         $this->proxyFactory = $proxyFactory;
-        $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
         $this->formAccessor = FormAccess::createFormAccessor();
     }
 
@@ -107,24 +87,22 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
         }
 
         $formAccessor = $this->formAccessor;
-        $formHashes = $this->formHashes;
         $proxy = $this->proxyFactory->createProxy(
             $form,
             [
-                'setData' => function (FormInterface $proxy, FormInterface $instance, $method, $params, $returnEarly) use ($formAccessor, &$formHashes) {
+                'setData' => function (FormInterface $proxy, FormInterface $instance, $method, $params, $returnEarly) use ($formAccessor) {
                     $form = $instance->getParent();
                     $child = $instance->getName();
-                    $type = $instance->getConfig()->getType()->getInnerType();
-                    $options = $instance->getConfig()->getOptions();
-                    $parents = $instance->getConfig()->getOption('hierarchical_parents');
-                    $formModifier = $instance->getConfig()->getOption('hierarchical_modifier');
+                    $type = $instance->getConfig()->getOption('original_type');
+                    $options = $instance->getConfig()->getOption('original_options');
+                    $parents = $instance->getConfig()->getOption('hierarchical_parents', []);
+                    $callback = $instance->getConfig()->getOption('hierarchical_callback');
 
                     if (empty($parents)) {
                         return;
                     }
 
-                    $formHash = spl_object_hash($form->get($child));
-                    if (in_array($formHash, $formHashes)) {
+                    if ($instance->getConfig()->getOption('hierarchical_processed', false)) {
                         return;
                     }
 
@@ -148,41 +126,39 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
                     $params = $parentDatas;
                     array_unshift($params, $hierarchicalEvent);
 
-                    if (false === call_user_func_array($formModifier, $params)) {
-                        // save old form hash
-                        $formHashes[] = $formHash;
-
+                    if (false === call_user_func_array($callback, $params)) {
                         return;
                     }
 
                     //$oldEd = $form->get($this->child)->getConfig()->getEventDispatcher();
-                    $form->add($child, $type, $hierarchicalEvent->getOptions());
+                    $form->add($child, $type, array_merge($hierarchicalEvent->getOptions(), [
+                        'hierarchical_processed' => true,
+                    ]));
                     //$newEd = $form->get($this->child)->getConfig()->getEventDispatcher();
                     //EventDispatcherUtils::extend($newEd, $oldEd);
 
                     $instanceFieldName = $proxy->__sleep();
-                    ReflectionUtils::setValue($proxy, $instanceFieldName[0], $form->get($child));
-
-                    // save new form hash
-                    $formHashes[] = spl_object_hash($form->get($child));
+                    ReflectionUtils::setValue($proxy, $instanceFieldName[0], $form->get($child)->getWrappedValueHolderValue());
                 },
-                'submit' => function (FormInterface $proxy, FormInterface $instance, $method, $params, $returnEarly) use ($formAccessor, &$formHashes) {
+                'submit' => function (FormInterface $proxy, FormInterface $instance, $method, $params, $returnEarly) use ($formAccessor) {
                     $form = $instance->getParent();
                     $child = $instance->getName();
-                    $type = $instance->getConfig()->getType()->getInnerType();
-                    $options = $instance->getConfig()->getOptions();
-                    $parents = $instance->getConfig()->getOption('hierarchical_parents');
-                    $formModifier = $instance->getConfig()->getOption('hierarchical_modifier');
+                    $type = $instance->getConfig()->getOption('original_type');
+                    $options = $instance->getConfig()->getOption('original_options');
+                    $parents = $instance->getConfig()->getOption('hierarchical_parents', []);
+                    $callback = $instance->getConfig()->getOption('hierarchical_callback');
 
                     if (empty($parents)) {
+                        return;
+                    }
+
+                    if ($instance->getConfig()->getOption('hierarchical_processed', false)) {
                         return;
                     }
 
                     //if (!$form->has($child)) {
                     //    return;
                     //}
-
-                    $formHash = spl_object_hash($form->get($child));
 
                     $rootForm = $form->getRoot();
                     $originator = $rootForm->getConfig()->getAttribute('hierarchical_originator');
@@ -208,29 +184,27 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
                     $params = $parentDatas;
                     array_unshift($params, $hierarchicalEvent);
 
-                    if (false === call_user_func_array($formModifier, $params)) {
-                        // save old form hash
-                        $formHashes[] = $formHash;
-
+                    if (false === call_user_func_array($callback, $params)) {
                         $form->get($child)->setRawOption('hierarchical_changed', false);
 
                         return;
                     }
 
                     //$oldEd = $form->get($this->child)->getConfig()->getEventDispatcher();
-                    $form->add($child, $type, $hierarchicalEvent->getOptions());
+                    $form->add($child, $type, array_merge($hierarchicalEvent->getOptions(), [
+                        'hierarchical_processed' => true,
+                    ]));
                     //$newEd = $form->get($this->child)->getConfig()->getEventDispatcher();
                     //EventDispatcherUtils::extend($newEd, $oldEd);
 
                     $instanceFieldName = $proxy->__sleep();
-                    ReflectionUtils::setValue($proxy, $instanceFieldName[0], $form->get($child));
-
-                    // save new form hash
-                    $formHashes[] = spl_object_hash($form->get($child));
+                    ReflectionUtils::setValue($proxy, $instanceFieldName[0], $form->get($child)->getWrappedValueHolderValue());
                 },
             ],
             [
                 'setData' => function (FormInterface $proxy, FormInterface $instance, $method, $params, $returnEarly) use ($formAccessor) {
+                    $instance->unsetRawOption('hierarchical_processed');
+
                     if (!$instance->getConfig()->hasOption('hierarchical_data')) {
                         return;
                     }
@@ -239,6 +213,8 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
                     FormUtils::setData($instance, $data);
                 },
                 'submit' => function (FormInterface $proxy, FormInterface $instance, $method, $params, $returnEarly) use ($formAccessor) {
+                    $instance->unsetRawOption('hierarchical_processed');
+
                     if (!$instance->getConfig()->hasOption('hierarchical_data')) {
                         return;
                     }
@@ -255,7 +231,7 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
     /**
      * {@inheritdoc}
      */
-    public function addHierarchical($child, $parents, $type = null, array $options = [], $formModifier = null)
+    public function addHierarchical($child, $parents, $type = null, array $options = [], $callback = null)
     {
         if (!is_string($child)) {
             throw new UnexpectedTypeException($child, 'string');
@@ -267,38 +243,17 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
             throw new \InvalidArgumentException('You must set at least one parent');
         }
         if (!is_array($parents)) {
-            $parents = array($parents);
+            $parents = [$parents];
         }
-        //if (!is_callable($formModifier)) {
-        //    throw new \InvalidArgumentException('The form modifier handler must be a valid PHP callable.');
+        //if (!is_callable($callback)) {
+        //    throw new \InvalidArgumentException('The hierarchical callback must be a valid PHP callable.');
         //}
 
-        $options = array_merge(
-            $options,
-            [
-                'hierarchical_parents' => $parents,
-                'hierarchical_modifier' => $formModifier,
-            ]
-        );
-
+        $options = array_merge($options, [
+            'hierarchical_parents' => $parents,
+            'hierarchical_callback' => $callback,
+        ]);
         $this->add($child, $type, $options);
-
-        //$this->get($child)->addEventSubscriber(new HierarchicalSetDataSubscriber());
-        //
-        //// evaluate reference point
-        //$referenceLevelUp = false;
-        //$reference = FormUtils::getBuilderReference($this, $child, $referenceLevelUp);
-        //$reference->addEventSubscriber(
-        //    new HierarchicalAddChildSubscriber(
-        //        $child,
-        //        $type,
-        //        $options,
-        //        $parents,
-        //        $formModifier,
-        //        $referenceLevelUp,
-        //        $this->formAccessor
-        //    )
-        //);
 
         return $this;
     }
@@ -306,18 +261,18 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
     /**
      * {@inheritdoc}
      */
-    public function addDataAware($child, $type = null, $formModifier = null)
+    public function addDataAware($child, $type = null, $callback = null)
     {
-        if (!is_callable($formModifier)) {
+        if (!is_callable($callback)) {
             throw new \InvalidArgumentException('The form modifier handler must be a valid PHP callable.');
         }
         $this->addEventListener(
             FormEvents::PRE_SET_DATA,
-            function (FormEvent $event) use ($child, $type, $formModifier) {
+            function (FormEvent $event) use ($child, $type, $callback) {
                 $form = $event->getForm();
                 $data = $event->getData();
 
-                $options = call_user_func($formModifier, $data);
+                $options = call_user_func($callback, $data);
                 $form->add($child, $type, $options);
             }
         );
@@ -330,9 +285,15 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
      */
     public function add($child, $type = null, array $options = [])
     {
-        if ($this->has($child)) {
-            $this->resetHierarchicalSubscribers($child);
+        $originalOptions = $options;
+        // @todo: rid of this
+        if (isset($originalOptions['hierarchical_processed'])) {
+            unset($originalOptions['hierarchical_processed']);
         }
+        $options = array_merge($options, [
+            'original_type' => $type,
+            'original_options' => $originalOptions,
+        ]);
 
         return parent::add($child, $type, $options);
     }
@@ -342,21 +303,19 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
      */
     public function remove($name)
     {
-        $this->resetHierarchicalSubscribers($name);
-
         return parent::remove($name);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function replaceType($name, $type, $modifier = null)
+    public function replaceType($name, $type, $callback = null)
     {
         $child = $this->get($name);
         $options = $child->getOptions();
 
-        if (is_callable($modifier)) {
-            $options = call_user_func($modifier, $options);
+        if (is_callable($callback)) {
+            $options = call_user_func($callback, $options);
         }
 
         return $this->add($name, $type, $options);
@@ -365,44 +324,16 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
     /**
      * {@inheritdoc}
      */
-    public function replaceOptions($name, $modifier)
+    public function replaceOptions($name, $callback)
     {
         $child = $this->get($name);
         $options = $child->getOptions();
         $type = $child->getType()->getName();
 
-        if (is_callable($modifier)) {
-            $options = call_user_func($modifier, $options);
+        if (is_callable($callback)) {
+            $options = call_user_func($callback, $options);
         }
 
         return $this->add($name, $type, $options);
-    }
-
-    /**
-     * @param string $name
-     */
-    protected function resetHierarchicalSubscribers($name)
-    {
-        $child = $this->get($name);
-
-        $isHierarchical = $child->hasOption('hierarchical_parents');
-        if ($isHierarchical) {
-            $referenceLevelUp = false;
-            $reference = FormUtils::getBuilderReference($this, $name, $referenceLevelUp);
-
-            $rawEd = EventDispatcherUtils::getRawEventDispatcher($reference->getFormConfig()->getEventDispatcher());
-            $listeners = EventDispatcherUtils::getRawListeners($rawEd);
-            foreach ($listeners as $eventName => $priorityListeners) {
-                foreach ($priorityListeners as $priority => $eventListeners) {
-                    foreach ($eventListeners as $i => $eventListener) {
-                        if (is_array($eventListener)
-                            && is_object($eventListener[0])
-                            && self::HIERARCHICAL_ADD_CHILD_SUBSCRIBER_CLASS === get_class($eventListener[0])) {
-                            $rawEd->removeSubscriber($eventListener[0]);
-                        }
-                    }
-                }
-            }
-        }
     }
 }

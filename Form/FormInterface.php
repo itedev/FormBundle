@@ -75,6 +75,12 @@ interface FormInterface extends BaseFormInterface
      */
     public function setRawOption($optionName, $optionValue);
 
+    /**
+     * @param string $optionName
+     * @return $this
+     */
+    public function unsetRawOption($optionName);
+
     ///**
     // * @param EventDispatcherInterface $ed
     // * @return $this
@@ -109,8 +115,8 @@ interface FormInterface extends BaseFormInterface
      * @param string|array $parents
      * @param string|null $type
      * @param array $options
-     * @param null $formModifier
+     * @param callable $callback
      * @return FormInterface
      */
-    public function addHierarchical($child, $parents, $type = null, array $options = [], $formModifier = null);
+    public function addHierarchical($child, $parents, $type = null, array $options = [], $callback = null);
 }
