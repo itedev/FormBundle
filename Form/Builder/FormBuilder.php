@@ -203,8 +203,15 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
             ],
             [
                 'setData' => function (FormInterface $proxy, FormInterface $instance, $method, $params, $returnEarly) use ($formAccessor) {
-                    $instance->unsetRawOption('skip_interceptors');
+                    $parents = $instance->getConfig()->getOption('hierarchical_parents', []);
 
+                    if (empty($parents)) {
+                        return;
+                    }
+                    if ($instance->getConfig()->getOption('skip_interceptors', false)) {
+                        $instance->unsetRawOption('skip_interceptors');
+                        return;
+                    }
                     if (!$instance->getConfig()->hasOption('hierarchical_data')) {
                         return;
                     }
@@ -213,8 +220,15 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
                     FormUtils::setData($instance, $data);
                 },
                 'submit' => function (FormInterface $proxy, FormInterface $instance, $method, $params, $returnEarly) use ($formAccessor) {
-                    $instance->unsetRawOption('skip_interceptors');
+                    $parents = $instance->getConfig()->getOption('hierarchical_parents', []);
 
+                    if (empty($parents)) {
+                        return;
+                    }
+                    if ($instance->getConfig()->getOption('skip_interceptors', false)) {
+                        $instance->unsetRawOption('skip_interceptors');
+                        return;
+                    }
                     if (!$instance->getConfig()->hasOption('hierarchical_data')) {
                         return;
                     }
