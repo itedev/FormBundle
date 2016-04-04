@@ -161,9 +161,8 @@ class Form extends BaseForm implements FormInterface
     public function add($child, $type = null, array $options = [])
     {
         $originalOptions = $options;
-        // @todo: rid of this
-        if (isset($originalOptions['hierarchical_processed'])) {
-            unset($originalOptions['hierarchical_processed']);
+        if (isset($originalOptions['skip_interceptors'])) {
+            unset($originalOptions['skip_interceptors']);
         }
         $options = array_merge($options, [
             'original_type' => $type,
@@ -209,7 +208,7 @@ class Form extends BaseForm implements FormInterface
     public function replaceType($name, $type, $modifier = null)
     {
         $child = $this->get($name);
-        $options = $child->getConfig()->getOptions();
+        $options = $child->getConfig()->getOption('original_options');
 
         if (is_callable($modifier)) {
             $options = call_user_func($modifier, $options);
@@ -224,8 +223,8 @@ class Form extends BaseForm implements FormInterface
     public function replaceOptions($name, $modifier)
     {
         $child = $this->get($name);
-        $options = $child->getConfig()->getOptions();
-        $type = $child->getConfig()->getType()->getName();
+        $type = $child->getConfig()->getOption('original_type');
+        $options = $child->getConfig()->getOption('original_options');
 
         if (is_callable($modifier)) {
             $options = call_user_func($modifier, $options);

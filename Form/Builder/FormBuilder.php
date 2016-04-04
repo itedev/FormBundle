@@ -102,7 +102,7 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
                         return;
                     }
 
-                    if ($instance->getConfig()->getOption('hierarchical_processed', false)) {
+                    if ($instance->getConfig()->getOption('skip_interceptors', false)) {
                         return;
                     }
 
@@ -132,7 +132,7 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
 
                     //$oldEd = $form->get($this->child)->getConfig()->getEventDispatcher();
                     $form->add($child, $type, array_merge($hierarchicalEvent->getOptions(), [
-                        'hierarchical_processed' => true,
+                        'skip_interceptors' => true,
                     ]));
                     //$newEd = $form->get($this->child)->getConfig()->getEventDispatcher();
                     //EventDispatcherUtils::extend($newEd, $oldEd);
@@ -152,7 +152,7 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
                         return;
                     }
 
-                    if ($instance->getConfig()->getOption('hierarchical_processed', false)) {
+                    if ($instance->getConfig()->getOption('skip_interceptors', false)) {
                         return;
                     }
 
@@ -192,7 +192,7 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
 
                     //$oldEd = $form->get($this->child)->getConfig()->getEventDispatcher();
                     $form->add($child, $type, array_merge($hierarchicalEvent->getOptions(), [
-                        'hierarchical_processed' => true,
+                        'skip_interceptors' => true,
                     ]));
                     //$newEd = $form->get($this->child)->getConfig()->getEventDispatcher();
                     //EventDispatcherUtils::extend($newEd, $oldEd);
@@ -203,7 +203,7 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
             ],
             [
                 'setData' => function (FormInterface $proxy, FormInterface $instance, $method, $params, $returnEarly) use ($formAccessor) {
-                    $instance->unsetRawOption('hierarchical_processed');
+                    $instance->unsetRawOption('skip_interceptors');
 
                     if (!$instance->getConfig()->hasOption('hierarchical_data')) {
                         return;
@@ -213,7 +213,7 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
                     FormUtils::setData($instance, $data);
                 },
                 'submit' => function (FormInterface $proxy, FormInterface $instance, $method, $params, $returnEarly) use ($formAccessor) {
-                    $instance->unsetRawOption('hierarchical_processed');
+                    $instance->unsetRawOption('skip_interceptors');
 
                     if (!$instance->getConfig()->hasOption('hierarchical_data')) {
                         return;
@@ -286,9 +286,8 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
     public function add($child, $type = null, array $options = [])
     {
         $originalOptions = $options;
-        // @todo: rid of this
-        if (isset($originalOptions['hierarchical_processed'])) {
-            unset($originalOptions['hierarchical_processed']);
+        if (isset($originalOptions['skip_interceptors'])) {
+            unset($originalOptions['skip_interceptors']);
         }
         $options = array_merge($options, [
             'original_type' => $type,
@@ -312,7 +311,7 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
     public function replaceType($name, $type, $callback = null)
     {
         $child = $this->get($name);
-        $options = $child->getOptions();
+        $options = $child->getOption('original_options');
 
         if (is_callable($callback)) {
             $options = call_user_func($callback, $options);
@@ -327,8 +326,8 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
     public function replaceOptions($name, $callback)
     {
         $child = $this->get($name);
-        $options = $child->getOptions();
-        $type = $child->getType()->getName();
+        $type = $child->getOption('original_type');
+        $options = $child->getOption('original_options');
 
         if (is_callable($callback)) {
             $options = call_user_func($callback, $options);

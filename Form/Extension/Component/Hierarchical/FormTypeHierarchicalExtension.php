@@ -138,7 +138,6 @@ class FormTypeHierarchicalExtension extends AbstractTypeExtension implements Cli
             'hierarchical_trigger_event',
             'hierarchical_data',
             'hierarchical_changed',
-            'hierarchical_processed',
         ]);
         $resolver->setNormalizers([
             'hierarchical_parents' => $hierarchicalParentsNormalizer,
@@ -149,7 +148,6 @@ class FormTypeHierarchicalExtension extends AbstractTypeExtension implements Cli
             'hierarchical_originator' => ['bool'],
             'hierarchical_trigger_event' => ['string'],
             'hierarchical_changed' => ['bool'],
-            'hierarchical_processed' => ['bool'],
         ]);
     }
 

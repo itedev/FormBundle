@@ -407,7 +407,7 @@ class FormUtils
 
         /** @var FormInterface $newForm */
         $newForm = $formFactory->createNamed($name, $type, $data, array_merge($options, [
-            'hierarchical_processed' => true,
+            'skip_interceptors' => true,
         ]));
         $newForm->setParent($form->getParent());
         $newForm->setData($newForm->getConfig()->getData()); // emulate Form::initialize()
