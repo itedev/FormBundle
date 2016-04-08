@@ -3,11 +3,11 @@
 namespace ITE\FormBundle\Util;
 
 use ITE\Common\Util\ReflectionUtils;
+use ITE\FormBundle\Form\FormInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\ImmutableEventDispatcher;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\ResolvedFormTypeInterface;
 
@@ -66,7 +66,7 @@ class FormUtils
      */
     public static function getFormByFullName(FormInterface $form, $fullName)
     {
-        $names = array_map(function($name) {
+        $names = array_map(function ($name) {
             return trim($name, '[]');
         }, explode('[', $fullName));
         array_shift($names);
@@ -89,7 +89,7 @@ class FormUtils
      */
     public static function getViewByFullName(FormView $view, $fullName)
     {
-        $names = array_map(function($name) {
+        $names = array_map(function ($name) {
             return trim($name, '[]');
         }, explode('[', $fullName));
         array_shift($names);
@@ -395,8 +395,8 @@ class FormUtils
 
         $formFactory = $form->getConfig()->getFormFactory();
         $name = $form->getConfig()->getName();
-        $type = $form->getConfig()->getType();
-        $options = $form->getConfig()->getOptions();
+        $type = $form->getConfig()->getOption('original_type');
+        $options = $form->getConfig()->getOption('original_options');
 
         if (isset($options['data'])) {
             unset($options['data']);
@@ -405,56 +405,27 @@ class FormUtils
             unset($options['hierarchical_data']);
         }
 
-        $newForm = $formFactory->createNamed($name, $type, $data, $options);
+        /** @var FormInterface $newForm */
+        $newForm = $formFactory->createNamed($name, $type, $data, array_merge($options, [
+            'skip_interceptors' => true,
+        ]));
         $newForm->setParent($form->getParent());
         $newForm->setData($newForm->getConfig()->getData()); // emulate Form::initialize()
 
         $submitted = $form->isSubmitted();
 
-        $modelData = ReflectionUtils::getValue($newForm, 'modelData');
-        $normData = ReflectionUtils::getValue($newForm, 'normData');
-        $viewData = ReflectionUtils::getValue($newForm, 'viewData');
-        $children = ReflectionUtils::getValue($newForm, 'children');
+        $modelData = $newForm->getRawModelData();
+        $normData = $newForm->getRawNormData();
+        $viewData = $newForm->getRawViewData();
+        $children = $newForm->getRawChildren();
 
         foreach ($children as $child) {
-            ReflectionUtils::setValue($child, 'parent', $form);
-            ReflectionUtils::setValue($child, 'submitted', $submitted);
+            $child->setRawParent($form);
+            $child->setRawSubmitted($submitted);
         }
-        ReflectionUtils::setValue($form, 'modelData', $modelData);
-        ReflectionUtils::setValue($form, 'normData', $normData);
-        ReflectionUtils::setValue($form, 'viewData', $viewData);
-        ReflectionUtils::setValue($form, 'children', $children);
-    }
-
-    /**
-     * @param FormInterface $form
-     * @param EventDispatcherInterface $ed
-     */
-    public static function setEventDispatcher(FormInterface $form, EventDispatcherInterface $ed)
-    {
-        $config = $form->getConfig();
-
-        $refClass = new \ReflectionClass($config);
-        while (!$refClass->hasProperty('dispatcher')) {
-            $refClass = $refClass->getParentClass();
-        }
-        $refProp = $refClass->getProperty('dispatcher');
-        $refProp->setAccessible(true);
-        $refProp->setValue($config, $ed);
-        $refProp->setAccessible(false);
-    }
-
-    /**
-     * @param FormInterface $form
-     * @param string $optionName
-     * @param mixed $optionValue
-     */
-    public static function setOption(FormInterface $form, $optionName, $optionValue)
-    {
-        $config = $form->getConfig();
-
-        $options = $config->getOptions();
-        $options[$optionName] = $optionValue;
-        ReflectionUtils::setValue($config, 'options', $options);
+        $form->setRawModelData($modelData);
+        $form->setRawNormData($normData);
+        $form->setRawViewData($viewData);
+        $form->setRawChildren($children);
     }
 }

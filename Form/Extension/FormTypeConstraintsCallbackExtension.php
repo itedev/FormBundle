@@ -3,6 +3,7 @@
 namespace ITE\FormBundle\Form\Extension;
 
 use ITE\Common\Util\ReflectionUtils;
+use ITE\FormBundle\Form\FormInterface;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -41,14 +42,13 @@ class FormTypeConstraintsCallbackExtension extends AbstractTypeExtension
 
         $constraintsCallback = $options['constraints_callback'];
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($constraintsCallback) {
+            /** @var FormInterface $form */
             $form = $event->getForm();
 
             $constraints = call_user_func_array($constraintsCallback, [$form]);
+            $constraints = array_merge($form->getConfig()->getOption('constraints'), $constraints);
 
-            $config = $form->getConfig();
-            $options = ReflectionUtils::getValue($config, 'options');
-            $options['constraints'] = array_merge($options['constraints'], $constraints);
-            ReflectionUtils::setValue($config, 'options', $options);
+            $form->setRawOption('constraints', $constraints);
         }, 1);
     }
 

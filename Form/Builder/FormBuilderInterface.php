@@ -24,38 +24,38 @@ interface FormBuilderInterface extends BaseFormBuilderInterface
      * @param array $options
      * @return FormBuilderInterface
      */
-    public function add($child, $type = null, array $options = array());
+    public function add($child, $type = null, array $options = []);
 
     /**
      * @param int|string|FormBuilderInterface $child
      * @param string|array $parents
      * @param string|FormTypeInterface $type
      * @param array $options
-     * @param null $formModifier
+     * @param callable $callback
      * @return FormBuilderInterface
      */
-    public function addHierarchical($child, $parents, $type = null, array $options = array(), $formModifier = null);
+    public function addHierarchical($child, $parents, $type = null, array $options = [], $callback = null);
 
     /**
      * @param int|string|FormBuilderInterface $child
      * @param string|FormTypeInterface $type
-     * @param callable $formModifier
+     * @param callable $callback
      * @return FormBuilderInterface
      */
-    public function addDataAware($child, $type = null, $formModifier = null);
+    public function addDataAware($child, $type = null, $callback = null);
 
     /**
      * @param string $name
      * @param string $type
-     * @param callable|null $modifier
+     * @param $callback|null $modifier
      * @return FormBuilderInterface
      */
-    public function replaceType($name, $type, $modifier = null);
+    public function replaceType($name, $type, $callback = null);
 
     /**
      * @param string $name
-     * @param callable $modifier
+     * @param callable $callback
      * @return FormBuilderInterface
      */
-    public function replaceOptions($name, $modifier);
+    public function replaceOptions($name, $callback);
 }

@@ -2,9 +2,9 @@
 
 namespace ITE\FormBundle\FormAccess;
 
+use ITE\FormBundle\Form\FormInterface;
 use ITE\FormBundle\SF\Form\ClientFormView;
 use ITE\FormBundle\Util\FormUtils;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
 /**

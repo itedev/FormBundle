@@ -2,6 +2,7 @@
 
 namespace ITE\FormBundle\Form;
 
+use ITE\FormBundle\Proxy\ProxyFactory;
 use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\Form\ResolvedFormTypeFactory as BaseResolvedFormTypeFactory;
 use Symfony\Component\Form\ResolvedFormTypeInterface;
@@ -14,10 +15,26 @@ use Symfony\Component\Form\ResolvedFormTypeInterface;
 class ResolvedFormTypeFactory extends BaseResolvedFormTypeFactory
 {
     /**
+     * @var ProxyFactory $proxyFactory
+     */
+    protected $proxyFactory;
+
+    /**
+     * @param ProxyFactory $proxyFactory
+     */
+    public function __construct(ProxyFactory $proxyFactory)
+    {
+        $this->proxyFactory = $proxyFactory;
+    }
+
+    /**
      * {@inheritdoc}
      */
-    public function createResolvedType(FormTypeInterface $type, array $typeExtensions, ResolvedFormTypeInterface $parent = null)
-    {
-        return new ResolvedFormType($type, $typeExtensions, $parent);
+    public function createResolvedType(
+        FormTypeInterface $type,
+        array $typeExtensions,
+        ResolvedFormTypeInterface $parent = null
+    ) {
+        return new ResolvedFormType($this->proxyFactory, $type, $typeExtensions, $parent);
     }
 }

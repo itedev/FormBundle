@@ -164,7 +164,7 @@
 
               // set element value
               var childEventData = {
-                originator: originatorInfo.originator,
+                originator: originatorInfo.fullName,
                 originatorValue: originatorInfo.originatorValue,
                 relatedTarget: $newChildElement.get(0)
               };

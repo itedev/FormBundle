@@ -28,6 +28,8 @@ class ITEFormExtension extends Extension
         $configuration = new Configuration($container);
         $config = $this->processConfiguration($configuration, $configs);
 
+        $loader->load('overridden.yml');
+        $loader->load('proxy.yml');
         $loader->load('sf.yml');
         $loader->load('types.yml');
         $loader->load('hidden.yml');
