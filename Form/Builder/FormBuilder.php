@@ -7,6 +7,7 @@ use ITE\FormBundle\Form\Builder\Event\HierarchicalEvent;
 use ITE\FormBundle\Form\Builder\Event\Model\HierarchicalParent;
 use ITE\FormBundle\Form\Form;
 use ITE\FormBundle\Form\FormInterface;
+use ITE\FormBundle\Form\DataMapper\PropertyPathMapper;
 use ITE\FormBundle\FormAccess\FormAccess;
 use ITE\FormBundle\FormAccess\FormAccessorInterface;
 use ITE\FormBundle\Proxy\ProxyFactory;
@@ -73,7 +74,8 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
         }
 
         $children = $this->all();
-
+        // set overridden data mapper
+        $this->setDataMapper($this->getCompound() ? new PropertyPathMapper() : null);
         $form = new Form($this->getFormConfig());
 
         foreach ($children as $child) {
