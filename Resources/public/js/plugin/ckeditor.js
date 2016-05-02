@@ -4,8 +4,10 @@
 (function($) {
   SF.fn.plugins['ckeditor'] = new SF.classes.Plugin({
     isInitialized: function($element) {
-      return 'undefined' !== typeof window.CKEDITOR
-        && 'undefined' !== typeof window.CKEDITOR.instances[$element.attr('id')];
+      //return 'undefined' !== typeof window.CKEDITOR
+      //  && 'undefined' !== typeof window.CKEDITOR.instances[$element.attr('id')];
+
+      return 'undefined' !== typeof $element.data('ckeditorInstance');
     },
 
     initialize: function($element, pluginData, view) {
