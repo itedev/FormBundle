@@ -57,12 +57,12 @@
           afterShowCallback.apply(self.$collection, [$item]);
         }
 
-        self.$collection.trigger('ite-add.collection', [$item]);
-
         var collectionView = self.$collection.formView();
         if (null !== collectionView) {
           collectionView.addCollectionItem(self.index);
         }
+
+        self.$collection.trigger('ite-add.collection', [$item]);
       });
     },
     remove: function($item) {
