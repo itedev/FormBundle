@@ -109,9 +109,6 @@ class SFFormExtension extends SFExtension implements SFFormExtensionInterface
         $dump = '';
         if ($this->formBag->count()) {
             $dump .= 'SF.forms.set(' . json_encode($this->formBag->toArray()) . ');';
-            $dump .= '(function($){$(function(){';
-            $dump .= 'SF.forms.initialize();';
-            $dump .= '});})(jQuery);';
         }
 
         return $dump;
