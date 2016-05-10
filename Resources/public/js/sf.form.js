@@ -866,14 +866,14 @@
   SF.services.set('form_accessor', new FormAccessor());
 
   // initialize
-  var baseInitialize = SF.fn.initialize;
-  SF.fn = $.extend(SF.fn, {
-    initialize: function () {
-      baseInitialize.call(this);
+  // var baseInitialize = SF.fn.initialize;
+  // SF.fn = $.extend(SF.fn, {
+  //   initialize: function () {
+  //     baseInitialize.call(this);
 
-      window.SF.forms.initialize();
-    }
-  });
+  //     window.SF.forms.initialize();
+  //   }
+  // });
 
   $(document)
     .on('ite-pre-ajax-complete', function(e, data) {
