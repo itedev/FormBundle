@@ -5,6 +5,7 @@ namespace ITE\FormBundle\Form;
 use ITE\FormBundle\Form\Builder\ButtonBuilder;
 use ITE\FormBundle\Form\Builder\FormBuilder;
 use ITE\FormBundle\Form\Builder\SubmitButtonBuilder;
+use ITE\FormBundle\OptionsResolver\MultidimensionalOptionsResolver;
 use ITE\FormBundle\Proxy\ProxyFactory;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Form\ButtonTypeInterface;
@@ -21,6 +22,11 @@ use Symfony\Component\Form\SubmitButtonTypeInterface;
  */
 class ResolvedFormType extends BaseResolvedFormType
 {
+    /**
+     * @var MultidimensionalOptionsResolver
+     */
+    private $optionsResolver;
+
     /**
      * @var ProxyFactory $proxyFactory
      */
@@ -40,6 +46,28 @@ class ResolvedFormType extends BaseResolvedFormType
     ) {
         parent::__construct($innerType, $typeExtensions, $parent);
         $this->proxyFactory = $proxyFactory;
+    }
+
+    /**
+     * @return MultidimensionalOptionsResolver
+     */
+    public function getOptionsResolver()
+    {
+        if (null === $this->optionsResolver) {
+            if (null !== $this->getParent()) {
+                $this->optionsResolver = clone $this->getParent()->getOptionsResolver();
+            } else {
+                $this->optionsResolver = new MultidimensionalOptionsResolver();
+            }
+
+            $this->getInnerType()->setDefaultOptions($this->optionsResolver);
+
+            foreach ($this->getTypeExtensions() as $extension) {
+                $extension->setDefaultOptions($this->optionsResolver);
+            }
+        }
+
+        return $this->optionsResolver;
     }
 
     /**

@@ -3,8 +3,13 @@
  */
 (function($) {
 
-  var Submitter = function(name) {
-    this.name = name;
+  var Submitter = function(methods) {
+    methods = methods || {};
+
+    var self = this;
+    $.each(methods, function(methodName, method) {
+      self[methodName] = method;
+    });
   };
 
   Submitter.prototype = {
@@ -23,37 +28,10 @@
 
   Submitter.prototype.fn = Submitter.prototype;
 
-  var SubmitterBag = function() {
-    this.submitters = {};
-  };
-
-  SubmitterBag.prototype = {
-    has: function(name) {
-      return this.submitters.hasOwnProperty(name);
-    },
-
-    add: function(name, submitter) {
-      if (!this.has(name)) {
-        this.submitters[name] = submitter;
-      }
-
-      return this;
-    },
-
-    get: function(name) {
-      if (!this.has(name)) {
-        throw new Error('Submitter "' + name + '" is not registered.');
-      }
-
-      return this.submitters[name];
-    }
-  };
-
-  SubmitterBag.prototype.fn = SubmitterBag.prototype;
+  SF.fn.submitters = {};
 
   SF.fn.classes = $.extend(SF.fn.classes, {
-    Submitter: Submitter,
-    SubmitterBag: SubmitterBag
+    Submitter: Submitter
   });
 
   var baseIsInitializable = SF.fn.classes.FormView.prototype.isInitializable;
@@ -72,7 +50,7 @@
         return;
       }
 
-      var submitter = SF.submitters.get(this.getOption('submitter'));
+      var submitter = SF.submitters[this.getOption('submitter')];
 
       if (submitter.isInitialized($element)) {
         return;

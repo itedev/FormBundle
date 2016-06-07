@@ -4,6 +4,6 @@ parameters:
 services:
     ite_form.form.type_extension.component.ajax_submit:
         class: %ite_form.form.type_extension.component.ajax_submit.class%
-        arguments: [ %ite_form.ajax_submit.default_submitter% ]
+        arguments: [ %ite_form.component.ajax_submit.default_submitter% ]
         tags:
             - { name: form.type_extension, alias: form }
