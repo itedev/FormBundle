@@ -37,7 +37,7 @@ class AjaxSubmitComponent extends AbstractComponent
      */
     public function loadConfiguration(FileLoader $loader, array $config, ContainerBuilder $container)
     {
-        $container->setParameter('ite_form.ajax_submit.default_submitter', $config['default_submitter']);
+        $container->setParameter('ite_form.component.ajax_submit.default_submitter', $config['default_submitter']);
 
         parent::loadConfiguration($loader, $config, $container);
     }

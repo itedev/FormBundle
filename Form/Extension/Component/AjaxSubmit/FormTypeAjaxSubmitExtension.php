@@ -2,12 +2,14 @@
 
 namespace ITE\FormBundle\Form\Extension\Component\AjaxSubmit;
 
+use ITE\FormBundle\OptionsResolver\MultidimensionalOptionsResolver;
 use ITE\FormBundle\SF\Form\ClientFormTypeExtensionInterface;
 use ITE\FormBundle\SF\Form\ClientFormView;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Options;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
@@ -35,13 +37,19 @@ class FormTypeAjaxSubmitExtension extends AbstractTypeExtension implements Clien
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
+//        /** @var MultidimensionalOptionsResolver $resolver */
+//        $subResolver = new OptionsResolver();
+//
+//        $resolver->setResolvers([
+//            'submitter_options' => $subResolver,
+//        ]);
         $resolver->setOptional([
             'ajax_submit',
             'submitter',
             'submitter_options',
         ]);
         $resolver->setDefaults([
-            'ajax_submit_replace' => 'replace',
+            'ajax_submit_type' => 'replace',
         ]);
         $resolver->setAllowedTypes([
             'ajax_submit' => ['bool'],
