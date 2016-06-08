@@ -37,6 +37,12 @@ class FormTypeExtrasExtension extends AbstractTypeExtension
                 $view->vars[$name] = $value;
             }
         }
+        if (isset($options['extra_block_prefixes'])) {
+            $extraBlockPrefixes = (array) $options['extra_block_prefixes'];
+            $blockPrefixes = $view->vars['block_prefixes'];
+            array_splice($blockPrefixes, -1, 0, $extraBlockPrefixes);
+            $view->vars['block_prefixes'] = $blockPrefixes;
+        }
     }
 
     /**
@@ -48,11 +54,13 @@ class FormTypeExtrasExtension extends AbstractTypeExtension
             'extra_options',
             'extra_attributes',
             'extra_view_vars',
+            'extra_block_prefixes',
         ]);
         $resolver->setAllowedTypes([
             'extra_options' => ['array'],
             'extra_attributes' => ['array'],
             'extra_view_vars' => ['array'],
+            'extra_block_prefixes' => ['string', 'array'],
         ]);
     }
 

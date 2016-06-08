@@ -316,6 +316,23 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
     /**
      * {@inheritdoc}
      */
+    public function create($name, $type = null, array $options = [])
+    {
+        $originalOptions = $options;
+        if (isset($originalOptions['skip_interceptors'])) {
+            unset($originalOptions['skip_interceptors']);
+        }
+        $options = array_merge($options, [
+            'original_type' => $type,
+            'original_options' => $originalOptions,
+        ]);
+
+        return parent::create($name, $type, $options);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function remove($name)
     {
         return parent::remove($name);

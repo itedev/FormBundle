@@ -25,7 +25,6 @@ services:
 
     ite_form.form.type_extension.form.constraints_callback:
         class: %ite_form.form.type_extension.form.constraints_callback.class%
-        arguments: [ @validator ]
         tags:
             - { name: form.type_extension, alias: form }
 

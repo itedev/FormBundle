@@ -69,17 +69,24 @@ interface FormInterface extends BaseFormInterface
     public function setRawSubmitted($submitted);
 
     /**
-     * @param string $optionName
-     * @param mixed $optionValue
+     * @param string $name
+     * @param mixed $value
      * @return $this
      */
-    public function setRawOption($optionName, $optionValue);
+    public function setRawOption($name, $value);
 
     /**
-     * @param string $optionName
+     * @param string $name
      * @return $this
      */
-    public function unsetRawOption($optionName);
+    public function unsetRawOption($name);
+
+    /**
+     * @param string $name
+     * @param mixed $value
+     * @return $this
+     */
+    public function setRawAttribute($name, $value);
 
     ///**
     // * @param EventDispatcherInterface $ed

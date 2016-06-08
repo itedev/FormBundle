@@ -2,14 +2,12 @@
 
 namespace ITE\FormBundle\Form\Extension;
 
-use ITE\Common\Util\ReflectionUtils;
 use ITE\FormBundle\Form\FormInterface;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Symfony\Component\Validator\Mapping\Factory\MetadataFactoryInterface;
 
 /**
  * Class FormTypeConstraintsCallbackExtension
@@ -18,19 +16,6 @@ use Symfony\Component\Validator\Mapping\Factory\MetadataFactoryInterface;
  */
 class FormTypeConstraintsCallbackExtension extends AbstractTypeExtension
 {
-    /**
-     * @var MetadataFactoryInterface $metadataFactory
-     */
-    protected $metadataFactory;
-
-    /**
-     * @param MetadataFactoryInterface $metadataFactory
-     */
-    public function __construct(MetadataFactoryInterface $metadataFactory)
-    {
-        $this->metadataFactory = $metadataFactory;
-    }
-
     /**
      * {@inheritdoc}
      */

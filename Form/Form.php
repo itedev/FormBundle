@@ -108,12 +108,12 @@ class Form extends BaseForm implements FormInterface
     /**
      * {@inheritdoc}
      */
-    public function setRawOption($optionName, $optionValue)
+    public function setRawOption($name, $value)
     {
         $config = $this->getConfig();
 
         $options = $config->getOptions();
-        $options[$optionName] = $optionValue;
+        $options[$name] = $value;
         ReflectionUtils::setValue($config, 'options', $options);
 
         return $this;
@@ -122,15 +122,29 @@ class Form extends BaseForm implements FormInterface
     /**
      * {@inheritdoc}
      */
-    public function unsetRawOption($optionName)
+    public function unsetRawOption($name)
     {
         $config = $this->getConfig();
 
         $options = $config->getOptions();
-        if (isset($options[$optionName])) {
-            unset($options[$optionName]);
+        if (isset($options[$name])) {
+            unset($options[$name]);
         }
         ReflectionUtils::setValue($config, 'options', $options);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setRawAttribute($name, $value)
+    {
+        $config = $this->getConfig();
+
+        $attributes = $config->getAttributes();
+        $attributes[$name] = $value;
+        ReflectionUtils::setValue($config, 'attributes', $attributes);
 
         return $this;
     }

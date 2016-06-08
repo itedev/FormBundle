@@ -16,32 +16,34 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 class FormTypeDefaultDataExtension extends AbstractTypeExtension
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        if (isset($options['default_data'])) {
-            $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
-                $defaultData = $event->getForm()->getConfig()->getOption('default_data');
-                if (null === $event->getData()) {
-                    $event->setData($defaultData);
-                }
-            });
+        if (!isset($options['default_data'])) {
+            return;
         }
+
+        $defaultData = $options['default_data'];
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($defaultData) {
+            if (null === $event->getData()) {
+                $event->setData($defaultData);
+            }
+        });
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setOptional([
-            'default_data'
+            'default_data',
         ]);
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getExtendedType()
     {
