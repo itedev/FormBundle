@@ -45,36 +45,42 @@
         options = $.extend(true, {
           tags: true,
           createTag: function (params) {
+            var term = $.trim(params.term);
+
+            if ('' === term) {
+              return null;
+            }
+
             var createOptionText = (extras.hasOwnProperty('create_option_format') && 'string' === typeof extras['create_option_format'])
-              ? extras['create_option_format'].replace('%term%', params.term)
-              : params.term;
+              ? extras['create_option_format'].replace('%term%', term)
+              : term;
 
             return {
-              id: params.term,
+              id: term,
               text: createOptionText,
               isNew: true
             };
           }
         }, options);
 
-        if (extras.hasOwnProperty('create_url') && 'string' === typeof extras['create_url']) {
-          $element.on('select2:selecting', function(e) {
-            var selection = e.params.args.data;
-            if (!selection.hasOwnProperty('isNew')) {
-              return;
-            }
+        $element.on('select2:selecting', function(e) {
+          var selection = e.params.args.data;
+          if (!selection.hasOwnProperty('isNew')) {
+            return;
+          }
 
-            $element.select2('close');
-            e.preventDefault();
+          $element.select2('close');
+          e.preventDefault();
 
-            var event = $.Event('before-create-option.ite.plugin.select2', {
-              text: selection.id
-            });
-            $element.trigger(event);
-            if (false === event.result) {
-              return;
-            }
+          var event = $.Event('before-create-option.ite.plugin.select2', {
+            text: selection.id
+          });
+          $element.trigger(event);
+          if (false === event.result) {
+            return false;
+          }
 
+          if (extras.hasOwnProperty('create_url') && 'string' === typeof extras['create_url']) {
             $.ajax({
               type: 'post',
               url: extras.create_url,
@@ -92,32 +98,18 @@
                 }
               }
             });
-          });
-        } else {
-          $element.on('select2:select', function(e) {
-            var selection = e.params.data;
-            if (!selection.hasOwnProperty('isNew')) {
-              return;
-            }
-
-            var event = $.Event('before-create-option.ite.plugin.select2', {
-              text: selection.id
-            });
-            $element.trigger(event);
-            if (false === event.result) {
-              return;
-            }
-
-            var term = selection.id;
+          } else {
             $element
-              .find('[value="' + term + '"]')
-              .replaceWith('<option value="' + term + '">' + term + '</option>')
+              .find('[value="' + selection.id + '"]')
+              .replaceWith('<option value="' + selection.id + '">' + selection.id + '</option>')
               .end()
-              .val(term)
-              .triggerHandler('change.select2')
+              .val(selection.id)
+              .trigger('change')
             ;
-          });
-        }
+          }
+
+          return false;
+        });
       }
 
       $element.select2(options);
