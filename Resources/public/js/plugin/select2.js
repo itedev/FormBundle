@@ -56,9 +56,6 @@
               : term;
 
             if (extras.hasOwnProperty('case_sensitive') && extras.case_sensitive === false) {
-              var term = $.trim(params.term);
-              if(term === "") { return null; }
-
               var optionsMatch = false;
 
               $.each(this._request.responseJSON, function () {
