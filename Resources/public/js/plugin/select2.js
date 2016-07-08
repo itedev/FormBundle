@@ -49,6 +49,29 @@
               ? extras['create_option_format'].replace('%term%', params.term)
               : params.term;
 
+            if (extras.hasOwnProperty('case_sensitive') && extras.case_sensitive === false) {
+              var term = $.trim(params.term);
+              if(term === "") { return null; }
+
+              var optionsMatch = false;
+
+              $.each(this._request.responseJSON, function () {
+                if (this.text.toLowerCase() == term.toLowerCase()) {
+                  optionsMatch = true;
+                }
+              });
+
+              this.$element.find("option").each(function() {
+                if(this.value.toLowerCase().indexOf(term.toLowerCase()) > -1) {
+                  optionsMatch = true;
+                }
+              });
+
+              if(optionsMatch) {
+                return null;
+              }
+            }
+
             return {
               id: params.term,
               text: createOptionText,

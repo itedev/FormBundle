@@ -71,6 +71,7 @@ class AjaxEntityType extends AbstractAjaxChoiceType
 
         $resolver->setDefaults([
             'allow_create' => false,
+            'case_sensitive' => true,
             'create_route' => null,
             'create_route_parameters' => [],
             'create_url' => null,
@@ -81,6 +82,7 @@ class AjaxEntityType extends AbstractAjaxChoiceType
         ]);
         $resolver->setAllowedTypes([
             'allow_create' => ['bool'],
+            'case_sensitive' => ['bool'],
             'create_route' => ['null', 'string'],
             'create_route_parameters' => ['array'],
             'create_url' => ['null', 'string'],
@@ -116,6 +118,7 @@ class AjaxEntityType extends AbstractAjaxChoiceType
         $pluginsExtras['allow_create'] = true;
         $pluginsExtras['create_url'] = $options['create_url'];
         $pluginsExtras['create_option_format'] = $options['create_option_format'];
+        $pluginsExtras['case_sensitive'] = $options['case_sensitive'];
 
         $plugins[Select2Plugin::getName()]['extras'] = $pluginsExtras;
         $clientView->setOption('plugins', $plugins);
