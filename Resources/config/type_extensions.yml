@@ -5,6 +5,7 @@ parameters:
     ite_form.form.type_extension.form.extras.class:                     ITE\FormBundle\Form\Extension\FormTypeExtrasExtension
     ite_form.form.type_extension.form.default_data.class:               ITE\FormBundle\Form\Extension\FormTypeDefaultDataExtension
     ite_form.form.type_extension.form.form_view.class:                  ITE\FormBundle\Form\Extension\FormTypeFormViewExtension
+    ite_form.form.type_extension.form.lifetime.class:                   ITE\FormBundle\Form\Extension\FormTypeLifetimeExtension
     ite_form.form.type_extension.collection.form_view.class:            ITE\FormBundle\Form\Extension\CollectionTypeFormViewExtension
     ite_form.form.type_extension.choice.form_view.class:                ITE\FormBundle\Form\Extension\ChoiceTypeFormViewExtension
     ite_form.form.type_extension.hidden.markup.class:                   ITE\FormBundle\Form\Extension\Hidden\HiddenTypeMarkupExtension
@@ -41,6 +42,11 @@ services:
     ite_form.form.type_extension.form.form_view:
         class: %ite_form.form.type_extension.form.form_view.class%
         arguments: [ @ite_form.sf.extension.form, @ite_form.client_form_view_builder ]
+        tags:
+            - { name: form.type_extension, alias: form }
+
+    ite_form.form.type_extension.form.lifetime:
+        class: %ite_form.form.type_extension.form.lifetime.class%
         tags:
             - { name: form.type_extension, alias: form }
 
