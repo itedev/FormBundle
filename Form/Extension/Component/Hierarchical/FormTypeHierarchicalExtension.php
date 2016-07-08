@@ -7,7 +7,7 @@ use ITE\FormBundle\FormAccess\FormAccessorInterface;
 use ITE\FormBundle\SF\Form\ClientFormTypeExtensionInterface;
 use ITE\FormBundle\SF\Form\ClientFormView;
 use ITE\FormBundle\SF\SFFormExtensionInterface;
-use ITE\FormBundle\Util\FormUtils;
+use ITE\FormBundle\Util\HierarchicalUtils;
 use ITE\JsBundle\SF\SFExtensionInterface;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -59,9 +59,9 @@ class FormTypeHierarchicalExtension extends AbstractTypeExtension implements Cli
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $request = $this->requestStack->getMasterRequest();
-        if ($request->headers->has('X-SF-Hierarchical')) {
-            $originator = explode(',', $request->headers->get('X-SF-Hierarchical-Originator'));
-            $builder->setAttribute('hierarchical_originator', $originator);
+        if (HierarchicalUtils::isHierarchicalRequest($request)) {
+            $originators = HierarchicalUtils::getOriginators($request);
+            $builder->setAttribute('hierarchical_originator', $originators);
 
             $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
                 $form = $event->getForm();

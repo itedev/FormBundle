@@ -3,8 +3,11 @@
 namespace ITE\FormBundle\Form;
 
 use ITE\Common\Util\ReflectionUtils;
+use ITE\FormBundle\Util\FormUtils;
+use ITE\FormBundle\Util\HierarchicalUtils;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Form\Form as BaseForm;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class Form
@@ -168,6 +171,18 @@ class Form extends BaseForm implements FormInterface
     //
     //    return $this;
     //}
+
+    /**
+     * @param Request $request
+     * @return bool
+     */
+    public function isHierarchicalOriginator(Request $request)
+    {
+        $fullName = FormUtils::getFullName($this);
+
+        return HierarchicalUtils::isHierarchicalRequest($request)
+        && in_array($fullName, HierarchicalUtils::getOriginators($request));
+    }
 
     /**
      * {@inheritdoc}

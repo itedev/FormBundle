@@ -428,4 +428,34 @@ class FormUtils
         $form->setRawViewData($viewData);
         $form->setRawChildren($children);
     }
+
+    /**
+     * @param FormInterface $form
+     * @param mixed $submittedData
+     * @return mixed
+     */
+    public static function getModelDataFromSubmittedData(FormInterface $form, $submittedData)
+    {
+        $formFactory = $form->getConfig()->getFormFactory();
+        $name = $form->getConfig()->getName();
+        $type = $form->getConfig()->getOption('original_type');
+        $options = $form->getConfig()->getOption('original_options');
+
+        if (isset($options['data'])) {
+            unset($options['data']);
+        }
+        if (isset($options['hierarchical_data'])) {
+            unset($options['hierarchical_data']);
+        }
+
+        /** @var FormInterface $newForm */
+        $newForm = $formFactory->createNamed($name, $type, null, array_merge($options, [
+            'skip_interceptors' => true,
+        ]));
+        $newForm->setData(null);
+        $newForm->setRawOption('skip_interceptors', true);
+        $newForm->submit($submittedData);
+
+        return $newForm->getData();
+    }
 }

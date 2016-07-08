@@ -4,6 +4,7 @@ namespace ITE\FormBundle\Form;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface as BaseFormInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Interface FormInterface
@@ -93,6 +94,12 @@ interface FormInterface extends BaseFormInterface
     // * @return $this
     // */
     //public function setRawEventDispatcher(EventDispatcherInterface $ed);
+
+    /**
+     * @param Request $request
+     * @return bool
+     */
+    public function isHierarchicalOriginator(Request $request);
 
     /**
      * @param FormInterface|string|int
