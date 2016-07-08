@@ -27,6 +27,14 @@ interface FormBuilderInterface extends BaseFormBuilderInterface
     public function add($child, $type = null, array $options = []);
 
     /**
+     * @param string $name
+     * @param string|FormTypeInterface $type
+     * @param array $options
+     * @return FormBuilderInterface
+     */
+    public function create($name, $type = null, array $options = []);
+
+    /**
      * @param int|string|FormBuilderInterface $child
      * @param string|array $parents
      * @param string|FormTypeInterface $type

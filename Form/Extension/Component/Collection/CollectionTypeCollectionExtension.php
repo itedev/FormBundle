@@ -64,11 +64,12 @@ class CollectionTypeCollectionExtension extends AbstractTypeExtension
 
         /** @var FormInterface $oldPrototype */
         $oldPrototype = $form->getConfig()->getAttribute('prototype');
-        $oldPrototypeOptions = $oldPrototype->getConfig()->getOptions();
+        $oldPrototypeOptions = $oldPrototype->getConfig()->getOption('original_options');
 
         $factory = $form->getConfig()->getFormFactory();
         $prototype = $factory->createNamed($options['prototype_name'], $options['type'], $data, $oldPrototypeOptions);
 
+        $form->setRawAttribute('prototype', $prototype);
         $view->vars['prototype'] = $prototype->createView($view);
     }
 
@@ -78,11 +79,13 @@ class CollectionTypeCollectionExtension extends AbstractTypeExtension
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $globalWidgetShowAnimation = $this->widgetShowAnimation;
-        $widgetShowAnimationNormalizer = function(Options $options, $widgetShowAnimation) use ($globalWidgetShowAnimation) {
+        $widgetShowAnimationNormalizer = function (Options $options, $widgetShowAnimation) use ($globalWidgetShowAnimation) {
             if (!is_array($widgetShowAnimation)) {
                 throw new \InvalidArgumentException('The "widget_show_animation" option must be an "array".');
             }
-            if (!isset($widgetShowAnimation['type']) || !is_string($widgetShowAnimation['type']) || empty($widgetShowAnimation['type'])) {
+            if (!isset($widgetShowAnimation['type'])
+                || !is_string($widgetShowAnimation['type'])
+                || empty($widgetShowAnimation['type'])) {
                 $widgetShowAnimation['type'] = $globalWidgetShowAnimation['type'];
             }
             if (!isset($widgetShowAnimation['length']) || !is_int($widgetShowAnimation['length'])) {
@@ -93,11 +96,13 @@ class CollectionTypeCollectionExtension extends AbstractTypeExtension
         };
 
         $globalWidgetHideAnimation = $this->widgetHideAnimation;
-        $widgetHideAnimationNormalizer = function(Options $options, $widgetHideAnimation) use ($globalWidgetHideAnimation) {
+        $widgetHideAnimationNormalizer = function (Options $options, $widgetHideAnimation) use ($globalWidgetHideAnimation) {
             if (!is_array($widgetHideAnimation)) {
                 throw new \InvalidArgumentException('The "widget_hide_animation" option must be an "array".');
             }
-            if (!isset($widgetHideAnimation['type']) || !is_string($widgetHideAnimation['type']) || empty($widgetHideAnimation['type'])) {
+            if (!isset($widgetHideAnimation['type'])
+                || !is_string($widgetHideAnimation['type'])
+                || empty($widgetHideAnimation['type'])) {
                 $widgetHideAnimation['type'] = $globalWidgetHideAnimation['type'];
             }
             if (!isset($widgetHideAnimation['length']) || !is_int($widgetHideAnimation['length'])) {
@@ -107,17 +112,17 @@ class CollectionTypeCollectionExtension extends AbstractTypeExtension
             return $widgetHideAnimation;
         };
 
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'collection_id' => null,
             'collection_item_tag' => 'div',
             'widget_show_animation' => $this->widgetShowAnimation,
             'widget_hide_animation' => $this->widgetHideAnimation,
             'prototype_data' => null,
-        ));
-        $resolver->setNormalizers(array(
+        ]);
+        $resolver->setNormalizers([
             'widget_show_animation' => $widgetShowAnimationNormalizer,
             'widget_hide_animation' => $widgetHideAnimationNormalizer,
-        ));
+        ]);
     }
 
     /**

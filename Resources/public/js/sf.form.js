@@ -5,7 +5,6 @@
 
   SF.fn.plugins = {};
   SF.fn.validators = {};
-  SF.fn.submitters = {};
 
   $.fn.formView = function() {
     if (1 !== this.length) {
@@ -487,6 +486,118 @@
       return this.getRoot().getElement(context);
     },
 
+    ///
+
+    errorElement: 'span',
+    errorWrapper: null,
+    errorContainer: $([]),
+    errorClass: 'error',
+
+    hasErrors: function () {
+      return 0 !== this.getErrors().length;
+    },
+
+    getErrors: function () {
+      return this.getOption('errors', []);
+    },
+
+    showErrorsRecursive: function () {
+      if (this.hasErrors()) {
+        var $element = this.getElement();
+        var errors = this.getErrors();
+
+        this.showErrors(errors, $element);
+      }
+
+      $.each(this.children, function(name, childView) {
+        childView.showErrorsRecursive();
+      });
+    },
+
+    resetErrorsRecursive: function () {
+      var $element = this.getElement();
+      this.resetErrors($element);
+
+      $.each(this.children, function(name, childView) {
+        childView.resetErrorsRecursive();
+      });
+    },
+
+    showErrors: function (message, $element) {
+      $element = 'undefined' !== typeof $element ? $element : this.getElement();
+      var describedBy = $element.attr('aria-describedby');
+      message = 'array' !== $.type(message) ? [message] : message;
+
+      if (this.highlight) {
+        this.highlight.apply(this, [$element, this.errorClass]);
+      }
+
+      var $error = this.findError($element);
+      var $reference = $error;
+      if (0 !== $error.length) {
+        $error
+          .addClass(this.errorClass)
+          .html(message)
+        ;
+      } else {
+        $error = $('<' + this.errorElement + '>')
+          .attr('id', this.getId + '_error')
+          .addClass(this.errorClass)
+          .html(message || '')
+        ;
+
+        $reference = $error;
+        if (this.errorWrapper) {
+          $reference = $error.wrap('<' + this.errorWrapper + '/>').parent();
+        }
+        if (0 !== this.errorContainer.length) {
+          this.errorContainer.append($reference);
+        } else if (this.errorPlacement) {
+          this.errorPlacement($reference, $element);
+        } else {
+          $reference.insertAfter($element);
+        }
+
+        if ($error.is('label')) {
+          $error.attr('for', this.getId());
+        } else if (0 === $error.parents('label[for="' + this.getId() + '"]').length) {
+          var errorId = $error.attr('id').replace(/(:|\.|\[|\])/g, "\\$1");
+          if (!describedBy) {
+            describedBy = errorId;
+          } else if (!describedBy.match(new RegExp("\\b" + errorId + "\\b"))) {
+            describedBy += ' ' + errorId;
+          }
+          $element.attr('aria-describedby', describedBy);
+        }
+      }
+    },
+
+    resetErrors: function ($element) {
+      $element = 'undefined' !== typeof $element ? $element : this.getElement();
+
+      if (this.unhighlight) {
+        this.highlight.apply(this, [$element, this.errorClass]);
+      }
+    },
+
+    highlight: function ($element, errorClass) {
+      if ('radio' === $element.type()) {
+        this.findByName(element.name).addClass(errorClass);
+      } else {
+        $element.addClass(errorClass);
+      }
+    },
+
+    unhighlight: function ($element, errorClass) {
+      if ('radio' === $element.type()) {
+        this.findByName(element.name).removeClass(errorClass);
+      } else {
+        $element.removeClass(errorClass);
+      }
+    },
+
+    ///
+
     isInitialized: function($element) {
       return 'undefined' !== typeof $element.data('sfInitialized');
     },
@@ -499,7 +610,7 @@
       $element.data('sfInitialized', true);
     },
 
-    initializeRecursive: function(force) {
+    initializeRecursive: function (force) {
       force = force || false;
 
       if (this.isInitializable()) {

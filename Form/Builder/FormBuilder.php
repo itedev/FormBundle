@@ -220,6 +220,7 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
 
                     $data = $instance->getConfig()->getOption('hierarchical_data');
                     FormUtils::setData($instance, $data);
+                    $instance->unsetRawOption('hierarchical_data');
                 },
                 'submit' => function (FormInterface $proxy, FormInterface $instance, $method, $params, $returnEarly) use ($formAccessor) {
                     $parents = $instance->getConfig()->getOption('hierarchical_parents', []);
@@ -237,6 +238,7 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
 
                     $data = $instance->getConfig()->getOption('hierarchical_data');
                     FormUtils::setData($instance, $data);
+                    $instance->unsetRawOption('hierarchical_data');
                 },
             ]
         );
@@ -311,6 +313,23 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
         ]);
 
         return parent::add($child, $type, $options);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function create($name, $type = null, array $options = [])
+    {
+        $originalOptions = $options;
+        if (isset($originalOptions['skip_interceptors'])) {
+            unset($originalOptions['skip_interceptors']);
+        }
+        $options = array_merge($options, [
+            'original_type' => $type,
+            'original_options' => $originalOptions,
+        ]);
+
+        return parent::create($name, $type, $options);
     }
 
     /**

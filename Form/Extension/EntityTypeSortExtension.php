@@ -2,8 +2,6 @@
 
 namespace ITE\FormBundle\Form\Extension;
 
-use ITE\FormBundle\SF\Form\ClientFormView;
-use ITE\FormBundle\SF\Form\ClientFormViewBuilderInterface;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
