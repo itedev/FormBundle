@@ -96,6 +96,11 @@ interface FormInterface extends BaseFormInterface
     //public function setRawEventDispatcher(EventDispatcherInterface $ed);
 
     /**
+     * @return mixed
+     */
+    public function getOriginalData();
+
+    /**
      * @param Request $request
      * @return bool
      */

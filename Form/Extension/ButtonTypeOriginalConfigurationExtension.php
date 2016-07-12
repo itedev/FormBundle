@@ -20,6 +20,7 @@ class ButtonTypeOriginalConfigurationExtension extends AbstractTypeExtension
         $resolver->setDefaults([
             'original_type' => null,
             'original_options' => [],
+            'original_data' => null,
         ]);
         $resolver->setAllowedTypes([
             'original_options' => ['array'],

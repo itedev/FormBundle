@@ -100,6 +100,10 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
                     $parents = $instance->getConfig()->getOption('hierarchical_parents', []);
                     $callback = $instance->getConfig()->getOption('hierarchical_callback');
 
+                    $modelData = $params['modelData'];
+                    $oldOriginalData = $instance->getConfig()->getOption('original_data');
+                    $instance->setRawOption('original_data', $modelData);
+
                     if (empty($parents)) {
                         return;
                     }
@@ -123,7 +127,7 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
                         $parentDatas[$parentName] = $parentData;
                     }
 
-                    $hierarchicalEvent = new HierarchicalEvent($form, $hierarchicalParents, $options, $params['modelData']);
+                    $hierarchicalEvent = new HierarchicalEvent($form, $hierarchicalParents, $options, $modelData);
 
                     $params = $parentDatas;
                     array_unshift($params, $hierarchicalEvent);
@@ -135,12 +139,16 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
                     //$oldEd = $form->get($this->child)->getConfig()->getEventDispatcher();
                     $form->add($child, $type, array_merge($hierarchicalEvent->getOptions(), [
                         'skip_interceptors' => true,
+                        'original_data' => $modelData,
                     ]));
+
+                    $newInstance = $form->get($child)->getWrappedValueHolderValue();
+
                     //$newEd = $form->get($this->child)->getConfig()->getEventDispatcher();
                     //EventDispatcherUtils::extend($newEd, $oldEd);
 
                     $instanceFieldName = $proxy->__sleep();
-                    ReflectionUtils::setValue($proxy, $instanceFieldName[0], $form->get($child)->getWrappedValueHolderValue());
+                    ReflectionUtils::setValue($proxy, $instanceFieldName[0], $newInstance);
                 },
                 'submit' => function (FormInterface $proxy, FormInterface $instance, $method, $params, $returnEarly) use ($formAccessor) {
                     $form = $instance->getParent();
@@ -182,9 +190,9 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
                     }
 
                     $submittedData = $params['submittedData'];
-//                    $modelData = FormUtils::getModelDataFromSubmittedData($instance, $submittedData);
+                    $modelData = FormUtils::getModelDataFromSubmittedData($instance, $submittedData);
 
-                    $hierarchicalEvent = new HierarchicalEvent($form, $hierarchicalParents, $options, $submittedData, true, $originator);
+                    $hierarchicalEvent = new HierarchicalEvent($form, $hierarchicalParents, $options, $modelData, true, $originator);
 
                     $params = $parentDatas;
                     array_unshift($params, $hierarchicalEvent);
@@ -309,6 +317,15 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
         $originalOptions = $options;
         if (isset($originalOptions['skip_interceptors'])) {
             unset($originalOptions['skip_interceptors']);
+        }
+        if (isset($originalOptions['original_type'])) {
+            unset($originalOptions['original_type']);
+        }
+        if (isset($originalOptions['original_options'])) {
+            unset($originalOptions['original_options']);
+        }
+        if (isset($originalOptions['original_data'])) {
+            unset($originalOptions['original_data']);
         }
         $options = array_merge($options, [
             'original_type' => $type,

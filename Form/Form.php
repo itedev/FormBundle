@@ -173,6 +173,14 @@ class Form extends BaseForm implements FormInterface
     //}
 
     /**
+     * @return mixed
+     */
+    public function getOriginalData()
+    {
+        return $this->getConfig()->getOption('original_data');
+    }
+
+    /**
      * @param Request $request
      * @return bool
      */
@@ -192,6 +200,15 @@ class Form extends BaseForm implements FormInterface
         $originalOptions = $options;
         if (isset($originalOptions['skip_interceptors'])) {
             unset($originalOptions['skip_interceptors']);
+        }
+        if (isset($originalOptions['original_type'])) {
+            unset($originalOptions['original_type']);
+        }
+        if (isset($originalOptions['original_options'])) {
+            unset($originalOptions['original_options']);
+        }
+        if (isset($originalOptions['original_data'])) {
+            unset($originalOptions['original_data']);
         }
         $options = array_merge($options, [
             'original_type' => $type,

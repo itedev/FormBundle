@@ -18,11 +18,12 @@ class FormTypeOriginalConfigurationExtension extends AbstractTypeExtension
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setOptional([
-           'skip_interceptors',
+            'skip_interceptors',
         ]);
         $resolver->setDefaults([
             'original_type' => null,
             'original_options' => [],
+            'original_data' => null,
         ]);
         $resolver->setAllowedTypes([
             'original_options' => ['array'],

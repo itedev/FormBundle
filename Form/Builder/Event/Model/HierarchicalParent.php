@@ -56,6 +56,14 @@ class HierarchicalParent
     }
 
     /**
+     * @return mixed
+     */
+    public function getOriginalData()
+    {
+        return $this->form->getOriginalData();
+    }
+
+    /**
      * @return FormInterface
      */
     public function getForm()
