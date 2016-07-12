@@ -19,7 +19,7 @@ class EntityTypeSortExtension extends AbstractTypeExtension
      */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        if (!$options['sort']) {
+        if (!$options['sort_group']) {
             return;
         }
 
@@ -34,10 +34,10 @@ class EntityTypeSortExtension extends AbstractTypeExtension
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'sort' => false,
+            'sort_group' => false,
         ]);
         $resolver->setAllowedTypes([
-            'sort' => ['bool'],
+            'sort_group' => ['bool'],
         ]);
     }
 
