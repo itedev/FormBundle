@@ -453,7 +453,12 @@ class FormUtils
             'skip_interceptors' => true,
         ]));
         $newForm->setData(null);
+
         $newForm->setRawOption('skip_interceptors', true);
+        self::formWalkRecursive($newForm, function (FormInterface $child) {
+            $child->setRawOption('skip_interceptors', true);
+        });
+
         $newForm->submit($submittedData);
 
         return $newForm->getData();

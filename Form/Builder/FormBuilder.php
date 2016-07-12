@@ -327,6 +327,10 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
         if (isset($originalOptions['original_data'])) {
             unset($originalOptions['original_data']);
         }
+
+        if ($this->getOption('skip_interceptors', false)) {
+            $options['skip_interceptors'] = true;
+        }
         $options = array_merge($options, [
             'original_type' => $type,
             'original_options' => $originalOptions,

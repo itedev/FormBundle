@@ -17,6 +17,9 @@ class ButtonTypeOriginalConfigurationExtension extends AbstractTypeExtension
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
+        $resolver->setOptional([
+            'skip_interceptors',
+        ]);
         $resolver->setDefaults([
             'original_type' => null,
             'original_options' => [],
@@ -24,6 +27,7 @@ class ButtonTypeOriginalConfigurationExtension extends AbstractTypeExtension
         ]);
         $resolver->setAllowedTypes([
             'original_options' => ['array'],
+            'skip_interceptors' => ['bool'],
         ]);
     }
 
