@@ -190,9 +190,9 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
                     }
 
                     $submittedData = $params['submittedData'];
-                    $modelData = FormUtils::getModelDataFromSubmittedData($instance, $submittedData);
+//                    $modelData = FormUtils::getModelDataFromSubmittedData($instance, $submittedData);
 
-                    $hierarchicalEvent = new HierarchicalEvent($form, $hierarchicalParents, $options, $modelData, true, $originator);
+                    $hierarchicalEvent = new HierarchicalEvent($form, $hierarchicalParents, $options, $submittedData, true, $originator);
 
                     $params = $parentDatas;
                     array_unshift($params, $hierarchicalEvent);
