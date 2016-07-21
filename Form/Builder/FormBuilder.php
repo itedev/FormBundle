@@ -190,7 +190,7 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
                     }
 
                     $submittedData = $params['submittedData'];
-//                    $modelData = FormUtils::getModelDataFromSubmittedData($instance, $submittedData);
+                    //                    $modelData = FormUtils::getModelDataFromSubmittedData($instance, $submittedData);
 
                     $hierarchicalEvent = new HierarchicalEvent($form, $hierarchicalParents, $options, $submittedData, true, $originator);
 
@@ -314,27 +314,27 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
      */
     public function add($child, $type = null, array $options = [])
     {
-        $originalOptions = $options;
-        if (isset($originalOptions['skip_interceptors'])) {
-            unset($originalOptions['skip_interceptors']);
-        }
-        if (isset($originalOptions['original_type'])) {
-            unset($originalOptions['original_type']);
-        }
-        if (isset($originalOptions['original_options'])) {
-            unset($originalOptions['original_options']);
-        }
-        if (isset($originalOptions['original_data'])) {
-            unset($originalOptions['original_data']);
-        }
-
-//        if ($this->getOption('skip_interceptors', false)) {
-//            $options['skip_interceptors'] = true;
-//        }
-        $options = array_merge($options, [
-            'original_type' => $type,
-            'original_options' => $originalOptions,
-        ]);
+        //        $originalOptions = $options;
+        //        if (isset($originalOptions['skip_interceptors'])) {
+        //            unset($originalOptions['skip_interceptors']);
+        //        }
+        //        if (isset($originalOptions['original_type'])) {
+        //            unset($originalOptions['original_type']);
+        //        }
+        //        if (isset($originalOptions['original_options'])) {
+        //            unset($originalOptions['original_options']);
+        //        }
+        //        if (isset($originalOptions['original_data'])) {
+        //            unset($originalOptions['original_data']);
+        //        }
+        //
+        ////        if ($this->getOption('skip_interceptors', false)) {
+        ////            $options['skip_interceptors'] = true;
+        ////        }
+        //        $options = array_merge($options, [
+        //            'original_type' => $type,
+        //            'original_options' => $originalOptions,
+        //        ]);
 
         return parent::add($child, $type, $options);
     }
@@ -348,6 +348,21 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
         if (isset($originalOptions['skip_interceptors'])) {
             unset($originalOptions['skip_interceptors']);
         }
+        // commented code below is redundant (ideally)
+        //if (isset($originalOptions['original_data'])) {
+        //    unset($originalOptions['original_data']);
+        //}
+        //if (isset($originalOptions['original_type'])) {
+        //    unset($originalOptions['original_type']);
+        //}
+        //if (isset($originalOptions['original_options'])) {
+        //    unset($originalOptions['original_options']);
+        //}
+
+        //if ($this->getOption('skip_interceptors', false)) {
+        //    $options['skip_interceptors'] = true;
+        //}
+
         $options = array_merge($options, [
             'original_type' => $type,
             'original_options' => $originalOptions,

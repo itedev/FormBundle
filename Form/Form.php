@@ -16,6 +16,50 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class Form extends BaseForm implements FormInterface
 {
+    ///**
+    // * @var array $options
+    // */
+    //protected $options = [];
+    //
+    ///**
+    // * @return array
+    // */
+    //public function getOptions()
+    //{
+    //    return $this->options;
+    //}
+    //
+    ///**
+    // * @param string $name
+    // * @return bool
+    // */
+    //public function hasOption($name)
+    //{
+    //    return array_key_exists($name, $this->options);
+    //}
+    //
+    ///**
+    // * @param string $name
+    // * @param mixed $defaultValue
+    // * @return mixed
+    // */
+    //public function getOption($name, $defaultValue = null)
+    //{
+    //    return $this->hasOption($name) ? $this->options[$name] : $defaultValue;
+    //}
+    //
+    ///**
+    // * @param string $name
+    // * @param mixed $value
+    // * @return $this
+    // */
+    //public function setOption($name, $value)
+    //{
+    //    $this->options[$name] = $value;
+    //
+    //    return $this;
+    //}
+
     /**
      * {@inheritdoc}
      */
@@ -197,19 +241,24 @@ class Form extends BaseForm implements FormInterface
      */
     public function add($child, $type = null, array $options = [])
     {
+        /**
+         * need same code as in \ITE\FormBundle\Form\Builder\FormBuilder::create() because hierarchical field can be
+         * added right in form event (e.g. FormEvents::PRE_SET_DATA).
+         */
         $originalOptions = $options;
         if (isset($originalOptions['skip_interceptors'])) {
             unset($originalOptions['skip_interceptors']);
         }
-        if (isset($originalOptions['original_type'])) {
-            unset($originalOptions['original_type']);
-        }
-        if (isset($originalOptions['original_options'])) {
-            unset($originalOptions['original_options']);
-        }
         if (isset($originalOptions['original_data'])) {
             unset($originalOptions['original_data']);
         }
+        // commented code below is redundant (ideally)
+        //if (isset($originalOptions['original_type'])) {
+        //    unset($originalOptions['original_type']);
+        //}
+        //if (isset($originalOptions['original_options'])) {
+        //    unset($originalOptions['original_options']);
+        //}
 
 //        if ($this->getConfig()->getOption('skip_interceptors', false)) {
 //            $options['skip_interceptors'] = true;
