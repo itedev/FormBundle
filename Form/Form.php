@@ -130,7 +130,7 @@ class Form extends BaseForm implements FormInterface
         $config = $this->getConfig();
 
         $options = $config->getOptions();
-        if (isset($options[$name])) {
+        if (array_key_exists($name, $options)) {
             unset($options[$name]);
         }
         ReflectionUtils::setValue($config, 'options', $options);
