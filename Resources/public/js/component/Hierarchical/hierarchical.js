@@ -53,10 +53,10 @@
     },
 
     addCollectionItem: function(name) {
-      var collectionItem = baseAddCollectionItem.call(this);
+      var collectionItem = baseAddCollectionItem.apply(this, [name]);
       var root = this.getRoot();
 
-      var walkViewCallback = function() {
+      var walkCallback = function() {
         var id = this.getId();
         var hierarchicalParents = this.getOption('hierarchical_parents', []);
         if (!hierarchicalParents.length) {
@@ -65,16 +65,19 @@
 
         $.each(hierarchicalParents, function(i, hierarchicalParent) {
           var parentView = root.find(hierarchicalParent);
+          if (null === parentView) {
+            return;
+          }
 
           var hierarchicalChildren = parentView.getOption('hierarchical_children', []);
           if (-1 === $.inArray(id, hierarchicalChildren)) {
             hierarchicalChildren.push(id);
           }
-          parentView.setOption('hierarchical_children', hierarchicalChildren);
+          parentView.options['hierarchical_children'] = hierarchicalChildren; // @todo: refactor and add addHierarchical* methods?
         });
       };
 
-      collectionItem.walkRecursive(walkViewCallback);
+      collectionItem.walkRecursive(walkCallback);
 
       return collectionItem;
     }
