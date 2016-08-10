@@ -23,98 +23,93 @@
       }
       force = force || false;
 
-      function buildInfoMap() {
-        var originatorInfoList = [];
-        $.each($elements, function (i, $element) {
-          var view = $element.formView();
-          var fullName = view.getFullName();
+      var originatorInfoList = [];
+      $.each($elements, function(i, $element) {
+        var view = $element.formView();
+        var fullName = view.getFullName();
 
-          var childrenInfoMap = {};
-          var eventData = {
-            originator: fullName,
-            children: {},
-            force: force
+        var childrenInfoMap = {};
+        var eventData = {
+          originator: fullName,
+          children: {},
+          force: force
+        };
+        var hierarchicalChildren = view.getOption('hierarchical_children', []);
+        $.each(hierarchicalChildren, function(i, childId) {
+          var childView = SF.forms.find(childId);
+          if (null === childView) {
+            return;
+          }
+
+          var $childElement = childView.getElement();
+          if (0 === $childElement.length) {
+            return;
+          }
+
+          var childInfo = {
+            view: childView,
+            $element: $childElement
           };
-          var hierarchicalChildren = view.getOption('hierarchical_children', []);
-          $.each(hierarchicalChildren, function (i, childId) {
-            var childView = SF.forms.find(childId);
-            if (null === childView) {
-              return;
-            }
-
-            var $childElement = childView.getElement();
-            if (0 === $childElement.length) {
-              return;
-            }
-
-            var childInfo = {
-              view: childView,
-              $element: $childElement
-            };
-            eventData.children[childId] = {
-              submit: true,
-              element: $childElement.get(0)
-            };
-            childrenInfoMap[childId] = childInfo;
-          });
-
-          var submit = true;
-          if (0 === SF.util.objectLength(childrenInfoMap)) {
-            // if there are no any child DOM element - don't submit the form
-            submit = false;
-          }
-          if (submit) {
-            var parentEvent = $.Event('before-parent-submit.ite.hierarchical', eventData);
-            $element.trigger(parentEvent);
-            if (false === parentEvent.result) {
-              // if any listener return false - don't submit the form
-              submit = false;
-            }
-          }
-          if (submit) {
-            // if all child elements set corresponding submit flag to false - don't submit the form
-            submit = false;
-            $.each(parentEvent.children, function (childId, child) {
-              if (true === child['submit']) {
-                submit = true;
-
-                return false; // break
-              }
-            });
-          }
-          if (submit) {
-            // if all child elements listeners return false - don't submit the form
-            submit = false;
-            var childEventData = {
-              originator: fullName
-            };
-            $.each(childrenInfoMap, function (childId, childInfo) {
-              var $childElement = childInfo.$element;
-
-              var childEvent = $.Event('before-child-submit.ite.hierarchical', childEventData);
-              $childElement.trigger(childEvent);
-              if (false !== childEvent.result) {
-                submit = true;
-              }
-            });
-          }
-
-          var originatorValue = view.getValue($element);
-          var originatorInfo = {
-            view: view,
-            $element: $element,
-            fullName: fullName,
-            originatorValue: originatorValue,
-            eventData: eventData,
-            submit: submit,
-            childrenInfoMap: childrenInfoMap
+          eventData.children[childId] = {
+            submit: true,
+            element: $childElement.get(0)
           };
-          originatorInfoList.push(originatorInfo);
+          childrenInfoMap[childId] = childInfo;
         });
 
-        return originatorInfoList;
-      }
-      var originatorInfoList = buildInfoMap();
+        var submit = true;
+        if (0 === SF.util.objectLength(childrenInfoMap)) {
+          // if there are no any child DOM element - don't submit the form
+          submit = false;
+        }
+        if (submit) {
+          var parentEvent = $.Event('before-parent-submit.ite.hierarchical', eventData);
+          $element.trigger(parentEvent);
+          if (false === parentEvent.result) {
+            // if any listener return false - don't submit the form
+            submit = false;
+          }
+        }
+        if (submit) {
+          // if all child elements set corresponding submit flag to false - don't submit the form
+          submit = false;
+          $.each(parentEvent.children, function(childId, child) {
+            if (true === child['submit']) {
+              submit = true;
+
+              return false; // break
+            }
+          });
+        }
+        if (submit) {
+          // if all child elements listeners return false - don't submit the form
+          submit = false;
+          var childEventData = {
+            originator: fullName
+          };
+          $.each(childrenInfoMap, function(childId, childInfo) {
+            var $childElement = childInfo.$element;
+
+            var childEvent = $.Event('before-child-submit.ite.hierarchical', childEventData);
+            $childElement.trigger(childEvent);
+            if (false !== childEvent.result) {
+              submit = true;
+            }
+          });
+        }
+
+        var originatorValue = view.getValue($element);
+        var originatorInfo = {
+          view: view,
+          $element: $element,
+          fullName: fullName,
+          originatorValue: originatorValue,
+          eventData: eventData,
+          submit: submit,
+          childrenInfoMap: childrenInfoMap
+        };
+        originatorInfoList.push(originatorInfo);
+      });
 
       var submit = false;
       var originators = [];
@@ -146,8 +141,6 @@
         },
         success: function(response) {
           var $newContext = $(response);
-
-          var originatorInfoList = buildInfoMap();
 
           $.each(originatorInfoList, function(i, originatorInfo) {
             var event = $.Event('before-children-change.ite.hierarchical', originatorInfo.eventData);
