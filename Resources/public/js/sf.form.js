@@ -414,7 +414,7 @@
       this.addChild(name, collectionItem);
       collectionItem.initializeRecursive();
 
-      return this;
+      return collectionItem;
     },
 
     isCollection: function() {

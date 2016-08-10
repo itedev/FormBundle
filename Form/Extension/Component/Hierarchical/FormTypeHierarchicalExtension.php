@@ -90,6 +90,7 @@ class FormTypeHierarchicalExtension extends AbstractTypeExtension implements Cli
         if ($hasHierarchicalParents) {
             $parentPaths = $options['hierarchical_parents'];
             $ascendantClientView = $clientView->getParent();
+            $hierarchicalParents = [];
             foreach ($parentPaths as $parentPath) {
                 $parentClientView = $this->formAccessor->getClientView($ascendantClientView, $parentPath);
                 if (null === $parentClientView) {
@@ -99,7 +100,10 @@ class FormTypeHierarchicalExtension extends AbstractTypeExtension implements Cli
                 $hierarchicalChildren = $parentClientView->getOption('hierarchical_children', []);
                 $hierarchicalChildren[] = $clientView->getOption('id');
                 $parentClientView->setOption('hierarchical_children', $hierarchicalChildren);
+
+                $hierarchicalParents[] = $parentClientView->getOption('id');
             }
+            $clientView->setOption('hierarchical_parents', $hierarchicalParents);
 
             if (isset($options['hierarchical_trigger_event'])) {
                 $clientView->setOption('hierarchical_trigger_event', $options['hierarchical_trigger_event']);

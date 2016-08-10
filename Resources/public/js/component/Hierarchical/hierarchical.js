@@ -20,6 +20,7 @@
 
   var baseIsInitializable = SF.fn.classes.FormView.prototype.isInitializable;
   var baseInitialize = SF.fn.classes.FormView.prototype.initialize;
+  var baseAddCollectionItem = SF.fn.classes.FormView.prototype.addCollectionItem;
   SF.fn.classes.FormView.prototype = $.extend(SF.fn.classes.FormView.prototype, {
     isInitializable: function() {
       var initializable = baseIsInitializable.call(this);
@@ -49,6 +50,33 @@
       }
 
       $element.data('hierarchical', true);
+    },
+
+    addCollectionItem: function(name) {
+      var collectionItem = baseAddCollectionItem.call(this);
+      var root = this.getRoot();
+
+      var walkViewCallback = function() {
+        var id = this.getId();
+        var hierarchicalParents = this.getOption('hierarchical_parents', []);
+        if (!hierarchicalParents.length) {
+          return;
+        }
+
+        $.each(hierarchicalParents, function(i, hierarchicalParent) {
+          var parentView = root.find(hierarchicalParent);
+
+          var hierarchicalChildren = parentView.getOption('hierarchical_children', []);
+          if (-1 === $.inArray(id, hierarchicalChildren)) {
+            hierarchicalChildren.push(id);
+          }
+          parentView.setOption('hierarchical_children', hierarchicalChildren);
+        });
+      };
+
+      collectionItem.walkRecursive(walkViewCallback);
+
+      return collectionItem;
     }
   });
 
