@@ -20,6 +20,7 @@
 
   var baseIsInitializable = SF.fn.classes.FormView.prototype.isInitializable;
   var baseInitialize = SF.fn.classes.FormView.prototype.initialize;
+  var baseAddCollectionItem = SF.fn.classes.FormView.prototype.addCollectionItem;
   SF.fn.classes.FormView.prototype = $.extend(SF.fn.classes.FormView.prototype, {
     isInitializable: function() {
       var initializable = baseIsInitializable.call(this);
@@ -49,6 +50,36 @@
       }
 
       $element.data('hierarchical', true);
+    },
+
+    addCollectionItem: function(name) {
+      var collectionItem = baseAddCollectionItem.apply(this, [name]);
+      var root = this.getRoot();
+
+      var walkCallback = function() {
+        var id = this.getId();
+        var hierarchicalParents = this.getOption('hierarchical_parents', []);
+        if (!hierarchicalParents.length) {
+          return;
+        }
+
+        $.each(hierarchicalParents, function(i, hierarchicalParent) {
+          var parentView = root.find(hierarchicalParent);
+          if (null === parentView) {
+            return;
+          }
+
+          var hierarchicalChildren = parentView.getOption('hierarchical_children', []);
+          if (-1 === $.inArray(id, hierarchicalChildren)) {
+            hierarchicalChildren.push(id);
+          }
+          parentView.options['hierarchical_children'] = hierarchicalChildren; // @todo: refactor and add addHierarchical* methods?
+        });
+      };
+
+      collectionItem.walkRecursive(walkCallback);
+
+      return collectionItem;
     }
   });
 
