@@ -32,6 +32,9 @@ abstract class AbstractAjaxChoiceType extends AbstractPluginType implements Clie
             // Fix for select2 multiple, input value explode required
             if ($isMultiple) {
                 $event->setData(null);
+                if (!is_array($data)) {
+                    $data = [$data];
+                }
                 if (
                     $data
                     && isset($data[0])
