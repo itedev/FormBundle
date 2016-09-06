@@ -7,6 +7,8 @@ use ITE\FormBundle\SF\Plugin\Select2Plugin;
 use RuntimeException;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Options;
@@ -43,6 +45,27 @@ class AjaxEntityType extends AbstractAjaxChoiceType
     public function getRouter()
     {
         return $this->router;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $isMultiple = $builder->getOption('multiple');
+
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($isMultiple) {
+            $data = $event->getData();
+
+            // Fix for select2 multiple, input value explode required
+            if (
+                $isMultiple
+                && $data
+                && isset($data[0])
+            ) {
+                $event->setData(explode(",", $data[0]));
+            }
+        });
     }
 
     /**
