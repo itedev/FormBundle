@@ -6,6 +6,9 @@ use ITE\FormBundle\Form\Type\Plugin\Core\AbstractPluginType;
 use ITE\FormBundle\SF\Form\ClientFormTypeInterface;
 use ITE\FormBundle\SF\Form\ClientFormView;
 use ITE\FormBundle\SF\Plugin\Select2Plugin;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -41,6 +44,30 @@ class AbstractChoiceType extends AbstractPluginType implements ClientFormTypeInt
                 'options' => (object) array_replace_recursive($this->options, $options['plugin_options'])
             ],
         ]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $isMultiple = $builder->getOption('multiple');
+
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($isMultiple) {
+            $data = $event->getData();
+
+            // Fix for select2 multiple, input value explode required
+            if ($isMultiple) {
+                $event->setData(null);
+                if (
+                    $data
+                    && isset($data[0])
+                    && $data[0]
+                ) {
+                    $event->setData(explode(",", $data[0]));
+                }
+            }
+        });
     }
 
     /**
