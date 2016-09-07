@@ -49,33 +49,6 @@ class AbstractChoiceType extends AbstractPluginType implements ClientFormTypeInt
     /**
      * {@inheritdoc}
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {
-        $isMultiple = $builder->getOption('multiple');
-
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($isMultiple) {
-            $data = $event->getData();
-
-            // Fix for select2 multiple, input value explode required
-            if ($isMultiple) {
-                $event->setData(null);
-                if (!is_array($data)) {
-                    $data = [$data];
-                }
-                if (
-                    $data
-                    && isset($data[0])
-                    && $data[0]
-                ) {
-                    $event->setData(explode(",", $data[0]));
-                }
-            }
-        });
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         if ('entity' === $this->type) {
