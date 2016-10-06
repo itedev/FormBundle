@@ -166,7 +166,13 @@ class DefaultConverter implements ConverterInterface
      */
     protected function getValue($entity, $mixed, $config, $alias)
     {
-        $value = (string) current($config[$alias]['classMetadata']->getIdentifierValues($entity));
+        $classMetadata = $config[$alias]['classMetadata'];
+
+        if (!$classMetadata) {
+            return '';
+        }
+
+        $value = (string) current($classMetadata->getIdentifierValues($entity));
 
         return $mixed ? MixedEntityUtils::wrapValue($value, $alias) : $value;
     }
