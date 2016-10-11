@@ -127,7 +127,7 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
                         $parentDatas[$parentName] = $parentData;
                     }
 
-                    $hierarchicalEvent = new HierarchicalEvent($form, $hierarchicalParents, $options, $modelData);
+                    $hierarchicalEvent = new HierarchicalEvent($form, $type, $hierarchicalParents, $options, $modelData);
 
                     $params = $parentDatas;
                     array_unshift($params, $hierarchicalEvent);
@@ -137,7 +137,7 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
                     }
 
                     //$oldEd = $form->get($this->child)->getConfig()->getEventDispatcher();
-                    $form->add($child, $type, array_merge($hierarchicalEvent->getOptions(), [
+                    $form->add($child, $hierarchicalEvent->getType(), array_merge($hierarchicalEvent->getOptions(), [
                         'skip_interceptors' => true,
                         'original_data' => $modelData,
                     ]));
@@ -192,7 +192,7 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
                     $submittedData = $params['submittedData'];
                     //                    $modelData = FormUtils::getModelDataFromSubmittedData($instance, $submittedData);
 
-                    $hierarchicalEvent = new HierarchicalEvent($form, $hierarchicalParents, $options, $submittedData, true, $originator);
+                    $hierarchicalEvent = new HierarchicalEvent($form, $type, $hierarchicalParents, $options, $submittedData, true, $originator);
 
                     $params = $parentDatas;
                     array_unshift($params, $hierarchicalEvent);
@@ -204,7 +204,7 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
                     }
 
                     //$oldEd = $form->get($this->child)->getConfig()->getEventDispatcher();
-                    $form->add($child, $type, array_merge($hierarchicalEvent->getOptions(), [
+                    $form->add($child, $hierarchicalEvent->getType(), array_merge($hierarchicalEvent->getOptions(), [
                         'skip_interceptors' => true,
                     ]));
                     //$newEd = $form->get($this->child)->getConfig()->getEventDispatcher();

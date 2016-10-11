@@ -97,6 +97,8 @@
       throw new Error('Method is not implemented.');
     },
 
+    destroy: function ($element) {},
+
     clearValue: function($element) {},
 
     getValue: function($element, $newElement) {},
@@ -801,6 +803,18 @@
     setValue: function($element, $newElement) {
       var valueSet = false;
 
+      if (this.getOption('type_changed')) {
+        var oldPlugins = this.getOption('old_plugins', {});
+
+        $.each(oldPlugins, function (plugin) {
+          SF.plugins[plugin].destroy($element);
+        });
+
+        $element.replaceWith($newElement);
+
+        return;
+      }
+
       // try to set value via plugins
       if (this.hasOption('plugins')) {
         var plugins = this.getOption('plugins', {});
@@ -885,7 +899,15 @@
 //        full_name: this.options['full_name']
 //      };
 //      this.options = $.extend(true, {}, this.options, view.getOptions(), frozenOptions);
+      var typeChanged = false;
+      var oldPlugins = this.getOption('plugins', {});
+
+      if (this.options.type !== view.getOption('type')) {
+        typeChanged = true;
+      }
       this.options = view.getOptions();
+      this.options.type_changed = typeChanged;
+      this.options.old_plugins = oldPlugins;
       //$.extend(this.options, view.getOptions());
     }
   };

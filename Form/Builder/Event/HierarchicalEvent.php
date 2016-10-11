@@ -61,6 +61,7 @@ class HierarchicalEvent
 
     /**
      * @param FormInterface $form
+     * @param string|FormInterface $type
      * @param array|HierarchicalParent[] $parents
      * @param array $options
      * @param mixed $data
@@ -69,6 +70,7 @@ class HierarchicalEvent
      */
     public function __construct(
         FormInterface $form,
+        $type,
         array $parents,
         array $options,
         $data,
@@ -76,6 +78,7 @@ class HierarchicalEvent
         array $originator = null
     ) {
         $this->form = $form;
+        $this->type = $type;
         $this->parents = new HierarchicalParentCollection($parents);
         $this->options = $options;
         $this->data = $data;
@@ -152,6 +155,21 @@ class HierarchicalEvent
     {
         return $this->type;
     }
+
+    /**
+     * Set type
+     *
+     * @param string|FormTypeInterface $type
+     *
+     * @return HierarchicalEvent
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
 
     /**
      * Get options

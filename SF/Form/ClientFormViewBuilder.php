@@ -31,7 +31,7 @@ class ClientFormViewBuilder implements ClientFormViewBuilderInterface
         $type = $form->getConfig()->getType();
         $options = $form->getConfig()->getOptions();
 
-        $clientView = $this->newClientView($view, $form, $parent);
+        $clientView = $this->newClientView($type, $view, $form, $parent);
 
         $this->buildClientView($type, $clientView, $view, $form, $options);
 
@@ -47,18 +47,20 @@ class ClientFormViewBuilder implements ClientFormViewBuilderInterface
     }
 
     /**
+     * @param string|FormInterface $type
      * @param FormView $view
      * @param FormInterface $form
      * @param ClientFormView $parent
      * @return ClientFormView
      */
-    protected function newClientView(FormView $view, FormInterface $form, ClientFormView $parent = null)
+    protected function newClientView($type, FormView $view, FormInterface $form, ClientFormView $parent = null)
     {
         $clientView = new ClientFormView($parent);
         $clientView->setOptions([
             'id' => isset($view->vars['attr']['id']) ? $view->vars['attr']['id'] : $view->vars['id'],
             'name' => $view->vars['name'],
             'full_name' => $view->vars['full_name'],
+            'type' => $type->getName(),
         ]);
 
         return $clientView;

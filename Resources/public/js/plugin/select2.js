@@ -4,6 +4,14 @@
       return 'SELECT' !== $element.prop('tagName') || 'undefined' !== typeof $element.data('select2');
     },
 
+    destroy: function ($element) {
+      if (!this.isInitialized($element)) {
+        return;
+      }
+
+      $element.select2('destroy');
+    },
+
     initialize: function($element, pluginData) {
       var extras = pluginData.extras;
       var options = pluginData.options;
