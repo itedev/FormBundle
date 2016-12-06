@@ -26,8 +26,12 @@ class FormTypeDefaultDataExtension extends AbstractTypeExtension
 
         $defaultData = $options['default_data'];
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($defaultData) {
-            if (null === $event->getData()) {
-                $event->setData($defaultData);
+            if (is_callable($defaultData)) {
+                call_user_func_array($defaultData, [$event]);
+            } else {
+                if (null === $event->getData()) {
+                    $event->setData($defaultData);
+                }
             }
         });
     }
