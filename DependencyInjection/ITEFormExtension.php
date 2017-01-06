@@ -5,6 +5,7 @@ namespace ITE\FormBundle\DependencyInjection;
 use ITE\FormBundle\SF\ExtensionInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\DefinitionDecorator;
 use Symfony\Component\DependencyInjection\Loader\FileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Loader;
@@ -42,6 +43,7 @@ class ITEFormExtension extends Extension
 
         $this->loadComponentsConfiguration($loader, $config['components'], $container);
         $this->loadPluginsConfiguration($loader, $config['plugins'], $container);
+        $this->loadTypeOptionsConfiguration($loader, $config, $container);
     }
 
     /**
@@ -91,6 +93,32 @@ class ITEFormExtension extends Extension
             if ($enabled) {
                 $plugin->loadConfiguration($loader, $config[$plugin::getName()], $container);
             }
+        }
+    }
+
+    /**
+     * @param FileLoader $loader
+     * @param array $config
+     * @param ContainerBuilder $container
+     */
+    protected function loadTypeOptionsConfiguration(FileLoader $loader, array $config, ContainerBuilder $container)
+    {
+        foreach ($config['type_options'] as $type => $options) {
+            if (empty($options)) {
+                continue;
+            }
+
+            $typeExtensionDefinitionDecorator = new DefinitionDecorator('ite_form.form.type_extension.form.default_configuration.abstract');
+            $typeExtensionServiceId = sprintf('ite_form.form.type_extension.%s.default_configuration', $type);
+
+            $container
+                ->setDefinition($typeExtensionServiceId, $typeExtensionDefinitionDecorator)
+                ->replaceArgument(0, $type)
+                ->replaceArgument(1, $options)
+                ->addTag('form.type_extension', [
+                    'alias' => $type,
+                ])
+            ;
         }
     }
 }

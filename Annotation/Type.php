@@ -18,7 +18,7 @@ class Type
     /**
      * @var array $options
      */
-    protected $options = array();
+    protected $options = [];
 
     /**
      * @param array $values

@@ -18,9 +18,9 @@ class GoogleFontType extends BaseAbstractType
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'choices' => GoogleFontChoiceListBuilder::getChoices(),
-        ));
+        ]);
     }
 
     /**

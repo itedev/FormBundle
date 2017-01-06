@@ -113,7 +113,10 @@ class MixedEntityToIdTransformer implements DataTransformerInterface
             $loader = $entityOptions['loader'];
             $identifierFieldName = $entityOptions['identifierFieldName'];
 
-            $unorderedEntities = array_merge($unorderedEntities, $loader->getEntitiesByIds($identifierFieldName, $entityIds));
+            $unorderedEntities = array_merge(
+                $unorderedEntities,
+                $loader->getEntitiesByIds($identifierFieldName, $entityIds)
+            );
         }
 
         $entitiesById = [];

@@ -47,8 +47,8 @@ class ExplodeCollectionListener implements EventSubscriberInterface
      */
     public static function getSubscribedEvents()
     {
-        return array(
-            FormEvents::PRE_SUBMIT => array('preSubmit', 10),
-        );
+        return [
+            FormEvents::PRE_SUBMIT => ['preSubmit', 10],
+        ];
     }
-} 
+}

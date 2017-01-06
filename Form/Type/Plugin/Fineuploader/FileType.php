@@ -33,10 +33,10 @@ class FileType extends AbstractType
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'route' => 'ite_form_plugin_fineuploader_file_upload',
             'input_name' => 'qqfile',
-        ));
+        ]);
     }
 
     /**
@@ -45,22 +45,22 @@ class FileType extends AbstractType
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         if (!isset($view->vars['plugins'])) {
-            $view->vars['plugins'] = array();
+            $view->vars['plugins'] = [];
         }
-        $view->vars['plugins'][FineuploaderPlugin::getName()] = array(
-            'extras' => (object) array(),
+        $view->vars['plugins'][FineuploaderPlugin::getName()] = [
+            'extras' => (object) [],
             'options' => array_replace_recursive(
                 $this->options,
                 $options['plugin_options'],
-                array(
+                [
                     'multiple' => $options['multiple'] ? 1 : 0,
-                    'request' => array(
+                    'request' => [
                         'endpoint' => $view->vars['url'],
                         'inputName' => $options['input_name'],
-                    )
-                )
+                    ]
+                ]
             )
-        );
+        ];
         $view->vars['type'] = 'hidden';
     }
 

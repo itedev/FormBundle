@@ -33,18 +33,18 @@ class FileType extends AbstractType
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'route' => 'ite_form_plugin_fileupload_file_upload',
             'input_name' => 'files',
             'widget' => 'basic',
-        ));
-        $resolver->setAllowedValues(array(
-            'widget' => array(
+        ]);
+        $resolver->setAllowedValues([
+            'widget' => [
                 'basic',
                 'basic_plus',
                 'basic_plus_ui',
-            ),
-        ));
+            ],
+        ]);
     }
 
     /**
@@ -53,16 +53,16 @@ class FileType extends AbstractType
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $pluginOptions = array_replace_recursive(
-            array(
+            [
                 'uploadTemplateId' => null,
                 'downloadTemplateId' => null,
-            ),
+            ],
             $this->options,
             $options['plugin_options'],
-            array(
+            [
                 'url' => $view->vars['url'],
                 'paramName' => $options['input_name'],
-            )
+            ]
         );
 
         if (!$options['multiple']) {
@@ -70,12 +70,12 @@ class FileType extends AbstractType
         }
 
         if (!isset($view->vars['plugins'])) {
-            $view->vars['plugins'] = array();
+            $view->vars['plugins'] = [];
         }
-        $view->vars['plugins'][FileuploadPlugin::getName()] = array(
-            'extras' => (object) array(),
+        $view->vars['plugins'][FileuploadPlugin::getName()] = [
+            'extras' => (object) [],
             'options' => $pluginOptions,
-        );
+        ];
         $view->vars['widget'] = $options['widget'];
     }
 

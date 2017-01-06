@@ -37,5 +37,4 @@ class CountProcessor extends AbstractConstraintProcessor
             '{{ limit }}' => $constraint->min
         ], (int) $constraint->min);
     }
-
 }

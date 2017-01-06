@@ -47,8 +47,13 @@ class AjaxEntityChoiceList extends ObjectChoiceList
      * @param EntityLoaderInterface|null $loader
      * @param PropertyAccessorInterface|null $propertyAccessor
      */
-    public function __construct(ObjectManager $em, $class, $labelPath = null, EntityLoaderInterface $loader = null, PropertyAccessorInterface $propertyAccessor = null)
-    {
+    public function __construct(
+        ObjectManager $em,
+        $class,
+        $labelPath = null,
+        EntityLoaderInterface $loader = null,
+        PropertyAccessorInterface $propertyAccessor = null
+    ) {
         $this->em = $em;
         $this->classMetadata = $em->getClassMetadata($class);
         $this->class = $this->classMetadata->getName();

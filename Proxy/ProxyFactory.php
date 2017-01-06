@@ -42,6 +42,18 @@ class ProxyFactory extends AccessInterceptorValueHolderFactory
         parent::__construct($configuration);
     }
 
+//    /**
+//     * {@inheritdoc}
+//     */
+//    public function createProxy($instance, array $prefixInterceptors = [], array $suffixInterceptors = [])
+//    {
+//        if (!$this->fs->exists($this->proxyDir)) {
+//            $this->fs->mkdir($this->proxyDir);
+//        }
+//
+//        return parent::createProxy($instance, $prefixInterceptors, $suffixInterceptors);
+//    }
+
     /**
      * @return string
      */

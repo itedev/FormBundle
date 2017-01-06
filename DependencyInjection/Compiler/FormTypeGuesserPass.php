@@ -24,11 +24,11 @@ class FormTypeGuesserPass implements CompilerPassInterface
 
         $definition = $container->getDefinition('ite_form.form.type_guesser');
         $serviceIds = array_keys($container->findTaggedServiceIds('form.type_guesser'));
-        $serviceIds = array_filter($serviceIds, function($serviceId) {
+        $serviceIds = array_filter($serviceIds, function ($serviceId) {
             return $serviceId !== 'ite_form.form.type_guesser';
         });
 
-        $serviceReferences = array_map(function($serviceId) {
+        $serviceReferences = array_map(function ($serviceId) {
             return new Reference($serviceId);
         }, $serviceIds);
 

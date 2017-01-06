@@ -26,7 +26,7 @@ class EntityConverterPass implements CompilerPassInterface
         $serviceIds = $container->findTaggedServiceIds('ite_form.converter');
         foreach ($serviceIds as $serviceId => $tagAttributes) {
             foreach ($tagAttributes as $attributes) {
-                $definition->addMethodCall('addConverter', array($attributes['alias'], new Reference($serviceId)));
+                $definition->addMethodCall('addConverter', [$attributes['alias'], new Reference($serviceId)]);
             }
         }
     }

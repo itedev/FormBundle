@@ -88,5 +88,4 @@ class HierarchicalParentCollection implements Countable, IteratorAggregate
     {
         return count($this->parents);
     }
-
 }

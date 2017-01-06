@@ -48,14 +48,14 @@ class FormTypeExtension extends AbstractTypeExtension
         $constraints = $this->constraintMapper->map($view, $form);
 
         if (!isset($view->vars['plugins'])) {
-            $view->vars['plugins'] = array();
+            $view->vars['plugins'] = [];
         }
-        $view->vars['plugins'][ParsleyPlugin::getName()] = array(
-            'extras' => array(
+        $view->vars['plugins'][ParsleyPlugin::getName()] = [
+            'extras' => [
                 'constraints' => $constraints
-            ),
+            ],
             'options' => (object) array_replace_recursive($this->options, $options['plugins'][ParsleyPlugin::getName()]),
-        );
+        ];
         $view->vars['attr']['parsley-validate'] = '';
     }
 
@@ -66,4 +66,4 @@ class FormTypeExtension extends AbstractTypeExtension
     {
         return 'form';
     }
-} 
+}

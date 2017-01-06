@@ -34,12 +34,12 @@ class GoogleFontType extends BaseAbstractType
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $resolver->setDefaults(array(
-            'plugin_options' => array(),
-        ));
-        $resolver->setAllowedTypes(array(
-            'plugin_options' => array('array'),
-        ));
+        $resolver->setDefaults([
+            'plugin_options' => [],
+        ]);
+        $resolver->setAllowedTypes([
+            'plugin_options' => ['array'],
+        ]);
     }
 
     /**
@@ -48,14 +48,14 @@ class GoogleFontType extends BaseAbstractType
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         if (!isset($view->vars['plugins'])) {
-            $view->vars['plugins'] = array();
+            $view->vars['plugins'] = [];
         }
-        $view->vars['plugins'][Select2Plugin::getName()] = array(
-            'extras' => array(
+        $view->vars['plugins'][Select2Plugin::getName()] = [
+            'extras' => [
                 'google_fonts' => true
-            ),
+            ],
             'options' => (object) array_replace_recursive($this->options, $options['plugin_options'])
-        );
+        ];
 
         array_splice(
             $view->vars['block_prefixes'],

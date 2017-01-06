@@ -20,7 +20,7 @@ class FormTypeExtension extends AbstractTypeExtension
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $pluginsNormalizer = function(Options $options, $plugins) {
+        $pluginsNormalizer = function (Options $options, $plugins) {
             if (!isset($plugins)) {
                 return [];
             }
@@ -64,4 +64,4 @@ class FormTypeExtension extends AbstractTypeExtension
     {
         return 'form';
     }
-} 
+}

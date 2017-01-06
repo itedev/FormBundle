@@ -148,5 +148,4 @@ class MixedEntityChoiceList extends CoreChoiceList implements ChoiceListInterfac
 
         $this->loaded = true;
     }
-
 }

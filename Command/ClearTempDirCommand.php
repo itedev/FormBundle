@@ -44,7 +44,7 @@ class ClearTempDirCommand extends ContainerAwareCommand
 
         $finder = new Finder();
         $finder->directories()->in($webRoot . '/' . $tmpPrefix)->depth(0)
-            ->filter(function(\SplFileInfo $dir) use ($time) {
+            ->filter(function (\SplFileInfo $dir) use ($time) {
                 return $dir->getCTime() < $time;
             });
 

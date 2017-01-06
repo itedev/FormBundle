@@ -32,12 +32,12 @@ class XEditableExtension extends Twig_Extension
      */
     public function getFilters()
     {
-        return array(
-            new \Twig_SimpleFilter('ite_x_editable', array($this, 'xEditable'), array(
-                'is_safe' => array('html'),
+        return [
+            new \Twig_SimpleFilter('ite_x_editable', [$this, 'xEditable'], [
+                'is_safe' => ['html'],
                 'needs_environment' => true
-            )),
-        );
+            ]),
+        ];
     }
 
     /**
@@ -49,7 +49,7 @@ class XEditableExtension extends Twig_Extension
      * @param array $attr
      * @return string
      */
-    public function xEditable(Twig_Environment $env, $entity, $field, $text = null, $options = array(), $attr = array())
+    public function xEditable(Twig_Environment $env, $entity, $field, $text = null, $options = [], $attr = [])
     {
         $text = isset($text) ? (string) $text : null;
 
@@ -70,5 +70,4 @@ class XEditableExtension extends Twig_Extension
     {
         return 'ite_form.twig.extension.plugin.x_editable';
     }
-
 }

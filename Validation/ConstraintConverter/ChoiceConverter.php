@@ -41,9 +41,8 @@ class ChoiceConverter extends AbstractConstraintConverter
     protected function getChoices(Choice $constraint)
     {
         if ($constraint->callback) {
-            if (!is_callable($choices = array($this->context->getClassName(), $constraint->callback))
-                && !is_callable($choices = $constraint->callback)
-            ) {
+            if (!is_callable($choices = [$this->context->getClassName(), $constraint->callback])
+                && !is_callable($choices = $constraint->callback)) {
                 throw new ConstraintDefinitionException('The Choice constraint expects a valid callback');
             }
             $choices = call_user_func($choices);

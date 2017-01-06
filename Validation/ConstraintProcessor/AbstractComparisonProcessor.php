@@ -33,5 +33,4 @@ class AbstractComparisonProcessor extends AbstractConstraintProcessor
             '{{ compared_value_type }}' => $this->formatTypeOf($constraint->value)
         ]);
     }
-
 }

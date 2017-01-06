@@ -53,5 +53,4 @@ class DefaultConverter extends AbstractConstraintConverter
 
         return new $newClass($options);
     }
-
 }

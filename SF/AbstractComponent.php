@@ -58,10 +58,9 @@ abstract class AbstractComponent implements ExtensionInterface
 
         $routeCollection = new RouteCollection();
         if (file_exists(sprintf('%s/Controller/Component/%s', $bundlePath, $componentName))) {
-            $routeCollection->addCollection($loader->import(
-                    sprintf('@ITEFormBundle/Controller/Component/%s/', $componentName),
-                    'annotation'
-                ));
+            $routeCollection->addCollection(
+                $loader->import(sprintf('@ITEFormBundle/Controller/Component/%s/', $componentName), 'annotation')
+            );
         }
 
         return $routeCollection;

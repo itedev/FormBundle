@@ -36,5 +36,4 @@ class ChoiceProcessor extends AbstractConstraintProcessor
         ], (int) $constraint->max);
         $constraint->message = $this->translate($constraint->message);
     }
-
 }

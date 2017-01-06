@@ -37,14 +37,14 @@ class FormTypeAjaxTokenExtension extends AbstractTypeExtension
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'ajax_token' => false,
             'ajax_token_field_name' => self::DEFAULT_AJAX_TOKEN_FIELD_NAME,
-        ));
-        $resolver->setAllowedTypes(array(
+        ]);
+        $resolver->setAllowedTypes([
             'ajax_token' => 'bool',
             'ajax_token_field_name' => 'string',
-        ));
+        ]);
     }
 
     /**
@@ -89,9 +89,9 @@ class FormTypeAjaxTokenExtension extends AbstractTypeExtension
             $factory = $form->getConfig()->getAttribute('ajax_token_factory');
             $data = $form->getConfig()->getAttribute('ajax_token_value');
 
-            $ajaxTokenForm = $factory->createNamed($options['ajax_token_field_name'], 'hidden', $data, array(
+            $ajaxTokenForm = $factory->createNamed($options['ajax_token_field_name'], 'hidden', $data, [
                 'mapped' => false,
-            ));
+            ]);
 
             $view->children[$options['ajax_token_field_name']] = $ajaxTokenForm->createView($view);
         }
@@ -104,4 +104,4 @@ class FormTypeAjaxTokenExtension extends AbstractTypeExtension
     {
         return 'form';
     }
-} 
+}

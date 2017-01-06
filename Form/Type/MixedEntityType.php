@@ -81,16 +81,16 @@ class MixedEntityType extends AbstractType
             ]
         );
 
-        $view->vars = array_replace($view->vars, array(
+        $view->vars = array_replace($view->vars, [
             'multiple' => false,
             'expanded' => false,
             'preferred_choices' => $options['choice_list']->getPreferredViews(),
             'choices' => $options['choice_list']->getRemainingViews(),
             'separator' => '-------------------',
             'placeholder' => null,
-        ));
+        ]);
 
-        $view->vars['is_selected'] = function($choice, $value) {
+        $view->vars['is_selected'] = function ($choice, $value) {
             return $choice === $value;
         };
 
@@ -121,7 +121,7 @@ class MixedEntityType extends AbstractType
         $propertyAccessor = $this->propertyAccessor;
         $type = $this;
 
-        $choiceList = function(Options $options) use (&$entityChoiceListCache, &$mixedEntityChoiceListCache, $type, $propertyAccessor) {
+        $choiceList = function (Options $options) use (&$entityChoiceListCache, &$mixedEntityChoiceListCache, $type, $propertyAccessor) {
             $entitiesOptions = $options['options'];
 
             $entityChoicesLists = [];
@@ -197,11 +197,11 @@ class MixedEntityType extends AbstractType
             return $mixedEntityChoiceListCache[$mixedEntityChoiceListHash];
         };
 
-        $placeholder = function(Options $options) {
+        $placeholder = function (Options $options) {
             return $options['required'] ? null : '';
         };
 
-        $optionsNormalizers = function(Options $options, $entitiesOptions) use ($registry, $type) {
+        $optionsNormalizers = function (Options $options, $entitiesOptions) use ($registry, $type) {
             $normalizedOptions = [];
             foreach ($entitiesOptions as $alias => $entityOptions) {
                 if (!isset($entityOptions['class'])) {
@@ -272,7 +272,7 @@ class MixedEntityType extends AbstractType
             return $normalizedOptions;
         };
 
-        $placeholderNormalizer = function(Options $options, $placeholder) {
+        $placeholderNormalizer = function (Options $options, $placeholder) {
             if (false === $placeholder) {
                 return;
             }

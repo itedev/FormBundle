@@ -38,5 +38,4 @@ abstract class AbstractTimePluginType extends AbstractTimeType
             'plugin_options' => ['array'],
         ]);
     }
-
 }

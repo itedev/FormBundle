@@ -18,11 +18,11 @@ abstract class AbstractRangeType extends AbstractType
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $classNormalizer = function(Options $options, $class) {
+        $classNormalizer = function (Options $options, $class) {
             $rangeInterface = 'ITE\FormBundle\Form\Data\RangeInterface';
 
             $refClass = new \ReflectionClass($class);
-            if (!$refClass->implementsInterface($rangeInterface) ) {
+            if (!$refClass->implementsInterface($rangeInterface)) {
                 throw new \RuntimeException(sprintf('Class "%s" must implement "%s" interface.', $class, $rangeInterface));
             }
 

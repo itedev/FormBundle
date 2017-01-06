@@ -22,10 +22,11 @@ abstract class ChoicePlugin extends AbstractPlugin
         foreach ($this->getChoiceTypeNames() as $type) {
             $definition = new DefinitionDecorator($serviceId);
             $definition
-              ->addMethodCall('setType', array($type))
-              ->addTag('form.type', array(
-                      'alias' => sprintf('ite_%s_%s', $pluginName, $type))
-              );
+                ->addMethodCall('setType', [$type])
+                ->addTag('form.type', [
+                    'alias' => sprintf('ite_%s_%s', $pluginName, $type)
+                ])
+            ;
 
             $extendedServiceId = preg_replace('/(abstract)$/', $type, $serviceId);
             $container->setDefinition($extendedServiceId, $definition);
@@ -37,7 +38,7 @@ abstract class ChoicePlugin extends AbstractPlugin
      */
     protected function getChoiceTypeNames()
     {
-        return array(
+        return [
             'choice',
             'language',
             'country',
@@ -47,6 +48,6 @@ abstract class ChoicePlugin extends AbstractPlugin
             'entity',
             'document',
             'model',
-        );
+        ];
     }
-} 
+}

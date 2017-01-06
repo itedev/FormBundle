@@ -30,5 +30,4 @@ class Language extends ClientConstraint
         $languages = Intl::getLanguageBundle()->getLanguageNames();
         $this->setAttribute('languages', $languages);
     }
-
 }

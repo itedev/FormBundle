@@ -30,5 +30,4 @@ class Locale extends ClientConstraint
         $locales = Intl::getLocaleBundle()->getLocaleNames();
         $this->setAttribute('locales', $locales);
     }
-
 }

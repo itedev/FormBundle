@@ -40,5 +40,4 @@ class LengthProcessor extends AbstractConstraintProcessor
             '{{ limit }}' => $constraint->min
         ], (int) $constraint->min);
     }
-
 }

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace ITE\FormBundle\SF;
 
 use ITE\JsBundle\SF\SFExtensionInterface;
@@ -44,5 +43,4 @@ interface SFFormExtensionInterface extends SFExtensionInterface
      * @return FormBag
      */
     public function getFormBag();
-
-} 
+}

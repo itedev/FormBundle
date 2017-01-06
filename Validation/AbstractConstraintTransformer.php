@@ -9,5 +9,4 @@ namespace ITE\FormBundle\Validation;
  */
 abstract class AbstractConstraintTransformer implements ConstraintTransformerInterface
 {
-
 }

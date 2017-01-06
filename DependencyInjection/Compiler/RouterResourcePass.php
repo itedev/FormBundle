@@ -29,10 +29,15 @@ class RouterResourcePass implements CompilerPassInterface
             mkdir($dir, 0777, true);
         }
 
-        file_put_contents($file, Yaml::dump(array(
-            '_ite_form' => array('resource' => '.', 'type' => 'ite_form'),
-            '_app'     => array('resource' => $container->getParameter('router.resource')),
-        )));
+        file_put_contents($file, Yaml::dump([
+            '_ite_form' => [
+                'resource' => '.',
+                'type' => 'ite_form',
+            ],
+            '_app' => [
+                'resource' => $container->getParameter('router.resource'),
+            ],
+        ]));
 
         $container->setParameter('router.resource', $file);
     }

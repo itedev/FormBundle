@@ -33,7 +33,7 @@ class DebugExtension extends Twig_Extension
             return;
         }
 
-        $variables = array();
+        $variables = [];
         $count = func_num_args();
         if (2 === $count) {
             foreach ($context as $key => $value) {

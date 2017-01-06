@@ -44,9 +44,9 @@ class EditableManager implements EditableManagerInterface
     public function createAndSubmitForm($entity, $field, $value)
     {
         $form = $this->createForm($entity, $field);
-        $form->submit(array(
+        $form->submit([
             $field => $value
-        ));
+        ]);
 
         return $form;
     }
@@ -58,15 +58,15 @@ class EditableManager implements EditableManagerInterface
      * @param array $options
      * @return Form
      */
-    protected function getForm($entity, $field, $type = null, $options = array())
+    protected function getForm($entity, $field, $type = null, $options = [])
     {
-        return $this->formFactory->createBuilder('form', $entity, array(
-            'data_class' => get_class($entity),
-            'csrf_protection' => false,
-        ))
+        return $this->formFactory
+            ->createBuilder('form', $entity, [
+                'data_class' => get_class($entity),
+                'csrf_protection' => false,
+            ])
             ->add($field, $type, $options)
-            ->getForm();
+            ->getForm()
+        ;
     }
-
-
-} 
+}

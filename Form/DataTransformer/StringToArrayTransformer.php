@@ -3,6 +3,7 @@
 namespace ITE\FormBundle\Form\DataTransformer;
 
 use Symfony\Component\Form\DataTransformerInterface;
+use Symfony\Component\Form\Exception\TransformationFailedException;
 
 /**
  * Class StringToArrayTransformer
@@ -30,15 +31,31 @@ class StringToArrayTransformer implements DataTransformerInterface
      */
     public function transform($values)
     {
+        if (null === $values) {
+            return;
+        }
+
+        if (!is_array($values)) {
+            throw new TransformationFailedException('Expected an array.');
+        }
+
         return implode($this->separator, $values);
     }
 
     /**
      * @param mixed $values
-     * @return array|mixed
+     * @return array
      */
     public function reverseTransform($values)
     {
-        return $values;
+        if (null === $values) {
+            return [];
+        }
+
+        if (!is_string($values)) {
+            throw new TransformationFailedException('Expected a string.');
+        }
+
+        return preg_split(sprintf('~%s~', preg_quote($this->separator, '~')), $values, -1, PREG_SPLIT_NO_EMPTY);
     }
 }

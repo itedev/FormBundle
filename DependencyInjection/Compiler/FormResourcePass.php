@@ -48,8 +48,11 @@ class FormResourcePass implements CompilerPassInterface
      * @param ContainerBuilder $container
      * @return array
      */
-    protected function processComponents(SFFormExtensionInterface $sfForm, array $resources, ContainerBuilder $container)
-    {
+    protected function processComponents(
+        SFFormExtensionInterface $sfForm,
+        array $resources,
+        ContainerBuilder $container
+    ) {
         foreach ($sfForm->getComponents() as $component) {
             /** @var $component ExtensionInterface */
             $resources = array_merge($resources, $component->addFormResources($container));

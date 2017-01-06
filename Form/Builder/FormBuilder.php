@@ -127,7 +127,13 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
                         $parentDatas[$parentName] = $parentData;
                     }
 
-                    $hierarchicalEvent = new HierarchicalEvent($form, $type, $hierarchicalParents, $options, $modelData);
+                    $hierarchicalEvent = new HierarchicalEvent(
+                        $form,
+                        $type,
+                        $hierarchicalParents,
+                        $options,
+                        $modelData
+                    );
 
                     $params = $parentDatas;
                     array_unshift($params, $hierarchicalEvent);
@@ -184,7 +190,12 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
                             ? in_array($parentFullName, $originator)
                             : false;
 
-                        $hierarchicalParent = new HierarchicalParent($parentName, $parentData, $parentForm, $isParentOriginator);
+                        $hierarchicalParent = new HierarchicalParent(
+                            $parentName,
+                            $parentData,
+                            $parentForm,
+                            $isParentOriginator
+                        );
                         $hierarchicalParents[$parentName] = $hierarchicalParent;
                         $parentDatas[$parentName] = $parentData;
                     }
@@ -192,7 +203,15 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
                     $submittedData = $params['submittedData'];
                     //                    $modelData = FormUtils::getModelDataFromSubmittedData($instance, $submittedData);
 
-                    $hierarchicalEvent = new HierarchicalEvent($form, $type, $hierarchicalParents, $options, $submittedData, true, $originator);
+                    $hierarchicalEvent = new HierarchicalEvent(
+                        $form,
+                        $type,
+                        $hierarchicalParents,
+                        $options,
+                        $submittedData,
+                        true,
+                        $originator
+                    );
 
                     $params = $parentDatas;
                     array_unshift($params, $hierarchicalEvent);
@@ -211,7 +230,11 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
                     //EventDispatcherUtils::extend($newEd, $oldEd);
 
                     $instanceFieldName = $proxy->__sleep();
-                    ReflectionUtils::setValue($proxy, $instanceFieldName[0], $form->get($child)->getWrappedValueHolderValue());
+                    ReflectionUtils::setValue(
+                        $proxy,
+                        $instanceFieldName[0],
+                        $form->get($child)->getWrappedValueHolderValue()
+                    );
                 },
             ],
             [

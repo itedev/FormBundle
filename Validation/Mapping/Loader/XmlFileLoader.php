@@ -31,7 +31,7 @@ class XmlFileLoader extends FileLoader
             // state before it completes
             $xml = $this->parseFile($this->file);
 
-            $this->classes = array();
+            $this->classes = [];
 
             foreach ($xml->namespace as $namespace) {
                 $this->addNamespaceAlias((string) $namespace['prefix'], trim((string) $namespace));
@@ -62,7 +62,7 @@ class XmlFileLoader extends FileLoader
      */
     protected function parseConstraints(\SimpleXMLElement $nodes)
     {
-        $constraints = array();
+        $constraints = [];
 
         foreach ($nodes as $node) {
             if (count($node) > 0) {
@@ -73,7 +73,7 @@ class XmlFileLoader extends FileLoader
                 } elseif (count($node->option) > 0) {
                     $options = $this->parseOptions($node->option);
                 } else {
-                    $options = array();
+                    $options = [];
                 }
             } elseif (strlen((string) $node) > 0) {
                 $options = trim($node);
@@ -96,7 +96,7 @@ class XmlFileLoader extends FileLoader
      */
     protected function parseValues(\SimpleXMLElement $nodes)
     {
-        $values = array();
+        $values = [];
 
         foreach ($nodes as $node) {
             if (count($node) > 0) {
@@ -105,7 +105,7 @@ class XmlFileLoader extends FileLoader
                 } elseif (count($node->constraint) > 0) {
                     $value = $this->parseConstraints($node->constraint);
                 } else {
-                    $value = array();
+                    $value = [];
                 }
             } else {
                 $value = trim($node);
@@ -130,7 +130,7 @@ class XmlFileLoader extends FileLoader
      */
     protected function parseOptions(\SimpleXMLElement $nodes)
     {
-        $options = array();
+        $options = [];
 
         foreach ($nodes as $node) {
             if (count($node) > 0) {
@@ -139,7 +139,7 @@ class XmlFileLoader extends FileLoader
                 } elseif (count($node->constraint) > 0) {
                     $value = $this->parseConstraints($node->constraint);
                 } else {
-                    $value = array();
+                    $value = [];
                 }
             } else {
                 $value = XmlUtils::phpize($node);

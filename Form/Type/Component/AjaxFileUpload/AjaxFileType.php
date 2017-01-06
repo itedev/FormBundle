@@ -34,8 +34,11 @@ class AjaxFileType extends AbstractType
      * @param FileManagerInterface $fileManager
      * @param StorageInterface $vichUploaderStorage
      */
-    public function __construct(RouterInterface $router, FileManagerInterface $fileManager, StorageInterface $vichUploaderStorage = null)
-    {
+    public function __construct(
+        RouterInterface $router,
+        FileManagerInterface $fileManager,
+        StorageInterface $vichUploaderStorage = null
+    ) {
         $this->router = $router;
         $this->fileManager = $fileManager;
         $this->vichUploaderStorage = $vichUploaderStorage;
@@ -57,28 +60,28 @@ class AjaxFileType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $type = $this;
-        $url = function(Options $options) use ($type) {
+        $url = function (Options $options) use ($type) {
             return $type->getRouter()->generate($options['route'], array_replace(
                 $options['route_parameters'],
-                array(
+                [
                     'multiple' => $options['multiple'] ? 1 : 0,
                     'inputName' => $options['input_name'],
-                )
+                ]
             ));
         };
 
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'input_name' => 'files',
-            'route_parameters' => array(),
+            'route_parameters' => [],
             'url' => $url,
-            'plugin_options' => array(),
-        ));
-        $resolver->setAllowedTypes(array(
-            'plugin_options' => array('array'),
-        ));
-        $resolver->setRequired(array(
+            'plugin_options' => [],
+        ]);
+        $resolver->setAllowedTypes([
+            'plugin_options' => ['array'],
+        ]);
+        $resolver->setRequired([
             'route',
-        ));
+        ]);
     }
 
     /**
@@ -150,7 +153,6 @@ class AjaxFileType extends AbstractType
 //                new WebFile($path, $uri)
 //            );
 //        }
-        return array();
+        return [];
     }
-
 }

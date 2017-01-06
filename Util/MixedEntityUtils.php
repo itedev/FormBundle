@@ -45,7 +45,7 @@ class MixedEntityUtils
      */
     public static function wrapValues(array $values, $alias, $withIndices = false)
     {
-        $wrappedValues = array_map(function($value) use ($alias) {
+        $wrappedValues = array_map(function ($value) use ($alias) {
             return self::wrapValue($value, $alias);
         }, $values);
 
@@ -64,7 +64,7 @@ class MixedEntityUtils
      */
     public static function wrapChoiceViews(array $choiceViews, $alias, $withIndices = false)
     {
-        $wrappedChoiceViews = array_map(function($choiceView) use ($alias) {
+        $wrappedChoiceViews = array_map(function ($choiceView) use ($alias) {
             $wrappedValue = self::wrapValue($choiceView->value, $alias);
 
             return new ChoiceView($choiceView->data, $wrappedValue, $choiceView->label);

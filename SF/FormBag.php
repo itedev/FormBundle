@@ -62,7 +62,7 @@ class FormBag
      */
     public function toArray()
     {
-        return array_map(function(ClientFormView $view) {
+        return array_map(function (ClientFormView $view) {
             return $view->toArray();
         }, $this->forms);
     }

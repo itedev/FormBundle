@@ -286,7 +286,7 @@ class Form extends BaseForm implements FormInterface
             throw new \InvalidArgumentException('You must set at least one parent');
         }
         if (!is_array($parents)) {
-            $parents = array($parents);
+            $parents = [$parents];
         }
         if (!is_callable($callback)) {
             throw new \InvalidArgumentException('The form modifier handler must be a valid PHP callable.');

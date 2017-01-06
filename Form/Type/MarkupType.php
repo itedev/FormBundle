@@ -71,7 +71,7 @@ class MarkupType extends AbstractType
         } elseif (is_scalar($options['markup'])) {
             return $options['markup'];
         } else {
-            $empty = null === $parentData || array() === $parentData;
+            $empty = null === $parentData || [] === $parentData;
             $propertyPath = $form->getPropertyPath();
 
             if (!$empty && null !== $propertyPath) {

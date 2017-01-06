@@ -80,14 +80,14 @@ class AjaxChoiceType extends AbstractType
                 ]
             );
 
-            $view->vars = array_replace($view->vars, array(
+            $view->vars = array_replace($view->vars, [
                 'multiple' => $options['multiple'],
                 'expanded' => false,
                 'preferred_choices' => $options['choice_list']->getPreferredViews(),
                 'choices' => $options['choice_list']->getRemainingViews(),
                 'separator' => '-------------------',
                 'placeholder' => null,
-            ));
+            ]);
 
             if ($options['multiple']) {
                 $view->vars['is_selected'] = function ($choice, array $values) {

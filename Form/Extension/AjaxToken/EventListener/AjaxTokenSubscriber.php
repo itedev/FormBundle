@@ -31,9 +31,9 @@ class AjaxTokenSubscriber implements EventSubscriberInterface
      */
     public static function getSubscribedEvents()
     {
-        return array(
+        return [
             FormEvents::PRE_SUBMIT => 'preSubmit',
-        );
+        ];
     }
 
     /**
@@ -52,4 +52,4 @@ class AjaxTokenSubscriber implements EventSubscriberInterface
 
         $event->setData($data);
     }
-} 
+}

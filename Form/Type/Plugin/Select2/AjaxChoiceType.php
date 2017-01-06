@@ -33,4 +33,4 @@ class AjaxChoiceType extends AbstractAjaxChoiceType
     {
         return 'ite_select2_ajax_choice';
     }
-} 
+}

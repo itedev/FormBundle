@@ -2,15 +2,15 @@
 
 namespace ITE\FormBundle\Form\Type\Plugin\Select2;
 
+use ITE\FormBundle\Form\DataTransformer\StringToArrayTransformer;
 use ITE\FormBundle\Form\Type\Plugin\Core\AbstractPluginType;
 use ITE\FormBundle\SF\Form\ClientFormTypeInterface;
 use ITE\FormBundle\SF\Form\ClientFormView;
 use ITE\FormBundle\SF\Plugin\Select2Plugin;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
  * Class AbstractAjaxChoiceType
@@ -24,26 +24,31 @@ abstract class AbstractAjaxChoiceType extends AbstractPluginType implements Clie
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $isMultiple = $builder->getOption('multiple');
+        if ($options['multiple']) {
+            $builder->addViewTransformer(new StringToArrayTransformer());
+        }
+    }
 
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($isMultiple) {
-            $data = $event->getData();
+    /**
+     * {@inheritdoc}
+     */
+    public function finishView(FormView $view, FormInterface $form, array $options)
+    {
+        if ($options['multiple']) {
+            $view->vars['full_name'] = substr($view->vars['full_name'], 0, -2);
+        }
+    }
 
-            // Fix for select2 multiple, input value explode required
-            if ($isMultiple) {
-                $event->setData(null);
-                if (!is_array($data)) {
-                    $data = [$data];
-                }
-                if (
-                    $data
-                    && isset($data[0])
-                    && $data[0]
-                ) {
-                    $event->setData(explode(",", $data[0]));
-                }
-            }
-        });
+    /**
+     * {@inheritdoc}
+     */
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        parent::setDefaultOptions($resolver);
+
+        $resolver->setDefaults([
+            'empty_data' => '',
+        ]);
     }
 
     /**

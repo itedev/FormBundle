@@ -49,8 +49,11 @@ class RouteLoader extends BaseLoader
      * @param RouteCollection $collection
      * @param ContainerInterface $container
      */
-    protected function addComponentsRoutes(SFFormExtensionInterface $sfForm, RouteCollection $collection, ContainerInterface $container)
-    {
+    protected function addComponentsRoutes(
+        SFFormExtensionInterface $sfForm,
+        RouteCollection $collection,
+        ContainerInterface $container
+    ) {
         foreach ($sfForm->getComponents() as $component) {
             /** @var $component ExtensionInterface */
             $collection->addCollection($component->addRoutes($this, $container));
@@ -62,8 +65,11 @@ class RouteLoader extends BaseLoader
      * @param RouteCollection $collection
      * @param ContainerInterface $container
      */
-    protected function addPluginsRoutes(SFFormExtensionInterface $sfForm, RouteCollection $collection, ContainerInterface $container)
-    {
+    protected function addPluginsRoutes(
+        SFFormExtensionInterface $sfForm,
+        RouteCollection $collection,
+        ContainerInterface $container
+    ) {
         foreach ($sfForm->getPlugins() as $plugin) {
             /** @var $plugin ExtensionInterface */
             $collection->addCollection($plugin->addRoutes($this, $container));
@@ -77,4 +83,4 @@ class RouteLoader extends BaseLoader
     {
         return 'ite_form' === $type;
     }
-} 
+}

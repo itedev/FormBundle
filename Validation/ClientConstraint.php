@@ -121,7 +121,10 @@ abstract class ClientConstraint
             return;
         }
 
-        throw new InvalidOptionsException(sprintf('The option "%s" does not exist in constraint %s', $option, get_class($this)), array($option));
+        throw new InvalidOptionsException(
+            sprintf('The option "%s" does not exist in constraint %s', $option, get_class($this)),
+            [$option]
+        );
     }
 
     /**
@@ -144,12 +147,15 @@ abstract class ClientConstraint
     public function __get($option)
     {
         if ('groups' === $option) {
-            $this->groups = array(self::DEFAULT_GROUP);
+            $this->groups = [self::DEFAULT_GROUP];
 
             return $this->groups;
         }
 
-        throw new InvalidOptionsException(sprintf('The option "%s" does not exist in constraint %s', $option, get_class($this)), array($option));
+        throw new InvalidOptionsException(
+            sprintf('The option "%s" does not exist in constraint %s', $option, get_class($this)),
+            [$option]
+        );
     }
 
     /**
@@ -194,7 +200,7 @@ abstract class ClientConstraint
      */
     public function getRequiredOptions()
     {
-        return array();
+        return [];
     }
 
     /**

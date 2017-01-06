@@ -82,5 +82,4 @@ class Range implements RangeInterface
 
         return $this;
     }
-
 }

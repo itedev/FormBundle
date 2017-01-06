@@ -55,5 +55,4 @@ class DefaultTransformer implements ConstraintTransformerInterface
             'ITE\FormBundle\Validation\Constraints\Range',
         ]);
     }
-
 }

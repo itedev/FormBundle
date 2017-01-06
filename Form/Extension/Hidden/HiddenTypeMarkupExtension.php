@@ -81,7 +81,7 @@ class HiddenTypeMarkupExtension extends AbstractTypeExtension
         } elseif (is_string($options['markup'])) {
             return $options['markup'];
         } else {
-            $empty = null === $parentData || array() === $parentData;
+            $empty = null === $parentData || [] === $parentData;
             $propertyPath = isset($options['markup_property_path'])
                 ? $options['markup_property_path']
                 : $form->getPropertyPath();

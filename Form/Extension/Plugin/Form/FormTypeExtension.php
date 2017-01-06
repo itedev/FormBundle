@@ -39,12 +39,12 @@ class FormTypeExtension extends AbstractTypeExtension
         }
 
         if (!isset($view->vars['plugins'])) {
-            $view->vars['plugins'] = array();
+            $view->vars['plugins'] = [];
         }
-        $view->vars['plugins'][FormPlugin::getName()] = array(
-            'extras' => (object) array(),
+        $view->vars['plugins'][FormPlugin::getName()] = [
+            'extras' => (object) [],
             'options' => (object) array_replace_recursive($this->options, $options['plugins'][FormPlugin::getName()]),
-        );
+        ];
     }
 
     /**

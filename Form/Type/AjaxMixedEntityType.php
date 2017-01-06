@@ -106,14 +106,14 @@ class AjaxMixedEntityType extends AbstractType
                 ]
             );
 
-            $view->vars = array_replace($view->vars, array(
+            $view->vars = array_replace($view->vars, [
                 'multiple' => false,
                 'expanded' => false,
                 'preferred_choices' => [],
                 'choices' => $options['choice_list']->getRemainingViews(),
                 'separator' => '-------------------',
                 'placeholder' => null,
-            ));
+            ]);
 
             if ($options['multiple']) {
                 $view->vars['is_selected'] = function ($choice, array $values) {
@@ -149,7 +149,7 @@ class AjaxMixedEntityType extends AbstractType
         $propertyAccessor = $this->propertyAccessor;
         $self = $this;
 
-        $choiceList = function(Options $options) use ($propertyAccessor) {
+        $choiceList = function (Options $options) use ($propertyAccessor) {
             $entitiesOptions = $options['options'];
 
             $entityChoicesLists = [];
@@ -178,11 +178,11 @@ class AjaxMixedEntityType extends AbstractType
             );
         };
 
-        $placeholder = function(Options $options) {
+        $placeholder = function (Options $options) {
             return $options['required'] ? null : '';
         };
 
-        $optionsNormalizers = function(Options $options, $entitiesOptions) use ($registry, $self) {
+        $optionsNormalizers = function (Options $options, $entitiesOptions) use ($registry, $self) {
             $normalizedOptions = [];
             foreach ($entitiesOptions as $alias => $entityOptions) {
                 if (!isset($entityOptions['class'])) {
@@ -253,7 +253,7 @@ class AjaxMixedEntityType extends AbstractType
             return $normalizedOptions;
         };
 
-        $placeholderNormalizer = function(Options $options, $placeholder) {
+        $placeholderNormalizer = function (Options $options, $placeholder) {
             if (false === $placeholder) {
                 return;
             }
@@ -261,7 +261,7 @@ class AjaxMixedEntityType extends AbstractType
             return $placeholder;
         };
 
-        $urlNormalizer = function(Options $options, $url) use ($router) {
+        $urlNormalizer = function (Options $options, $url) use ($router) {
             if (!empty($options['route'])) {
                 return $router->generate($options['route'], $options['route_parameters']);
             } elseif (!empty($url)) {

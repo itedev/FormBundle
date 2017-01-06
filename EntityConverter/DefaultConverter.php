@@ -166,8 +166,8 @@ class DefaultConverter implements ConverterInterface
      */
     protected function getValue($entity, $mixed, $config, $alias)
     {
+        // @todo: check it
         $classMetadata = $config[$alias]['classMetadata'];
-
         if (!$classMetadata) {
             return '';
         }

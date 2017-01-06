@@ -38,9 +38,9 @@ All files uploaded via AJAX will be saved in tmp\_prefix directory
     {
         public function setDefaultOptions(OptionsResolverInterface $resolver)
         {
-            $resolver->setDefaults(array(
+            $resolver->setDefaults([
                 'ajax_token' => true,
-            ));
+            ]);
         }
     }
 

@@ -49,4 +49,4 @@ class DefaultAjaxTokenProvider implements AjaxTokenProviderInterface
 
         return sha1($generator->nextBytes(20));
     }
-} 
+}

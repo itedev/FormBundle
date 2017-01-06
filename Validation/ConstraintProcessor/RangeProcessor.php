@@ -39,5 +39,4 @@ class RangeProcessor extends AbstractConstraintProcessor
             '{{ max }}' => $this->formatValue($constraint->max, self::PRETTY_DATE),
         ]);
     }
-
 }

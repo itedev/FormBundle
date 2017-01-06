@@ -36,10 +36,10 @@ class CollectionExtension extends Twig_Extension
      */
     public function getFunctions()
     {
-        return array(
-            new \Twig_SimpleFunction('ite_is_collection', array($this, 'isCollection'), array('needs_context' => true)),
-            new \Twig_SimpleFunction('ite_is_collection_item', array($this, 'isCollectionItem'), array('needs_context' => true)),
-        );
+        return [
+            new \Twig_SimpleFunction('ite_is_collection', [$this, 'isCollection'], ['needs_context' => true]),
+            new \Twig_SimpleFunction('ite_is_collection_item', [$this, 'isCollectionItem'], ['needs_context' => true]),
+        ];
     }
 
     /**
@@ -74,5 +74,4 @@ class CollectionExtension extends Twig_Extension
     {
         return 'ite_form.twig.collection_extension';
     }
-
 }

@@ -18,7 +18,6 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
  * Birthday type wrapper for bootstrap-datetimepeeker
  * Plugin URL: https://github.com/Eonasdan/bootstrap-datetimepicker
  *
- *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
 class BirthdayType extends AbstractPluginType implements ClientFormTypeInterface
@@ -45,7 +44,10 @@ class BirthdayType extends AbstractPluginType implements ClientFormTypeInterface
         $startDate = \DateTime::createFromFormat('Y-m-d H:i:s', sprintf('%d-01-01 00:00:00', $options['years'][0]));
         $endDate = min(
             new \DateTime(),
-            \DateTime::createFromFormat('Y-m-d H:i:s', sprintf('%d-12-31 23:59:59', $options['years'][count($options['years']) - 1]))
+            \DateTime::createFromFormat(
+                'Y-m-d H:i:s',
+                sprintf('%d-12-31 23:59:59', $options['years'][count($options['years']) - 1])
+            )
         );
 
         //$viewTransformers = $form->getConfig()->getViewTransformers();

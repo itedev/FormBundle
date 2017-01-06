@@ -31,5 +31,4 @@ class TypeProcessor extends AbstractConstraintProcessor
             '{{ type }}', $constraint->type
         ]);
     }
-
 }

@@ -34,8 +34,10 @@ class FormTypeValidationExtension extends AbstractTypeExtension implements Clien
      * @param FormMetadataFactoryInterface $metadataFactory
      * @param ClientConstraintManagerInterface $clientConstraintManager
      */
-    public function __construct(FormMetadataFactoryInterface $metadataFactory, ClientConstraintManagerInterface $clientConstraintManager)
-    {
+    public function __construct(
+        FormMetadataFactoryInterface $metadataFactory,
+        ClientConstraintManagerInterface $clientConstraintManager
+    ) {
         $this->metadataFactory = $metadataFactory;
         $this->clientConstraintManager = $clientConstraintManager;
     }
@@ -87,8 +89,6 @@ class FormTypeValidationExtension extends AbstractTypeExtension implements Clien
             $formMetadata = $this->metadataFactory->getMetadataFor($form, $constraintConversion);
             $constraints = $formMetadata->getConstraints();
             if (!empty($constraints)) {
-
-
                 $clientView->setOption('constraints', $constraints);
             }
         }

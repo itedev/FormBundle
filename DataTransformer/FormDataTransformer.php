@@ -128,5 +128,4 @@ class FormDataTransformer implements FormDataTransformerInterface
 
         return $value;
     }
-
 }

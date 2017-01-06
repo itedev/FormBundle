@@ -89,5 +89,4 @@ class EntityConverter extends ConfigurationAnnotation
     {
         return false;
     }
-
 }

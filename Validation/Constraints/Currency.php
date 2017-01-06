@@ -30,5 +30,4 @@ class Currency extends ClientConstraint
         $currencies = Intl::getCurrencyBundle()->getCurrencyNames();
         $this->setAttribute('currencies', $currencies);
     }
-
 }

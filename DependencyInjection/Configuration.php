@@ -38,6 +38,7 @@ class Configuration implements ConfigurationInterface
 
         $this->addComponentsConfiguration($rootNode);
         $this->addPluginsConfiguration($rootNode);
+        $this->addTypeOptionsConfiguration($rootNode);
 
         $rootNode
             ->children()
@@ -88,4 +89,18 @@ class Configuration implements ConfigurationInterface
         }
     }
 
+    /**
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addTypeOptionsConfiguration(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('type_options')
+                    ->defaultValue([])
+                    ->useAttributeAsKey('name')
+                    ->prototype('variable')
+                ->end()
+        ;
+    }
 }

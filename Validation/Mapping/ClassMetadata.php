@@ -41,7 +41,7 @@ class ClassMetadata extends GenericMetadata implements ClassMetadataInterface
      *           class' serialized representation. Do not access it. Use
      *           {@link getPropertyMetadata()} instead.
      */
-    public $members = array();
+    public $members = [];
 
     /**
      * @var PropertyMetadata[]
@@ -50,7 +50,7 @@ class ClassMetadata extends GenericMetadata implements ClassMetadataInterface
      *           class' serialized representation. Do not access it. Use
      *           {@link getPropertyMetadata()} instead.
      */
-    public $properties = array();
+    public $properties = [];
 
     /**
      * @var \ReflectionClass
@@ -80,12 +80,12 @@ class ClassMetadata extends GenericMetadata implements ClassMetadataInterface
     {
         $parentProperties = parent::__sleep();
 
-        return array_merge($parentProperties, array(
+        return array_merge($parentProperties, [
             'members',
             'name',
             'properties',
             'defaultGroup',
-        ));
+        ]);
     }
 
     /**
@@ -219,7 +219,7 @@ class ClassMetadata extends GenericMetadata implements ClassMetadataInterface
     public function getPropertyMetadata($property)
     {
         if (!isset($this->members[$property])) {
-            return array();
+            return [];
         }
 
         return $this->members[$property];

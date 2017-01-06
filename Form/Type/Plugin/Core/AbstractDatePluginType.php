@@ -38,5 +38,4 @@ abstract class AbstractDatePluginType extends AbstractDateType
             'plugin_options' => ['array'],
         ]);
     }
-
 }

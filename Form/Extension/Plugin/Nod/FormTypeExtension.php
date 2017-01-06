@@ -48,15 +48,15 @@ class FormTypeExtension extends AbstractTypeExtension
         $constraints = $this->constraintMapper->map($view, $form);
 
         if (!isset($view->vars['plugins'])) {
-            $view->vars['plugins'] = array();
+            $view->vars['plugins'] = [];
         }
-        $view->vars['plugins'][NodPlugin::getName()] = array(
-            'extras' => (object) array(),
-            'options' => array(
+        $view->vars['plugins'][NodPlugin::getName()] = [
+            'extras' => (object) [],
+            'options' => [
                 'metrics' => $constraints,
                 'options' => (object) array_replace_recursive($this->options, $options['plugins'][NodPlugin::getName()]),
-            )
-        );
+            ]
+        ];
     }
 
     /**
@@ -66,4 +66,4 @@ class FormTypeExtension extends AbstractTypeExtension
     {
         return 'form';
     }
-} 
+}
