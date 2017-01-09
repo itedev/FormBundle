@@ -6,11 +6,11 @@ use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * Class FormTypeDefaultConfigurationExtension
+ * Class AbstractDynamicTypeDefaultConfigurationExtension
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-class FormTypeDefaultConfigurationExtension extends AbstractTypeExtension
+class AbstractDynamicTypeDefaultConfigurationExtension extends AbstractTypeExtension
 {
     /**
      * @var string

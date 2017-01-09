@@ -43,7 +43,8 @@ class ITEFormExtension extends Extension
 
         $this->loadComponentsConfiguration($loader, $config['components'], $container);
         $this->loadPluginsConfiguration($loader, $config['plugins'], $container);
-        $this->loadTypeOptionsConfiguration($loader, $config, $container);
+        $this->loadTypesConfiguration($loader, $config, $container);
+        $this->loadTypeExtensionsConfiguration($loader, $config, $container);
     }
 
     /**
@@ -101,14 +102,37 @@ class ITEFormExtension extends Extension
      * @param array $config
      * @param ContainerBuilder $container
      */
-    protected function loadTypeOptionsConfiguration(FileLoader $loader, array $config, ContainerBuilder $container)
+    protected function loadTypesConfiguration(FileLoader $loader, array $config, ContainerBuilder $container)
     {
-        foreach ($config['type_options'] as $type => $options) {
+        foreach ($config['types'] as $type => $typeConfiguration) {
+            $typeDefinitionDecorator = new DefinitionDecorator('ite_form.form.type.dynamic.abstract');
+            $typeServiceId = sprintf('ite_form.form.type.%s', $type);
+
+            $container
+                ->setDefinition($typeServiceId, $typeDefinitionDecorator)
+                ->replaceArgument(0, $type)
+                ->replaceArgument(1, $typeConfiguration['parent'])
+                ->replaceArgument(2, $typeConfiguration['options'])
+                ->addTag('form.type', [
+                    'alias' => $type,
+                ])
+            ;
+        }
+    }
+
+    /**
+     * @param FileLoader $loader
+     * @param array $config
+     * @param ContainerBuilder $container
+     */
+    protected function loadTypeExtensionsConfiguration(FileLoader $loader, array $config, ContainerBuilder $container)
+    {
+        foreach ($config['type_extensions'] as $type => $options) {
             if (empty($options)) {
                 continue;
             }
 
-            $typeExtensionDefinitionDecorator = new DefinitionDecorator('ite_form.form.type_extension.form.default_configuration.abstract');
+            $typeExtensionDefinitionDecorator = new DefinitionDecorator('ite_form.form.type_extension.dynamic.default_configuration.abstract');
             $typeExtensionServiceId = sprintf('ite_form.form.type_extension.%s.default_configuration', $type);
 
             $container

@@ -4,9 +4,8 @@ parameters:
     ite_form.form.type.mixed_entity.class:          ITE\FormBundle\Form\Type\MixedEntityType
     ite_form.form.type.ajax_mixed_entity.class:     ITE\FormBundle\Form\Type\AjaxMixedEntityType
     ite_form.form.type.google_font.class:           ITE\FormBundle\Form\Type\GoogleFontType
-
-    # todo: refactor types below
     ite_form.form.markup_type.class:                ITE\FormBundle\Form\Type\MarkupType
+    ite_form.form.type.dynamic.abstract.class:      ITE\FormBundle\Form\Type\AbstractDynamicType
 
 services:
     ite_form.form.type.ajax_choice:
@@ -42,3 +41,11 @@ services:
         class: %ite_form.form.markup_type.class%
         tags:
             - { name: form.type, alias: ite_markup }
+
+    ite_form.form.type.dynamic.abstract:
+        class: %ite_form.form.type.dynamic.abstract.class%
+        abstract: true
+        arguments:
+            - null
+            - null
+            - {}

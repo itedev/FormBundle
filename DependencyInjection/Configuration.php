@@ -38,7 +38,8 @@ class Configuration implements ConfigurationInterface
 
         $this->addComponentsConfiguration($rootNode);
         $this->addPluginsConfiguration($rootNode);
-        $this->addTypeOptionsConfiguration($rootNode);
+        $this->addTypesConfiguration($rootNode);
+        $this->addTypeExtensionsConfiguration($rootNode);
 
         $rootNode
             ->children()
@@ -89,18 +90,43 @@ class Configuration implements ConfigurationInterface
         }
     }
 
-    /**
+        /**
      * @param ArrayNodeDefinition $rootNode
      */
-    private function addTypeOptionsConfiguration(ArrayNodeDefinition $rootNode)
+    private function addTypesConfiguration(ArrayNodeDefinition $rootNode)
     {
         $rootNode
             ->children()
-                ->arrayNode('type_options')
+                ->arrayNode('types')
+                    ->defaultValue([])
+                    ->useAttributeAsKey('name')
+                    ->prototype('array')
+                        ->children()
+                            ->scalarNode('parent')
+                                ->isRequired()
+                            ->end()
+                            ->variableNode('options')
+                                ->defaultValue([])
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+        ;
+    }
+
+    /**
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addTypeExtensionsConfiguration(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('type_extensions')
                     ->defaultValue([])
                     ->useAttributeAsKey('name')
                     ->prototype('variable')
                 ->end()
+            ->end()
         ;
     }
 }
