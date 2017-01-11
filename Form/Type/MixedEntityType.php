@@ -10,6 +10,7 @@ use Symfony\Bridge\Doctrine\Form\ChoiceList\ORMQueryBuilderLoader;
 use Symfony\Component\Form\Exception\RuntimeException;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\DataTransformer\ChoicesToValuesTransformer;
 use Symfony\Component\Form\Extension\Core\DataTransformer\ChoiceToValueTransformer;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
@@ -63,7 +64,11 @@ class MixedEntityType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->addViewTransformer(new ChoiceToValueTransformer($options['choice_list']));
+        if ($options['multiple']) {
+            $builder->addViewTransformer(new ChoicesToValuesTransformer($options['choice_list']));
+        } else {
+            $builder->addViewTransformer(new ChoiceToValueTransformer($options['choice_list']));
+        }
     }
 
     /**
@@ -82,7 +87,7 @@ class MixedEntityType extends AbstractType
         );
 
         $view->vars = array_replace($view->vars, [
-            'multiple' => false,
+            'multiple' => $options['multiple'],
             'expanded' => false,
             'preferred_choices' => $options['choice_list']->getPreferredViews(),
             'choices' => $options['choice_list']->getRemainingViews(),
@@ -90,9 +95,15 @@ class MixedEntityType extends AbstractType
             'placeholder' => null,
         ]);
 
-        $view->vars['is_selected'] = function ($choice, $value) {
-            return $choice === $value;
-        };
+        if ($options['multiple']) {
+            $view->vars['is_selected'] = function ($choice, array $values) {
+                return in_array($choice, $values, true);
+            };
+        } else {
+            $view->vars['is_selected'] = function ($choice, $value) {
+                return $choice === $value;
+            };
+        }
 
         // Check if the choices already contain the empty value
         $view->vars['placeholder_in_choices'] = false; // 0 !== count($options['choice_list']->getChoicesForValues(['']));
@@ -100,6 +111,10 @@ class MixedEntityType extends AbstractType
         // Only add the empty value option if this is not the case
         if (null !== $options['placeholder'] && !$view->vars['placeholder_in_choices']) {
             $view->vars['placeholder'] = $options['placeholder'];
+        }
+
+        if ($options['multiple']) {
+            $view->vars['full_name'] .= '[]';
         }
     }
 
@@ -121,7 +136,7 @@ class MixedEntityType extends AbstractType
         $propertyAccessor = $this->propertyAccessor;
         $type = $this;
 
-        $choiceList = function (Options $options) use (&$entityChoiceListCache, &$mixedEntityChoiceListCache, $type, $propertyAccessor) {
+        $choiceList = function (Options $options) use (&$entityChoiceListCache, &$mixedEntityChoiceListCache, $propertyAccessor) {
             $entitiesOptions = $options['options'];
 
             $entityChoicesLists = [];
@@ -273,20 +288,32 @@ class MixedEntityType extends AbstractType
         };
 
         $placeholderNormalizer = function (Options $options, $placeholder) {
-            if (false === $placeholder) {
+            if ($options['multiple']) {
+                return;
+            } elseif (false === $placeholder) {
                 return;
             }
 
             return $placeholder;
         };
 
+        $emptyData = function (Options $options) {
+            if ($options['multiple']) {
+                return [];
+            }
+
+            return '';
+        };
+
         $resolver->setDefaults([
+            'multiple' => false,
             'options' => [],
             'choice_list' => $choiceList,
+            'empty_data' => $emptyData,
             'placeholder' => $placeholder,
-            'data_class' => null,
-            'multiple' => false,
+            'error_bubbling' => false,
             'compound' => false,
+            'data_class' => null,
         ]);
         $resolver->setNormalizers([
             'options' => $optionsNormalizers,
@@ -295,6 +322,7 @@ class MixedEntityType extends AbstractType
         $resolver->setAllowedTypes([
             'options' => ['array'],
             'multiple' => ['bool'],
+            'choice_list' => ['null', 'Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceListInterface'],
         ]);
     }
 
