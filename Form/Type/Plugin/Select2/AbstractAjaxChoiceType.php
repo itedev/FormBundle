@@ -2,15 +2,12 @@
 
 namespace ITE\FormBundle\Form\Type\Plugin\Select2;
 
-use ITE\FormBundle\Form\DataTransformer\StringToArrayTransformer;
 use ITE\FormBundle\Form\Type\Plugin\Core\AbstractPluginType;
 use ITE\FormBundle\SF\Form\ClientFormTypeInterface;
 use ITE\FormBundle\SF\Form\ClientFormView;
 use ITE\FormBundle\SF\Plugin\Select2Plugin;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
  * Class AbstractAjaxChoiceType
@@ -19,38 +16,6 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
  */
 abstract class AbstractAjaxChoiceType extends AbstractPluginType implements ClientFormTypeInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {
-        if ($options['multiple']) {
-            $builder->addViewTransformer(new StringToArrayTransformer());
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function finishView(FormView $view, FormInterface $form, array $options)
-    {
-        if ($options['multiple']) {
-            $view->vars['full_name'] = substr($view->vars['full_name'], 0, -2);
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
-    {
-        parent::setDefaultOptions($resolver);
-
-        $resolver->setDefaults([
-            'empty_data' => '',
-        ]);
-    }
-
     /**
      * {@inheritdoc}
      */
