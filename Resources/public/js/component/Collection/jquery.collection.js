@@ -142,10 +142,12 @@
       if (!data) {
         $this.data('collection', (data = new Collection(this)));
       }
-      if ($.isFunction(data[method])) {
-        value = data[method].apply(data, Array.prototype.slice.call(methodArguments, 1));
-      } else {
-        $.error('Method with name "' +  method + '" does not exist in jQuery.collection');
+      if ('string' === typeof method) {
+        if ($.isFunction(data[method])) {
+          value = data[method].apply(data, Array.prototype.slice.call(methodArguments, 1));
+        } else {
+          $.error('Method with name "' +  method + '" does not exist in jQuery.collection');
+        }
       }
     });
 
