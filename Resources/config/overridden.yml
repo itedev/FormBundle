@@ -4,4 +4,4 @@ parameters:
 services:
     form.resolved_type_factory:
         class: %form.resolved_type_factory.class%
-        arguments: [ @ite_form.proxy_factory ]
+        arguments: [ @service_container, @ite_form.proxy_factory ]
