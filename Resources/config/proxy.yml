@@ -10,7 +10,7 @@ services:
 
     ite_form.cache_warmer.proxy:
         class: %ite_form.cache_warmer.proxy.class%
-        arguments: [ @ite_form.proxy_factory ]
+        arguments: [ @ite_form.proxy_factory, %ite_form.classes% ]
         public: false
         tags:
             - { name: kernel.cache_warmer }

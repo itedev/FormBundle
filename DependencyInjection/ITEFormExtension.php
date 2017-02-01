@@ -41,6 +41,7 @@ class ITEFormExtension extends Extension
 
         $container->setParameter('ite_form.timezone', $config['timezone']);
 
+        $this->loadClassesConfiguration($loader, $config, $container);
         $this->loadComponentsConfiguration($loader, $config['components'], $container);
         $this->loadPluginsConfiguration($loader, $config['plugins'], $container);
         $this->loadTypesConfiguration($loader, $config, $container);
@@ -53,6 +54,16 @@ class ITEFormExtension extends Extension
     public function getConfiguration(array $config, ContainerBuilder $container)
     {
         return new Configuration($container);
+    }
+
+    /**
+     * @param FileLoader $loader
+     * @param array $config
+     * @param ContainerBuilder $container
+     */
+    protected function loadClassesConfiguration(FileLoader $loader, array $config, ContainerBuilder $container)
+    {
+        $container->setParameter('ite_form.classes', $config['classes']);
     }
 
     /**

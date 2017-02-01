@@ -15,14 +15,21 @@ class ProxyCacheWarmer implements CacheWarmerInterface
     /**
      * @var ProxyFactory $proxyFactory
      */
-    private $proxyFactory;
+    protected $proxyFactory;
+
+    /**
+     * @var array $classes
+     */
+    protected $classes;
 
     /**
      * @param ProxyFactory $proxyFactory
+     * @param array $classes
      */
-    public function __construct(ProxyFactory $proxyFactory)
+    public function __construct(ProxyFactory $proxyFactory, array $classes)
     {
         $this->proxyFactory = $proxyFactory;
+        $this->classes = $classes;
     }
 
     /**
@@ -30,9 +37,7 @@ class ProxyCacheWarmer implements CacheWarmerInterface
      */
     public function warmUp($cacheDir)
     {
-        $classes = [
-            'ITE\FormBundle\Form\Form',
-        ];
+        $classes = [$this->classes['form']];
         foreach ($classes as $class) {
             $reflection = new \ReflectionClass($class);
             $instance = $reflection->newInstanceWithoutConstructor();

@@ -33,19 +33,27 @@ class ResolvedFormType extends BaseResolvedFormType
     protected $proxyFactory;
 
     /**
+     * @var array $classes
+     */
+    protected $classes;
+
+    /**
      * @param ProxyFactory $proxyFactory
+     * @param array $classes
      * @param FormTypeInterface $innerType
      * @param array $typeExtensions
      * @param ResolvedFormTypeInterface|null $parent
      */
     public function __construct(
         ProxyFactory $proxyFactory,
+        array $classes,
         FormTypeInterface $innerType,
         array $typeExtensions = [],
         ResolvedFormTypeInterface $parent = null
     ) {
         parent::__construct($innerType, $typeExtensions, $parent);
         $this->proxyFactory = $proxyFactory;
+        $this->classes = $classes;
     }
 
     /**
@@ -76,13 +84,21 @@ class ResolvedFormType extends BaseResolvedFormType
     protected function newBuilder($name, $dataClass, FormFactoryInterface $factory, array $options)
     {
         if ($this->getInnerType() instanceof ButtonTypeInterface) {
-            return new ButtonBuilder($name, $options);
+            return new $this->classes['button_builder']($name, $options);
         }
 
         if ($this->getInnerType() instanceof SubmitButtonTypeInterface) {
-            return new SubmitButtonBuilder($name, $options);
+            return new $this->classes['submit_button_builder']($name, $options);
         }
 
-        return new FormBuilder($this->proxyFactory, $name, $dataClass, new EventDispatcher(), $factory, $options);
+        return new $this->classes['form_builder'](
+            $this->proxyFactory,
+            $this->classes['form'],
+            $name,
+            $dataClass,
+            new EventDispatcher(),
+            $factory,
+            $options
+        );
     }
 }

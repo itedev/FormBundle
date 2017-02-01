@@ -36,6 +36,7 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('ite_form');
 
+        $this->addClassesConfiguration($rootNode);
         $this->addComponentsConfiguration($rootNode);
         $this->addPluginsConfiguration($rootNode);
         $this->addTypesConfiguration($rootNode);
@@ -48,6 +49,37 @@ class Configuration implements ConfigurationInterface
         ->end();
 
         return $treeBuilder;
+    }
+
+    /**
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addClassesConfiguration(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('classes')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('form')
+                            ->cannotBeEmpty()
+                            ->defaultValue('ITE\FormBundle\Form\Form')
+                        ->end()
+                        ->scalarNode('form_builder')
+                            ->cannotBeEmpty()
+                            ->defaultValue('ITE\FormBundle\Form\Builder\FormBuilder')
+                        ->end()
+                        ->scalarNode('button_builder')
+                            ->cannotBeEmpty()
+                            ->defaultValue('ITE\FormBundle\Form\Builder\ButtonBuilder')
+                        ->end()
+                        ->scalarNode('submit_button_builder')
+                            ->cannotBeEmpty()
+                            ->defaultValue('ITE\FormBundle\Form\Builder\SubmitButtonBuilder')
+                        ->end()
+                    ->end()
+                ->end()
+        ;
     }
 
     /**

@@ -3,8 +3,6 @@ parameters:
     ite_form.twig.extension.sf.class:           ITE\FormBundle\Twig\Extension\SFExtension
     ite_form.route_loader.class:                ITE\FormBundle\Routing\RouteLoader
 
-    form.resolved_type_factory.class:           ITE\FormBundle\Form\ResolvedFormTypeFactory
-
     ite_form.client_form_view_builder.class:    ITE\FormBundle\SF\Form\ClientFormViewBuilder
 
     ite_form.form_data_transformer.class:       ITE\FormBundle\DataTransformer\FormDataTransformer

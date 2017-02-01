@@ -27,13 +27,20 @@ class ResolvedFormTypeFactory extends BaseResolvedFormTypeFactory
     protected $proxyFactory;
 
     /**
+     * @var array $classes
+     */
+    protected $classes;
+
+    /**
      * @param ContainerInterface $container
      * @param ProxyFactory $proxyFactory
+     * @param array $classes
      */
-    public function __construct(ContainerInterface $container, ProxyFactory $proxyFactory)
+    public function __construct(ContainerInterface $container, ProxyFactory $proxyFactory, array $classes)
     {
         $this->container = $container;
         $this->proxyFactory = $proxyFactory;
+        $this->classes = $classes;
     }
 
     /**
@@ -48,6 +55,6 @@ class ResolvedFormTypeFactory extends BaseResolvedFormTypeFactory
             $type->setContainer($this->container);
         }
 
-        return new ResolvedFormType($this->proxyFactory, $type, $typeExtensions, $parent);
+        return new ResolvedFormType($this->proxyFactory, $this->classes, $type, $typeExtensions, $parent);
     }
 }

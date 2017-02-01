@@ -33,15 +33,27 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
     protected $proxyFactory;
 
     /**
+     * @var string $formClass
+     */
+    protected $formClass;
+
+    /**
      * @var FormAccessorInterface
      */
     protected $formAccessor;
 
     /**
-     * {@inheritdoc}
+     * @param ProxyFactory $proxyFactory
+     * @param string $formClass
+     * @param EventDispatcherInterface $name
+     * @param FormFactoryInterface $dataClass
+     * @param EventDispatcherInterface $dispatcher
+     * @param FormFactoryInterface $factory
+     * @param array $options
      */
     public function __construct(
         ProxyFactory $proxyFactory,
+        $formClass,
         $name,
         $dataClass,
         EventDispatcherInterface $dispatcher,
@@ -51,6 +63,7 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
         parent::__construct($name, $dataClass, $dispatcher, $factory, $options);
 
         $this->proxyFactory = $proxyFactory;
+        $this->formClass = $formClass;
         $this->formAccessor = FormAccess::createFormAccessor();
     }
 
@@ -76,7 +89,8 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
         $children = $this->all();
         // set overridden data mapper
         $this->setDataMapper($this->getCompound() ? new PropertyPathMapper() : null);
-        $form = new Form($this->getFormConfig());
+        /** @var Form $form */
+        $form = new $this->formClass($this->getFormConfig());
 
         foreach ($children as $child) {
             // Automatic initialization is only supported on root forms
