@@ -45,7 +45,7 @@ class HierarchicalUtils
             return null;
         }
 
-        $originator = reset($array);
+        $originator = reset($originators);
 
         return false !== $originator ? $originator : null;
     }
