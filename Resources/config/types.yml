@@ -39,6 +39,7 @@ services:
 
     ite_form.form.markup_type:
         class: %ite_form.form.markup_type.class%
+        arguments: [ @?ite_formatter ]
         tags:
             - { name: form.type, alias: ite_markup }
 

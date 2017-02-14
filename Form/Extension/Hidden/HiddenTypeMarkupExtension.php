@@ -2,6 +2,7 @@
 
 namespace ITE\FormBundle\Form\Extension\Hidden;
 
+use ITE\FormatterBundle\Formatter\FormatterManagerInterface;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -17,12 +18,21 @@ use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 class HiddenTypeMarkupExtension extends AbstractTypeExtension
 {
     /**
+     * @var FormatterManagerInterface|null $formatter
+     */
+    protected $formatter;
+
+    /**
      * @var PropertyAccessorInterface
      */
     protected $propertyAccessor;
 
-    public function __construct()
+    /**
+     * @param FormatterManagerInterface|null $formatter
+     */
+    public function __construct(FormatterManagerInterface $formatter = null)
     {
+        $this->formatter = $formatter;
         $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
     }
 
@@ -40,6 +50,16 @@ class HiddenTypeMarkupExtension extends AbstractTypeExtension
             'markup_attr' => ['array'],
             'markup_property_path' => ['string'],
         ]);
+
+        if ($this->formatter) {
+            $resolver->setOptional([
+                'formatter',
+                'formatter_options',
+            ]);
+            $resolver->setAllowedTypes([
+                'formatter_options' => ['array'],
+            ]);
+        }
     }
 
     /**
@@ -51,7 +71,13 @@ class HiddenTypeMarkupExtension extends AbstractTypeExtension
             return;
         }
 
-        $view->vars['markup'] = $this->getMarkup($form, $options);
+        $markup = $this->getMarkup($form, $options);
+        if ($this->formatter && isset($options['formatter']) && null !== $options['formatter']) {
+            $formatterOptions = isset($options['formatter_options']) ? $options['formatter_options'] : [];
+            $markup = $this->formatter->format($markup, $options['formatter'], $formatterOptions);
+        }
+
+        $view->vars['markup'] = $markup;
         $view->vars['markup_attr'] = isset($options['markup_attr']) ? $options['markup_attr'] : [];
 
         $typeName = $form->getConfig()->getType()->getName();
@@ -78,7 +104,7 @@ class HiddenTypeMarkupExtension extends AbstractTypeExtension
 
         if (is_callable($options['markup'])) {
             return call_user_func_array($options['markup'], [$parentForm]);
-        } elseif (is_string($options['markup'])) {
+        } elseif (is_scalar($options['markup'])) {
             return $options['markup'];
         } else {
             $empty = null === $parentData || [] === $parentData;
