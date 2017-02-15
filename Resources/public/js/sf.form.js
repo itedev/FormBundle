@@ -17,9 +17,9 @@
   };
 
   SF.fn.util = $.extend(SF.fn.util, {
-    strtr: function(str, replacementTokens) {
+    strtr: function (str, replacementTokens) {
       if ('object' === typeof replacementTokens) {
-        $.each(replacementTokens, function(from, to) {
+        $.each(replacementTokens, function (from, to) {
           str = str.replace(new RegExp(from, 'g'), to);
         });
       }
@@ -27,8 +27,8 @@
       return str;
     },
 
-    mapRecursive: function(array, callback) {
-      $.each(array, function(key, value) {
+    mapRecursive: function (array, callback) {
+      $.each(array, function (key, value) {
         if ('object' === typeof value || 'array' === typeof value) {
           array[key] = SF.util.mapRecursive(value, callback);
         } else {
@@ -39,7 +39,7 @@
       return array;
     },
 
-    hasEvent: function(element, event) {
+    hasEvent: function ($element, event) {
       var eventName, eventNamespace, i;
       if (-1 === event.indexOf('.')){
         eventName = event;
@@ -49,7 +49,7 @@
         eventNamespace = event.substring(event.indexOf('.') + 1);
       }
 
-      var events = $._data(element[0], 'events');
+      var events = $._data($element[0], 'events');
       if ('undefined' === typeof events || 0 === events.length || !events.hasOwnProperty(eventName)) {
         return false;
       }
@@ -66,7 +66,7 @@
       return false;
     },
 
-    objectLength: function(obj) {
+    objectLength: function (obj) {
       var size = 0;
 
       for (var key in obj) {
@@ -76,6 +76,19 @@
       }
 
       return size;
+    },
+
+    attributes: function ($element) {
+      var attr = {};
+      $element.each(function () {
+        $.each(this.attributes, function () {
+          if (this.specified) {
+            attr[this.name] = this.value;
+          }
+        });
+      });
+
+      return attr;
     }
   });
 
