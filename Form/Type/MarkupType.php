@@ -69,7 +69,7 @@ class MarkupType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function finishView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $markup = $this->getMarkup($form, $options);
         $view->vars['value'] = $markup;
