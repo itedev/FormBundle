@@ -53,13 +53,13 @@
 
       var self = this;
       $item[showMethod](showLength, function() {
-        if ($.isFunction(afterShowCallback)) {
-          afterShowCallback.apply(self.$collection, [$item]);
-        }
-
         var collectionView = self.$collection.formView();
         if (null !== collectionView) {
           collectionView.addCollectionItem(self.index);
+        }
+
+        if ($.isFunction(afterShowCallback)) {
+          afterShowCallback.apply(self.$collection, [$item]);
         }
 
         self.$collection.trigger('ite-add.collection', [$item]);
