@@ -2,9 +2,8 @@
 
 namespace ITE\FormBundle\Form\Type;
 
+use ITE\FormatterBundle\Formatter\FormatterManagerInterface;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\BaseType;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -19,12 +18,21 @@ use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 class MarkupType extends AbstractType
 {
     /**
+     * @var FormatterManagerInterface|null $formatter
+     */
+    protected $formatter;
+
+    /**
      * @var PropertyAccessorInterface
      */
     protected $propertyAccessor;
 
-    public function __construct()
+    /**
+     * @param FormatterManagerInterface|null $formatter
+     */
+    public function __construct(FormatterManagerInterface $formatter = null)
     {
+        $this->formatter = $formatter;
         $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
     }
 
@@ -46,14 +54,34 @@ class MarkupType extends AbstractType
         $resolver->setAllowedValues([
             'mapped' => [false],
         ]);
+
+        if ($this->formatter) {
+            $resolver->setDefaults([
+                'formatter' => null,
+                'formatter_options' => [],
+            ]);
+            $resolver->setAllowedTypes([
+                'formatter_options' => ['array'],
+            ]);
+        }
     }
 
     /**
      * {@inheritdoc}
      */
-    public function finishView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $view->vars['markup'] = $this->getMarkup($form, $options);
+        $markup = $this->getMarkup($form, $options);
+        $view->vars['value'] = $markup;
+        $view->vars['data'] = $markup;
+
+        if ($this->formatter) {
+            if (null !== $options['formatter']) {
+                $markup = $this->formatter->format($markup, $options['formatter'], $options['formatter_options']);
+            }
+        }
+
+        $view->vars['markup'] = $markup;
     }
 
     /**

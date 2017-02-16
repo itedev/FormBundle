@@ -64,6 +64,7 @@ services:
 
     ite_form.form.type_extension.hidden.markup:
         class: %ite_form.form.type_extension.hidden.markup.class%
+        arguments: [ @?ite_formatter ]
         tags:
             - { name: form.type_extension, alias: hidden }
 
