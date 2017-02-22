@@ -151,12 +151,14 @@ class EntityToIdTransformer implements DataTransformerInterface
 //
 //        $this->em->initializeObject($entity);
 
-        $class = ClassUtils::getRealClass(get_class($entity));
-        if ($class !== $this->class) {
+
+        $class = $this->class;
+
+        if (!($entity instanceof $class)) {
             throw new TransformationFailedException(sprintf(
                 'Expected instance of "%s", instance of "%s" given',
                 $this->class,
-                $class
+                get_class($entity)
             ));
         }
 
