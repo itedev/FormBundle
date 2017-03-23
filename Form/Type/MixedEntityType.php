@@ -106,7 +106,7 @@ class MixedEntityType extends AbstractType
         }
 
         // Check if the choices already contain the empty value
-        $view->vars['placeholder_in_choices'] = false; // 0 !== count($options['choice_list']->getChoicesForValues(['']));
+        $view->vars['placeholder_in_choices'] = 0 !== count($options['choice_list']->getChoicesForValues(['']));
 
         // Only add the empty value option if this is not the case
         if (null !== $options['placeholder'] && !$view->vars['placeholder_in_choices']) {
