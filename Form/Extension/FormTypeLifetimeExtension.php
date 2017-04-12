@@ -6,6 +6,8 @@ use ITE\FormBundle\SF\Form\ClientFormTypeExtensionInterface;
 use ITE\FormBundle\SF\Form\ClientFormView;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -24,6 +26,17 @@ class FormTypeLifetimeExtension extends AbstractTypeExtension implements ClientF
     {
         if (isset($options['build_form'])) {
             call_user_func_array($options['build_form'], func_get_args());
+        }
+        if (isset($options['valid_callback'])) {
+            $validCallback = $options['valid_callback'];
+            $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($validCallback) {
+                $form = $event->getForm();
+                $data = $event->getData();
+
+                if ($form->isValid()) {
+                    call_user_func_array($validCallback, [$data]);
+                }
+            }, -900);
         }
     }
 
@@ -67,12 +80,14 @@ class FormTypeLifetimeExtension extends AbstractTypeExtension implements ClientF
             'build_view',
             'finish_view',
             'build_client_view',
+            'valid_callback',
         ]);
         $resolver->setAllowedTypes([
             'build_form' => ['callable'],
             'build_view' => ['callable'],
             'finish_view' => ['callable'],
             'build_client_view' => ['callable'],
+            'valid_callback' => ['callable'],
         ]);
     }
 
