@@ -27,7 +27,7 @@ services:
 
     ite_form.form.type.mixed_entity:
         class: %ite_form.form.type.mixed_entity.class%
-        arguments: [ @doctrine ]
+        arguments: [ @form.factory ]
         tags:
             - { name: form.type, alias: ite_mixed_entity }
 

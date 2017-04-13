@@ -26,6 +26,11 @@ class MixedEntityChoiceList extends CoreChoiceList implements ChoiceListInterfac
     private $entityLabels;
 
     /**
+     * @var bool $group
+     */
+    private $group;
+
+    /**
      * @var array|ChoiceView[]
      */
     private $remainingViews = [];
@@ -38,11 +43,13 @@ class MixedEntityChoiceList extends CoreChoiceList implements ChoiceListInterfac
     /**
      * @param array|CoreEntityChoiceList[] $entityChoiceLists
      * @param array $entityLabels
+     * @param bool $group
      */
-    public function __construct(array $entityChoiceLists, array $entityLabels)
+    public function __construct(array $entityChoiceLists, array $entityLabels, $group = true)
     {
         $this->entityChoiceLists = $entityChoiceLists;
         $this->entityLabels = $entityLabels;
+        $this->group = $group;
     }
 
     /**
@@ -138,8 +145,13 @@ class MixedEntityChoiceList extends CoreChoiceList implements ChoiceListInterfac
 
             $choices = array_merge($choices, $wrappedChoices);
             $values = array_merge($values, $wrappedValues);
-            $label = $this->entityLabels[$alias];
-            $remainingViews[$label] = array_merge($wrappedPreferredViews, $wrappedRemainingViews);
+
+            if ($this->group) {
+                $label = $this->entityLabels[$alias];
+                $remainingViews[$label] = array_merge($wrappedPreferredViews, $wrappedRemainingViews);
+            } else {
+                $remainingViews = array_merge($remainingViews, array_merge($wrappedPreferredViews, $wrappedRemainingViews));
+            }
         }
 
         $this->choices = $choices;
