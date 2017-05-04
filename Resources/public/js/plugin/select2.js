@@ -1,6 +1,6 @@
 (function($) {
   SF.fn.plugins['select2'] = new SF.classes.Plugin({
-    isInitialized: function($element) {
+    isInitialized: function ($element) {
       return 'SELECT' !== $element.prop('tagName') || 'undefined' !== typeof $element.data('select2');
     },
 
@@ -12,15 +12,16 @@
       $element.select2('destroy');
     },
 
-    initialize: function($element, pluginData) {
+    initialize: function ($element, pluginData) {
       var extras = pluginData.extras;
       var options = pluginData.options;
 
       // google fonts
       if (extras.hasOwnProperty('google_fonts')) {
         options = $.extend(true, {
-          formatResult: function(state) {
+          formatResult: function (state) {
             var option = $(state.element);
+
             return '<div style="height: 28px; background: url(/bundles/iteform/img/google_fonts.png); background-position: 0 -' + ((option.index() * 30) - 2) + 'px;"></div>';
           }
         }, options);
@@ -72,13 +73,13 @@
                 }
               });
 
-              this.$element.find("option").each(function() {
-                if(this.value.toLowerCase().indexOf(term.toLowerCase()) > -1) {
+              this.$element.find('option').each(function() {
+                if (this.value.toLowerCase().indexOf(term.toLowerCase()) > -1) {
                   optionsMatch = true;
                 }
               });
 
-              if(optionsMatch) {
+              if (optionsMatch) {
                 return null;
               }
             }
@@ -116,7 +117,7 @@
                 text: selection.id
               },
               dataType: 'dataType' in options.ajax ? options.ajax.dataType : 'json',
-              success: function(response) {
+              success: function (response) {
                 if ($.isPlainObject(response) && response.hasOwnProperty('id') && response.hasOwnProperty('text')) {
                   $element
                     .html('<option value="' + response.id + '">' + response.text + '</option>')
@@ -143,7 +144,7 @@
       $element.select2(options);
     },
 
-    clearValue: function($element) {
+    clearValue: function ($element) {
       $element
         .html('')
         .val('')
@@ -153,7 +154,7 @@
       return true;
     },
 
-    setValue: function($element, $newElement) {
+    setValue: function ($element, $newElement) {
       $element
         .html($newElement.html())
         .val($newElement.val())
