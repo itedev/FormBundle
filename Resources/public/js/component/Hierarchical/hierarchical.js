@@ -8,13 +8,13 @@
   });
 
   SF.fn.callbacks = $.extend(SF.fn.callbacks, {
-    hierarchicalChange: function(e) {
+    hierarchicalChange: function (e) {
       var $element = $(e.delegateTarget);
 
       var view = $element.formView();
       var $form = view.getForm();
 
-      $form.hierarchical('trigger', [$element]);
+      $form.hierarchical('trigger', [$element], false, e);
     }
   });
 

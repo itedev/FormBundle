@@ -14,7 +14,7 @@
 
     initialize: function() {},
 
-    trigger: function($elements, force) {
+    trigger: function($elements, force, originalEvent) {
       var self = this;
 
       // @todo: what if radio/checkbox?
@@ -32,7 +32,8 @@
         var eventData = {
           originator: fullName,
           children: {},
-          force: force
+          force: force,
+          originalEvent: originalEvent
         };
         var hierarchicalChildren = view.getOption('hierarchical_children', []);
         $.each(hierarchicalChildren, function(i, childId) {
@@ -85,7 +86,8 @@
           // if all child elements listeners return false - don't submit the form
           submit = false;
           var childEventData = {
-            originator: fullName
+            originator: fullName,
+            originalEvent: originalEvent
           };
           $.each(childrenInfoMap, function(childId, childInfo) {
             var $childElement = childInfo.$element;
@@ -166,7 +168,8 @@
               var childEventData = {
                 originator: originatorInfo.fullName,
                 originatorValue: originatorInfo.originatorValue,
-                relatedTarget: $newChildElement.get(0)
+                relatedTarget: $newChildElement.get(0),
+                originalEvent: originalEvent
               };
               event = $.Event('before-change.ite.hierarchical', childEventData);
               $childElement.trigger(event, [$newContext]);
