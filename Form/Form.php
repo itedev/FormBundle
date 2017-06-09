@@ -246,11 +246,14 @@ class Form extends BaseForm implements FormInterface
          * added right in form event (e.g. FormEvents::PRE_SET_DATA).
          */
         $originalOptions = $options;
-        if (isset($originalOptions['skip_interceptors'])) {
+        if (array_key_exists('skip_interceptors', $originalOptions)) {
             unset($originalOptions['skip_interceptors']);
         }
-        if (isset($originalOptions['original_data'])) {
+        if (array_key_exists('original_data', $originalOptions)) {
             unset($originalOptions['original_data']);
+        }
+        if (array_key_exists('hierarchical_data', $originalOptions)) {
+            unset($originalOptions['hierarchical_data']);
         }
         // commented code below is redundant (ideally)
         //if (isset($originalOptions['original_type'])) {
