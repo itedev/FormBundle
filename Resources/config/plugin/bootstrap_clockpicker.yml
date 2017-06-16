@@ -1,0 +1,9 @@
+parameters:
+    ite_form.form.type.plugin.bootstrap_clockpicker.time.class:     ITE\FormBundle\Form\Type\Plugin\BootstrapClockpicker\TimeType
+
+services:
+    ite_form.form.type.plugin.bootstrap_clockpicker.time:
+        class: %ite_form.form.type.plugin.bootstrap_clockpicker.time.class%
+        arguments: [ %ite_form.plugin.bootstrap_clockpicker.options% ]
+        tags:
+            - { name: form.type, alias: ite_bootstrap_clockpicker_time }

@@ -19,6 +19,7 @@ parameters:
     ite_form.plugin.inputmask.class:                    ITE\FormBundle\SF\Plugin\InputmaskPlugin
     ite_form.plugin.typeahead.class:                    ITE\FormBundle\SF\Plugin\TypeaheadPlugin
     ite_form.plugin.ckeditor.class:                     ITE\FormBundle\SF\Plugin\CKEditorPlugin
+    ite_form.plugin.bootstrap_clockpicker.class:        ITE\FormBundle\SF\Plugin\BootstrapClockpickerPlugin
 
 services:
     ite_form.plugin.select2:
@@ -120,3 +121,8 @@ services:
         class: %ite_form.plugin.ckeditor.class%
         tags:
             - { name: ite_form.plugin, alias: ckeditor }
+
+    ite_form.plugin.bootstrap_clockpicker:
+        class: %ite_form.plugin.bootstrap_clockpicker.class%
+        tags:
+            - { name: ite_form.plugin, alias: bootstrap_clockpicker }
