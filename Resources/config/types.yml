@@ -5,6 +5,7 @@ parameters:
     ite_form.form.type.ajax_mixed_entity.class:     ITE\FormBundle\Form\Type\AjaxMixedEntityType
     ite_form.form.type.google_font.class:           ITE\FormBundle\Form\Type\GoogleFontType
     ite_form.form.markup_type.class:                ITE\FormBundle\Form\Type\MarkupType
+    ite_form.form.type.compound_datetime.class:     ITE\FormBundle\Form\Type\CompoundDatetimeType
     ite_form.form.type.dynamic.abstract.class:      ITE\FormBundle\Form\Type\AbstractDynamicType
 
 services:
@@ -42,6 +43,11 @@ services:
         arguments: [ @?ite_formatter ]
         tags:
             - { name: form.type, alias: ite_markup }
+
+    ite_form.form.type.compound_datetime:
+        class: %ite_form.form.type.compound_datetime.class%
+        tags:
+            - { name: form.type, alias: compound_datetime }
 
     ite_form.form.type.dynamic.abstract:
         class: %ite_form.form.type.dynamic.abstract.class%

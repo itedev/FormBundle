@@ -2,10 +2,13 @@
 
 namespace ITE\FormBundle\Form\Type\Plugin\BootstrapClockpicker;
 
+use ITE\Common\Util\ArrayUtils;
+use ITE\FormBundle\Form\DataTransformer\LowerToUpperCaseTransformer;
 use ITE\FormBundle\Form\Type\Plugin\Core\AbstractPluginType;
 use ITE\FormBundle\SF\Form\ClientFormTypeInterface;
 use ITE\FormBundle\SF\Form\ClientFormView;
 use ITE\FormBundle\SF\Plugin\BootstrapClockpickerPlugin;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -23,18 +26,9 @@ class TimeType extends AbstractPluginType implements ClientFormTypeInterface
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        parent::setDefaultOptions($resolver);
-
-        $resolver->setDefaults([
-            'widget' => 'single_text',
-            'with_seconds' => false,
-        ]);
-        $resolver->setAllowedValues([
-            'widget' => ['single_text'],
-            'with_seconds' => [false],
-        ]);
+        $builder->addViewTransformer(new LowerToUpperCaseTransformer());
     }
 
     /**
@@ -67,9 +61,26 @@ class TimeType extends AbstractPluginType implements ClientFormTypeInterface
             BootstrapClockpickerPlugin::getName() => [
                 'extras' => (object) [],
                 'options' => array_replace_recursive($this->options, $options['plugin_options'], [
-
+                    'twelvehour' => ArrayUtils::getValue($options, 'twelve_hour', false),
                 ]),
             ],
+        ]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        parent::setDefaultOptions($resolver);
+
+        $resolver->setDefaults([
+            'widget' => 'single_text',
+            'with_seconds' => false,
+        ]);
+        $resolver->setAllowedValues([
+            'widget' => ['single_text'],
+            'with_seconds' => [false],
         ]);
     }
 

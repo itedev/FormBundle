@@ -4,6 +4,7 @@ parameters:
     ite_form.form.type_extension.form.constraints_callback.class:               ITE\FormBundle\Form\Extension\FormTypeConstraintsCallbackExtension
     ite_form.form.type_extension.form.extras.class:                             ITE\FormBundle\Form\Extension\FormTypeExtrasExtension
     ite_form.form.type_extension.form.default_data.class:                       ITE\FormBundle\Form\Extension\FormTypeDefaultDataExtension
+    ite_form.form.type_extension.time.twelve_hour.class:                        ITE\FormBundle\Form\Extension\TimeTypeTwelveHourExtension
     ite_form.form.type_extension.form.form_view.class:                          ITE\FormBundle\Form\Extension\FormTypeFormViewExtension
     ite_form.form.type_extension.form.lifetime.class:                           ITE\FormBundle\Form\Extension\FormTypeLifetimeExtension
     ite_form.form.type_extension.collection.form_view.class:                    ITE\FormBundle\Form\Extension\CollectionTypeFormViewExtension
@@ -39,6 +40,11 @@ services:
         class: %ite_form.form.type_extension.form.default_data.class%
         tags:
             - { name: form.type_extension, alias: form }
+
+    ite_form.form.type_extension.time.twelve_hour:
+        class: %ite_form.form.type_extension.time.twelve_hour.class%
+        tags:
+            - { name: form.type_extension, alias: time }
 
     ite_form.form.type_extension.form.form_view:
         class: %ite_form.form.type_extension.form.form_view.class%

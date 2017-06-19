@@ -2,6 +2,7 @@
 
 namespace ITE\FormBundle\Form\Type\Plugin\BootstrapDatetimepicker;
 
+use ITE\Common\Util\ArrayUtils;
 use ITE\FormBundle\Form\Type\Plugin\Core\AbstractPluginType;
 use ITE\FormBundle\SF\Form\ClientFormTypeInterface;
 use ITE\FormBundle\SF\Form\ClientFormView;
@@ -65,12 +66,17 @@ class TimeType extends AbstractPluginType implements ClientFormTypeInterface
      */
     public function buildClientView(ClientFormView $clientView, FormView $view, FormInterface $form, array $options)
     {
-        $format = 'HH';
+        $twelveHour = ArrayUtils::getValue($options, 'twelve_hour', false);
+
+        $format = !$twelveHour ? 'HH' : 'hh';
         if ($options['with_minutes']) {
             $format .= ':mm';
         }
         if ($options['with_seconds']) {
             $format .= ':ss';
+        }
+        if ($twelveHour) {
+            $format .= 'a';
         }
 
         $clientView->setOption('plugins', [
