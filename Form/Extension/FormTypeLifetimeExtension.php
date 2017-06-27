@@ -27,6 +27,24 @@ class FormTypeLifetimeExtension extends AbstractTypeExtension implements ClientF
         if (isset($options['build_form'])) {
             call_user_func_array($options['build_form'], func_get_args());
         }
+        if (isset($options['pre_validate_callback'])) {
+            $preValidateCallback = $options['pre_validate_callback'];
+            $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($preValidateCallback) {
+                $form = $event->getForm();
+                $data = $event->getData();
+
+                call_user_func_array($preValidateCallback, [$data, $form]);
+            }, 1);
+        }
+        if (isset($options['post_validate_callback'])) {
+            $postValidateCallback = $options['post_validate_callback'];
+            $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($postValidateCallback) {
+                $form = $event->getForm();
+                $data = $event->getData();
+
+                call_user_func_array($postValidateCallback, [$data, $form]);
+            }, -1);
+        }
         if (isset($options['valid_callback'])) {
             $validCallback = $options['valid_callback'];
             $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($validCallback) {
@@ -34,7 +52,7 @@ class FormTypeLifetimeExtension extends AbstractTypeExtension implements ClientF
                 $data = $event->getData();
 
                 if ($form->isValid()) {
-                    call_user_func_array($validCallback, [$data]);
+                    call_user_func_array($validCallback, [$data, $form]);
                 }
             }, -900);
         }
@@ -80,6 +98,8 @@ class FormTypeLifetimeExtension extends AbstractTypeExtension implements ClientF
             'build_view',
             'finish_view',
             'build_client_view',
+            'pre_validate_callback',
+            'post_validate_callback',
             'valid_callback',
         ]);
         $resolver->setAllowedTypes([
@@ -87,6 +107,8 @@ class FormTypeLifetimeExtension extends AbstractTypeExtension implements ClientF
             'build_view' => ['callable'],
             'finish_view' => ['callable'],
             'build_client_view' => ['callable'],
+            'pre_validate_callback' => ['callable'],
+            'post_validate_callback' => ['callable'],
             'valid_callback' => ['callable'],
         ]);
     }
