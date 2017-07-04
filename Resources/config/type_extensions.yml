@@ -11,6 +11,7 @@ parameters:
     ite_form.form.type_extension.choice.form_view.class:                        ITE\FormBundle\Form\Extension\ChoiceTypeFormViewExtension
     ite_form.form.type_extension.hidden.markup.class:                           ITE\FormBundle\Form\Extension\Hidden\HiddenTypeMarkupExtension
     ite_form.form.type_extension.entity.sort.class:                             ITE\FormBundle\Form\Extension\EntityTypeSortExtension
+    ite_form.form.type_extension.checkbox.inversed.class:                       ITE\FormBundle\Form\Extension\CheckboxTypeInversedExtension
     ite_form.form.type_extension.form.original_configuration.class:             ITE\FormBundle\Form\Extension\FormTypeOriginalConfigurationExtension
     ite_form.form.type_extension.dynamic.default_configuration.abstract.class:  ITE\FormBundle\Form\Extension\AbstractDynamicTypeDefaultConfigurationExtension
     ite_form.form.type_extension.button.original_configuration.class:           ITE\FormBundle\Form\Extension\ButtonTypeOriginalConfigurationExtension
@@ -78,6 +79,11 @@ services:
         class: %ite_form.form.type_extension.entity.sort.class%
         tags:
             - { name: form.type_extension, alias: entity }
+
+    ite_form.form.type_extension.checkbox.inversed:
+        class: %ite_form.form.type_extension.checkbox.inversed.class%
+        tags:
+            - { name: form.type_extension, alias: checkbox }
 
     ite_form.form.type_extension.form.original_configuration:
         class: %ite_form.form.type_extension.form.original_configuration.class%
