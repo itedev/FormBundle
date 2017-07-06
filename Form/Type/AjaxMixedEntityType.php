@@ -107,7 +107,7 @@ class AjaxMixedEntityType extends AbstractType
             );
 
             $view->vars = array_replace($view->vars, [
-                'multiple' => false,
+                'multiple' => $options['multiple'],
                 'expanded' => false,
                 'preferred_choices' => [],
                 'choices' => $options['choice_list']->getRemainingViews(),
@@ -179,8 +179,8 @@ class AjaxMixedEntityType extends AbstractType
         };
 
         $emptyData = function (Options $options) {
-            if ($options['multiple'] || $options['expanded']) {
-                return array();
+            if ($options['multiple']) {
+                return [];
             }
 
             return '';
