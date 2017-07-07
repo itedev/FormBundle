@@ -107,7 +107,7 @@ class AjaxMixedEntityType extends AbstractType
             );
 
             $view->vars = array_replace($view->vars, [
-                'multiple' => false,
+                'multiple' => $options['multiple'],
                 'expanded' => false,
                 'preferred_choices' => [],
                 'choices' => $options['choice_list']->getRemainingViews(),
@@ -176,6 +176,14 @@ class AjaxMixedEntityType extends AbstractType
                 $entityChoicesLists,
                 $entityLabels
             );
+        };
+
+        $emptyData = function (Options $options) {
+            if ($options['multiple']) {
+                return [];
+            }
+
+            return '';
         };
 
         $placeholder = function (Options $options) {
@@ -274,6 +282,7 @@ class AjaxMixedEntityType extends AbstractType
         $resolver->setDefaults([
             'options' => [],
             'choice_list' => $choiceList,
+            'empty_data' => $emptyData,
             'placeholder' => $placeholder,
             'data_class' => null,
             'route' => null,
