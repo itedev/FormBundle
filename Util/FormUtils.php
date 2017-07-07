@@ -4,10 +4,13 @@ namespace ITE\FormBundle\Util;
 
 use ITE\Common\Util\ReflectionUtils;
 use ITE\FormBundle\Form\FormInterface;
+use ProxyManager\Proxy\ValueHolderInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\ImmutableEventDispatcher;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\ResolvedFormTypeInterface;
 
@@ -436,6 +439,10 @@ class FormUtils
      */
     public static function getModelDataFromSubmittedData(FormInterface $form, $submittedData)
     {
+        if ($form instanceof ValueHolderInterface) {
+            $form = $form->getWrappedValueHolderValue();
+        }
+
         $formFactory = $form->getConfig()->getFormFactory();
         $name = $form->getConfig()->getName();
         $type = $form->getConfig()->getOption('original_type');
@@ -452,12 +459,16 @@ class FormUtils
         $newForm = $formFactory->createNamed($name, $type, null, array_merge($options, [
             'skip_interceptors' => true,
         ]));
-        $newForm->setData(null);
 
+        $newForm->setData(null);
         $newForm->setRawOption('skip_interceptors', true);
-        self::formWalkRecursive($newForm, function (FormInterface $child) {
-            $child->setRawOption('skip_interceptors', true);
-        });
+        self::addEventListener($newForm, FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+            $form = $event->getForm();
+
+            self::formWalkRecursive($form, function (FormInterface $child) {
+                $child->setRawOption('skip_interceptors', true);
+            });
+        }, -100);
 
         $newForm->submit($submittedData);
 
