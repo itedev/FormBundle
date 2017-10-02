@@ -44,6 +44,7 @@ class HiddenTypeMarkupExtension extends AbstractTypeExtension
     {
         $resolver->setDefaults([
             'markupable' => false,
+            'translate' => true,
         ]);
         $resolver->setOptional([
             'markup',
@@ -53,6 +54,7 @@ class HiddenTypeMarkupExtension extends AbstractTypeExtension
         $resolver->setAllowedTypes([
             'markup_attr' => ['array'],
             'markup_property_path' => ['string'],
+            'translate' => ['bool'],
         ]);
 
         if ($this->formatter) {
@@ -81,6 +83,7 @@ class HiddenTypeMarkupExtension extends AbstractTypeExtension
             $markup = $this->formatter->format($markup, $options['formatter'], $formatterOptions);
         }
 
+        $view->vars['translate'] = $options['translate'];
         $view->vars['markup'] = $markup;
         $view->vars['markup_attr'] = isset($options['markup_attr']) ? $options['markup_attr'] : [];
 

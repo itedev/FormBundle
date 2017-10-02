@@ -50,9 +50,13 @@ class MarkupType extends AbstractType
             'compound' => false,
             'auto_initialize' => false,
             'markup' => null,
+            'translate' => true,
         ]);
         $resolver->setAllowedValues([
             'mapped' => [false],
+        ]);
+        $resolver->setAllowedTypes([
+            'translate' => 'bool',
         ]);
 
         if ($this->formatter) {
@@ -74,6 +78,7 @@ class MarkupType extends AbstractType
         $markup = $this->getMarkup($form, $options);
         $view->vars['value'] = $markup;
         $view->vars['data'] = $markup;
+        $view->vars['translate'] = $options['translate'];
 
         if ($this->formatter) {
             if (null !== $options['formatter']) {

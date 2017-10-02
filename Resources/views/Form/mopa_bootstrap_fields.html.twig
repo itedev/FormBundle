@@ -2,7 +2,13 @@
 
 {% block ite_markup_widget %}
     {% set attr = attr|merge({'class': (attr.class|default('') ~ ' form-control-static')|trim}) %}
-    <p {{ block('widget_container_attributes') }}>{{ markup|trans({}, translation_domain)|raw }}</p>
+    <p {{ block('widget_container_attributes') }}>
+        {% if translate %}
+            {{ markup|trans({}, translation_domain)|raw }}
+        {% else %}
+            {{ markup|raw }}
+        {% endif %}
+    </p>
 {% endblock ite_markup_widget %}
 
 {# choice must be wrapped in div with id #}

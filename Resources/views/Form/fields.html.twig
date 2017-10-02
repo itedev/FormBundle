@@ -22,7 +22,13 @@
 {% endblock ite_bootstrap_daterangepicker_widget %}
 
 {% block ite_markup_widget %}
-    <p {{ block('widget_container_attributes') }}>{{ markup|trans({}, translation_domain)|raw }}</p>
+    <p {{ block('widget_container_attributes') }}>
+        {% if translate %}
+            {{ markup|trans({}, translation_domain)|raw }}
+        {% else %}
+            {{ markup|raw }}
+        {% endif %}
+    </p>
 {% endblock ite_markup_widget %}
 
 {% block ite_markup_hidden_widget %}
