@@ -398,14 +398,11 @@ class FormUtils
 
         $formFactory = $form->getConfig()->getFormFactory();
         $name = $form->getConfig()->getName();
-        $type = $form->getConfig()->getOption('original_type');
-        $options = $form->getConfig()->getOption('original_options');
+        $type = $form->getConfig()->getOriginalType();
+        $options = $form->getConfig()->getOriginalOptions();
 
         if (isset($options['data'])) {
             unset($options['data']);
-        }
-        if (isset($options['hierarchical_data'])) {
-            unset($options['hierarchical_data']);
         }
 
         /** @var FormInterface $newForm */
@@ -445,14 +442,11 @@ class FormUtils
 
         $formFactory = $form->getConfig()->getFormFactory();
         $name = $form->getConfig()->getName();
-        $type = $form->getConfig()->getOption('original_type');
-        $options = $form->getConfig()->getOption('original_options');
+        $type = $form->getConfig()->getOriginalType();
+        $options = $form->getConfig()->getOriginalOptions();
 
         if (isset($options['data'])) {
             unset($options['data']);
-        }
-        if (isset($options['hierarchical_data'])) {
-            unset($options['hierarchical_data']);
         }
 
         /** @var FormInterface $newForm */

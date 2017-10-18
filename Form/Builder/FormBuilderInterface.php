@@ -14,6 +14,16 @@ use Symfony\Component\Form\FormTypeInterface;
 interface FormBuilderInterface extends BaseFormBuilderInterface
 {
     /**
+     * @return int|string|FormBuilderInterface
+     */
+    public function getOriginalType();
+
+    /**
+     * @return array
+     */
+    public function getOriginalOptions();
+
+    /**
      * @return FormAccessorInterface
      */
     public function getFormAccessor();

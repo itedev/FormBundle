@@ -4,10 +4,6 @@ namespace ITE\FormBundle\Form\Builder\Event;
 
 use ITE\FormBundle\Form\Builder\Event\Model\HierarchicalParent;
 use ITE\FormBundle\Form\Builder\Event\Model\HierarchicalParentCollection;
-use ITE\FormBundle\FormAccess\FormAccess;
-use ITE\FormBundle\FormAccess\FormAccessor;
-use ITE\FormBundle\FormAccess\FormAccessorInterface;
-use ITE\FormBundle\Util\FormUtils;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormTypeInterface;
@@ -296,9 +292,10 @@ class HierarchicalEvent
     }
 
     /**
+     * @param bool $deep
      * @return bool
      */
-    public function isAffected()
+    public function isAffected($deep = false)
     {
         if (!$this->hasOriginator()) {
             return false;
@@ -307,6 +304,8 @@ class HierarchicalEvent
         foreach ($this->parents as $parentName => $parent) {
             /** @var HierarchicalParent $parent */
             if ($parent->isOriginator()) {
+                return true;
+            } elseif ($deep && $parent->getForm()->isHierarchicalAffected()) {
                 return true;
             }
         }

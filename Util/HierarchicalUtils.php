@@ -2,6 +2,7 @@
 
 namespace ITE\FormBundle\Util;
 
+use ITE\FormBundle\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -48,5 +49,17 @@ class HierarchicalUtils
         $originator = reset($originators);
 
         return false !== $originator ? $originator : null;
+    }
+
+    /**
+     * @param FormInterface $form
+     * @param array $originators
+     * @return bool
+     */
+    public static function isFormHierarchicalOriginator(FormInterface $form, array $originators)
+    {
+        $fullName = FormUtils::getFullName($form);
+
+        return in_array($fullName, $originators);
     }
 }

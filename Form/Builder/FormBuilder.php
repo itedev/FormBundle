@@ -12,6 +12,7 @@ use ITE\FormBundle\FormAccess\FormAccess;
 use ITE\FormBundle\FormAccess\FormAccessorInterface;
 use ITE\FormBundle\Proxy\ProxyFactory;
 use ITE\FormBundle\Util\FormUtils;
+use ProxyManager\Proxy\ValueHolderInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Exception\BadMethodCallException;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
@@ -78,6 +79,22 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
     /**
      * {@inheritdoc}
      */
+    public function getOriginalType()
+    {
+        return $this->getOption('original_type');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getOriginalOptions()
+    {
+        return $this->getOption('original_options');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getForm()
     {
         if ($this->locked) {
@@ -102,29 +119,36 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
             $form->initialize();
         }
 
+        if (null === $form->getConfig()->getOption('hierarchical_parents')) {
+            return $form;
+        }
+
         $formAccessor = $this->formAccessor;
         $proxy = $this->proxyFactory->createProxy(
             $form,
             [
                 'setData' => function (FormInterface $proxy, FormInterface $instance, $method, $params, $returnEarly) use ($formAccessor) {
-                    $form = $instance->getParent();
-                    $child = $instance->getName();
-                    $type = $instance->getConfig()->getOption('original_type');
-                    $options = $instance->getConfig()->getOption('original_options');
-                    $parents = $instance->getConfig()->getOption('hierarchical_parents', []);
-                    $callback = $instance->getConfig()->getOption('hierarchical_callback');
+                    // before setData() callback
+                    /** @var self $config */
+                    $config = $instance->getConfig();
 
-                    $modelData = $params['modelData'];
-                    $oldOriginalData = $instance->getConfig()->getOption('original_data');
-                    $instance->setRawOption('original_data', $modelData);
-
+                    $parents = $config->getOption('hierarchical_parents', []);
                     if (empty($parents)) {
                         return;
                     }
-
-                    if ($instance->getConfig()->getOption('skip_interceptors', false)) {
+                    if ($config->getOption('skip_interceptors', false)) {
                         return;
                     }
+
+                    $form = $instance->getParent();
+                    $child = $instance->getName();
+                    $type = $config->getOriginalType();
+                    $options = $config->getOriginalOptions();
+                    $callback = $config->getOption('hierarchical_callback');
+
+                    $modelData = $params['modelData'];
+//                    $oldOriginalData = $config->getOption('original_data');
+                    $instance->setRawOption('original_data', $modelData);
 
                     if ($form->isSubmitted()) {
                         return;
@@ -151,8 +175,8 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
 
                     $params = $parentDatas;
                     array_unshift($params, $hierarchicalEvent);
-
                     if (false === call_user_func_array($callback, $params)) {
+                        // if hierarchical callback return false - don't re-add child field
                         return;
                     }
 
@@ -161,30 +185,27 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
                         'skip_interceptors' => true,
                         'original_data' => $modelData,
                     ]));
-
-                    $newInstance = $form->get($child)->getWrappedValueHolderValue();
-
-                    //$newEd = $form->get($this->child)->getConfig()->getEventDispatcher();
-                    //EventDispatcherUtils::extend($newEd, $oldEd);
-
-                    $instanceFieldName = $proxy->__sleep();
-                    ReflectionUtils::setValue($proxy, $instanceFieldName[0], $newInstance);
+                    $newProxy = $form->get($child);
+                    self::updateProxyValue($proxy, $newProxy);
                 },
                 'submit' => function (FormInterface $proxy, FormInterface $instance, $method, $params, $returnEarly) use ($formAccessor) {
-                    $form = $instance->getParent();
-                    $child = $instance->getName();
-                    $type = $instance->getConfig()->getOption('original_type');
-                    $options = $instance->getConfig()->getOption('original_options');
-                    $parents = $instance->getConfig()->getOption('hierarchical_parents', []);
-                    $callback = $instance->getConfig()->getOption('hierarchical_callback');
+                    // before submit() callback
+                    /** @var self $config */
+                    $config = $instance->getConfig();
 
+                    $parents = $config->getOption('hierarchical_parents', []);
                     if (empty($parents)) {
                         return;
                     }
-
-                    if ($instance->getConfig()->getOption('skip_interceptors', false)) {
+                    if ($config->getOption('skip_interceptors', false)) {
                         return;
                     }
+
+                    $form = $instance->getParent();
+                    $child = $instance->getName();
+                    $type = $config->getOriginalType();
+                    $options = $config->getOriginalOptions();
+                    $callback = $config->getOption('hierarchical_callback');
 
                     //if (!$form->has($child)) {
                     //    return;
@@ -195,7 +216,9 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
 
                     $hierarchicalParents = [];
                     $parentDatas = [];
+                    $hierarchicalAffected = false;
                     foreach ($parents as $parentName) {
+                        /** @var \ITE\FormBundle\Form\FormInterface $parentForm */
                         $parentForm = $this->formAccessor->getForm($form, $parentName);
                         $parentData = $parentForm ? $parentForm->getData() : null;
 
@@ -203,6 +226,9 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
                         $isParentOriginator = null !== $originator
                             ? in_array($parentFullName, $originator)
                             : false;
+                        if ($isParentOriginator || $parentForm->isHierarchicalAffected()) {
+                            $hierarchicalAffected = true;
+                        }
 
                         $hierarchicalParent = new HierarchicalParent(
                             $parentName,
@@ -210,6 +236,7 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
                             $parentForm,
                             $isParentOriginator
                         );
+
                         $hierarchicalParents[$parentName] = $hierarchicalParent;
                         $parentDatas[$parentName] = $parentData;
                     }
@@ -229,8 +256,8 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
 
                     $params = $parentDatas;
                     array_unshift($params, $hierarchicalEvent);
-
                     if (false === call_user_func_array($callback, $params)) {
+                        // if hierarchical callback return false - don't re-add child field
                         $form->get($child)->setRawOption('hierarchical_changed', false);
 
                         return;
@@ -240,53 +267,56 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
                     $form->add($child, $hierarchicalEvent->getType(), array_merge($hierarchicalEvent->getOptions(), [
                         'skip_interceptors' => true,
                     ]));
-                    //$newEd = $form->get($this->child)->getConfig()->getEventDispatcher();
-                    //EventDispatcherUtils::extend($newEd, $oldEd);
+                    $newProxy = $form->get($child);
+                    self::updateProxyValue($proxy, $newProxy);
 
-                    $instanceFieldName = $proxy->__sleep();
-                    ReflectionUtils::setValue(
-                        $proxy,
-                        $instanceFieldName[0],
-                        $form->get($child)->getWrappedValueHolderValue()
-                    );
+                    $proxy->setParameter('hierarchical_affected', $hierarchicalAffected);
                 },
             ],
             [
                 'setData' => function (FormInterface $proxy, FormInterface $instance, $method, $params, $returnEarly) use ($formAccessor) {
-                    $parents = $instance->getConfig()->getOption('hierarchical_parents', []);
+                    // after setData() callback
+                    /** @var self $config */
+                    $config = $instance->getConfig();
 
+                    $parents = $config->getOption('hierarchical_parents', []);
                     if (empty($parents)) {
                         return;
                     }
-                    if ($instance->getConfig()->getOption('skip_interceptors', false)) {
+                    if ($config->getOption('skip_interceptors', false)) {
                         $instance->unsetRawOption('skip_interceptors');
+
                         return;
                     }
-                    if (!$instance->getConfig()->hasOption('hierarchical_data')) {
+                    if (!$config->hasOption('hierarchical_data')) {
                         return;
                     }
 
-                    $data = $instance->getConfig()->getOption('hierarchical_data');
-                    FormUtils::setData($instance, $data);
+                    $data = $config->getOption('hierarchical_data');
                     $instance->unsetRawOption('hierarchical_data');
+                    FormUtils::setData($instance, $data);
                 },
                 'submit' => function (FormInterface $proxy, FormInterface $instance, $method, $params, $returnEarly) use ($formAccessor) {
-                    $parents = $instance->getConfig()->getOption('hierarchical_parents', []);
+                    // after submit() callback
+                    /** @var self $config */
+                    $config = $instance->getConfig();
 
+                    $parents = $config->getOption('hierarchical_parents', []);
                     if (empty($parents)) {
                         return;
                     }
-                    if ($instance->getConfig()->getOption('skip_interceptors', false)) {
+                    if ($config->getOption('skip_interceptors', false)) {
                         $instance->unsetRawOption('skip_interceptors');
+
                         return;
                     }
-                    if (!$instance->getConfig()->hasOption('hierarchical_data')) {
+                    if (!$config->hasOption('hierarchical_data')) {
                         return;
                     }
 
-                    $data = $instance->getConfig()->getOption('hierarchical_data');
-                    FormUtils::setData($instance, $data);
+                    $data = $config->getOption('hierarchical_data');
                     $instance->unsetRawOption('hierarchical_data');
+                    FormUtils::setData($instance, $data);
                 },
             ]
         );
@@ -346,33 +376,13 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
         return $this;
     }
 
+
+
     /**
      * {@inheritdoc}
      */
     public function add($child, $type = null, array $options = [])
     {
-        //        $originalOptions = $options;
-        //        if (isset($originalOptions['skip_interceptors'])) {
-        //            unset($originalOptions['skip_interceptors']);
-        //        }
-        //        if (isset($originalOptions['original_type'])) {
-        //            unset($originalOptions['original_type']);
-        //        }
-        //        if (isset($originalOptions['original_options'])) {
-        //            unset($originalOptions['original_options']);
-        //        }
-        //        if (isset($originalOptions['original_data'])) {
-        //            unset($originalOptions['original_data']);
-        //        }
-        //
-        ////        if ($this->getOption('skip_interceptors', false)) {
-        ////            $options['skip_interceptors'] = true;
-        ////        }
-        //        $options = array_merge($options, [
-        //            'original_type' => $type,
-        //            'original_options' => $originalOptions,
-        //        ]);
-
         return parent::add($child, $type, $options);
     }
 
@@ -385,20 +395,13 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
         if (isset($originalOptions['skip_interceptors'])) {
             unset($originalOptions['skip_interceptors']);
         }
-        // commented code below is redundant (ideally)
-        //if (isset($originalOptions['original_data'])) {
-        //    unset($originalOptions['original_data']);
-        //}
-        //if (isset($originalOptions['original_type'])) {
-        //    unset($originalOptions['original_type']);
-        //}
-        //if (isset($originalOptions['original_options'])) {
-        //    unset($originalOptions['original_options']);
-        //}
-
-        //if ($this->getOption('skip_interceptors', false)) {
-        //    $options['skip_interceptors'] = true;
-        //}
+        /**
+         * no need to unset:
+         * - original_data (cannot be set here)
+         * - hierarchical_data (cannot be set here)
+         * - original_type (anyway will be overwritten below)
+         * - original_options (anyway will be overwritten below)
+         */
 
         $options = array_merge($options, [
             'original_type' => $type,
@@ -422,7 +425,7 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
     public function replaceType($name, $type, $callback = null)
     {
         $child = $this->get($name);
-        $options = $child->getOption('original_options');
+        $options = $child->getOriginalOptions();
 
         if (is_callable($callback)) {
             $options = call_user_func($callback, $options);
@@ -437,13 +440,29 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
     public function replaceOptions($name, $callback)
     {
         $child = $this->get($name);
-        $type = $child->getOption('original_type');
-        $options = $child->getOption('original_options');
+        $type = $child->getOriginalType();
+        $options = $child->getOriginalOptions();
 
         if (is_callable($callback)) {
             $options = call_user_func($callback, $options);
         }
 
         return $this->add($name, $type, $options);
+    }
+
+    /**
+     * @param FormInterface $proxy
+     * @param FormInterface $newProxy
+     */
+    private static function updateProxyValue(FormInterface $proxy, FormInterface $newProxy)
+    {
+        /** @var ValueHolderInterface $newProxy */
+        $newInstance = $newProxy->getWrappedValueHolderValue();
+
+        //$newEd = $child->getConfig()->getEventDispatcher();
+        //EventDispatcherUtils::extend($newEd, $oldEd);
+
+        $instanceFieldName = $proxy->__sleep();
+        ReflectionUtils::setValue($proxy, $instanceFieldName[0], $newInstance);
     }
 }

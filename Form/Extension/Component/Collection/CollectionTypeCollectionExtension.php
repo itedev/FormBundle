@@ -64,7 +64,7 @@ class CollectionTypeCollectionExtension extends AbstractTypeExtension
 
         /** @var FormInterface $oldPrototype */
         $oldPrototype = $form->getConfig()->getAttribute('prototype');
-        $oldPrototypeOptions = $oldPrototype->getConfig()->getOption('original_options');
+        $oldPrototypeOptions = $oldPrototype->getConfig()->getOriginalOptions();
 
         $factory = $form->getConfig()->getFormFactory();
         $prototype = $factory->createNamed($options['prototype_name'], $options['type'], $data, $oldPrototypeOptions);

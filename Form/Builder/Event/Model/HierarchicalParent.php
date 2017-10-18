@@ -2,8 +2,7 @@
 
 namespace ITE\FormBundle\Form\Builder\Event\Model;
 
-use ITE\FormBundle\Util\FormUtils;
-use Symfony\Component\Form\FormInterface;
+use ITE\FormBundle\Form\FormInterface;
 use Symfony\Component\Form\Util\FormUtil;
 
 /**

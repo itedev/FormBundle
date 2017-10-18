@@ -2,9 +2,7 @@
 
 namespace ITE\FormBundle\Form;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface as BaseFormInterface;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Interface FormInterface
@@ -13,6 +11,56 @@ use Symfony\Component\HttpFoundation\Request;
  */
 interface FormInterface extends BaseFormInterface
 {
+    /**
+     * @return array
+     */
+    public function getParameters();
+
+    /**
+     * @param string $name
+     * @return bool
+     */
+    public function hasParameter($name);
+
+    /**
+     * @param string $name
+     * @param mixed $defaultValue
+     * @return mixed
+     */
+    public function getParameter($name, $defaultValue = null);
+
+    /**
+     * @param array $parameters
+     * @return FormInterface
+     */
+    public function setParameters(array $parameters);
+
+    /**
+     * @param string $name
+     * @param mixed $value
+     * @return FormInterface
+     */
+    public function setParameter($name, $value);
+
+    /**
+     * @param array $parameters
+     * @return FormInterface
+     */
+    public function addParameters(array $parameters);
+
+    /**
+     * @param string $name
+     * @return FormInterface
+     */
+    public function unsetParameter($name);
+
+    /**
+     * @return bool
+     */
+    public function isHierarchicalAffected();
+
+    ///
+
     /**
      * @return mixed
      */
@@ -100,11 +148,11 @@ interface FormInterface extends BaseFormInterface
      */
     public function getOriginalData();
 
-    /**
-     * @param Request $request
-     * @return bool
-     */
-    public function isHierarchicalOriginator(Request $request);
+//    /**
+//     * @param Request $request
+//     * @return bool
+//     */
+//    public function isHierarchicalOriginator(Request $request);
 
     /**
      * @param FormInterface|string|int

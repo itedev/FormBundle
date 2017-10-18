@@ -11,4 +11,19 @@ use Symfony\Component\Form\SubmitButtonBuilder as BaseSubmitButtonBuilder;
  */
 class SubmitButtonBuilder extends BaseSubmitButtonBuilder
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function getOriginalType()
+    {
+        return $this->getOption('original_type');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getOriginalOptions()
+    {
+        return $this->getOption('original_options');
+    }
 }

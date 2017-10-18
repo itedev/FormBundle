@@ -16,49 +16,86 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class Form extends BaseForm implements FormInterface
 {
-    ///**
-    // * @var array $options
-    // */
-    //protected $options = [];
-    //
-    ///**
-    // * @return array
-    // */
-    //public function Options()
-    //{
-    //    return $this->options;
-    //}
-    //
-    ///**
-    // * @param string $name
-    // * @return bool
-    // */
-    //public function hasOption($name)
-    //{
-    //    return array_key_exists($name, $this->options);
-    //}
-    //
-    ///**
-    // * @param string $name
-    // * @param mixed $defaultValue
-    // * @return mixed
-    // */
-    //public function getOption($name, $defaultValue = null)
-    //{
-    //    return $this->hasOption($name) ? $this->options[$name] : $defaultValue;
-    //}
-    //
-    ///**
-    // * @param string $name
-    // * @param mixed $value
-    // * @return $this
-    // */
-    //public function setOption($name, $value)
-    //{
-    //    $this->options[$name] = $value;
-    //
-    //    return $this;
-    //}
+    /**
+     * @var array $parameters
+     */
+    protected $parameters = [];
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getParameters()
+    {
+        return $this->parameters;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasParameter($name)
+    {
+        return array_key_exists($name, $this->parameters);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getParameter($name, $defaultValue = null)
+    {
+        return $this->hasParameter($name) ? $this->parameters[$name] : $defaultValue;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setParameters(array $parameters)
+    {
+        $this->parameters = $parameters;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setParameter($name, $value)
+    {
+        $this->parameters[$name] = $value;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addParameters(array $parameters)
+    {
+        $this->parameters = array_merge($this->parameters, $parameters);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function unsetParameter($name)
+    {
+        if ($this->hasParameter($name)) {
+            unset($this->parameters);
+        }
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isHierarchicalAffected()
+    {
+        return $this->getParameter('hierarchical_affected', false);
+    }
+
+    ///
 
     /**
      * {@inheritdoc}
@@ -224,17 +261,17 @@ class Form extends BaseForm implements FormInterface
         return $this->getConfig()->getOption('original_data');
     }
 
-    /**
-     * @param Request $request
-     * @return bool
-     */
-    public function isHierarchicalOriginator(Request $request)
-    {
-        $fullName = FormUtils::getFullName($this);
-
-        return HierarchicalUtils::isHierarchicalRequest($request)
-        && in_array($fullName, HierarchicalUtils::getOriginators($request));
-    }
+//    /**
+//     * @param Request $request
+//     * @return bool
+//     */
+//    public function isHierarchicalOriginator(Request $request)
+//    {
+//        $fullName = FormUtils::getFullName($this);
+//
+//        return HierarchicalUtils::isHierarchicalRequest($request)
+//            && in_array($fullName, HierarchicalUtils::getOriginators($request));
+//    }
 
     /**
      * {@inheritdoc}
@@ -255,17 +292,12 @@ class Form extends BaseForm implements FormInterface
         if (array_key_exists('hierarchical_data', $originalOptions)) {
             unset($originalOptions['hierarchical_data']);
         }
-        // commented code below is redundant (ideally)
-        //if (isset($originalOptions['original_type'])) {
-        //    unset($originalOptions['original_type']);
-        //}
-        //if (isset($originalOptions['original_options'])) {
-        //    unset($originalOptions['original_options']);
-        //}
+        /**
+         * no need to unset:
+         * - original_type (anyway will be overwritten below)
+         * - original_options (anyway will be overwritten below)
+         */
 
-//        if ($this->getConfig()->getOption('skip_interceptors', false)) {
-//            $options['skip_interceptors'] = true;
-//        }
         $options = array_merge($options, [
             'original_type' => $type,
             'original_options' => $originalOptions,
@@ -310,7 +342,7 @@ class Form extends BaseForm implements FormInterface
     public function replaceType($name, $type, $modifier = null)
     {
         $child = $this->get($name);
-        $options = $child->getConfig()->getOption('original_options');
+        $options = $child->getConfig()->getOriginalOptions();
 
         if (is_callable($modifier)) {
             $options = call_user_func($modifier, $options);
@@ -325,8 +357,8 @@ class Form extends BaseForm implements FormInterface
     public function replaceOptions($name, $modifier)
     {
         $child = $this->get($name);
-        $type = $child->getConfig()->getOption('original_type');
-        $options = $child->getConfig()->getOption('original_options');
+        $type = $child->getConfig()->getOriginalType();
+        $options = $child->getConfig()->getOriginalOptions();
 
         if (is_callable($modifier)) {
             $options = call_user_func($modifier, $options);
