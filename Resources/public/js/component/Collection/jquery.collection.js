@@ -113,6 +113,7 @@
     },
     clear: function() {
       this.$collection.find(this.itemsWrapperSelector).empty();
+      this.index = -1;
       var collectionView = this.$collection.formView();
       if (null !== collectionView) {
         collectionView.clearChildren();
