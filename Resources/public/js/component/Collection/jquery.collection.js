@@ -58,7 +58,7 @@
           collectionView.addCollectionItem(self.index);
         }
 
-        if ($.isfunction (afterShowCallback)) {
+        if ($.isFunction(afterShowCallback)) {
           afterShowCallback.apply(self.$collection, [$item]);
         }
 
@@ -148,7 +148,7 @@
         $this.data('collection', (data = new Collection(this)));
       }
       if ('string' === typeof method) {
-        if ($.isfunction (data[method])) {
+        if ($.isFunction(data[method])) {
           value = data[method].apply(data, Array.prototype.slice.call(methodArguments, 1));
         } else {
           $.error('Method with name "' +  method + '" does not exist in jQuery.collection');
