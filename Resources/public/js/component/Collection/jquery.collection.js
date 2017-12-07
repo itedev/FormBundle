@@ -1,6 +1,6 @@
-(function($) {
+(function ($) {
 
-  var Collection = function(element) {
+  var Collection = function (element) {
     this.$collection = $(element);
     this.itemsWrapperSelector = '.collection-items:first';
     this.itemSelector = this.itemsWrapperSelector + ' > .collection-item';
@@ -12,10 +12,10 @@
 
   Collection.prototype = {
     constructor: Collection,
-    initialize: function() {
+    initialize: function () {
       this.index = this.$collection.find(this.itemSelector).length - 1;
     },
-    add: function(afterShowCallback) {
+    add: function (afterShowCallback) {
       var prototype = this.$collection.data('prototype');
       var prototypeName = this.$collection.data('prototypeName');
       if ('undefined' === typeof prototypeName) {
@@ -52,20 +52,20 @@
       }
 
       var self = this;
-      $item[showMethod](showLength, function() {
+      $item[showMethod](showLength, function () {
         var collectionView = self.$collection.formView();
         if (null !== collectionView) {
           collectionView.addCollectionItem(self.index);
         }
 
-        if ($.isFunction(afterShowCallback)) {
+        if ($.isfunction (afterShowCallback)) {
           afterShowCallback.apply(self.$collection, [$item]);
         }
 
         self.$collection.trigger('ite-add.collection', [$item]);
       });
     },
-    remove: function($item) {
+    remove: function ($item) {
       var event = $.Event('ite-before-remove.collection');
       this.$collection.trigger(event, [$item]);
       if (false === event.result) {
@@ -87,7 +87,7 @@
       }
 
       var self = this;
-      $item[hideMethod](hideLength, function() {
+      $item[hideMethod](hideLength, function () {
         $item.remove();
 
         self.$collection.trigger('ite-remove.collection', [$item]);
@@ -99,44 +99,48 @@
         }
       });
     },
-    itemsWrapper: function() {
+    itemsWrapper: function () {
       return this.$collection.find(this.itemsWrapperSelector);
     },
-    items: function() {
+    items: function () {
       return this.$collection.find(this.itemSelector);
     },
-    currentIndex: function() {
+    currentIndex: function () {
       return this.index;
     },
-    isEmpty: function() {
+    isEmpty: function () {
       return 0 === this.count();
     },
-    clear: function() {
+    clear: function (resetIndex) {
+      resetIndex = 'undefined' !== typeof resetIndex ? resetIndex : false;
+      
       this.$collection.find(this.itemsWrapperSelector).empty();
-      this.index = -1;
+      if (resetIndex) {
+        this.index = -1;
+      }
       var collectionView = this.$collection.formView();
       if (null !== collectionView) {
         collectionView.clearChildren();
       }
       this.$collection.trigger('ite-clear.collection');
     },
-    count: function() {
+    count: function () {
       return this.items().length;
     },
-    parents: function() {
+    parents: function () {
       return this.$collection.parents('[data-collection-id]');
     },
-    parentsCount: function() {
+    parentsCount: function () {
       return this.parents().length;
     },
-    hasParent: function() {
+    hasParent: function () {
       return 0 !== this.parentsCount();
     }
   };
 
-  $.fn.collection = function(method) {
+  $.fn.collection = function (method) {
     var methodArguments = arguments, value;
-    this.each(function() {
+    this.each(function () {
       var $this = $(this);
 
       var data = $this.data('collection');
@@ -144,7 +148,7 @@
         $this.data('collection', (data = new Collection(this)));
       }
       if ('string' === typeof method) {
-        if ($.isFunction(data[method])) {
+        if ($.isfunction (data[method])) {
           value = data[method].apply(data, Array.prototype.slice.call(methodArguments, 1));
         } else {
           $.error('Method with name "' +  method + '" does not exist in jQuery.collection');
@@ -157,9 +161,9 @@
 
   $.fn.collection.Constructor = Collection;
 
-  $(function() {
+  $(function () {
     $('body')
-      .on('click.ite.collection', '[data-collection-add-btn]', function(e) {
+      .on('click.ite.collection', '[data-collection-add-btn]', function (e) {
         e.preventDefault();
         e.stopPropagation();
 
@@ -171,7 +175,7 @@
 
         $collection.collection('add');
       })
-      .on('click.ite.collection', '[data-collection-remove-btn]', function(e) {
+      .on('click.ite.collection', '[data-collection-remove-btn]', function (e) {
         e.preventDefault();
         e.stopPropagation();
 
