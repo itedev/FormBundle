@@ -65,11 +65,14 @@
         self.$collection.trigger('ite-add.collection', [$item]);
       });
     },
-    remove: function ($item) {
-      var event = $.Event('ite-before-remove.collection');
-      this.$collection.trigger(event, [$item]);
-      if (false === event.result) {
-        return;
+    remove: function ($item, force) {
+      force = 'undefined' !== typeof force ? force : false;
+      if (!force) {
+        var event = $.Event('ite-before-remove.collection');
+        this.$collection.trigger(event, [$item]);
+        if (false === event.result) {
+          return;
+        }
       }
 
       var hideLength = this.hideAnimation.length;
