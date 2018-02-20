@@ -102,11 +102,11 @@
   };
 
   Plugin.prototype = {
-    isInitialized: function($element) {
+    isInitialized: function ($element, pluginData) {
       return false;
     },
 
-    initialize: function($element, pluginData) {
+    initialize: function ($element, pluginData) {
       throw new Error('Method is not implemented.');
     },
 
@@ -403,17 +403,24 @@
 
         return string.replace(re, name);
       };
+      var walkArrayCallback = function (optionValue) {
+        $.each(optionValue, function (subOptionName, subOptionValue) {
+          if ($.isArray(subOptionValue) || $.isPlainObject(subOptionValue)) {
+            optionValue[subOptionName] = walkArrayCallback(subOptionValue);
+          } else if ('string' === typeof subOptionValue) {
+            optionValue[subOptionName] = replaceStringCallback(subOptionValue);
+          }
+        });
+
+        return optionValue;
+      };
       var walkViewCallback = function() {
         var self = this;
         $.each(this.options, function(optionName, optionValue) {
           if (optionValue instanceof FormView) {
             optionValue.walkRecursive(walkViewCallback);
           } else if ($.isArray(optionValue) || $.isPlainObject(optionValue)) {
-            $.each(optionValue, function(subOptionName, subOptionValue) {
-              if ('string' === typeof subOptionValue) {
-                optionValue[subOptionName] = replaceStringCallback(subOptionValue);
-              }
-            });
+            optionValue = walkArrayCallback(optionValue);
           } else if ('string' === typeof optionValue) {
             optionValue = replaceStringCallback(optionValue);
           }
@@ -661,7 +668,7 @@
           throw new Error('Plugin "' + plugin + '" is not registered.');
         }
 
-        if (SF.plugins[plugin].isInitialized($element)) {
+        if (SF.plugins[plugin].isInitialized($element, pluginData)) {
           return;
         }
 

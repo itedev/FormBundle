@@ -1,43 +1,43 @@
 parameters:
-    ite_form.form.type_extension.component.ajax_file_upload.form.class: ITE\FormBundle\Form\Extension\Component\AjaxFileUpload\FormTypeAjaxTokenExtension
-    ite_form.default_ajax_token_provider.class:                         ITE\FormBundle\Form\Extension\AjaxToken\DefaultAjaxTokenProvider
-    ite_form.form.type_extension.component.ajax_file_upload.file.class: ITE\FormBundle\Form\Extension\Component\AjaxFileUpload\FileTypeMultipleExtension
-    ite_form.form.type.component.ajax_file_upload.ajax_file.class:      ITE\FormBundle\Form\Type\Component\AjaxFileUpload\AjaxFileType
-
-    ite_form.abstract_file_service.class:                               ITE\FormBundle\Service\File\AbstractFileService
-    ite_form.file_manager.class:                                        ITE\FormBundle\Service\File\FileManager
-    ite_form.file_uploader.class:                                       ITE\FormBundle\Service\File\FileUploader
+#    ite_form.form.type_extension.component.ajax_file_upload.form.class: ITE\FormBundle\Form\Extension\Component\AjaxFileUpload\FormTypeAjaxTokenExtension
+#    ite_form.default_ajax_token_provider.class:                         ITE\FormBundle\Form\Extension\AjaxToken\DefaultAjaxTokenProvider
+#    ite_form.form.type_extension.component.ajax_file_upload.file.class: ITE\FormBundle\Form\Extension\Component\AjaxFileUpload\FileTypeMultipleExtension
+#    ite_form.form.type.component.ajax_file_upload.ajax_file.class:      ITE\FormBundle\Form\Type\Component\AjaxFileUpload\AjaxFileType
+#
+#    ite_form.abstract_file_service.class:                               ITE\FormBundle\Service\File\AbstractFileService
+#    ite_form.file_manager.class:                                        ITE\FormBundle\Service\File\FileManager
+#    ite_form.file_uploader.class:                                       ITE\FormBundle\Service\File\FileUploader
 
 services:
-    ite_form.form.type_extension.component.ajax_file_upload.form:
-        class:                                                          %ite_form.form.type_extension.component.ajax_file_upload.form.class%
-        arguments: [ @ite_form.default_ajax_token_provider ]
-        tags:
-            - { name: form.type_extension, alias: form }
-
-    ite_form.default_ajax_token_provider:
-        class:                                                          %ite_form.default_ajax_token_provider.class%
-        arguments: [ @request= ]
-
-    ite_form.form.type.component.ajax_file_upload.ajax_file:
-        class:                                                          %ite_form.form.type.component.ajax_file_upload.ajax_file.class%
-        arguments: [ @router, @ite_form.file_manager, @?vich_uploader.storage ]
-        tags:
-            - { name: form.type, alias: ite_ajax_file }
-
-    ite_form.abstract_file_service:
-        class:                                                          %ite_form.abstract_file_service.class%
-        abstract:                                                       true
-        calls:
-            - [ setWebRoot, [ %ite_form.file_manager.web_root% ] ]
-            - [ setTmpPrefix, [ %ite_form.file_manager.tmp_prefix% ] ]
-
-    ite_form.file_manager:
-        class:                                                          %ite_form.file_manager.class%
-        parent:                                                         ite_form.abstract_file_service
-
-    ite_form.file_uploader:
-        class:                                                          %ite_form.file_uploader.class%
-        parent:                                                         ite_form.abstract_file_service
-        calls:
-            - [ setRequest, [ @request= ] ]
+#    ite_form.form.type_extension.component.ajax_file_upload.form:
+#        class:                                                          %ite_form.form.type_extension.component.ajax_file_upload.form.class%
+#        arguments: [ @ite_form.default_ajax_token_provider ]
+#        tags:
+#            - { name: form.type_extension, alias: form }
+#
+#    ite_form.default_ajax_token_provider:
+#        class:                                                          %ite_form.default_ajax_token_provider.class%
+#        arguments: [ @request= ]
+#
+#    ite_form.form.type.component.ajax_file_upload.ajax_file:
+#        class:                                                          %ite_form.form.type.component.ajax_file_upload.ajax_file.class%
+#        arguments: [ @router, @ite_form.file_manager, @?vich_uploader.storage ]
+#        tags:
+#            - { name: form.type, alias: ite_ajax_file }
+#
+#    ite_form.abstract_file_service:
+#        class:                                                          %ite_form.abstract_file_service.class%
+#        abstract:                                                       true
+#        calls:
+#            - [ setWebRoot, [ %ite_form.file_manager.web_root% ] ]
+#            - [ setTmpPrefix, [ %ite_form.file_manager.tmp_prefix% ] ]
+#
+#    ite_form.file_manager:
+#        class:                                                          %ite_form.file_manager.class%
+#        parent:                                                         ite_form.abstract_file_service
+#
+#    ite_form.file_uploader:
+#        class:                                                          %ite_form.file_uploader.class%
+#        parent:                                                         ite_form.abstract_file_service
+#        calls:
+#            - [ setRequest, [ @request= ] ]

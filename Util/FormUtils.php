@@ -61,6 +61,19 @@ class FormUtils
         return $fullName;
     }
 
+    /**
+     * @param FormInterface $form
+     * @return string
+     */
+    public static function getPropertyPath(FormInterface $form)
+    {
+        $propertyPath = '';
+        for ($type = $form; null !== $type; $type = $type->getParent()) {
+            $propertyPath = '[' . $type->getName() . ']' . $propertyPath;
+        }
+
+        return $propertyPath;
+    }
 
     /**
      * @param FormInterface $form
