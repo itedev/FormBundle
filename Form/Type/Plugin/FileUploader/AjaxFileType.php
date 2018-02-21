@@ -38,23 +38,6 @@ class AjaxFileType extends AbstractPluginType implements ClientFormTypeInterface
      */
     public function buildClientView(ClientFormView $clientView, FormView $view, FormInterface $form, array $options)
     {
-        $data = $form->getData();
-        $files = [];
-        if ($data instanceof UploadedFile) {
-            $data = [$data];
-        }
-        if (is_array($data)) {
-            /** @var UploadedFile $file */
-            foreach ($data as $file) {
-                $files[] = [
-                    'name' => $file->getClientOriginalName(),
-                    'size' => $file->getClientSize(),
-                    'type' => $file->getClientMimeType(),
-                    'file' => $this->uploadPath . '/' . $file->getFilename(),
-                ];
-            }
-        }
-
         $clientView->setOption('plugins', [
             FileUploaderPlugin::getName() => [
                 'extras' => (object) [],
@@ -64,9 +47,8 @@ class AjaxFileType extends AbstractPluginType implements ClientFormTypeInterface
                     'upload' => [
                         'url' => $options['url'],
                         'start' => true,
-                        'listInput' => false,
                     ],
-                    'files' => $files,
+                    'listInput' => false,
                 ])
             ],
         ]);

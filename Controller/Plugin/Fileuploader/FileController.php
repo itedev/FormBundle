@@ -25,6 +25,7 @@ class FileController extends Controller
     {
         $fileUploader = new FileUploader('files', [
             'uploadDir' => $this->container->getParameter('ite_form.component.ajax_file_upload.upload_dir') . '/',
+            'uploadPath' => $this->container->getParameter('ite_form.component.ajax_file_upload.upload_path') . '/',
             'title' => 'name'
         ]);
         foreach ($fileUploader->getRemovedFiles('file') as $key => $value) {

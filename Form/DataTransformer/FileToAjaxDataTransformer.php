@@ -72,7 +72,12 @@ class FileToAjaxDataTransformer implements DataTransformerInterface
 
         $file = isset($value[$this->fileName]) ? $value[$this->fileName] : null;
         $data = isset($value[$this->dataName]) ? $value[$this->dataName] : null;
-        if (null !== $file && [null] !== $file) {
+
+        if ($this->multiple && is_array($file)) {
+            $file = array_filter($file);
+        }
+
+        if (null !== $file && [] !== $file) {
             return $file;
         } elseif (null !== $data) {
             return $data;
