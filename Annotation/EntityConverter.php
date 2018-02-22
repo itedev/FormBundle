@@ -21,6 +21,16 @@ class EntityConverter extends ConfigurationAnnotation
     protected $options = [];
 
     /**
+     * @var bool
+     */
+    protected $multiple = true;
+
+    /**
+     * @var callable
+     */
+    protected $entityOptionsCallback;
+
+    /**
      * Get alias
      *
      * @return string
@@ -62,6 +72,54 @@ class EntityConverter extends ConfigurationAnnotation
     public function setOptions(array $options)
     {
         $this->options = $options;
+
+        return $this;
+    }
+
+    /**
+     * Get multiple
+     *
+     * @return bool
+     */
+    public function isMultiple()
+    {
+        return $this->multiple;
+    }
+
+    /**
+     * Set multiple
+     *
+     * @param bool $multiple
+     *
+     * @return EntityConverter
+     */
+    public function setMultiple($multiple)
+    {
+        $this->multiple = $multiple;
+
+        return $this;
+    }
+
+    /**
+     * Get entityOptionsCallback
+     *
+     * @return callable
+     */
+    public function getEntityOptionsCallback()
+    {
+        return $this->entityOptionsCallback;
+    }
+
+    /**
+     * Set entityOptionsCallback
+     *
+     * @param callable $entityOptionsCallback
+     *
+     * @return EntityConverter
+     */
+    public function setEntityOptionsCallback($entityOptionsCallback)
+    {
+        $this->entityOptionsCallback = $entityOptionsCallback;
 
         return $this;
     }

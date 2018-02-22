@@ -41,7 +41,10 @@ class KernelListener
 
         $converter = $this->converterManager->getConverter($annotation->getAlias());
         $entities = $event->getControllerResult();
-        $convertedResult = $converter->convert($entities, $annotation->getOptions());
+        $options = $annotation->getOptions();
+        $options['multiple'] = $annotation->isMultiple();
+        $options['entity_options_callback'] = $annotation->getEntityOptionsCallback();
+        $convertedResult = $converter->convert($entities, $options);
 
         $event->setControllerResult($convertedResult);
     }

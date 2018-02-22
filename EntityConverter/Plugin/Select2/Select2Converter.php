@@ -18,15 +18,27 @@ class Select2Converter extends DefaultConverter
     {
         $choices = parent::convert($entities, $options);
 
+        if (false === $options['multiple']) {
+            $choices = [$choices];
+        }
+
         $convertedChoices = [];
         foreach ($choices as $group => $groupChoices) {
             if (is_array($groupChoices) && !isset($groupChoices['value'])) {
                 $children = [];
                 foreach ($groupChoices as $choice) {
-                    $children[] = [
-                        'id' => $choice['value'],
-                        'text' => $choice['label'],
-                    ];
+                    if (isset($choice['options'])) {
+                        $children[] = [
+                            'id'      => $choice['value'],
+                            'text'    => $choice['label'],
+                            'options' => $choice['options'],
+                        ];
+                    } else {
+                        $children[] = [
+                            'id'   => $choice['value'],
+                            'text' => $choice['label'],
+                        ];
+                    }
                 }
 
                 $convertedChoices[] = [
@@ -34,14 +46,22 @@ class Select2Converter extends DefaultConverter
                     'children' => $children,
                 ];
             } else {
-                $convertedChoices[] = [
-                    'id' => $groupChoices['value'],
-                    'text' => $groupChoices['label'],
-                ];
+                if (isset($groupChoices['options'])) {
+                    $convertedChoices[] = [
+                        'id'      => $groupChoices['value'],
+                        'text'    => $groupChoices['label'],
+                        'options' => $groupChoices['options'],
+                    ];
+                } else {
+                    $convertedChoices[] = [
+                        'id'   => $groupChoices['value'],
+                        'text' => $groupChoices['label'],
+                    ];
+                }
             }
         }
 
-        return $convertedChoices;
+        return $options['multiple'] ? $convertedChoices : array_pop($convertedChoices);
     }
 
 }

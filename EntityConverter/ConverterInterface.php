@@ -10,9 +10,10 @@ namespace ITE\FormBundle\EntityConverter;
 interface ConverterInterface
 {
     /**
-     * @param array $entities
+     * @param mixes $entities
      * @param array $options
-     * @return array
+     *
+     * @return mixed
      */
     public function convert($entities, array $options = []);
 }

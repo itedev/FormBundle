@@ -54,7 +54,11 @@ class DefaultConverter implements ConverterInterface
     public function convert($entities, array $options = [])
     {
         if (!is_array($entities) && !($entities instanceof \Traversable)) {
-            throw new \InvalidArgumentException('You must pass "array" or instance of "Traversable"');
+            if (true === $options['multiple']) {
+                throw new \InvalidArgumentException('You must pass "array" or instance of "Traversable"');
+            }
+
+            $entities = [$entities];
         }
 
         $mixed = array_key_exists('options', $options);
@@ -118,24 +122,40 @@ class DefaultConverter implements ConverterInterface
                     $value = $this->getValue($item, $mixed, $config, $alias);
                     $label = $this->getLabel($item, $config, $alias);
 
-                    $choices[$i][] = [
-                        'value' => $value,
-                        'label' => $label,
-                    ];
+                    if (null !== $options['entity_options_callback']) {
+                        $choices[$i][] = [
+                            'value'   => $value,
+                            'label'   => $label,
+                            'options' => (array)call_user_func($options['entity_options_callback'], $entity),
+                        ];
+                    } else {
+                        $choices[$i][] = [
+                            'value' => $value,
+                            'label' => $label,
+                        ];
+                    }
                 }
             } else {
                 $alias = $this->getAlias($entity, $aliases);
                 $value = $this->getValue($entity, $mixed, $config, $alias);
                 $label = $this->getLabel($entity, $config, $alias);
 
-                $choices[] = [
-                    'value' => $value,
-                    'label' => $label,
-                ];
+                if (null !== $options['entity_options_callback']) {
+                    $choices[] = [
+                        'value'   => $value,
+                        'label'   => $label,
+                        'options' => (array)call_user_func($options['entity_options_callback'], $entity),
+                    ];
+                } else {
+                    $choices[] = [
+                        'value' => $value,
+                        'label' => $label,
+                    ];
+                }
             }
         }
 
-        return $choices;
+        return $options['multiple'] ? $choices : array_pop($choices);
     }
 
     /**
