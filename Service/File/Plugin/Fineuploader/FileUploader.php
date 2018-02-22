@@ -2,15 +2,16 @@
 
 namespace ITE\FormBundle\Service\File\Plugin\Fineuploader;
 
-use ITE\FormBundle\Service\File\FileUploader as BaseFileUploader;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * Class FileUploadEngine
  *
+ * @deprecated
+ *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-class FileUploader extends BaseFileUploader
+class FileUploader
 {
     /**
      * @var array

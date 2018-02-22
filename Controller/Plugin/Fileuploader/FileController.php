@@ -28,9 +28,9 @@ class FileController extends Controller
             'uploadPath' => $this->container->getParameter('ite_form.component.ajax_file_upload.upload_path') . '/',
             'title' => 'name'
         ]);
-        foreach ($fileUploader->getRemovedFiles('file') as $key => $value) {
+//        foreach ($fileUploader->getRemovedFiles('file') as $key => $value) {
 //            unlink('../uploads/' . $value['name']);
-        }
+//        }
         $data = $fileUploader->upload();
 
         return new JsonResponse($data);
