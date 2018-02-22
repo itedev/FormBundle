@@ -171,7 +171,7 @@
     },
 
     addOption: function ($element, data, setValue) {
-      setValue = setvalue || true;
+      setValue = setValue || true;
       var $option = this.createOptionFromData($element, data);
 
       $element
