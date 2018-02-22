@@ -15,6 +15,7 @@
     initialize: function ($element, pluginData) {
       var extras = pluginData.extras;
       var options = pluginData.options;
+      var self = this;
 
       // google fonts
       if (extras.hasOwnProperty('google_fonts')) {
@@ -119,29 +120,78 @@
               dataType: 'dataType' in options.ajax ? options.ajax.dataType : 'json',
               success: function (response) {
                 if ($.isPlainObject(response) && response.hasOwnProperty('id') && response.hasOwnProperty('text')) {
-                  $element
-                    .html('<option value="' + response.id + '">' + response.text + '</option>')
-                    .val(response.id)
-                    .trigger('change')
-                  ;
+                  self.addOption($element, response);
                 }
               }
             });
           } else {
-            $element
-              .find('[value="' + selection.id + '"]')
-              .replaceWith('<option value="' + selection.id + '">' + selection.id + '</option>')
-              .end()
-              .val(selection.id)
-              .trigger('change')
-            ;
+            self.addOption($element, selection);
           }
 
           return false;
-        });
+        })
       }
 
+      $element.on('select2:select', function (e) {
+        var data = e.params.data;
+        var $option = $element.find('option[value="' + data.id + '"]');
+
+        if ($option.length > 0) {
+          self.processOptionOptions($element, $option, data);
+        } else {
+          self.addOption($element, data);
+        }
+      });
+
       $element.select2(options);
+    },
+
+    processOptionOptions: function ($element, $option, data) {
+      if (typeof data.options !== 'undefined') {
+        var event = $.Event('process-option-options.ite.plugin.select2', {
+          option: $option,
+          data: data
+        });
+        $element.trigger(event);
+
+        $.each(data.options, function (optionName, options) {
+          switch (optionName) {
+            case 'attr':
+              $.each(options, function (name, value) {
+                if (typeof value === 'object' || typeof value === 'array') {
+                  value = JSON.stringify(value);
+                }
+
+                $option.attr(name, value);
+              });
+              break;
+          }
+        });
+      }
+    },
+
+    addOption: function ($element, data, setValue) {
+      setValue = setValue || true;
+      var $option = this.createOptionFromData($element, data);
+
+      $element
+        .append($option)
+      ;
+
+      if (setValue) {
+        $element
+          .val(data.id)
+          .trigger('change')
+        ;
+      }
+    },
+
+    createOptionFromData: function ($element, data) {
+      var $option = $('<option value="' + data.id + '">' + data.text + '</option>');
+
+      this.processOptionOptions($element, $option, data);
+
+      return $option;
     },
 
     clearValue: function ($element) {
