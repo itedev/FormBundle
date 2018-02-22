@@ -21,10 +21,11 @@ class AjaxFileUploadComponent extends AbstractComponent
         $rootNode = parent::addConfiguration($container);
         $rootNode
             ->children()
-                ->scalarNode('web_root')
-                    ->defaultValue('%kernel.root_dir%/../web')
+                ->scalarNode('upload_dir')
+                    ->cannotBeEmpty()
+                    ->isRequired()
                 ->end()
-                ->scalarNode('tmp_prefix')
+                ->scalarNode('upload_path')
                     ->cannotBeEmpty()
                     ->isRequired()
                 ->end()
@@ -39,8 +40,8 @@ class AjaxFileUploadComponent extends AbstractComponent
      */
     public function loadConfiguration(FileLoader $loader, array $config, ContainerBuilder $container)
     {
-        $container->setParameter('ite_form.file_manager.web_root', $config['web_root']);
-        $container->setParameter('ite_form.file_manager.tmp_prefix', $config['tmp_prefix']);
+        $container->setParameter('ite_form.component.ajax_file_upload.upload_dir', $config['upload_dir']);
+        $container->setParameter('ite_form.component.ajax_file_upload.upload_path', $config['upload_path']);
 
         parent::loadConfiguration($loader, $config, $container);
     }

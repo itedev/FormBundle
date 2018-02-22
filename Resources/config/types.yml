@@ -1,6 +1,8 @@
 parameters:
     ite_form.form.type.ajax_choice.class:           ITE\FormBundle\Form\Type\AjaxChoiceType
     ite_form.form.type.ajax_entity.class:           ITE\FormBundle\Form\Type\AjaxEntityType
+    ite_form.form.type.ajax_file.class:             ITE\FormBundle\Form\Type\AjaxFileType
+    ite_form.form.type.ajax_file_data.class:        ITE\FormBundle\Form\Type\AjaxFileDataType
     ite_form.form.type.mixed_entity.class:          ITE\FormBundle\Form\Type\MixedEntityType
     ite_form.form.type.ajax_mixed_entity.class:     ITE\FormBundle\Form\Type\AjaxMixedEntityType
     ite_form.form.type.google_font.class:           ITE\FormBundle\Form\Type\GoogleFontType
@@ -20,6 +22,18 @@ services:
         arguments: [ @doctrine ]
         tags:
             - { name: form.type, alias: ite_ajax_entity }
+
+    ite_form.form.type.ajax_file:
+        class: %ite_form.form.type.ajax_file.class%
+        arguments: [ @router, @request_stack ]
+        tags:
+            - { name: form.type, alias: ite_ajax_file }
+
+    ite_form.form.type.ajax_file_data:
+        class: %ite_form.form.type.ajax_file_data.class%
+        arguments: [ %ite_form.component.ajax_file_upload.upload_dir% ]
+        tags:
+            - { name: form.type, alias: ite_ajax_file_data }
 
     ite_form.form.type.google_font:
         class: %ite_form.form.type.google_font.class%

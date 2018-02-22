@@ -91,14 +91,7 @@ class ClientFormViewBuilder implements ClientFormViewBuilderInterface
             $innerType->buildClientView($clientView, $view, $form, $options);
         }
 
-        // @todo: remove code below
-        $proxiedType = $type;
-        if ($type instanceof ResolvedTypeDataCollectorProxy) {
-            $proxiedType = ReflectionUtils::getValue($proxiedType, 'proxiedType');
-        }
-        $typeExtensions = ReflectionUtils::getValue($proxiedType, 'typeExtensions');
-//        foreach ($type->getTypeExtensions() as $extension) {
-        foreach ($typeExtensions as $extension) {
+        foreach ($type->getTypeExtensions() as $extension) {
             if ($extension instanceof ClientFormTypeExtensionInterface) {
                 $extension->buildClientView($clientView, $view, $form, $options);
             }

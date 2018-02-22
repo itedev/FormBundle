@@ -1,0 +1,9 @@
+parameters:
+    ite_form.form.type.plugin.fileuploader.ajax_file.class: ITE\FormBundle\Form\Type\Plugin\FileUploader\AjaxFileType
+
+services:
+    ite_form.form.type.plugin.fileuploader.ajax_file:
+        class: %ite_form.form.type.plugin.fileuploader.ajax_file.class%
+        arguments: [ %ite_form.component.ajax_file_upload.upload_path%, %ite_form.plugin.fileuploader.options% ]
+        tags:
+            - { name: form.type, alias: ite_fileuploader_ajax_file }

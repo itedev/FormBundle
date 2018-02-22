@@ -42,6 +42,14 @@
     {{ block('hidden_widget') }}
 {% endblock ite_markup_hidden_widget %}
 
+{% block ite_ajax_file_widget %}
+    <div {{ block('widget_container_attributes') }}>
+        {% for child in form %}
+            {{ form_widget(child) }}
+        {% endfor %}
+    </div>
+{% endblock ite_ajax_file_widget %}
+
 {# refactor below #}
 
 {#{% block ite_fileupload_file_widget %}#}
