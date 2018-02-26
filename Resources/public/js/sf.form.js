@@ -92,31 +92,31 @@
     }
   });
 
-  var Plugin = function(methods) {
+  var Plugin = function (methods) {
     methods = methods || {};
 
     var self = this;
-    $.each(methods, function(methodName, method) {
+    $.each(methods, function (methodName, method) {
       self[methodName] = method;
     });
   };
 
   Plugin.prototype = {
-    isInitialized: function ($element, pluginData) {
+    isInitialized: function ($element, pluginData, formView) {
       return false;
     },
 
-    initialize: function ($element, pluginData) {
+    initialize: function ($element, pluginData, formView) {
       throw new Error('Method is not implemented.');
     },
 
     destroy: function ($element) {},
 
-    clearValue: function($element) {},
+    clearValue: function ($element) {},
 
-    getValue: function($element, $newElement) {},
+    getValue: function ($element, $newElement) {},
 
-    setValue: function($element, $newElement) {}
+    setValue: function ($element, $newElement) {}
   };
 
   Plugin.prototype.fn = Plugin.prototype;
@@ -620,15 +620,15 @@
 
     ///
 
-    isInitialized: function($element) {
+    isInitialized: function ($element) {
       return 'undefined' !== typeof $element.data('sfInitialized');
     },
 
-    isInitializable: function() {
+    isInitializable: function () {
       return this.isRoot() || this.hasOption('plugins');
     },
 
-    setInitialized: function($element) {
+    setInitialized: function ($element) {
       $element.data('sfInitialized', true);
     },
 
@@ -668,7 +668,7 @@
           throw new Error('Plugin "' + plugin + '" is not registered.');
         }
 
-        if (SF.plugins[plugin].isInitialized($element, pluginData)) {
+        if (SF.plugins[plugin].isInitialized($element, pluginData, self)) {
           return;
         }
 
