@@ -6,7 +6,7 @@
   SF.fn.plugins = {};
   SF.fn.validators = {};
 
-  $.fn.formView = function() {
+  $.fn.formView = function () {
     if (1 !== this.length) {
       $.error('jQuery.formView can be called only for 1 element.');
     }
@@ -121,7 +121,7 @@
 
   Plugin.prototype.fn = Plugin.prototype;
 
-  var FormPath = function(formPath) {
+  var FormPath = function (formPath) {
     if ('string' !== typeof formPath) {
       throw new Error('String expected.');
     }
@@ -143,7 +143,7 @@
     var elements = formPath.split('/');
     this.elements = [];
     this.parents = [];
-    $.each(elements, function(i, element) {
+    $.each(elements, function (i, element) {
       self.elements.push(element);
       self.parents.push('..' === element);
     });
@@ -152,23 +152,23 @@
   };
 
   FormPath.prototype = {
-    getLength: function() {
+    getLength: function () {
       return this.length;
     },
 
-    getElements: function() {
+    getElements: function () {
       return this.elements;
     },
 
-    isAbsolute: function() {
+    isAbsolute: function () {
       return this.absolute;
     },
 
-    isRelative: function() {
+    isRelative: function () {
       return !this.absolute;
     },
 
-    getElement: function(index) {
+    getElement: function (index) {
       if ('undefined' === typeof this.elements[index]) {
         throw new Error('The index "' + index + '" is not within the form path.');
       }
@@ -176,7 +176,7 @@
       return this.elements[index];
     },
 
-    isParent: function(index) {
+    isParent: function (index) {
       if ('undefined' === typeof this.parents[index]) {
         throw new Error('The index "' + index + '" is not within the form path.');
       }
@@ -184,17 +184,17 @@
       return this.parents[index];
     },
 
-    getPathAsString: function() {
+    getPathAsString: function () {
       return this.pathAsString;
     }
   };
 
   FormPath.prototype.fn = FormPath.prototype;
 
-  var FormAccessor = function() {};
+  var FormAccessor = function () {};
 
   FormAccessor.prototype = {
-    getView: function(view, formPath) {
+    getView: function (view, formPath) {
       if (!(formPath instanceof FormPath)) {
         formPath = new FormPath(formPath);
       }
@@ -220,7 +220,7 @@
       return current;
     },
 
-    getReverseFormPath: function(parentView, childView) {
+    getReverseFormPath: function (parentView, childView) {
       var elements = [];
       var current = childView;
       while (null !== current && current !== parentView) {
@@ -238,77 +238,89 @@
 
   FormAccessor.prototype.fn = FormAccessor.prototype;
 
-  var FormView = function(viewData, parent) {
+  var FormView = function (viewData, parent) {
     this.parent = parent || null;
     this.options = {};
     this.children = {};
 
     var self = this;
-    $.each(viewData['options'], function(name, value) {
+    $.each(viewData['options'], function (name, value) {
       self.options[name] = 'prototype_view' === name
         ? new FormView(value, self)
         : value;
     });
-    $.each(viewData['children'], function(name, childViewData) {
+    $.each(viewData['children'], function (name, childViewData) {
       var childView = new FormView(childViewData, self);
       self.addChild(name, childView);
     });
   };
 
   FormView.prototype = {
-    getParent: function() {
+    getParent: function () {
       return this.parent;
     },
 
-    getRoot: function() {
+    getRoot: function () {
       return null !== this.parent ? this.parent.getRoot() : this;
     },
 
-    isRoot: function() {
+    isRoot: function () {
       return null === this.parent;
     },
 
-    getOptions: function() {
+    getOptions: function () {
       return this.options;
     },
 
-    hasOption: function(option) {
+    hasOption: function (option) {
       return this.options.hasOwnProperty(option);
     },
 
-    getOption: function(option, defaultValue) {
+    getOption: function (option, defaultValue) {
       defaultValue = defaultValue || null;
 
       return this.hasOption(option) ? this.options[option] : defaultValue;
     },
 
-    getId: function() {
+    setOption: function (option, value) {
+      this.options[option] = value;
+
+      return this;
+    },
+
+    unsetOption: function (option) {
+      if (this.hasOption(option)) {
+        delete this.options[option];
+      }
+    },
+
+    getId: function () {
       return this.getOption('id');
     },
 
-    getName: function() {
+    getName: function () {
       return this.getOption('name');
     },
 
-    getFullName: function() {
+    getFullName: function () {
       return this.getOption('full_name');
     },
 
-    getChildren: function() {
+    getChildren: function () {
       return this.children;
     },
 
-    hasChild: function(name) {
+    hasChild: function (name) {
       return this.children.hasOwnProperty(name);
     },
 
-    getChild: function(name, defaultValue) {
+    getChild: function (name, defaultValue) {
       defaultValue = defaultValue || null;
 
       return this.hasChild(name) ? this.children[name] : defaultValue;
     },
 
-    addChild: function(name, view) {
+    addChild: function (name, view) {
       if (this.hasChild(name)) {
         return this;
       }
@@ -319,7 +331,7 @@
       return this;
     },
 
-    removeChild: function(name) {
+    removeChild: function (name) {
       if (!this.hasChild(name)) {
         return this;
       }
@@ -329,19 +341,19 @@
       return this;
     },
 
-    clearChildren: function() {
+    clearChildren: function () {
       this.children = {};
 
       return this;
     },
 
-    toArray: function() {
+    toArray: function () {
       var result = {
         options: {},
         children: {}
       };
 
-      $.each(this.options, function(name, value) {
+      $.each(this.options, function (name, value) {
         var newValue;
         if (value instanceof FormView) {
           newValue = value.toArray();
@@ -352,25 +364,25 @@
         }
         result.options[name] = newValue;
       });
-      $.each(this.children, function(name, childView) {
+      $.each(this.children, function (name, childView) {
         result.children[name] = childView.toArray();
       });
 
       return result;
     },
 
-    clone: function() {
+    clone: function () {
       return new FormView(this.toArray(), this.parent);
     },
 
-    findByOption: function(name, value) {
+    findByOption: function (name, value) {
       var currentValue = this.getOption(name);
       if (currentValue == value) {
         return this;
       }
 
       var result = null;
-      $.each(this.children, function(childName, childView) {
+      $.each(this.children, function (childName, childView) {
         result = childView.findByOption(name, value);
         if (null !== result) {
           return false; // break
@@ -380,25 +392,25 @@
       return result;
     },
 
-    find: function(id) {
+    find: function (id) {
       return this.findByOption('id', id);
     },
 
-    walkRecursive: function(callback) {
+    walkRecursive: function (callback) {
       callback.call(this);
-      $.each(this.children, function(name, childView) {
+      $.each(this.children, function (name, childView) {
         childView.walkRecursive(callback);
       });
 
       return this;
     },
 
-    addCollectionItem: function(name) {
+    addCollectionItem: function (name) {
       if (!this.hasOption('prototype_view')) {
         return;
       }
 
-      var replaceStringCallback = function(string) {
+      var replaceStringCallback = function (string) {
         var re = new RegExp(prototypeName, 'g');
 
         return string.replace(re, name);
@@ -414,9 +426,9 @@
 
         return optionValue;
       };
-      var walkViewCallback = function() {
+      var walkViewCallback = function () {
         var self = this;
-        $.each(this.options, function(optionName, optionValue) {
+        $.each(this.options, function (optionName, optionValue) {
           if (optionValue instanceof FormView) {
             optionValue.walkRecursive(walkViewCallback);
           } else if ($.isArray(optionValue) || $.isPlainObject(optionValue)) {
@@ -439,31 +451,31 @@
       return collectionItem;
     },
 
-    isCollection: function() {
+    isCollection: function () {
       return this.hasOption('prototype_view'); // @todo: collection may be without prototype
     },
 
-    isCollectionItem: function() {
+    isCollectionItem: function () {
       return !this.isRoot() && this.parent.isCollection();
     },
 
-    getClosestCollection: function() {
+    getClosestCollection: function () {
       return !this.isRoot()
         ? (this.parent.isCollection() ? this.parent : this.parent.getClosestCollection())
         : null;
     },
 
-    getClosestCollectionItem: function() {
+    getClosestCollectionItem: function () {
       return !this.isRoot()
         ? (this.parent.isCollectionItem() ? this.parent : this.parent.getClosestCollectionItem())
         : null;
     },
 
-    isInsideCollectionItem: function() {
+    isInsideCollectionItem: function () {
       return null !== this.getClosestCollectionItem();
     },
 
-    findClosestCollectionSiblings: function() {
+    findClosestCollectionSiblings: function () {
       var closestCollectionItemView = this.getClosestCollectionItem();
       if (null === closestCollectionItemView) {
         return [];
@@ -475,7 +487,7 @@
       var formPath = formAccessor.getReverseFormPath(closestCollectionItemView, this);
 
       var closestCollectionSiblingViews = [];
-      $.each(closestCollectionView.getChildren(), function(childName, childView) {
+      $.each(closestCollectionView.getChildren(), function (childName, childView) {
         if (closestCollectionItemView !== childView) {
           var collectionSiblingView = formAccessor.getView(childView, formPath);
           closestCollectionSiblingViews.push(collectionSiblingView)
@@ -485,10 +497,10 @@
       return closestCollectionSiblingViews;
     },
 
-    getClosestCollectionSiblingsData: function() {
+    getClosestCollectionSiblingsData: function () {
       var siblings = this.findClosestCollectionSiblings();
       var data = [];
-      $.each(siblings, function(i, sibling) {
+      $.each(siblings, function (i, sibling) {
         var $element = sibling.getElement();
         if (!$element.length) {
           return;
@@ -500,11 +512,11 @@
       return data;
     },
 
-    getElement: function(context) {
+    getElement: function (context) {
       return $('#' + this.getId(), context);
     },
 
-    getForm: function(context) {
+    getForm: function (context) {
       return this.getRoot().getElement(context);
     },
 
@@ -531,7 +543,7 @@
         this.showErrors(errors, $element);
       }
 
-      $.each(this.children, function(name, childView) {
+      $.each(this.children, function (name, childView) {
         childView.showErrorsRecursive();
       });
     },
@@ -540,7 +552,7 @@
       var $element = this.getElement();
       this.resetErrors($element);
 
-      $.each(this.children, function(name, childView) {
+      $.each(this.children, function (name, childView) {
         childView.resetErrorsRecursive();
       });
     },
@@ -648,7 +660,7 @@
           // element does not exist
         }
       }
-      $.each(this.children, function(name, childView) {
+      $.each(this.children, function (name, childView) {
         childView.initializeRecursive(force);
       });
 
@@ -659,11 +671,11 @@
       return this;
     },
 
-    initialize: function($element) {
+    initialize: function ($element) {
       var self = this;
 
       var plugins = this.getOption('plugins', {});
-      $.each(plugins, function(plugin, pluginData) {
+      $.each(plugins, function (plugin, pluginData) {
         if ('undefined' === typeof SF.plugins[plugin] || !(SF.plugins[plugin] instanceof Plugin)) {
           throw new Error('Plugin "' + plugin + '" is not registered.');
         }
@@ -689,7 +701,7 @@
       });
     },
 
-    //clearElementValue: function($element) {
+    //clearElementValue: function ($element) {
     //  var event = $.Event('ite-before-clear.hierarchical');
     //  $element.trigger(event);
     //  if (false === event.result) {
@@ -708,7 +720,7 @@
     //  }
     //
     //  if (element.hasPlugins()) {
-    //    $.each(element.getPlugins(), function(i, plugin) {
+    //    $.each(element.getPlugins(), function (i, plugin) {
     //      if ('undefined' !== typeof SF.plugins[plugin].clearValue) {
     //        SF.plugins[plugin].clearValue($element);
     //      }
@@ -718,7 +730,7 @@
     //  $element.trigger('ite-clear.hierarchical');
     //},
 
-    getData: function($element) {
+    getData: function ($element) {
       var value;
       var valueTaken = false;
 
@@ -768,7 +780,7 @@
       return $element.html();
     },
 
-    getValue: function($element) {
+    getValue: function ($element) {
       //var $element = this.getElement(context);
 
       var value;
@@ -820,7 +832,7 @@
       return $element.html();
     },
 
-    setValue: function($element, $newElement) {
+    setValue: function ($element, $newElement) {
       var valueSet = false;
 
       if (this.getOption('type_changed')) {
@@ -877,7 +889,7 @@
       }
     },
 
-    triggerEvent: function($element, event) {
+    triggerEvent: function ($element, event) {
       var delegateSelector = this.getOption('delegate_selector', false);
       if (delegateSelector) {
         var $checkedChildren = $element.find(delegateSelector).filter(function() {
@@ -891,11 +903,11 @@
       }
     },
 
-    mergeRecursive: function(view) {
+    mergeRecursive: function (view) {
       this.merge(view);
 
       var self = this;
-      $.each(this.children, function(childName, childView) {
+      $.each(this.children, function (childName, childView) {
         if (view.hasChild(childName)) {
           // merge intersected child
           childView.mergeRecursive(view.getChild(childName));
@@ -904,7 +916,7 @@
           self.removeChild(childName);
         }
       });
-      $.each(view.getChildren(), function(childName, childView) {
+      $.each(view.getChildren(), function (childName, childView) {
         if (!self.hasChild(childName)) {
           // add new child
           self.addChild(childName, childView);
@@ -912,7 +924,7 @@
       });
     },
 
-    merge: function(view) {
+    merge: function (view) {
 //      var frozenOptions = {
 //        id: this.options['id'],
 //        name: this.options['name'],
@@ -934,22 +946,22 @@
 
   FormView.prototype.fn = FormView.prototype;
 
-  var FormBag = function() {
+  var FormBag = function () {
     this.forms = {};
   };
 
   FormBag.prototype = {
-    has: function(name) {
+    has: function (name) {
       return this.forms.hasOwnProperty(name);
     },
 
-    get: function(name, defaultValue) {
+    get: function (name, defaultValue) {
       defaultValue = defaultValue || null;
 
       return this.has(name) ? this.forms[name] : defaultValue;
     },
 
-    add: function(name, viewData) {
+    add: function (name, viewData) {
       var view = new FormView(viewData);
       if (this.has(name)) {
         this.forms[name].mergeRecursive(view);
@@ -962,26 +974,26 @@
       return this;
     },
 
-    set: function(forms) {
+    set: function (forms) {
       var self = this;
-      $.each(forms, function(name, viewData) {
+      $.each(forms, function (name, viewData) {
         self.add(name, viewData);
       });
 
       return this;
     },
 
-    initialize: function(force) {
-      $.each(this.forms, function(name, view) {
+    initialize: function (force) {
+      $.each(this.forms, function (name, view) {
         view.initializeRecursive(force);
       });
 
       return this;
     },
 
-    findByOption: function(name, value) {
+    findByOption: function (name, value) {
       var result = null;
-      $.each(this.forms, function(viewName, view) {
+      $.each(this.forms, function (viewName, view) {
         result = view.findByOption(name, value);
         if (null !== result) {
           return false; // break
@@ -991,9 +1003,9 @@
       return result;
     },
 
-    find: function(id) {
+    find: function (id) {
       var result = null;
-      $.each(this.forms, function(viewName, view) {
+      $.each(this.forms, function (viewName, view) {
         result = view.find(id);
         if (null !== result) {
           return false; // break
@@ -1029,14 +1041,14 @@
   // });
 
   $(document)
-    .on('ite-pre-ajax-complete', function(e, data) {
+    .on('ite-pre-ajax-complete', function (e, data) {
       if (!data.hasOwnProperty('forms')) {
         return;
       }
 
       SF.forms.set(data['forms']);
     })
-    .on('ite-post-ajax-complete', function(e, data) {
+    .on('ite-post-ajax-complete', function (e, data) {
       if (!data.hasOwnProperty('forms')) {
         return;
       }
