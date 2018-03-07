@@ -4,6 +4,14 @@
       return !$element.is($element.icheck('data'));
     },
 
+    destroy: function ($element) {
+      if (!this.isInitialized($element)) {
+        return;
+      }
+
+      $element.icheck('destroy');
+    },
+
     initialize: function($element, pluginData, view) {
       $element.icheck(pluginData.options);
     },

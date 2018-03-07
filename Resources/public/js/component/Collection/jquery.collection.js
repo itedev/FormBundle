@@ -15,7 +15,7 @@
     initialize: function () {
       this.index = this.$collection.find(this.itemSelector).length - 1;
     },
-    add: function (afterShowCallback) {
+    add: function (addCallback, addCallback2) {
       var prototype = this.$collection.data('prototype');
       var prototypeName = this.$collection.data('prototypeName');
       if ('undefined' === typeof prototypeName) {
@@ -58,11 +58,15 @@
           collectionView.addCollectionItem(self.index);
         }
 
-        if ($.isFunction(afterShowCallback)) {
-          afterShowCallback.apply(self.$collection, [$item]);
+        if ($.isFunction(addCallback)) {
+          addCallback.apply(self.$collection, [$item]);
         }
 
         self.$collection.trigger('ite-add.collection', [$item]);
+
+        if ($.isFunction(addCallback2)) {
+          addCallback2.apply(self.$collection, [$item]);
+        }
       });
     },
     remove: function ($item, force) {
