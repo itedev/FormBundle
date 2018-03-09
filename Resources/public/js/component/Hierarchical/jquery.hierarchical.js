@@ -2,7 +2,7 @@
  * Created by c1tru55 on 11.06.15.
  */
 (function($) {
-  var Hierarchical = function(form, options) {
+  var Hierarchical = function (form, options) {
     this.$form = $(form);
     this.options = $.extend(true, {}, $.fn.hierarchical.defaults, options);
 
@@ -12,9 +12,9 @@
   Hierarchical.prototype = {
     constructor: Hierarchical,
 
-    initialize: function() {},
+    initialize: function () {},
 
-    trigger: function($elements, force, sfOriginalEvent) {
+    trigger: function ($elements, force, sfOriginalEvent) {
       var self = this;
 
       // @todo: what if radio/checkbox?
@@ -24,7 +24,7 @@
       force = force || false;
 
       var originatorInfoList = [];
-      $.each($elements, function(i, $element) {
+      $.each($elements, function (i, $element) {
         var view = $element.formView();
         var fullName = view.getFullName();
 
@@ -36,7 +36,7 @@
           sfOriginalEvent: sfOriginalEvent
         };
         var hierarchicalChildren = view.getOption('hierarchical_children', []);
-        $.each(hierarchicalChildren, function(i, childId) {
+        $.each(hierarchicalChildren, function (i, childId) {
           var childView = SF.forms.find(childId);
           if (null === childView) {
             return;
@@ -74,7 +74,7 @@
         if (submit) {
           // if all child elements set corresponding submit flag to false - don't submit the form
           submit = false;
-          $.each(parentEvent.children, function(childId, child) {
+          $.each(parentEvent.children, function (childId, child) {
             if (true === child['submit']) {
               submit = true;
 
@@ -89,7 +89,7 @@
             originator: fullName,
             sfOriginalEvent: sfOriginalEvent
           };
-          $.each(childrenInfoMap, function(childId, childInfo) {
+          $.each(childrenInfoMap, function (childId, childInfo) {
             var $childElement = childInfo.$element;
 
             var childEvent = $.Event('before-child-submit.ite.hierarchical', childEventData);
@@ -115,7 +115,7 @@
 
       var submit = false;
       var originators = [];
-      $.each(originatorInfoList, function(i, originatorInfo) {
+      $.each(originatorInfoList, function (i, originatorInfo) {
         if (true === originatorInfo.submit || force) {
           submit = true;
           originators.push(originatorInfo.fullName);
@@ -141,17 +141,17 @@
           'X-SF-Hierarchical': '1',
           'X-SF-Hierarchical-Originator': originators.join(',')
         },
-        success: function(response) {
+        success: function (response) {
           var $newContext = $(response);
 
-          $.each(originatorInfoList, function(i, originatorInfo) {
+          $.each(originatorInfoList, function (i, originatorInfo) {
             var event = $.Event('before-children-change.ite.hierarchical', originatorInfo.eventData);
             originatorInfo.$element.trigger(event, [$newContext]);
             if (false === event.result) {
               return;
             }
 
-            $.each(originatorInfo.childrenInfoMap, function(i, childInfo) {
+            $.each(originatorInfo.childrenInfoMap, function (i, childInfo) {
               var childView = childInfo.view;
               var $childElement = childInfo.$element;
               var $newChildElement = childView.getElement($newContext);
@@ -200,12 +200,12 @@
       this.$form.data('hierarchicalJqxhr', jqxhr);
     },
 
-    active: function() {
+    active: function () {
       return 'undefined' !== typeof this.$form.data('hierarchicalJqxhr');
     }
   };
 
-  $.fn.hierarchical = function(option) {
+  $.fn.hierarchical = function (option) {
     var methodArguments = arguments, value;
     this.each(function() {
       var $this = $(this);

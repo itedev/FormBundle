@@ -82,12 +82,9 @@ class FormTypeHierarchicalExtension extends AbstractTypeExtension implements Cli
     {
         $hasHierarchicalParents = isset($options['hierarchical_parents']) && !empty($options['hierarchical_parents']);
         $isHierarchicalOriginator = isset($options['hierarchical_originator']) && $options['hierarchical_originator'];
+        $isHierarchicalInteractive = !isset($options['hierarchical_interactive']) || $options['hierarchical_interactive'];
 
-        if (!$hasHierarchicalParents && !$isHierarchicalOriginator) {
-            return;
-        }
-
-        if ($hasHierarchicalParents) {
+        if ($hasHierarchicalParents && $isHierarchicalInteractive) {
             $parentPaths = $options['hierarchical_parents'];
             $ascendantClientView = $clientView->getParent();
             $hierarchicalParents = [];
@@ -142,6 +139,7 @@ class FormTypeHierarchicalExtension extends AbstractTypeExtension implements Cli
             'hierarchical_trigger_event',
             'hierarchical_data',
             'hierarchical_changed',
+            'hierarchical_interactive',
         ]);
         $resolver->setNormalizers([
             'hierarchical_parents' => $hierarchicalParentsNormalizer,
@@ -152,6 +150,7 @@ class FormTypeHierarchicalExtension extends AbstractTypeExtension implements Cli
             'hierarchical_originator' => ['bool'],
             'hierarchical_trigger_event' => ['string'],
             'hierarchical_changed' => ['bool'],
+            'hierarchical_interactive' => ['bool'],
         ]);
     }
 
