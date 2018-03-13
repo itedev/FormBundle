@@ -171,9 +171,9 @@
     },
 
     addOption: function ($element, data, setValue) {
-      setValue = setValue || true;
-      var $option = this.createOptionFromData($element, data);
+      setValue = 'undefined' !== setValue ? setValue : true;
 
+      var $option = this.createOptionFromData($element, data);
       $element
         .append($option)
       ;
@@ -188,7 +188,6 @@
 
     createOptionFromData: function ($element, data) {
       var $option = $('<option value="' + data.id + '">' + data.text + '</option>');
-
       this.processOptionOptions($element, $option, data);
 
       return $option;
