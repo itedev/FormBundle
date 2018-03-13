@@ -171,7 +171,7 @@
     },
 
     addOption: function ($element, data, setValue) {
-      setValue = 'undefined' !== setValue ? setValue : true;
+      setValue = 'undefined' !== typeof setValue ? setValue : true;
 
       var $option = this.createOptionFromData($element, data);
       $element
