@@ -125,7 +125,11 @@
               }
             });
           } else {
-            self.addOption($element, selection);
+            $element.find('[value="' + selection.id + '"]').remove();
+            self.addOption($element, {
+              id: selection.id,
+              text: selection.id
+            });
           }
 
           return false;
