@@ -69,6 +69,48 @@
         }
       });
     },
+    addItems: function (count, addCallback) {
+      var $collection = this.$collection;
+      var prototype = $collection.data('prototype');
+      var prototypeName = $collection.data('prototypeName');
+      var $itemsWrapper = $collection.find(this.itemsWrapperSelector);
+      var items = [];
+      var collectionView = $collection.formView();
+      var self = this;
+      var startIndex = this.index + 1;
+      if ('undefined' === typeof prototypeName) {
+        prototypeName = '__name__';
+      }
+
+      var re = new RegExp(prototypeName, 'g');
+
+      for (var i = 0; i < count; i++) {
+        this.index++;
+        var itemHtml = prototype.replace(re, this.index);
+        var $item = $(itemHtml);
+
+        var event = $.Event('ite-before-add.collection');
+        $collection.trigger(event, [$item]);
+        if (false === event.result) {
+          continue;
+        }
+
+        $itemsWrapper.append($item);
+        items[this.index] = $item;
+      }
+
+      $.each(items, function (i, $item) {
+        if (null !== collectionView) {
+          collectionView.addCollectionItem(startIndex + i);
+        }
+
+        if ($.isFunction(addCallback)) {
+          addCallback.apply($collection, [i, $item]);
+        }
+
+        $collection.trigger('ite-add.collection', [$item]);
+      });
+    },
     remove: function ($item, force) {
       force = 'undefined' !== typeof force ? force : false;
       if (!force) {
