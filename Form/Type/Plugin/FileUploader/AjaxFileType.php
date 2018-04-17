@@ -40,7 +40,9 @@ class AjaxFileType extends AbstractPluginType implements ClientFormTypeInterface
     {
         $clientView->setOption('plugins', [
             FileUploaderPlugin::getName() => [
-                'extras' => (object) [],
+                'extras' => [
+                    'uploadPath' => $this->uploadPath,
+                ],
                 'options' => (object) array_replace_recursive($this->options, $options['plugin_options'], [
                     'limit' => $options['multiple'] ? null : 1,
                     'inputNameBrackets' => false,
