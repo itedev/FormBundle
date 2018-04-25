@@ -4,6 +4,7 @@ namespace ITE\FormBundle\Form\DataTransformer;
 
 use ITE\FormBundle\File\UploadedFile;
 use Symfony\Component\Form\DataTransformerInterface;
+use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 
 /**
  * Class FileToStringTransformer
@@ -23,13 +24,20 @@ class FileToStringTransformer implements DataTransformerInterface
     private $uploadDir;
 
     /**
+     * @var bool
+     */
+    private $checkFile;
+
+    /**
      * @param bool $multiple
      * @param string $uploadDir
+     * @param bool $checkFile
      */
-    public function __construct($multiple, $uploadDir)
+    public function __construct($multiple, $uploadDir, $checkFile = false)
     {
         $this->multiple = $multiple;
         $this->uploadDir = $uploadDir;
+        $this->checkFile = $checkFile;
     }
 
     /**
@@ -71,14 +79,23 @@ class FileToStringTransformer implements DataTransformerInterface
         $fileDataItems = json_decode($value, true);
         $files = [];
         foreach ($fileDataItems as $fileDataItem) {
-            $file = new UploadedFile(
-                $this->uploadDir . DIRECTORY_SEPARATOR . $fileDataItem['fileName'],
-                $fileDataItem['originalName'],
-                isset($fileDataItem['type']) ? $fileDataItem['type'] : null,
-                isset($fileDataItem['size']) ? $fileDataItem['size'] : null,
-                null,
-                true
-            );
+            try {
+                $file = new UploadedFile(
+                    $this->uploadDir . DIRECTORY_SEPARATOR . $fileDataItem['fileName'],
+                    $fileDataItem['originalName'],
+                    isset($fileDataItem['type']) ? $fileDataItem['type'] : null,
+                    isset($fileDataItem['size']) ? $fileDataItem['size'] : null,
+                    null,
+                    true
+                );
+            } catch (FileNotFoundException $e) {
+                if ($this->checkFile) {
+                    throw $e;
+                } else {
+                    $file = null;
+                }
+            }
+
             $files[] = $file;
         }
 

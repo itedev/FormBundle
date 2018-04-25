@@ -21,7 +21,7 @@
       var dataData = $dataElement.val() ? JSON.parse($dataElement.val()) : [];
       $.each(dataData, function (i, file) {
         files.push({
-          file: file.fileName,
+          file: pluginData.extras.uploadPath + '/' + file.fileName,
           name: file.originalName,
           type: file.type,
           size: file.size
