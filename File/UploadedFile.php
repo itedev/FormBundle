@@ -4,6 +4,7 @@ namespace ITE\FormBundle\File;
 
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesser;
 use Symfony\Component\HttpFoundation\File\UploadedFile as BaseUploadedFile;
 
 /**
@@ -135,4 +136,24 @@ class UploadedFile extends BaseUploadedFile
     {
         return $this->newFileName;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getMimeType()
+    {
+        if (false !== $this->getRealPath()) {
+            return parent::getMimeType();
+        }
+
+        $guesser = MimeTypeGuesser::getInstance();
+        $tmpName = tempnam(sys_get_temp_dir(), 'uploaded_file');
+        file_put_contents($tmpName, file_get_contents($this->getPathname()));
+
+        $mimeType = $guesser->guess($tmpName);
+        unlink($tmpName);
+
+        return $mimeType;
+    }
+
 }
