@@ -30,12 +30,27 @@ class UploadedFile extends BaseUploadedFile
     private $newFileName;
 
     /**
+     * @var string
+     */
+    private $tmpPath;
+
+    /**
      * @inheritdoc
      */
     public function __construct($path, $originalName, $mimeType = null, $size = null, $error = null, $test = false)
     {
         $this->test = $test;
         parent::__construct($path, $originalName, $mimeType, $size, $error, $test);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function __destruct()
+    {
+        if (file_exists($this->tmpPath)) {
+            @unlink($this->tmpPath);
+        }
     }
 
     /**
@@ -142,7 +157,7 @@ class UploadedFile extends BaseUploadedFile
      */
     public function getMimeType()
     {
-        if (false !== $this->getRealPath()) {
+        if (file_exists('file://'.$this->getPathname())) {
             return parent::getMimeType();
         }
 
@@ -156,4 +171,16 @@ class UploadedFile extends BaseUploadedFile
         return $mimeType;
     }
 
+    public function getRealPath()
+    {
+        $realPath = parent::getRealPath();
+
+        if (false === $realPath) {
+            $tmpName = tempnam(sys_get_temp_dir(), 'uploaded_file');
+            file_put_contents($tmpName, file_get_contents($this->getPathname()));
+            $this->tmpPath = $realPath = $tmpName;
+        }
+
+        return $realPath;
+    }
 }
