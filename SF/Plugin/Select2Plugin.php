@@ -63,7 +63,7 @@ class Select2Plugin extends ChoicePlugin
             new CdnAssetReference(
                 $this->getCdnName(),
                 $this->getCdnVersion(),
-                $debug ? 'js/select2.js' : 'js/select2.min.js'
+                $debug ? 'js/select2.full.js' : 'js/select2.full.min.js'
             ),
         ];
     }
