@@ -180,6 +180,7 @@
       var $option = this.createOptionFromData($element, data);
       $element
         .append($option)
+        .triggerHandler('change.select2')
       ;
 
       if (setValue) {
