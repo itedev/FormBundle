@@ -43,8 +43,12 @@
       return initializable || this.hasOption('ajax_submit');
     },
 
-    initialize: function($element) {
-      baseInitialize.call(this, $element);
+    initialize: function($element, initializationMode) {
+      baseInitialize.apply(this, [$element, initializationMode]);
+
+      if ('forward' !== initializationMode) {
+        return;
+      }
 
       if (!this.getOption('ajax_submit', false)) {
         return;

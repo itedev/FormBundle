@@ -6,14 +6,18 @@
   var baseIsInitializable = SF.fn.classes.FormView.prototype.isInitializable;
   var baseInitialize = SF.fn.classes.FormView.prototype.initialize;
   SF.fn.classes.FormView.prototype = $.extend(SF.fn.classes.FormView.prototype, {
-    isInitializable: function() {
+    isInitializable: function () {
       var initializable = baseIsInitializable.call(this);
 
       return initializable || this.hasOption('constraints');
     },
 
-    initialize: function($element) {
-      baseInitialize.call(this, $element);
+    initialize: function ($element, initializationMode) {
+      baseInitialize.apply(this, [$element, initializationMode]);
+
+      if ('forward' !== initializationMode) {
+        return;
+      }
 
       var validatorConstraints = this.getOption('constraints', {});
       $.each(validatorConstraints, function(validator, constraints) {

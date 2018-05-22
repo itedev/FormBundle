@@ -102,6 +102,10 @@
   };
 
   Plugin.prototype = {
+    getInitializationMode: function () {
+      return 'forward';
+    },
+
     isInitialized: function ($element, pluginData, formView) {
       return false;
     },
@@ -657,16 +661,25 @@
         if (0 !== $element.length) {
           // element exists
           if (!this.isInitialized($element) || force) {
-            this.initialize($element);
+            this.initialize($element, 'forward');
             this.setInitialized($element);
           }
-        } else {
-          // element does not exist
         }
       }
       $.each(this.children, function (name, childView) {
         childView.initializeRecursive(force);
       });
+      // @todo: refactor
+      if (this.isInitializable()) {
+        // view is initializable
+        if (0 !== $element.length) {
+          // element exists
+          // if (!this.isInitialized($element) || force) {
+            this.initialize($element, 'backward');
+            // this.setInitialized($element);
+          // }
+        }
+      }
 
       if ($element) {
         $element.trigger('post-initialize.ite.form');
@@ -675,13 +688,17 @@
       return this;
     },
 
-    initialize: function ($element) {
+    initialize: function ($element, initializationMode) {
       var self = this;
 
       var plugins = this.getOption('plugins', {});
       $.each(plugins, function (plugin, pluginData) {
         if ('undefined' === typeof SF.plugins[plugin] || !(SF.plugins[plugin] instanceof Plugin)) {
           throw new Error('Plugin "' + plugin + '" is not registered.');
+        }
+
+        if (SF.plugins[plugin].getInitializationMode() !== initializationMode) {
+          return;
         }
 
         if (SF.plugins[plugin].isInitialized($element, pluginData, self)) {
@@ -798,6 +815,68 @@
 
         return null; // @todo: send value for buttons?
       }
+    },
+
+    setData: function (value, $element) {
+      $element = 'undefined' !== typeof $element ? $element : this.getElement();
+      var self = this;
+
+      if (this.getOption('compound', false) && !this.hasOption('delegate_selector')) {
+        // compound
+        if ($.isPlainObject(value)) {
+          $.each(value, function (childName, childValue) {
+            if (self.hasChild(childName)) {
+              self.getChild(childName).setData(childValue);
+            }
+          });
+        }
+      } else {
+        // not compound
+
+        var valueSet = false;
+
+        // try to set value via plugins
+        if (this.hasOption('plugins')) {
+          var plugins = this.getOption('plugins', {});
+          $.each(plugins, function (plugin, pluginData) {
+            var result = SF.plugins[plugin].setValue($element, value, self);
+            if ('undefined' !== typeof result) {
+              valueSet = true;
+
+              return false; // break
+            }
+          });
+
+          if (valueSet) {
+            return this;
+          }
+        }
+
+        // get value in regular way
+        if (!valueSet) {
+          var delegateSelector = this.getOption('delegate_selector', false);
+          if (delegateSelector) {
+            // checkbox or radio
+            $element.find(delegateSelector).each(function() {
+              var checked = ':radio' === delegateSelector
+                ? this.value === value
+                : -1 !== $.inArray(this.value, value);
+              $(this).prop('checked', checked);
+            });
+          } else {
+            var element = $element.get(0);
+            if ('input' === element.nodeName.toLowerCase() && rxCheckable.test(element.type)) {
+              // checkbox or radio
+              $element.prop('checked', value);
+            } else if (rxText.test(element.nodeName) || rxSelect.test(element.nodeName)) {
+              // input, textarea or select
+              $element.val(value);
+            }
+          }
+        }
+      }
+
+      return this;
     },
 
     setValue: function ($element, $newElement) {
