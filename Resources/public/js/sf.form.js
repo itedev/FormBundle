@@ -803,12 +803,14 @@
             return value;
           } else {
             var element = $element.get(0);
-            if ('input' === element.nodeName.toLowerCase() && rxCheckable.test(element.type)) {
-              // checkbox or radio
-              return $element.prop('checked') ? $element.val() : null;
-            } else if (rxText.test(element.nodeName) || rxSelect.test(element.nodeName)) {
-              // input, textarea or select
-              return $element.val();
+            if ('undefined' !== typeof element && element.nodeName) {
+              if ('input' === element.nodeName.toLowerCase() && rxCheckable.test(element.type)) {
+                // checkbox or radio
+                return $element.prop('checked') ? $element.val() : null;
+              } else if (rxText.test(element.nodeName) || rxSelect.test(element.nodeName)) {
+                // input, textarea or select
+                return $element.val();
+              }
             }
           }
         }
