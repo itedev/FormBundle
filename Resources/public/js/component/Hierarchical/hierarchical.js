@@ -22,14 +22,18 @@
   var baseInitialize = SF.fn.classes.FormView.prototype.initialize;
   var baseAddCollectionItem = SF.fn.classes.FormView.prototype.addCollectionItem;
   SF.fn.classes.FormView.prototype = $.extend(SF.fn.classes.FormView.prototype, {
-    isInitializable: function() {
+    isInitializable: function () {
       var initializable = baseIsInitializable.call(this);
 
       return initializable || this.hasOption('hierarchical_children') || this.hasOption('hierarchical_originator');
     },
 
-    initialize: function($element) {
-      baseInitialize.call(this, $element);
+    initialize: function ($element, initializationMode) {
+      baseInitialize.apply(this, [$element, initializationMode]);
+
+      if ('forward' !== initializationMode) {
+        return;
+      }
 
       var hierarchicalChildren = this.getOption('hierarchical_children', []);
       var isHierarchicalOriginator = this.getOption('hierarchical_originator', false);

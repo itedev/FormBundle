@@ -2,6 +2,9 @@ parameters:
     ite_form.form.type.plugin.ion_range_slider.range.integer.class: ITE\FormBundle\Form\Type\Plugin\IonRangeSlider\IntegerRangeType
     ite_form.form.type.plugin.ion_range_slider.range.number.class:  ITE\FormBundle\Form\Type\Plugin\IonRangeSlider\NumberRangeType
     ite_form.form.type.plugin.ion_range_slider.range.money.class:   ITE\FormBundle\Form\Type\Plugin\IonRangeSlider\MoneyRangeType
+    ite_form.form.type.plugin.ion_range_slider.integer.class:       ITE\FormBundle\Form\Type\Plugin\IonRangeSlider\IntegerType
+    ite_form.form.type.plugin.ion_range_slider.number.class:        ITE\FormBundle\Form\Type\Plugin\IonRangeSlider\NumberType
+    ite_form.form.type.plugin.ion_range_slider.money.class:         ITE\FormBundle\Form\Type\Plugin\IonRangeSlider\MoneyType
 
 services:
     ite_form.form.type.plugin.ion_range_slider.range.integer:
@@ -21,3 +24,21 @@ services:
         arguments: [ %ite_form.plugin.ion_range_slider.options% ]
         tags:
             - { name: form.type, alias: ite_ion_range_slider_money_range }
+
+    ite_form.form.type.plugin.ion_range_slider.integer:
+        class: %ite_form.form.type.plugin.ion_range_slider.integer.class%
+        arguments: [ %ite_form.plugin.ion_range_slider.options% ]
+        tags:
+            - { name: form.type, alias: ite_ion_range_slider_integer }
+
+    ite_form.form.type.plugin.ion_range_slider.number:
+        class: %ite_form.form.type.plugin.ion_range_slider.number.class%
+        arguments: [ %ite_form.plugin.ion_range_slider.options% ]
+        tags:
+            - { name: form.type, alias: ite_ion_range_slider_number }
+
+    ite_form.form.type.plugin.ion_range_slider.money:
+        class: %ite_form.form.type.plugin.ion_range_slider.money.class%
+        arguments: [ %ite_form.plugin.ion_range_slider.options% ]
+        tags:
+            - { name: form.type, alias: ite_ion_range_slider_money }

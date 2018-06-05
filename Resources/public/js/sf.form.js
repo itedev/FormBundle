@@ -102,6 +102,10 @@
   };
 
   Plugin.prototype = {
+    getInitializationMode: function () {
+      return 'forward';
+    },
+
     isInitialized: function ($element, pluginData, formView) {
       return false;
     },
@@ -306,6 +310,10 @@
       return this.getOption('full_name');
     },
 
+    hasChildren: function () {
+      return 0 !== SF.util.objectLength(this.children);
+    },
+
     getChildren: function () {
       return this.children;
     },
@@ -497,19 +505,19 @@
       return closestCollectionSiblingViews;
     },
 
-    getClosestCollectionSiblingsData: function () {
+    getClosestCollectionSiblingValues: function () {
       var siblings = this.findClosestCollectionSiblings();
-      var data = [];
+      var values = [];
       $.each(siblings, function (i, sibling) {
         var $element = sibling.getElement();
         if (!$element.length) {
           return;
         }
 
-        data.push(sibling.getData($element));
+        values.push(sibling.getValue($element));
       });
 
-      return data;
+      return values;
     },
 
     getElement: function (context) {
@@ -653,16 +661,25 @@
         if (0 !== $element.length) {
           // element exists
           if (!this.isInitialized($element) || force) {
-            this.initialize($element);
+            this.initialize($element, 'forward');
             this.setInitialized($element);
           }
-        } else {
-          // element does not exist
         }
       }
       $.each(this.children, function (name, childView) {
         childView.initializeRecursive(force);
       });
+      // @todo: refactor
+      if (this.isInitializable()) {
+        // view is initializable
+        if (0 !== $element.length) {
+          // element exists
+          // if (!this.isInitialized($element) || force) {
+            this.initialize($element, 'backward');
+            // this.setInitialized($element);
+          // }
+        }
+      }
 
       if ($element) {
         $element.trigger('post-initialize.ite.form');
@@ -671,13 +688,17 @@
       return this;
     },
 
-    initialize: function ($element) {
+    initialize: function ($element, initializationMode) {
       var self = this;
 
       var plugins = this.getOption('plugins', {});
       $.each(plugins, function (plugin, pluginData) {
         if ('undefined' === typeof SF.plugins[plugin] || !(SF.plugins[plugin] instanceof Plugin)) {
           throw new Error('Plugin "' + plugin + '" is not registered.');
+        }
+
+        if (SF.plugins[plugin].getInitializationMode() !== initializationMode) {
+          return;
         }
 
         if (SF.plugins[plugin].isInitialized($element, pluginData, self)) {
@@ -730,106 +751,134 @@
     //  $element.trigger('ite-clear.hierarchical');
     //},
 
-    getData: function ($element) {
+    getValue: function ($element) {
+      $element = 'undefined' !== typeof $element ? $element : this.getElement();
+
       var value;
-      var valueTaken = false;
-
-      // try to get value via plugins
-      if (this.hasOption('plugins')) {
-        var plugins = this.getOption('plugins', {});
-        $.each(plugins, function (plugin, pluginData) {
-          value = SF.plugins[plugin].getValue($element);
-          if ('undefined' !== typeof value) {
-            valueTaken = true;
-
-            return false; // break
-          }
+      if (this.getOption('compound', false) && !this.hasOption('delegate_selector')) {
+        // compound
+        value = {};
+        $.each(this.children, function (childName, childView) {
+          value[childName] = childView.getValue();
         });
 
-        if (valueTaken) {
-          return value;
-        }
-      }
+        return value;
+      } else {
+        // not compound
+        var valueTaken = false;
 
-      // get value in regular way
-      if (!valueTaken) {
-        var delegateSelector = this.getOption('delegate_selector', false);
-        if (delegateSelector) {
-          // checkbox or radio
-          value = [];
+        // try to get value via plugins
+        if (this.hasOption('plugins')) {
+          var plugins = this.getOption('plugins', {});
+          $.each(plugins, function (plugin, pluginData) {
+            value = SF.plugins[plugin].getValue($element);
+            if ('undefined' !== typeof value) {
+              valueTaken = true;
 
-          $element.find(delegateSelector).filter(function() {
-            return this.checked;
-          }).each(function() {
-            value.push($(this).val());
+              return false; // break
+            }
           });
-          if (':radio' === delegateSelector) {
-            return value.length ? value[0] : null;
-          }
 
-          return value;
-        } else {
-          // input, textarea or select
-          var element = $element.get(0);
-          if (rxText.test(element.nodeName) || rxSelect.test(element.nodeName)) {
-            return $element.val();
+          if (valueTaken) {
+            return value;
           }
         }
-      }
 
-      return $element.html();
+        // get value in regular way
+        if (!valueTaken) {
+          var delegateSelector = this.getOption('delegate_selector', false);
+          if (delegateSelector) {
+            // checkbox or radio
+            value = [];
+
+            $element.find(delegateSelector).filter(function() {
+              return this.checked;
+            }).each(function() {
+              value.push($(this).val());
+            });
+            if (':radio' === delegateSelector) {
+              return value.length ? value[0] : null;
+            }
+
+            return value;
+          } else {
+            var element = $element.get(0);
+            if ('undefined' !== typeof element && element.nodeName) {
+              if ('input' === element.nodeName.toLowerCase() && rxCheckable.test(element.type)) {
+                // checkbox or radio
+                return $element.prop('checked') ? $element.val() : null;
+              } else if (rxText.test(element.nodeName) || rxSelect.test(element.nodeName)) {
+                // input, textarea or select
+                return $element.val();
+              }
+            }
+          }
+        }
+
+        return null; // @todo: send value for buttons?
+      }
     },
 
-    getValue: function ($element) {
-      //var $element = this.getElement(context);
+    setData: function (value, $element) {
+      $element = 'undefined' !== typeof $element ? $element : this.getElement();
+      var self = this;
 
-      var value;
-      var valueTaken = false;
-
-      // try to get value via plugins
-      if (this.hasOption('plugins')) {
-        var plugins = this.getOption('plugins', {});
-        $.each(plugins, function (plugin, pluginData) {
-          value = SF.plugins[plugin].getValue($element);
-          if ('undefined' !== typeof value) {
-            valueTaken = true;
-
-            return false; // break
-          }
-        });
-
-        if (valueTaken) {
-          return value;
-        }
-      }
-
-      // get value in regular way
-      if (!valueTaken) {
-        var delegateSelector = this.getOption('delegate_selector', false);
-        if (delegateSelector) {
-          // checkbox or radio
-          value = [];
-
-          $element.find(delegateSelector).filter(function() {
-            return this.checked;
-          }).each(function() {
-            value.push($(this).val());
+      if (this.getOption('compound', false) && !this.hasOption('delegate_selector')) {
+        // compound
+        if ($.isPlainObject(value)) {
+          $.each(value, function (childName, childValue) {
+            if (self.hasChild(childName)) {
+              self.getChild(childName).setData(childValue);
+            }
           });
-          if (':radio' === delegateSelector) {
-            return value.length ? value[0] : null;
-          }
+        }
+      } else {
+        // not compound
 
-          return value;
-        } else {
-          // input, textarea or select
-          var element = $element.get(0);
-          if (rxText.test(element.nodeName) || rxSelect.test(element.nodeName)) {
-            return $element.val();
+        var valueSet = false;
+
+        // try to set value via plugins
+        if (this.hasOption('plugins')) {
+          var plugins = this.getOption('plugins', {});
+          $.each(plugins, function (plugin, pluginData) {
+            var result = SF.plugins[plugin].setValue($element, value, self);
+            if ('undefined' !== typeof result) {
+              valueSet = true;
+
+              return false; // break
+            }
+          });
+
+          if (valueSet) {
+            return this;
+          }
+        }
+
+        // get value in regular way
+        if (!valueSet) {
+          var delegateSelector = this.getOption('delegate_selector', false);
+          if (delegateSelector) {
+            // checkbox or radio
+            $element.find(delegateSelector).each(function() {
+              var checked = ':radio' === delegateSelector
+                ? this.value === value
+                : -1 !== $.inArray(this.value, value);
+              $(this).prop('checked', checked);
+            });
+          } else {
+            var element = $element.get(0);
+            if ('input' === element.nodeName.toLowerCase() && rxCheckable.test(element.type)) {
+              // checkbox or radio
+              $element.prop('checked', value);
+            } else if (rxText.test(element.nodeName) || rxSelect.test(element.nodeName)) {
+              // input, textarea or select
+              $element.val(value);
+            }
           }
         }
       }
 
-      return $element.html();
+      return this;
     },
 
     setValue: function ($element, $newElement) {
