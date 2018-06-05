@@ -53,6 +53,10 @@ class DefaultConverter implements ConverterInterface
      */
     public function convert($entities, array $options = [])
     {
+        if (null === $entities) {
+            return;
+        }
+
         if (!is_array($entities) && !($entities instanceof \Traversable)) {
             if (true === $options['multiple']) {
                 throw new \InvalidArgumentException('You must pass "array" or instance of "Traversable"');

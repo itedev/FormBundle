@@ -122,6 +122,10 @@
                 if ($.isPlainObject(response) && response.hasOwnProperty('id') && response.hasOwnProperty('text')) {
                   self.addOption($element, response);
                 }
+                var event = $.Event('after-create-option.ite.plugin.select2', {
+                  option: response
+                });
+                $element.trigger(event);
               }
             });
           } else {
