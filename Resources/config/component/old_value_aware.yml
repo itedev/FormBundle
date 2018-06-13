@@ -1,0 +1,8 @@
+parameters:
+    ite_form.form.type_extension.component.old_value_aware.form.class: ITE\FormBundle\Form\Extension\Component\OldValueAware\FormTypeOldValueAwareExtension
+
+services:
+    ite_form.form.type_extension.component.old_value_aware.form:
+        class: %ite_form.form.type_extension.component.old_value_aware.form.class%
+        tags:
+            - { name: form.type_extension, alias: form }

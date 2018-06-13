@@ -2,6 +2,7 @@ parameters:
     ite_form.component.collection.class:        ITE\FormBundle\SF\Component\CollectionComponent
     ite_form.component.ajax_file_upload.class:  ITE\FormBundle\SF\Component\AjaxFileUploadComponent
     ite_form.component.hierarchical.class:      ITE\FormBundle\SF\Component\HierarchicalComponent
+    ite_form.component.old_value_aware.class:   ITE\FormBundle\SF\Component\OldValueAwareComponent
     ite_form.component.editable.class:          ITE\FormBundle\SF\Component\EditableComponent
     ite_form.component.ajax_submit.class:       ITE\FormBundle\SF\Component\AjaxSubmitComponent
     ite_form.component.validation.class:        ITE\FormBundle\SF\Component\ValidationComponent
@@ -22,6 +23,11 @@ services:
         class: %ite_form.component.hierarchical.class%
         tags:
             - { name: ite_form.component, alias: hierarchical }
+
+    ite_form.component.old_value_aware:
+        class: %ite_form.component.old_value_aware.class%
+        tags:
+            - { name: ite_form.component, alias: old_value_aware }
 
     ite_form.component.editable:
         class: %ite_form.component.editable.class%
