@@ -124,7 +124,7 @@
             <div class="collection-items">
                 {{ block('form_widget') }}
             </div>
-            {% if 'collection' in form.vars.block_prefixes and widget_add_btn|default(null) %}
+            {% if 'collection' in form.vars.block_prefixes and widget_add_btn|default(null) and prototype is defined and allow_add is sameas(true) %}
                 {{ block('form_widget_add_btn') }}
             {% endif %}
         </div>
