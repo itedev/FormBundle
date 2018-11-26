@@ -12,9 +12,11 @@
 
   Collection.prototype = {
     constructor: Collection,
+
     initialize: function () {
       this.index = this.$collection.find(this.itemSelector).length - 1;
     },
+
     add: function (addCallback, addCallback2) {
       var prototype = this.$collection.data('prototype');
       var prototypeName = this.$collection.data('prototypeName');
@@ -69,6 +71,7 @@
         }
       });
     },
+
     addItems: function (count, addCallback) {
       var $collection = this.$collection;
       var prototype = $collection.data('prototype');
@@ -111,6 +114,7 @@
         $collection.trigger('ite-add.collection', [$item]);
       });
     },
+
     remove: function ($item, force) {
       force = 'undefined' !== typeof force ? force : false;
       if (!force) {
@@ -148,18 +152,27 @@
         }
       });
     },
+
     itemsWrapper: function () {
       return this.$collection.find(this.itemsWrapperSelector);
     },
+
     items: function () {
       return this.$collection.find(this.itemSelector);
     },
+
+    item: function (index) {
+      return this.$collection.find(this.itemSelector).eq(index);
+    },
+
     currentIndex: function () {
       return this.index;
     },
+
     isEmpty: function () {
       return 0 === this.count();
     },
+
     clear: function (resetIndex) {
       resetIndex = 'undefined' !== typeof resetIndex ? resetIndex : false;
       
@@ -173,15 +186,19 @@
       }
       this.$collection.trigger('ite-clear.collection');
     },
+
     count: function () {
       return this.items().length;
     },
+
     parents: function () {
       return this.$collection.parents('[data-collection-id]');
     },
+
     parentsCount: function () {
       return this.parents().length;
     },
+
     hasParent: function () {
       return 0 !== this.parentsCount();
     }
