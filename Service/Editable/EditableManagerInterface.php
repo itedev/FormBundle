@@ -1,8 +1,10 @@
 <?php
 
 namespace ITE\FormBundle\Service\Editable;
-use Doctrine\ORM\Mapping\ClassMetadata;
-use Symfony\Component\Form\Form;
+
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Interface EditableManagerInterface
@@ -12,9 +14,24 @@ use Symfony\Component\Form\Form;
 interface EditableManagerInterface
 {
     /**
-     * @param $entity
-     * @param $field
-     * @return Form
+     * @param object $entity
+     * @param string $field
+     * @param array $options
+     * @return string
      */
-    public function createForm($entity, $field);
-} 
+    public function getWidget($entity, $field, array $options = []);
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function handleRequest(Request $request);
+
+    /**
+     * @param object $entity
+     * @param string $field
+     * @param array $options
+     * @return FormInterface
+     */
+    public function createForm($entity, $field, array $options = []);
+}

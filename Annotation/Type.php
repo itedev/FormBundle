@@ -2,7 +2,8 @@
 
 namespace ITE\FormBundle\Annotation;
 
-use InvalidArgumentException;
+use ITE\FormBundle\Exception\InvalidArgumentException;
+use ITE\FormBundle\Exception\UnexpectedTypeException;
 
 /**
  * @Annotation
@@ -11,14 +12,19 @@ use InvalidArgumentException;
 class Type
 {
     /**
-     * @var string|null $type
+     * @var string $type
      */
-    protected $type = null;
+    protected $type;
 
     /**
      * @var array $options
      */
     protected $options = [];
+
+    /**
+     * @var callable|null
+     */
+    protected $optionsModifier;
 
     /**
      * @param array $values
@@ -35,6 +41,12 @@ class Type
         }
         if (isset($values['options'])) {
             $this->options = $values['options'];
+        }
+        if (isset($values['optionsModifier'])) {
+            if (!is_callable($values['optionsModifier'])) {
+                throw new UnexpectedTypeException($values['optionsModifier'], 'callable');
+            }
+            $this->optionsModifier = $values['optionsModifier'];
         }
     }
 
@@ -56,5 +68,15 @@ class Type
     public function getOptions()
     {
         return $this->options;
+    }
+
+    /**
+     * Get optionsModifier
+     *
+     * @return callable|null
+     */
+    public function getOptionsModifier()
+    {
+        return $this->optionsModifier;
     }
 }

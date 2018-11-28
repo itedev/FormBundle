@@ -1,0 +1,15 @@
+.ite-editable .ite-editable-form {
+    display: none;
+}
+
+.ite-editable.ite-editable-active .ite-editable-form {
+    display: block;
+}
+
+.ite-editable.ite-editable-active .ite-editable-text {
+    display: none;
+}
+
+.ite-editable.ite-editable-sending {
+    pointer-events: none;
+}

@@ -1,1 +1,18 @@
-{{ form_widget(form) }}
+{% spaceless %}
+    <div class="ite-editable">
+        <div class="ite-editable-text">
+            {{- text -}}
+            <a href="#" class="ite-editable-edit-link">
+                Edit
+            </a>
+        </div>
+        <div class="ite-editable-form">
+            {{- form(form, {attr: {
+                'data-ite-editable-class': class,
+                'data-ite-editable-identifier': identifier|json_encode,
+                'data-ite-editable-field': field,
+                'data-ite-editable-options': options|json_encode
+            } }) -}}
+        </div>
+    </div>
+{% endspaceless %}
