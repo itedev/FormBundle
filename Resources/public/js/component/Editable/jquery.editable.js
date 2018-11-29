@@ -33,7 +33,7 @@
   };
 
   function hideAllActiveForms() {
-    $('.ite-editable-active').each(function () {
+    $('.ite-editable-active:not(.ite-editable-sending)').each(function () {
       $(this).removeClass('ite-editable-active');
     });
   }
