@@ -12,7 +12,7 @@
 
   $.fn.editable = function (option) {
     var methodArguments = arguments, value;
-    this.each(function() {
+    this.each(function () {
       var $this = $(this);
 
       var data = $this.data('editable');
