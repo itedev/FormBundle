@@ -12,6 +12,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Routing\RouterInterface;
 
 /**
@@ -45,10 +47,16 @@ class EditableManager implements EditableManagerInterface
      * @var FormatterManagerInterface
      */
     protected $formatterManager;
+
     /**
      * @var string
      */
     protected $template;
+
+    /**
+     * @var PropertyAccessor
+     */
+    protected $propertyAccessor;
 
     /**
      * @param RegistryInterface $registry
@@ -72,6 +80,7 @@ class EditableManager implements EditableManagerInterface
         $this->templating = $templating;
         $this->formatterManager = $formatterManager;
         $this->template = $template;
+        $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
     }
 
     /**
@@ -151,12 +160,20 @@ class EditableManager implements EditableManagerInterface
         $class,
         $identifier
     ) {
-        $text = $this->formatterManager->formatProperty($entity, $field, $resolvedOptions['formatter_options']);
-        $view = $form->createView();
+        if (null !== $resolvedOptions['text']) {
+            $text = $resolvedOptions['text'];
+        } else {
+            if (null !== $resolvedOptions['formatter']) {
+                $value = $this->propertyAccessor->getValue($entity, $field);
+                $text = $this->formatterManager->format($value, $resolvedOptions['formatter'], $resolvedOptions['formatter_options']);
+            } else {
+                $text = $this->formatterManager->formatProperty($entity, $field, $resolvedOptions['formatter_options']);
+            }
+        }
 
         return $this->templating->render($this->template, [
             'text' => $text,
-            'form' => $view,
+            'form' => $form->createView(),
             'class' => $class,
             'identifier' => $identifier,
             'field' => $field,
@@ -184,6 +201,8 @@ class EditableManager implements EditableManagerInterface
         };
 
         $resolver->setDefaults([
+            'text' => null,
+            'formatter' => null,
             'formatter_options' => [],
             'url' => null,
             'route' => 'ite_form_component_editable_edit',
@@ -200,6 +219,8 @@ class EditableManager implements EditableManagerInterface
             'url' => $urlNormalizer,
         ]);
         $resolver->setAllowedTypes([
+            'text' => ['null', 'string'],
+            'formatter' => ['null', 'string'],
             'formatter_options' => ['array'],
             'form_name' => ['string'],
             'form_options' => ['array'],

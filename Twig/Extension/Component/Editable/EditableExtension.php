@@ -61,9 +61,9 @@ class EditableExtension extends \Twig_Extension
         }
 
         $entity = $propertyPath['object'];
-        $propertyPath = $propertyPath['property'];
+        $property = $propertyPath['property'];
 
-        return $this->editableManager->getWidget($entity, $propertyPath, $options);
+        return $this->editableManager->getWidget($entity, $property, $options);
     }
 
     /**
