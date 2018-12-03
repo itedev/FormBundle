@@ -2,8 +2,6 @@
 
 namespace ITE\FormBundle\Controller\Component\Editable;
 
-use ITE\FormBundle\Util\FormUtils;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;

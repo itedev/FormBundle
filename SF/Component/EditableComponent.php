@@ -21,9 +21,30 @@ class EditableComponent extends AbstractComponent
         $rootNode = parent::addConfiguration($container);
         $rootNode
             ->children()
-                ->scalarNode('template')
-                    ->cannotBeEmpty()
-                    ->defaultValue('ITEFormBundle:Form/Component/editable:field.html.twig')
+                ->arrayNode('defaults')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('route')
+                            ->cannotBeEmpty()
+                            ->defaultValue('ite_form_component_editable_edit')
+                        ->end()
+                        ->variableNode('route_parameters')
+                            ->defaultValue([])
+                        ->end()
+                        ->scalarNode('template')
+                            ->cannotBeEmpty()
+                            ->defaultValue('ITEFormBundle:Form/Component/editable:field.html.twig')
+                        ->end()
+                        ->variableNode('formatter_options')
+                            ->defaultValue([])
+                        ->end()
+                        ->variableNode('form_options')
+                            ->defaultValue([])
+                        ->end()
+                        ->variableNode('field_options')
+                            ->defaultValue([])
+                        ->end()
+                    ->end()
                 ->end()
             ->end()
         ;
@@ -36,7 +57,7 @@ class EditableComponent extends AbstractComponent
      */
     public function loadConfiguration(FileLoader $loader, array $config, ContainerBuilder $container)
     {
-        $container->setParameter('ite_form.component.editable.template', $config['template']);
+        $container->setParameter('ite_form.component.editable.defaults', $config['defaults']);
 
         parent::loadConfiguration($loader, $config, $container);
     }

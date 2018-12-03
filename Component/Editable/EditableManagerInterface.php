@@ -1,6 +1,6 @@
 <?php
 
-namespace ITE\FormBundle\Service\Editable;
+namespace ITE\FormBundle\Component\Editable;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;

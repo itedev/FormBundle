@@ -1,5 +1,5 @@
 parameters:
-    ite_form.editable_manager.class:                        ITE\FormBundle\Service\Editable\EditableManager
+    ite_form.editable_manager.class:                        ITE\FormBundle\Component\Editable\EditableManager
     ite_form.twig.extension.component.editable.class:       ITE\FormBundle\Twig\Extension\Component\Editable\EditableExtension
 
 services:
@@ -11,7 +11,7 @@ services:
             - @form.factory
             - @templating
             - @ite_formatter.manager
-            - %ite_form.component.editable.template%
+            - %ite_form.component.editable.defaults%
 
     ite_form.twig.extension.component.editable:
         class: %ite_form.twig.extension.component.editable.class%

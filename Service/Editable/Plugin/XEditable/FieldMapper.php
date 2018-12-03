@@ -2,7 +2,7 @@
 
 namespace ITE\FormBundle\Service\Editable\Plugin\XEditable;
 
-use ITE\FormBundle\Service\Editable\EditableManagerInterface;
+use ITE\FormBundle\Component\Editable\EditableManagerInterface;
 use ITE\FormBundle\SF\Plugin\BootstrapDatetimepickerPlugin;
 use ITE\FormBundle\SF\Plugin\Select2Plugin;
 use ITE\FormBundle\SF\Plugin\TinymcePlugin;

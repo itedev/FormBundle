@@ -3,7 +3,7 @@
 namespace ITE\FormBundle\Twig\Extension\Component\Editable;
 
 use ITE\FormatterBundle\Twig\PropertyPathAwareFilter;
-use ITE\FormBundle\Service\Editable\EditableManagerInterface;
+use ITE\FormBundle\Component\Editable\EditableManagerInterface;
 use ITE\FormBundle\Twig\NodeVisitor\EditableNodeVisitor;
 
 /**

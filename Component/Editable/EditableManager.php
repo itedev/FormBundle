@@ -1,6 +1,6 @@
 <?php
 
-namespace ITE\FormBundle\Service\Editable;
+namespace ITE\FormBundle\Component\Editable;
 
 use ITE\FormatterBundle\Formatter\FormatterManagerInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
@@ -49,9 +49,9 @@ class EditableManager implements EditableManagerInterface
     protected $formatterManager;
 
     /**
-     * @var string
+     * @var array
      */
-    protected $template;
+    protected $defaults = [];
 
     /**
      * @var PropertyAccessor
@@ -64,7 +64,7 @@ class EditableManager implements EditableManagerInterface
      * @param FormFactoryInterface $formFactory
      * @param EngineInterface $templating
      * @param FormatterManagerInterface $formatterManager
-     * @param string $template
+     * @param array $defaults
      */
     public function __construct(
         RegistryInterface $registry,
@@ -72,14 +72,14 @@ class EditableManager implements EditableManagerInterface
         FormFactoryInterface $formFactory,
         EngineInterface $templating,
         FormatterManagerInterface $formatterManager,
-        $template
+        array $defaults = []
     ) {
         $this->registry = $registry;
         $this->router = $router;
         $this->formFactory = $formFactory;
         $this->templating = $templating;
         $this->formatterManager = $formatterManager;
-        $this->template = $template;
+        $this->defaults = $defaults;
         $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
     }
 
@@ -171,7 +171,7 @@ class EditableManager implements EditableManagerInterface
             }
         }
 
-        return $this->templating->render($this->template, [
+        return $this->templating->render($resolvedOptions['template'], [
             'text' => $text,
             'form' => $form->createView(),
             'class' => $class,
@@ -203,17 +203,18 @@ class EditableManager implements EditableManagerInterface
         $resolver->setDefaults([
             'text' => null,
             'formatter' => null,
-            'formatter_options' => [],
+            'formatter_options' => $this->defaults['formatter_options'],
             'url' => null,
-            'route' => 'ite_form_component_editable_edit',
-            'route_parameters' => [],
+            'route' => $this->defaults['route'],
+            'route_parameters' => $this->defaults['route_parameters'],
             'form_name' => function (Options $options) {
                 return uniqid('ite_editable_');
             },
-            'form_options' => [],
+            'form_options' => $this->defaults['form_options'],
             'field_type' => null,
-            'field_options' => [],
+            'field_options' => $this->defaults['field_options'],
             'field_options_modifier' => null,
+            'template' => $this->defaults['template'],
         ]);
         $resolver->setNormalizers([
             'url' => $urlNormalizer,
@@ -227,6 +228,7 @@ class EditableManager implements EditableManagerInterface
             'field_type' => ['null', 'string'],
             'field_options' => ['array'],
             'field_options_modifier' => ['null', 'callable'],
+            'template' => ['string'],
         ]);
     }
 
