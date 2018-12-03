@@ -15,13 +15,13 @@
     "php": ">=5.3.2",
     "symfony/symfony": "~2.3-dev",
     "ite/js-bundle": "dev-master",
-    "ite/common": "dev-master",
-    "defuse/php-encryption": "dev-master"
+    "ite/common": "dev-master"
   },
   "suggest": {
     "mopa/bootstrap-bundle": "dev-master",
     "vich/uploader-bundle": "dev-master",
-    "zendframework/zend-crypt": "dev-master"
+    "zendframework/zend-crypt": "dev-master",
+    "defuse/php-encryption": "dev-master"
   },
   "autoload": {
     "psr-0": {
