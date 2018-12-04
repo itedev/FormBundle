@@ -38,12 +38,20 @@
     });
   }
 
+  function submitActiveForms() {
+    $('.ite-editable-active:not(.ite-editable-sending)').each(function () {
+      $(this).find('.ite-editable-submit-link').trigger('click');
+    });
+  }
+
   $(function () {
 
     $('body')
       .on('keyup', function (e) {
         if ('Escape' === e.key) {
           hideAllActiveForms();
+        } else if ('Enter' === e.key) {
+          submitActiveForms();
         }
       })
       .on('click', '.ite-editable-edit-link', function (e) {
@@ -57,11 +65,20 @@
 
         return false;
       })
-      .on('change', '.ite-editable-form', function (e) {
-        var $this = $(e.target);
+      .on('click', '.ite-editable-cancel-link', function (e) {
+        var $this = $(this);
 
-        var $form = $this.closest('form');
-        var $container = $form.closest('.ite-editable');
+        var $container = $this.closest('.ite-editable');
+
+        $container.removeClass('ite-editable-active');
+
+        return false;
+      })
+      .on('click', '.ite-editable-submit-link', function (e) {
+        var $this = $(this);
+
+        var $container = $this.closest('.ite-editable');
+        var $form = $container.find('form');
         var $textContainer = $container.find('.ite-editable-text');
         var $formContainer = $container.find('.ite-editable-form');
 
@@ -94,6 +111,8 @@
             $container.removeClass('ite-editable-sending');
           }
         });
+
+        return false;
       })
     ;
 

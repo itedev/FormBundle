@@ -34,4 +34,10 @@ interface EditableManagerInterface
      * @return FormInterface
      */
     public function createForm($entity, $field, array $options = []);
+
+    /**
+     * @param Request $request
+     * @return array
+     */
+    public function getRequestData(Request $request);
 }

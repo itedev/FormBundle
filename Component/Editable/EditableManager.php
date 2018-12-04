@@ -106,10 +106,11 @@ class EditableManager implements EditableManagerInterface
      */
     public function handleRequest(Request $request)
     {
-        $class = $request->request->get('class');
-        $identifier = json_decode($request->request->get('identifier'), true);
-        $field = $request->request->get('field');
-        $options = json_decode($request->request->get('options'), true);
+        $requestData = $this->getRequestData($request);
+        $class = $requestData['class'];
+        $identifier = $requestData['identifier'];
+        $field = $requestData['field'];
+        $options = $requestData['options'];
 
         $manager = $this->registry->getManagerForClass($class);
         $entity = $manager->getRepository($class)->find($identifier);
@@ -142,6 +143,24 @@ class EditableManager implements EditableManagerInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getRequestData(Request $request)
+    {
+        $class = $request->request->get('class');
+        $identifier = json_decode($request->request->get('identifier'), true);
+        $field = $request->request->get('field');
+        $options = json_decode($request->request->get('options'), true);
+
+        return [
+            'class' => $class,
+            'identifier' => $identifier,
+            'field' => $field,
+            'options' => $options,
+        ];
+    }
+
+    /**
      * @param object entity
      * @param string $field
      * @param array $options
@@ -160,11 +179,15 @@ class EditableManager implements EditableManagerInterface
         $class,
         $identifier
     ) {
-        if (null !== $resolvedOptions['text']) {
-            $text = $resolvedOptions['text'];
+        $value = $this->propertyAccessor->getValue($entity, $field);
+        if (null !== $resolvedOptions['text_template']) {
+            $text = $this->templating->render($resolvedOptions['text_template'], [
+                'entity' => $entity,
+                'field' => $field,
+                'value' => $value,
+            ]);
         } else {
             if (null !== $resolvedOptions['formatter']) {
-                $value = $this->propertyAccessor->getValue($entity, $field);
                 $text = $this->formatterManager->format($value, $resolvedOptions['formatter'], $resolvedOptions['formatter_options']);
             } else {
                 $text = $this->formatterManager->formatProperty($entity, $field, $resolvedOptions['formatter_options']);
@@ -201,7 +224,7 @@ class EditableManager implements EditableManagerInterface
         };
 
         $resolver->setDefaults([
-            'text' => null,
+            'text_template' => null,
             'formatter' => null,
             'formatter_options' => $this->defaults['formatter_options'],
             'url' => null,
@@ -220,7 +243,7 @@ class EditableManager implements EditableManagerInterface
             'url' => $urlNormalizer,
         ]);
         $resolver->setAllowedTypes([
-            'text' => ['null', 'string'],
+            'text_template' => ['null', 'string'],
             'formatter' => ['null', 'string'],
             'formatter_options' => ['array'],
             'form_name' => ['string'],
