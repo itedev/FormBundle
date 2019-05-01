@@ -8,8 +8,6 @@ parameters:
     ite_form.form.type.number_hidden.class:         ITE\FormBundle\Form\Type\Hidden\NumberHiddenType
     ite_form.form.type.percent_hidden.class:        ITE\FormBundle\Form\Type\Hidden\PercentHiddenType
     ite_form.form.type.entity_hidden.class:         ITE\FormBundle\Form\Type\Hidden\EntityHiddenType
-    ite_form.form.type.mixed_hidden.class:          ITE\FormBundle\Form\Type\Hidden\MixedHiddenType
-    ite_form.form.type.collection_hidden.class:     ITE\FormBundle\Form\Type\Hidden\CollectionHiddenType
 
 services:
     ite_form.form.type.boolean_hidden:
@@ -57,15 +55,3 @@ services:
         arguments: [ @doctrine ]
         tags:
             - { name: form.type, alias: ite_entity_hidden }
-
-    ite_form.form.type.mixed_hidden:
-        class: %ite_form.form.type.mixed_hidden.class%
-        arguments: [ @jms_serializer ]
-        tags:
-            - { name: form.type, alias: ite_mixed_hidden }
-
-    ite_form.form.type.collection_hidden:
-        class: %ite_form.form.type.collection_hidden.class%
-        arguments: [ @jms_serializer ]
-        tags:
-            - { name: form.type, alias: ite_collection_hidden }

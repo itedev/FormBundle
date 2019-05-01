@@ -17,9 +17,7 @@
       this.index = this.$collection.find(this.itemSelector).length - 1;
     },
 
-    add: function (addCallback, addCallback2, index) {
-      index = 'undefined' !== typeof index ? parseInt(index) : this.index + 1;
-
+    add: function (addCallback, addCallback2) {
       var prototype = this.$collection.data('prototype');
       var prototypeName = this.$collection.data('prototypeName');
       if ('undefined' === typeof prototypeName) {
@@ -28,7 +26,7 @@
 
       var re = new RegExp(prototypeName, 'g');
 
-      this.index = index;
+      this.index++;
       var itemHtml = prototype.replace(re, this.index);
       var $item = $(itemHtml);
 
@@ -74,59 +72,47 @@
       });
     },
 
-    addItems: function (count, addCallback, addCallback2, startIndex) {
-      if ('undefined' === typeof startIndex) {
-        startIndex = this.index + 1;
-      }
-      var indices = $.isArray(startIndex) ? startIndex : Array.apply(0, Array(count)).map(function (element, i) {
-        return parseInt(i) + parseInt(startIndex);
-      });
-
-      var prototype = this.$collection.data('prototype');
-      var prototypeName = this.$collection.data('prototypeName');
+    addItems: function (count, addCallback) {
+      var $collection = this.$collection;
+      var prototype = $collection.data('prototype');
+      var prototypeName = $collection.data('prototypeName');
+      var $itemsWrapper = $collection.find(this.itemsWrapperSelector);
+      var items = [];
+      var collectionView = $collection.formView();
+      var self = this;
+      var startIndex = this.index + 1;
       if ('undefined' === typeof prototypeName) {
         prototypeName = '__name__';
       }
 
       var re = new RegExp(prototypeName, 'g');
 
-      var $itemsWrapper = this.itemsWrapper();
-      var items = {};
-      for (var i = 0; i < indices.length; i++) {
-        this.index = indices[i];
+      for (var i = 0; i < count; i++) {
+        this.index++;
         var itemHtml = prototype.replace(re, this.index);
         var $item = $(itemHtml);
 
         var event = $.Event('ite-before-add.collection');
-        this.$collection.trigger(event, [$item]);
+        $collection.trigger(event, [$item]);
         if (false === event.result) {
           continue;
         }
 
         $itemsWrapper.append($item);
-        items[i] = $item;
+        items[this.index] = $item;
       }
 
-      var self = this;
-      var collectionView = this.$collection.formView();
-      for (i = 0; i < indices.length; i++) {
-        var index = indices[i];
-        var $item = items[i];
-
+      $.each(items, function (i, $item) {
         if (null !== collectionView) {
-          collectionView.addCollectionItem(index);
+          collectionView.addCollectionItem(startIndex + i);
         }
 
         if ($.isFunction(addCallback)) {
-          addCallback.apply(self.$collection, [i, $item, index]);
+          addCallback.apply($collection, [i, $item]);
         }
 
-        self.$collection.trigger('ite-add.collection', [$item]);
-
-        if ($.isFunction(addCallback2)) {
-          addCallback2.apply(self.$collection, [i, $item, index]);
-        }
-      };
+        $collection.trigger('ite-add.collection', [$item]);
+      });
     },
 
     remove: function ($item, force) {

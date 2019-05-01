@@ -120,9 +120,7 @@
 
     getValue: function ($element, $newElement) {},
 
-    setValue: function ($element, $newElement) {},
-
-    setData: function ($element, data) {}
+    setValue: function ($element, $newElement) {}
   };
 
   Plugin.prototype.fn = Plugin.prototype;
@@ -533,7 +531,6 @@
     ///
 
     errorElement: 'span',
-    errorSeparator: '<br />',
     errorWrapper: null,
     errorContainer: $([]),
     errorClass: 'error',
@@ -568,47 +565,32 @@
       });
     },
 
-    getErrorElement: function ($element) {
+    showErrors: function (message, $element) {
       $element = 'undefined' !== typeof $element ? $element : this.getElement();
-
-      var errorClass = this.errorClass.split(' ').join('.');
-      var id = this.getId();
-      var errorSelector = 'label[for="' + id + '"], label[for="' + id + '"] *';
       var describedBy = $element.attr('aria-describedby');
+      message = 'array' !== $.type(message) ? [message] : message;
 
-      if (describedBy) {
-        errorSelector = errorSelector + ', #' + describedBy.replace(/\s+/g, ', #');
+      if (this.highlight) {
+        this.highlight.apply(this, [$element, this.errorClass]);
       }
 
-      return $(this.errorElement + '.' + errorClass, this.getRoot().getElement())
-        .filter(errorSelector);
-    },
-
-    showErrors: function (message, $element, append) {
-      message = 'array' !== $.type(message) ? [message] : message;
-      $element = 'undefined' !== typeof $element ? $element : this.getElement();
-      append = 'undefined' !== typeof append ? append : false;
-
-      message = message.join(this.errorSeparator);
-
-      this.highlight($element, this.errorClass);
-
-      var $error = this.getErrorElement($element);
+      var $error = this.findError($element);
+      var $reference = $error;
       if (0 !== $error.length) {
         $error
           .addClass(this.errorClass)
-          .html(append ? $error.html() + this.errorSeparator + message : message)
+          .html(message)
         ;
       } else {
         $error = $('<' + this.errorElement + '>')
-          .attr('id', this.getId() + '_error')
+          .attr('id', this.getId + '_error')
           .addClass(this.errorClass)
-          .html(message)
+          .html(message || '')
         ;
 
-        var $reference = $error;
+        $reference = $error;
         if (this.errorWrapper) {
-          $reference = $error.hide().show().wrap('<' + this.errorWrapper + '/>').parent();
+          $reference = $error.wrap('<' + this.errorWrapper + '/>').parent();
         }
         if (0 !== this.errorContainer.length) {
           this.errorContainer.append($reference);
@@ -622,7 +604,6 @@
           $error.attr('for', this.getId());
         } else if (0 === $error.parents('label[for="' + this.getId() + '"]').length) {
           var errorId = $error.attr('id').replace(/(:|\.|\[|\])/g, "\\$1");
-          var describedBy = $element.attr('aria-describedby');
           if (!describedBy) {
             describedBy = errorId;
           } else if (!describedBy.match(new RegExp("\\b" + errorId + "\\b"))) {
@@ -631,34 +612,30 @@
           $element.attr('aria-describedby', describedBy);
         }
       }
-
-      if (this.errorWrapper) {
-        $error = $error.add($error.parent(this.errorWrapper));
-      }
-      $error.show();
     },
 
     resetErrors: function ($element) {
       $element = 'undefined' !== typeof $element ? $element : this.getElement();
 
-      var $error = this.getErrorElement($element);
-      if (0 !== $error.length) {
-        $error.text('');
-        if (this.errorWrapper) {
-          $error = $error.add($error.parent(this.errorWrapper));
-        }
-        $error.hide();
+      if (this.unhighlight) {
+        this.highlight.apply(this, [$element, this.errorClass]);
       }
-
-      this.unhighlight($element, this.errorClass);
     },
 
     highlight: function ($element, errorClass) {
-      $element.addClass(errorClass);
+      if ('radio' === $element.type()) {
+        this.findByName(element.name).addClass(errorClass);
+      } else {
+        $element.addClass(errorClass);
+      }
     },
 
     unhighlight: function ($element, errorClass) {
-      $element.removeClass(errorClass);
+      if ('radio' === $element.type()) {
+        this.findByName(element.name).removeClass(errorClass);
+      } else {
+        $element.removeClass(errorClass);
+      }
     },
 
     ///
@@ -842,74 +819,60 @@
       }
     },
 
-    setData: function (data, $element) {
+    setData: function (value, $element) {
       $element = 'undefined' !== typeof $element ? $element : this.getElement();
       var self = this;
 
       if (this.getOption('compound', false) && !this.hasOption('delegate_selector')) {
         // compound
-        if (this.isCollection()) {
-          if ($.isPlainObject(data)) {
-            var count = SF.util.objectLength(data);
-            var startIndex = Object.keys(data)[0];
-
-            $element.collection('clear', true);
-            $element.collection('addItems', count, null, function (i, $collectionItem, index) {
-              var collectionItemData = data[index];
-
-              $collectionItem.formView().setData(collectionItemData, $collectionItem);
-            }, startIndex);
-          }
-        } else {
-          if ($.isPlainObject(data)) {
-            $.each(data, function (childName, childValue) {
-              if (self.hasChild(childName)) {
-                self.getChild(childName).setData(childValue);
-              }
-            });
-          }
+        if ($.isPlainObject(value)) {
+          $.each(value, function (childName, childValue) {
+            if (self.hasChild(childName)) {
+              self.getChild(childName).setData(childValue);
+            }
+          });
         }
       } else {
         // not compound
 
-        var dataSet = false;
+        var valueSet = false;
 
         // try to set value via plugins
         if (this.hasOption('plugins')) {
           var plugins = this.getOption('plugins', {});
           $.each(plugins, function (plugin, pluginData) {
-            var result = SF.plugins[plugin].setData($element, data, self);
+            var result = SF.plugins[plugin].setValue($element, value, self);
             if ('undefined' !== typeof result) {
-              dataSet = true;
+              valueSet = true;
 
               return false; // break
             }
           });
 
-          if (dataSet) {
+          if (valueSet) {
             return this;
           }
         }
 
         // get value in regular way
-        if (!dataSet) {
+        if (!valueSet) {
           var delegateSelector = this.getOption('delegate_selector', false);
           if (delegateSelector) {
             // checkbox or radio
             $element.find(delegateSelector).each(function() {
               var checked = ':radio' === delegateSelector
-                ? this.value === data
-                : -1 !== $.inArray(this.value, data);
+                ? this.value === value
+                : -1 !== $.inArray(this.value, value);
               $(this).prop('checked', checked);
             });
           } else {
             var element = $element.get(0);
             if ('input' === element.nodeName.toLowerCase() && rxCheckable.test(element.type)) {
               // checkbox or radio
-              $element.prop('checked', data);
+              $element.prop('checked', value);
             } else if (rxText.test(element.nodeName) || rxSelect.test(element.nodeName)) {
               // input, textarea or select
-              $element.val(data);
+              $element.val(value);
             }
           }
         }

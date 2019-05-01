@@ -27,15 +27,6 @@ class FormTypeLifetimeExtension extends AbstractTypeExtension implements ClientF
         if (isset($options['build_form'])) {
             call_user_func_array($options['build_form'], func_get_args());
         }
-        if (isset($options['pre_set_data_callback'])) {
-            $preSetDataCallback = $options['pre_set_data_callback'];
-            $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($preSetDataCallback) {
-                $form = $event->getForm();
-                $data = $event->getData();
-
-                call_user_func_array($preSetDataCallback, [$data, $form]);
-            }, 1);
-        }
         if (isset($options['pre_validate_callback'])) {
             $preValidateCallback = $options['pre_validate_callback'];
             $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($preValidateCallback) {
@@ -107,7 +98,6 @@ class FormTypeLifetimeExtension extends AbstractTypeExtension implements ClientF
             'build_view',
             'finish_view',
             'build_client_view',
-            'pre_set_data_callback',
             'pre_validate_callback',
             'post_validate_callback',
             'valid_callback',
@@ -117,7 +107,6 @@ class FormTypeLifetimeExtension extends AbstractTypeExtension implements ClientF
             'build_view' => ['callable'],
             'finish_view' => ['callable'],
             'build_client_view' => ['callable'],
-            'pre_set_data_callback' => ['callable'],
             'pre_validate_callback' => ['callable'],
             'post_validate_callback' => ['callable'],
             'valid_callback' => ['callable'],
