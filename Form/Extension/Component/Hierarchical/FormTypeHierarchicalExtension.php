@@ -58,8 +58,10 @@ class FormTypeHierarchicalExtension extends AbstractTypeExtension implements Cli
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $request = $this->requestStack->getMasterRequest();
-        if (HierarchicalUtils::isHierarchicalRequest($request)) {
+        if (
+            ($request = $this->requestStack->getMasterRequest())
+            && HierarchicalUtils::isHierarchicalRequest($request)
+        ) {
             $originators = HierarchicalUtils::getOriginators($request);
             $builder->setAttribute('hierarchical_originator', $originators);
 
