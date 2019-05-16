@@ -175,6 +175,12 @@
 
     clear: function (resetIndex) {
       resetIndex = 'undefined' !== typeof resetIndex ? resetIndex : false;
+
+      var event = $.Event('ite-before-clear.collection');
+      this.$collection.trigger(event);
+      if (false === event.result) {
+        return;
+      }
       
       this.$collection.find(this.itemsWrapperSelector).empty();
       if (resetIndex) {
