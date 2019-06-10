@@ -46,6 +46,7 @@ class SFExtension extends Twig_Extension
             new \Twig_SimpleFunction('ite_last_form_resource', [$this, 'lastFormResource']),
             new \Twig_SimpleFunction('ite_uniqid', [$this, 'uniqId']),
             new \Twig_SimpleFunction('ite_set_attribute', [$this, 'setAttribute']),
+            new \Twig_SimpleFunction('ite_get_attribute', [$this, 'getAttribute']),
             new \Twig_SimpleFunction('ite_set_not_rendered', [$this, 'setNotRendered']),
             new \Twig_SimpleFunction('ite_dynamic_form_widget', [$this, 'dynamicFormWidget'], ['is_safe' => ['html'], 'needs_environment' => true]),
             new \Twig_SimpleFunction('ite_dynamic_form_row', [$this, 'dynamicFormRow'], ['is_safe' => ['html'], 'needs_environment' => true]),
@@ -93,6 +94,16 @@ class SFExtension extends Twig_Extension
     public function setAttribute($object, $attributeName, $attributeValue)
     {
         $this->accessor->setValue($object, $attributeName, $attributeValue);
+    }
+
+    /**
+     * @param $object
+     * @param $attributeName
+     * @param $attributeValue
+     */
+    public function getAttribute($object, $attributeName)
+    {
+        return $this->accessor->getValue($object, $attributeName);
     }
 
     /**
