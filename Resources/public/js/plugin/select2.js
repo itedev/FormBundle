@@ -220,6 +220,15 @@
       ;
 
       return true;
+    },
+
+    setData: function ($element, data) {
+      $element
+        .val(data)
+        .triggerHandler('change.select2')
+      ;
+
+      return true;
     }
   });
 })(jQuery);
