@@ -45,18 +45,16 @@ class MoneyType extends AbstractPluginType implements ClientFormTypeInterface
         }
         $predefinedOptions['step'] = 1 / pow(10, $options['precision']);
 
-        $clientView->setOption('plugins', [
-            IonRangeSliderPlugin::getName() => [
-                'extras' => (object) [],
-                'options' => array_replace_recursive(
-                    $this->options,
-                    $predefinedOptions,
-                    $options['plugin_options'],
-                    [
-                        'type' => 'single',
-                    ]
-                ),
-            ],
+        $clientView->addPlugin(IonRangeSliderPlugin::getName(), [
+            'extras' => (object) [],
+            'options' => array_replace_recursive(
+                $this->options,
+                $predefinedOptions,
+                $options['plugin_options'],
+                [
+                    'type' => 'single',
+                ]
+            ),
         ]);
     }
 

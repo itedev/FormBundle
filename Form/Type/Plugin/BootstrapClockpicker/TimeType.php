@@ -57,13 +57,11 @@ class TimeType extends AbstractPluginType implements ClientFormTypeInterface
      */
     public function buildClientView(ClientFormView $clientView, FormView $view, FormInterface $form, array $options)
     {
-        $clientView->setOption('plugins', [
-            BootstrapClockpickerPlugin::getName() => [
-                'extras' => (object) [],
-                'options' => array_replace_recursive($this->options, $options['plugin_options'], [
-                    'twelvehour' => ArrayUtils::getValue($options, 'twelve_hour', false),
-                ]),
-            ],
+        $clientView->addPlugin(BootstrapClockpickerPlugin::getName(), [
+            'extras' => (object) [],
+            'options' => array_replace_recursive($this->options, $options['plugin_options'], [
+                'twelvehour' => ArrayUtils::getValue($options, 'twelve_hour', false),
+            ]),
         ]);
     }
 

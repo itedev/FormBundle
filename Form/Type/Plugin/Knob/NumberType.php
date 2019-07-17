@@ -21,11 +21,9 @@ class NumberType extends AbstractPluginType implements ClientFormTypeInterface
      */
     public function buildClientView(ClientFormView $clientView, FormView $view, FormInterface $form, array $options)
     {
-        $clientView->setOption('plugins', [
-            KnobPlugin::getName() => [
-                'extras' => (object) [],
-                'options' => (object) array_replace_recursive($this->options, $options['plugin_options']),
-            ],
+        $clientView->addPlugin(KnobPlugin::getName(), [
+            'extras' => (object) [],
+            'options' => (object) array_replace_recursive($this->options, $options['plugin_options']),
         ]);
     }
 

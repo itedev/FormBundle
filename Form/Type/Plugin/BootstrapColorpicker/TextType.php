@@ -21,11 +21,9 @@ class TextType extends AbstractPluginType implements ClientFormTypeInterface
      */
     public function buildClientView(ClientFormView $clientView, FormView $view, FormInterface $form, array $options)
     {
-        $clientView->setOption('plugins', [
-            BootstrapColorpickerPlugin::getName() => [
-                'extras' => (object) [],
-                'options' => (object) array_replace_recursive($this->options, $options['plugin_options'])
-            ],
+        $clientView->addPlugin(BootstrapColorpickerPlugin::getName(), [
+            'extras' => (object) [],
+            'options' => (object) array_replace_recursive($this->options, $options['plugin_options']),
         ]);
     }
 

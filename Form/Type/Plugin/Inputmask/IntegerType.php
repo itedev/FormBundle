@@ -31,20 +31,18 @@ class IntegerType extends AbstractPluginType implements ClientFormTypeInterface
             $pluginOptions['groupSeparator'] = LocaleUtils::getGroupingSeparatorSymbol();
         }
 
-        $clientView->setOption('plugins', [
-            InputmaskPlugin::getName() => [
-                'extras' => (object) [],
-                'options' => (object) array_replace_recursive(
-                    [
-                        'alias' => 'integer',
-                        'rightAlign' => false,
-                        'allowPlus' => false,
-                    ],
-                    $this->options,
-                    $options['plugin_options'],
-                    $pluginOptions
-                ),
-            ],
+        $clientView->addPlugin(InputmaskPlugin::getName(), [
+            'extras' => (object) [],
+            'options' => (object) array_replace_recursive(
+                [
+                    'alias' => 'integer',
+                    'rightAlign' => false,
+                    'allowPlus' => false,
+                ],
+                $this->options,
+                $options['plugin_options'],
+                $pluginOptions
+            ),
         ]);
     }
 

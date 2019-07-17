@@ -48,11 +48,9 @@ class AbstractChoiceType extends AbstractPluginType implements ClientFormTypeInt
      */
     public function buildClientView(ClientFormView $clientView, FormView $view, FormInterface $form, array $options)
     {
-        $clientView->setOption('plugins', [
-            ICheckPlugin::getName() => [
-                'extras' => (object) [],
-                'options' => (object) array_replace_recursive($this->options, $options['plugin_options'])
-            ],
+        $clientView->addPlugin(ICheckPlugin::getName(), [
+            'extras' => (object) [],
+            'options' => (object) array_replace_recursive($this->options, $options['plugin_options'])
         ]);
     }
 

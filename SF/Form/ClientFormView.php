@@ -229,6 +229,20 @@ class ClientFormView
     }
 
     /**
+     * @param $pluginName
+     * @param array $pluginOptions
+     * @return $this
+     */
+    public function addPlugin($pluginName, array $pluginOptions)
+    {
+        $plugins = $this->getOption('plugins', []);
+        $plugins[$pluginName] = $pluginOptions;
+        $this->setOption('plugins', $plugins);
+
+        return $this;
+    }
+
+    /**
      * @return int
      */
     public function count()

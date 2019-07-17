@@ -77,16 +77,14 @@ class TextType extends AbstractPluginType implements ClientFormTypeInterface
             ];
         }
 
-        $clientView->setOption('plugins', [
-            TypeaheadPlugin::getName() => [
-                'extras' => (object) [],
-                'options' => (object) array_replace_recursive($this->options, $options['plugin_options']),
-                'dataset_options' => (object) array_replace_recursive($this->datasetOptions, $options['dataset_options']),
-                'engine_options' => (object) array_replace_recursive($this->engineOptions, $options['engine_options'], [
-                    'prefetch' => $prefetchOptions,
-                    'remote' => $remoteOptions,
-                ]),
-            ],
+        $clientView->addPlugin(TypeaheadPlugin::getName(), [
+            'extras' => (object) [],
+            'options' => (object) array_replace_recursive($this->options, $options['plugin_options']),
+            'dataset_options' => (object) array_replace_recursive($this->datasetOptions, $options['dataset_options']),
+            'engine_options' => (object) array_replace_recursive($this->engineOptions, $options['engine_options'], [
+                'prefetch' => $prefetchOptions,
+                'remote' => $remoteOptions,
+            ]),
         ]);
     }
 

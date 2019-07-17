@@ -32,22 +32,20 @@ class MoneyType extends AbstractPluginType implements ClientFormTypeInterface
             $pluginOptions['radixPoint'] = LocaleUtils::getDecimalSeparatorSymbol();
         }
 
-        $clientView->setOption('plugins', [
-            InputmaskPlugin::getName() => [
-                'extras' => (object) [],
-                'options' => (object) array_replace_recursive(
-                    [
-                        'alias' => 'decimal',
-                        'digitsOptional' => true,
-                        'rightAlign' => false,
-                        'allowPlus' => false,
-                        'autoUnmask' => true,
-                    ],
-                    $this->options,
-                    $options['plugin_options'],
-                    $pluginOptions
-                ),
-            ],
+        $clientView->addPlugin(InputmaskPlugin::getName(), [
+            'extras' => (object) [],
+            'options' => (object) array_replace_recursive(
+                [
+                    'alias' => 'decimal',
+                    'digitsOptional' => true,
+                    'rightAlign' => false,
+                    'allowPlus' => false,
+                    'autoUnmask' => true,
+                ],
+                $this->options,
+                $options['plugin_options'],
+                $pluginOptions
+            ),
         ]);
     }
 

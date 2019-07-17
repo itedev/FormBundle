@@ -22,11 +22,9 @@ class TextareaType extends AbstractPluginType implements ClientFormTypeInterface
      */
     public function buildClientView(ClientFormView $clientView, FormView $view, FormInterface $form, array $options)
     {
-        $clientView->setOption('plugins', [
-            TinymcePlugin::getName() => [
-                'extras' => (object) [],
-                'options' => (object) ArrayUtils::replaceRecursive($this->options, $options['plugin_options']),
-            ],
+        $clientView->addPlugin(TinymcePlugin::getName(), [
+            'extras' => (object) [],
+            'options' => (object) ArrayUtils::replaceRecursive($this->options, $options['plugin_options']),
         ]);
     }
 

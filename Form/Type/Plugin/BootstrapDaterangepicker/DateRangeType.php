@@ -66,14 +66,12 @@ class DateRangeType extends AbstractDatePluginType implements ClientFormTypeInte
      */
     public function buildClientView(ClientFormView $clientView, FormView $view, FormInterface $form, array $options)
     {
-        $clientView->setOption('plugins', [
-            BootstrapDaterangepickerPlugin::getName() => [
-                'extras' => (object) [],
-                'options' => array_replace_recursive($this->options, $options['plugin_options'], [
-                    'format' => MomentJsUtils::icuToMomentJs($options['format']),
-                    'timePicker' => false,
-                ]),
-            ],
+        $clientView->addPlugin(BootstrapDaterangepickerPlugin::getName(), [
+            'extras' => (object) [],
+            'options' => array_replace_recursive($this->options, $options['plugin_options'], [
+                'format' => MomentJsUtils::icuToMomentJs($options['format']),
+                'timePicker' => false,
+            ]),
         ]);
     }
 

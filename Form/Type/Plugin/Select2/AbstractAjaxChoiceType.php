@@ -21,21 +21,19 @@ abstract class AbstractAjaxChoiceType extends AbstractPluginType implements Clie
      */
     public function buildClientView(ClientFormView $clientView, FormView $view, FormInterface $form, array $options)
     {
-        $clientView->setOption('plugins', [
-            Select2Plugin::getName() => [
-                'extras' => [
-                    'ajax' => true,
-                ],
-                'options' => array_replace_recursive($this->options, $options['plugin_options'], [
-                    'ajax' => [
-                        'url' => $options['url'],
-                        'dataType' => 'json',
-                    ],
-                    'multiple' => $options['multiple'],
-                    'placeholder' => $options['placeholder'],
-                    'allowClear' => !$options['required'],
-                ]),
+        $clientView->addPlugin(Select2Plugin::getName(), [
+            'extras' => [
+                'ajax' => true,
             ],
+            'options' => array_replace_recursive($this->options, $options['plugin_options'], [
+                'ajax' => [
+                    'url' => $options['url'],
+                    'dataType' => 'json',
+                ],
+                'multiple' => $options['multiple'],
+                'placeholder' => $options['placeholder'],
+                'allowClear' => !$options['required'],
+            ]),
         ]);
     }
 }

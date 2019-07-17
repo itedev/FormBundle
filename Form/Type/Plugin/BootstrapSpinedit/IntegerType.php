@@ -21,13 +21,11 @@ class IntegerType extends AbstractPluginType implements ClientFormTypeInterface
      */
     public function buildClientView(ClientFormView $clientView, FormView $view, FormInterface $form, array $options)
     {
-        $clientView->setOption('plugins', [
-            BootstrapSpineditPlugin::getName() => [
-                'extras' => (object) [],
-                'options' => array_replace_recursive($this->options, $options['plugin_options'], [
-                    'numberOfDecimals' => 0,
-                ]),
-            ],
+        $clientView->addPlugin(BootstrapSpineditPlugin::getName(), [
+            'extras' => (object) [],
+            'options' => array_replace_recursive($this->options, $options['plugin_options'], [
+                'numberOfDecimals' => 0,
+            ]),
         ]);
     }
 

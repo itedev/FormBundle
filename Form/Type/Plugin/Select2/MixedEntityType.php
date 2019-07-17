@@ -35,11 +35,9 @@ class MixedEntityType extends AbstractPluginType implements ClientFormTypeInterf
      */
     public function buildClientView(ClientFormView $clientView, FormView $view, FormInterface $form, array $options)
     {
-        $clientView->setOption('plugins', [
-            Select2Plugin::getName() => [
-                'extras' => (object) [],
-                'options' => (object) array_replace_recursive($this->options, $options['plugin_options'])
-            ],
+        $clientView->addPlugin(Select2Plugin::getName(), [
+            'extras' => (object) [],
+            'options' => (object) array_replace_recursive($this->options, $options['plugin_options'])
         ]);
     }
 

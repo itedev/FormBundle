@@ -67,13 +67,11 @@ class DateTimeType extends AbstractPluginType implements ClientFormTypeInterface
      */
     public function buildClientView(ClientFormView $clientView, FormView $view, FormInterface $form, array $options)
     {
-        $clientView->setOption('plugins', [
-            BootstrapDatetimepickerPlugin::getName() => [
-                'extras' => (object) [],
-                'options' => array_replace_recursive($this->options, $options['plugin_options'], [
-                    'format' => MomentJsUtils::icuToMomentJs($options['format']),
-                ]),
-            ],
+        $clientView->addPlugin(BootstrapDatetimepickerPlugin::getName(), [
+            'extras' => (object) [],
+            'options' => array_replace_recursive($this->options, $options['plugin_options'], [
+                'format' => MomentJsUtils::icuToMomentJs($options['format']),
+            ]),
         ]);
     }
 
