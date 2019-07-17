@@ -4,15 +4,18 @@
 (function($) {
   SF.fn.plugins['ckeditor'] = new SF.classes.Plugin({
     isInitialized: function($element) {
-      //return 'undefined' !== typeof window.CKEDITOR
-      //  && 'undefined' !== typeof window.CKEDITOR.instances[$element.attr('id')];
-
-      return 'undefined' !== typeof $element.data('ckeditorInstance');
+      return false;
     },
 
     initialize: function($element, pluginData, view) {
+      var ckeditorInstance = $element.data('ckeditorInstance')
+
+      if (ckeditorInstance) {
+        ckeditorInstance.removeAllListeners();
+        CKEDITOR.remove(ckeditorInstance);
+      }
+
       $element.ckeditor(pluginData.options);
-      //CKEDITOR.replace($element.attr('id'), pluginData.options);
     },
 
     setValue: function($element, $newElement, view) {
