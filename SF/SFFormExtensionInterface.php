@@ -3,6 +3,7 @@
 namespace ITE\FormBundle\SF;
 
 use ITE\JsBundle\SF\SFExtensionInterface;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
  * Interface SFFormExtensionInterface
@@ -43,4 +44,9 @@ interface SFFormExtensionInterface extends SFExtensionInterface
      * @return FormBag
      */
     public function getFormBag();
+
+    /**
+     * @return ParameterBag
+     */
+    public function getDynamicChoiceDomainBag();
 }

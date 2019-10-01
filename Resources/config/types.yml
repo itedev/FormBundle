@@ -1,4 +1,5 @@
 parameters:
+    ite_form.form.type.dynamic_choice.class:        ITE\FormBundle\Form\Type\DynamicChoiceType
     ite_form.form.type.ajax_choice.class:           ITE\FormBundle\Form\Type\AjaxChoiceType
     ite_form.form.type.ajax_entity.class:           ITE\FormBundle\Form\Type\AjaxEntityType
     ite_form.form.type.mixed_entity.class:          ITE\FormBundle\Form\Type\MixedEntityType
@@ -9,6 +10,12 @@ parameters:
     ite_form.form.type.dynamic.abstract.class:      ITE\FormBundle\Form\Type\AbstractDynamicType
 
 services:
+    ite_form.form.type.dynamic_choice:
+        class: %ite_form.form.type.dynamic_choice.class%
+        arguments: [ @doctrine, @ite_form.sf.extension.form ]
+        tags:
+            - { name: form.type, alias: ite_dynamic_choice }
+
     ite_form.form.type.ajax_choice:
         class: %ite_form.form.type.ajax_choice.class%
         arguments: [ @router ]

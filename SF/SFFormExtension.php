@@ -5,6 +5,7 @@ namespace ITE\FormBundle\SF;
 use ITE\JsBundle\EventListener\Event\AjaxRequestEvent;
 use ITE\JsBundle\EventListener\Event\AjaxResponseEvent;
 use ITE\JsBundle\SF\SFExtension;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
  * Class SFFormExtension
@@ -28,9 +29,15 @@ class SFFormExtension extends SFExtension implements SFFormExtensionInterface
      */
     public $formBag;
 
+    /**
+     * @var ParameterBag
+     */
+    public $dynamicChoiceDomainBag;
+
     public function __construct()
     {
         $this->formBag = new FormBag();
+        $this->dynamicChoiceDomainBag = new ParameterBag();
     }
 
     /**
@@ -107,6 +114,9 @@ class SFFormExtension extends SFExtension implements SFFormExtensionInterface
     public function dump()
     {
         $dump = '';
+        if ($this->dynamicChoiceDomainBag->count()) {
+            $dump .= 'SF.dynamicChoiceDomains.add(' . json_encode($this->dynamicChoiceDomainBag->all()) . ');';
+        }
         if ($this->formBag->count()) {
             $dump .= 'SF.forms.set(' . json_encode($this->formBag->toArray()) . ');';
             $dump .= '(function($){$(function(){';
@@ -174,5 +184,13 @@ class SFFormExtension extends SFExtension implements SFFormExtensionInterface
     public function getFormBag()
     {
         return $this->formBag;
+    }
+
+    /**
+     * @return ParameterBag
+     */
+    public function getDynamicChoiceDomainBag()
+    {
+        return $this->dynamicChoiceDomainBag;
     }
 }

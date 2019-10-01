@@ -50,6 +50,35 @@
         }, options);
       }
 
+      // dynamic
+      if (extras.hasOwnProperty('dynamic')) {
+        var domain = extras['domain'];
+
+        $element
+          .on('select2:opening', function (e) {
+            var choices = SF.dynamicChoiceDomains.get(domain);
+            var selectedValue = $element.val();
+
+            $element.empty();
+            $.each(choices, function (value, label) {
+              var option = new Option(label, value, selectedValue === value, selectedValue === value);
+              $element.append(option);
+            });
+            $element.val(selectedValue);
+          })
+          .on('select2:close', function (e) {
+            $element.children('option[value!=""]:not(:selected)').remove();
+          })
+          .on('before-create-option.ite.plugin.select2', function (e) {
+            var choices = SF.dynamicChoiceDomains.get(domain);
+            if (!choices.hasOwnProperty(e.text)) {
+              choices[e.text] = e.text;
+              SF.dynamicChoiceDomains.set(domain, choices);
+            }
+          })
+        ;
+      }
+
       // create
       if (extras.hasOwnProperty('allow_create') && extras.allow_create === true) {
         options = $.extend(true, {
