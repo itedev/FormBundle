@@ -26,6 +26,7 @@ class DynamicChoiceType extends AbstractPluginType implements ClientFormTypeInte
             'extras' => [
                 'dynamic' => true,
                 'domain' => $options['domain'],
+                'preload_choices' => $options['preload_choices'],
                 'allow_create' => $options['allow_create'],
                 'create_option_format' => $options['create_option_format'],
             ],

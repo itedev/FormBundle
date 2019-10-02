@@ -54,29 +54,51 @@
       if (extras.hasOwnProperty('dynamic')) {
         var domain = extras['domain'];
 
-        $element
-          .on('select2:opening', function (e) {
-            var choices = SF.dynamicChoiceDomains.get(domain);
-            var selectedValue = $element.val();
+        if (!extras['preload_choices']) {
+          $element
+            .on('select2:opening', function (e) {
+              if ($element.select2('isOpen')) {
+                return;
+              }
 
-            $element.empty();
-            $.each(choices, function (value, label) {
-              var option = new Option(label, value, selectedValue === value, selectedValue === value);
-              $element.append(option);
-            });
-            $element.val(selectedValue);
-          })
-          .on('select2:close', function (e) {
-            $element.children('option[value!=""]:not(:selected)').remove();
-          })
-          .on('before-create-option.ite.plugin.select2', function (e) {
-            var choices = SF.dynamicChoiceDomains.get(domain);
-            if (!choices.hasOwnProperty(e.text)) {
-              choices[e.text] = e.text;
-              SF.dynamicChoiceDomains.set(domain, choices);
-            }
-          })
-        ;
+              var choices = SF.dynamicChoiceDomains.get(domain);
+              var selectedValue = $element.val();
+
+              $element.children('option[value!=""]').remove();
+              $.each(choices, function (value, label) {
+                var option = new Option(label, value, selectedValue === value, selectedValue === value);
+                $element.append(option);
+              });
+            })
+            .on('select2:close', function (e) {
+              $element.children('option[value!=""]:not(:selected)').remove();
+            })
+          ;
+        } else {
+          $element
+            .on('before-create-option.ite.plugin.select2', function (e) {
+              $('[data-dynamic-choice-domain="' + domain + '"]').each(function () {
+                var $sibling = $(this);
+
+                if ($sibling.is($element)) {
+                  return;
+                }
+
+                if (0 === $sibling.children('option[value="' + e.text + '"]').length) {
+                  $sibling.append('<option value="' + e.text + '">' + e.text + '</option>');
+                }
+              });
+            })
+          ;
+        }
+
+        $element.on('before-create-option.ite.plugin.select2', function (e) {
+          var choices = SF.dynamicChoiceDomains.get(domain);
+          if (!choices.hasOwnProperty(e.text)) {
+            choices[e.text] = e.text;
+            SF.dynamicChoiceDomains.set(domain, choices);
+          }
+        });
       }
 
       // create

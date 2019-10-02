@@ -75,7 +75,7 @@ class DynamicChoiceType extends AbstractType
             $data = $form->getData();
             $empty = null === $data || [] === $data;
             if (!$empty) {
-                $options['choice_list']->setData($data);
+                $options['choice_list']->setData($data, !$options['preload_choices']);
             }
 
             $dynamicChoiceDomainBag = $this->sfForm->getDynamicChoiceDomainBag();
@@ -96,7 +96,7 @@ class DynamicChoiceType extends AbstractType
                 'multiple' => $options['multiple'],
                 'expanded' => false,
                 'preferred_choices' => $options['choice_list']->getPreferredViews(),
-                'choices' => [],
+                'choices' => $options['preload_choices'] ? $options['choice_list']->getRemainingViews() : [],
                 'separator' => '-------------------',
                 'placeholder' => null,
             ]);
@@ -186,6 +186,7 @@ class DynamicChoiceType extends AbstractType
         $resolver->setDefaults([
             'choice_builder' => null,
             'choice_limit' => 0,
+            'preload_choices' => true,
             'multiple' => false,
             'choices' => [],
             'choice_list' => $choiceList,
@@ -210,7 +211,7 @@ class DynamicChoiceType extends AbstractType
         ]);
         $resolver->setAllowedTypes([
             'domain' => ['string'],
-            'choice_limit' => ['int'],
+            'preload_choices' => ['bool'],
         ]);
     }
 
