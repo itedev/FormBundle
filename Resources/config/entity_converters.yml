@@ -6,7 +6,10 @@ parameters:
 services:
     ite_form.entity_converter.default:
         class: %ite_form.entity_converter.default.class%
-        arguments: [ @doctrine.orm.entity_manager, @request_stack ]
+        arguments:
+            - @service_container
+            - @doctrine.orm.entity_manager
+            - @request_stack
         tags:
             - { name: ite_form.converter, alias: default }
 

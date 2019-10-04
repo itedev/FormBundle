@@ -3,6 +3,7 @@ parameters:
     ite_form.form.type.plugin.select2.google_font.class:        ITE\FormBundle\Form\Type\Plugin\Select2\GoogleFontType
     ite_form.form.type.plugin.select2.ajax_entity.class:        ITE\FormBundle\Form\Type\Plugin\Select2\AjaxEntityType
     ite_form.form.type.plugin.select2.ajax_choice.class:        ITE\FormBundle\Form\Type\Plugin\Select2\AjaxChoiceType
+    ite_form.form.type.plugin.select2.dynamic_choice.class:     ITE\FormBundle\Form\Type\Plugin\Select2\DynamicChoiceType
     ite_form.form.type.plugin.select2.mixed_entity.class:       ITE\FormBundle\Form\Type\Plugin\Select2\MixedEntityType
     ite_form.form.type.plugin.select2.ajax_mixed_entity.class:  ITE\FormBundle\Form\Type\Plugin\Select2\AjaxMixedEntityType
     ite_form.entity_converter.select2.class:                    ITE\FormBundle\EntityConverter\Plugin\Select2\Select2Converter
@@ -30,6 +31,12 @@ services:
         arguments: [ %ite_form.plugin.select2.options%, @router ]
         tags:
             - { name: form.type, alias: ite_select2_ajax_choice }
+
+    ite_form.form.type.plugin.select2.dynamic_choice:
+        class: %ite_form.form.type.plugin.select2.dynamic_choice.class%
+        arguments: [ %ite_form.plugin.select2.options% ]
+        tags:
+            - { name: form.type, alias: ite_select2_dynamic_choice }
 
     ite_form.form.type.plugin.select2.mixed_entity:
         class: %ite_form.form.type.plugin.select2.mixed_entity.class%

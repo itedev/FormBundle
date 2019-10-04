@@ -1113,6 +1113,7 @@
   });
 
   SF.fn.forms = new FormBag();
+  SF.fn.dynamicChoiceDomains = new SF.fn.classes.ParameterBag();
 
   SF.services.set('form_accessor', new FormAccessor());
 

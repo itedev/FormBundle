@@ -5,6 +5,10 @@ namespace ITE\FormBundle\EntityConverter;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManager;
 use ITE\FormBundle\Util\MixedEntityUtils;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ExpressionLanguageProvider;
+use Symfony\Component\ExpressionLanguage\ExpressionFunction;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Form\Exception\StringCastException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -18,6 +22,11 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
  */
 class DefaultConverter implements ConverterInterface
 {
+    /**
+     * @var ContainerInterface
+     */
+    protected $container;
+
     /**
      * @var EntityManager
      */
@@ -34,14 +43,34 @@ class DefaultConverter implements ConverterInterface
     protected $propertyAccessor;
 
     /**
+     * @var ExpressionLanguage|null
+     */
+    protected $expressionLanguage;
+
+    /**
+     * @param ContainerInterface $container
      * @param EntityManager $em
      * @param RequestStack $requestStack
      */
-    public function __construct(EntityManager $em, RequestStack $requestStack)
+    public function __construct(ContainerInterface $container, EntityManager $em, RequestStack $requestStack)
     {
+        $this->container = $container;
         $this->em = $em;
         $this->requestStack = $requestStack;
         $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
+    }
+
+    /**
+     * @return ExpressionLanguage|null
+     */
+    private function getExpressionLanguage()
+    {
+        if (null === $this->expressionLanguage) {
+            $this->expressionLanguage = new ExpressionLanguage();
+            $this->expressionLanguage->registerProvider(new ExpressionLanguageProvider());
+        }
+
+        return $this->expressionLanguage;
     }
 
     /**
@@ -91,12 +120,14 @@ class DefaultConverter implements ConverterInterface
 
             $classMetadata = $this->em->getClassMetadata($class);
             $class = $classMetadata->getName();
-            $labelPath = isset($options['property']) ? $options['property'] : $this->getLabelPathFromRequest();
+            $labelPath = $options['property'] ?? $this->getLabelPathFromRequest();
+            $labelExpression = $options['property_expression'] ?? null;
 
             $config[0] = [
                 'class' => $class,
                 'classMetadata' => $classMetadata,
-                'labelPath' => $labelPath
+                'labelPath' => $labelPath,
+                'labelExpression' => $labelExpression,
             ];
             $aliases[$class] = 0;
         } else {
@@ -104,12 +135,14 @@ class DefaultConverter implements ConverterInterface
                 $class = $entityOptions['class'];
                 $classMetadata = $this->em->getClassMetadata($class);
                 $class = $classMetadata->getName();
-                $labelPath = $entityOptions['property'];
+                $labelPath = $entityOptions['property'] ?? null;
+                $labelExpression = $entityOptions['property_expression'] ?? null;
 
                 $config[$alias] = [
                     'class' => $class,
                     'classMetadata' => $classMetadata,
-                    'labelPath' => $labelPath
+                    'labelPath' => $labelPath,
+                    'labelExpression' => $labelExpression,
                 ];
                 $aliases[$class] = $alias;
             }
@@ -223,10 +256,16 @@ class DefaultConverter implements ConverterInterface
     protected function getLabel($entity, $config, $alias)
     {
         $labelPath = $config[$alias]['labelPath'];
+        $labelExpression = $config[$alias]['labelExpression'];
 
         $label = null;
         if ($labelPath) {
             $label = (string) $this->propertyAccessor->getValue($entity, $labelPath);
+        } elseif ($labelExpression) {
+            $label = $this->getExpressionLanguage()->evaluate($labelExpression, [
+               'container' => $this->container,
+               'entity' => $entity,
+            ]);
         } elseif (is_object($entity) && method_exists($entity, '__toString')) {
             $label = (string) $entity;
         } else {
