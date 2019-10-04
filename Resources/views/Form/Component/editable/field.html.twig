@@ -1,18 +1,31 @@
 {% spaceless %}
-    <div class="ite-editable">
+    {% set data_attr = {
+        'class': class,
+        'identifier': identifier|json_encode,
+        'field': field,
+        'options': options|json_encode
+    } %}
+    {% set container_attr = container_attr|merge({class: 'ite-editable ' ~ (inline ? 'ite-editable-inline ' : '') ~ container_attr.class|default('')}) %}
+    <div
+        {% for attr_name, attr_value in container_attr %} {{ attr_name }}="{{ attr_value }}"{% endfor %}
+        {% for attr_name, attr_value in data_attr %} data-ite-editable-{{ attr_name }}="{{ attr_value }}"{% endfor %}
+    >
         <div class="ite-editable-text">
             {{- text -}}
-            <a href="#" class="ite-editable-edit-link">
+            {% set edit_link_attr = edit_link_attr|merge({class: 'ite-editable-edit-link ' ~ edit_link_attr.class|default('')}) %}
+            {% if not inline %}
+                {% set edit_link_attr = edit_link_attr|merge({
+                    'data-data': data_attr|json_encode
+                }) %}
+            {% endif %}
+            <a href="{{ edit_link_href }}"
+                {% for attr_name, attr_value in edit_link_attr %} {{ attr_name }}="{{ attr_value }}"{% endfor %}
+            >
                 Edit
             </a>
         </div>
         <div class="ite-editable-form">
-            {{- form(form, {attr: {
-                'data-ite-editable-class': class,
-                'data-ite-editable-identifier': identifier|json_encode,
-                'data-ite-editable-field': field,
-                'data-ite-editable-options': options|json_encode
-            } }) -}}
+            {{- form(form) -}}
             <a href="#" class="ite-editable-submit-link">
                 Save
             </a>

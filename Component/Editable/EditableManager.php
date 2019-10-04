@@ -95,9 +95,12 @@ class EditableManager implements EditableManagerInterface
         $classMetadata = $manager->getClassMetadata($class);
         $identifier = $classMetadata->getIdentifierValues($entity);
 
-        $form = $this->getForm($entity, $field, $resolvedOptions);
+        $form = null;
+        if ($resolvedOptions['inline']) {
+            $form = $this->getForm($entity, $field, $resolvedOptions);
+        }
 
-        return $this->render($entity, $field, $options, $resolvedOptions, $form, $class, $identifier);
+        return $this->render($entity, $field, $options, $resolvedOptions, $class, $identifier, $form);
     }
 
     /**
@@ -125,7 +128,7 @@ class EditableManager implements EditableManagerInterface
 
         return new JsonResponse([
             'success' => $form->isValid(),
-            'html' => $this->render($entity, $field, $options, $resolvedOptions, $form, $class, $identifier),
+            'html' => $this->render($entity, $field, $options, $resolvedOptions, $class, $identifier, $form),
         ]);
     }
 
@@ -165,9 +168,9 @@ class EditableManager implements EditableManagerInterface
      * @param string $field
      * @param array $options
      * @param array $resolvedOptions
-     * @param FormInterface $form
      * @param string $class
      * @param array $identifier
+     * @param FormInterface|null $form
      * @return string
      */
     protected function render(
@@ -175,9 +178,9 @@ class EditableManager implements EditableManagerInterface
         $field,
         array $options,
         array $resolvedOptions,
-        FormInterface $form,
         $class,
-        $identifier
+        $identifier,
+        FormInterface $form = null
     ) {
         $value = $this->propertyAccessor->getValue($entity, $field);
         if (null !== $resolvedOptions['text_template']) {
@@ -194,16 +197,24 @@ class EditableManager implements EditableManagerInterface
             }
         }
 
-        return $this->templating->render($resolvedOptions['template'], [
+        $parameters = [
             'text' => $text,
-            'form' => $form->createView(),
             'class' => $class,
             'identifier' => $identifier,
             'field' => $field,
             'options' => array_merge($options, [
                 'form_name' => $resolvedOptions['form_name'],
             ]),
-        ]);
+            'inline' => $resolvedOptions['inline'],
+            'container_attr' => $resolvedOptions['container_attr'],
+            'edit_link_href' => $resolvedOptions['edit_link_href'],
+            'edit_link_attr' => $resolvedOptions['edit_link_attr'],
+        ];
+        if ($resolvedOptions['inline']) {
+            $parameters['form'] = $form->createView();
+        }
+
+        return $this->templating->render($resolvedOptions['template'], $parameters);
     }
 
     /**
@@ -224,6 +235,7 @@ class EditableManager implements EditableManagerInterface
         };
 
         $resolver->setDefaults([
+            'inline' => true,
             'text_template' => null,
             'formatter' => null,
             'formatter_options' => $this->defaults['formatter_options'],
@@ -238,11 +250,15 @@ class EditableManager implements EditableManagerInterface
             'field_options' => $this->defaults['field_options'],
             'field_options_modifier' => null,
             'template' => $this->defaults['template'],
+            'container_attr' => [],
+            'edit_link_href' => '#',
+            'edit_link_attr' => [],
         ]);
         $resolver->setNormalizers([
             'url' => $urlNormalizer,
         ]);
         $resolver->setAllowedTypes([
+            'inline' => ['bool'],
             'text_template' => ['null', 'string'],
             'formatter' => ['null', 'string'],
             'formatter_options' => ['array'],
@@ -252,6 +268,9 @@ class EditableManager implements EditableManagerInterface
             'field_options' => ['array'],
             'field_options_modifier' => ['null', 'callable'],
             'template' => ['string'],
+            'container_attr' => ['array'],
+            'edit_link_href' => ['string'],
+            'edit_link_attr' => ['array'],
         ]);
     }
 
