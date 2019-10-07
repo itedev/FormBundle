@@ -29,7 +29,7 @@ class FormTypeDefaultDataExtension extends AbstractTypeExtension
             if (is_callable($defaultData)) {
                 call_user_func_array($defaultData, [$event]);
             } else {
-                if (null === $event->getData()) {
+                if (null === $event->getData() || [] === $event->getData()) {
                     $event->setData($defaultData);
                 }
             }

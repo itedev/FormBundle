@@ -61,9 +61,11 @@
 
         var $container = $this.closest('.ite-editable');
 
-        $container.addClass('ite-editable-active');
+        if ($container.hasClass('ite-editable-inline')) {
+          $container.addClass('ite-editable-active');
 
-        return false;
+          return false;
+        }
       })
       .on('click', '.ite-editable-cancel-link', function (e) {
         var $this = $(this);
@@ -83,10 +85,10 @@
         var $formContainer = $container.find('.ite-editable-form');
 
         var data = {
-          class: $form.attr('data-ite-editable-class'),
-          identifier: $form.attr('data-ite-editable-identifier'),
-          field: $form.attr('data-ite-editable-field'),
-          options: $form.attr('data-ite-editable-options')
+          class: $container.attr('data-ite-editable-class'),
+          identifier: $container.attr('data-ite-editable-identifier'),
+          field: $container.attr('data-ite-editable-field'),
+          options: $container.attr('data-ite-editable-options')
         };
 
         $container.addClass('ite-editable-sending');
