@@ -1104,16 +1104,62 @@
 
   FormBag.prototype.fn = FormBag.prototype;
 
+  var DynamicChoiceDomainBag = function (domainChoices) {
+    domainChoices = domainChoices || {};
+
+    this.domainChoices = domainChoices;
+  };
+
+  DynamicChoiceDomainBag.prototype = {
+    has: function (domain) {
+      return this.domainChoices.hasOwnProperty(domain);
+    },
+
+    get: function (domain) {
+      return this.has(domain) ? this.domainChoices[domain] : {};
+    },
+
+    set: function (domain, choices) {
+      this.domainChoices[domain] = choices;
+
+      return this;
+    },
+
+    add: function (domain, choices) {
+      if (this.has(domain)) {
+        $.extend(this.domainChoices[domain], choices);
+
+        return this;
+      }
+
+      this.domainChoices[domain] = choices;
+
+      return this;
+    },
+
+    merge: function (domainChoices) {
+      var self = this;
+      $.each(domainChoices, function (domain, choices) {
+        self.add(domain, choices);
+      });
+
+      return this;
+    }
+  };
+
+  DynamicChoiceDomainBag.prototype.fn = DynamicChoiceDomainBag.prototype;
+
   SF.fn.classes = $.extend(SF.fn.classes, {
     Plugin: Plugin,
     FormPath: FormPath,
     FormAccessor: FormAccessor,
     FormView: FormView,
-    FormBag: FormBag
+    FormBag: FormBag,
+    DynamicChoiceDomainBag: DynamicChoiceDomainBag
   });
 
   SF.fn.forms = new FormBag();
-  SF.fn.dynamicChoiceDomains = new SF.fn.classes.ParameterBag();
+  SF.fn.dynamicChoiceDomains = new DynamicChoiceDomainBag();
 
   SF.services.set('form_accessor', new FormAccessor());
 
@@ -1129,11 +1175,13 @@
 
   $(document)
     .on('ite-pre-ajax-complete', function (e, data) {
-      if (!data.hasOwnProperty('forms')) {
-        return;
+      if (data.hasOwnProperty('dynamic_choice_domains')) {
+        SF.dynamicChoiceDomains.merge(data['dynamic_choice_domains']);
+      }
+      if (data.hasOwnProperty('forms')) {
+        SF.forms.set(data['forms']);
       }
 
-      SF.forms.set(data['forms']);
     })
     .on('ite-post-ajax-complete', function (e, data) {
       if (!data.hasOwnProperty('forms')) {

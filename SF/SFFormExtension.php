@@ -132,6 +132,9 @@ class SFFormExtension extends SFExtension implements SFFormExtensionInterface
      */
     public function onAjaxResponse(AjaxResponseEvent $event)
     {
+        if ($this->dynamicChoiceDomainBag->count()) {
+            $event->getAjaxDataBag()->addBodyData('dynamicChoiceDomains', $this->dynamicChoiceDomainBag->all());
+        }
         if ($this->formBag->count()) {
             $event->getAjaxDataBag()->addBodyData('forms', $this->formBag->toArray());
         }
