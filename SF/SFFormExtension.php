@@ -115,7 +115,7 @@ class SFFormExtension extends SFExtension implements SFFormExtensionInterface
     {
         $dump = '';
         if ($this->dynamicChoiceDomainBag->count()) {
-            $dump .= 'SF.dynamicChoiceDomains.add(' . json_encode($this->dynamicChoiceDomainBag->all()) . ');';
+            $dump .= 'SF.dynamicChoiceDomains.merge(' . json_encode($this->dynamicChoiceDomainBag->all()) . ');';
         }
         if ($this->formBag->count()) {
             $dump .= 'SF.forms.set(' . json_encode($this->formBag->toArray()) . ');';
