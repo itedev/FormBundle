@@ -82,7 +82,21 @@ class MarkupType extends AbstractType
 
         if ($this->formatter) {
             if (null !== $options['formatter']) {
-                $markup = $this->formatter->format($markup, $options['formatter'], $options['formatter_options']);
+                if (true === $options['formatter']) {
+                    $parentForm = $form->getParent();
+                    $parentData = $parentForm->getData();
+                    $propertyPath = $form->getPropertyPath();
+
+                    $empty = null === $parentData || [] === $parentData;
+
+                    if (!$empty && null !== $propertyPath) {
+                        $markup = $this->formatter->formatProperty($parentData, (string) $propertyPath, $options['formatter_options']);
+                    } else {
+                        $markup = null;
+                    }
+                } else {
+                    $markup = $this->formatter->format($markup, $options['formatter'], $options['formatter_options']);
+                }
             }
         }
 

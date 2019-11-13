@@ -274,6 +274,21 @@
     },
 
     setData: function ($element, data) {
+      var domain = $element.data('dynamicChoiceDomain');
+      if ('undefined' !== typeof domain
+        && 0 === $element.children('option[value="' + data + '"]').length) {
+        var choices = SF.dynamicChoiceDomains.get(domain);
+
+        $.each(choices, function (value, label) {
+          if (data == value) {
+            var option = new Option(label, value);
+            $element.append(option);
+
+            return false; // break
+          }
+        });
+      }
+
       $element
         .val(data)
         .triggerHandler('change.select2')
