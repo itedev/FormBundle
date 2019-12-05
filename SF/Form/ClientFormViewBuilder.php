@@ -43,6 +43,8 @@ class ClientFormViewBuilder implements ClientFormViewBuilderInterface
             $clientView->addChild($name, $this->createClientView($childView, $childForm, $clientView));
         }
 
+        $this->finishClientView($type, $clientView, $view, $form, $options);
+
         return $clientView;
     }
 
@@ -94,6 +96,38 @@ class ClientFormViewBuilder implements ClientFormViewBuilderInterface
         foreach ($type->getTypeExtensions() as $extension) {
             if ($extension instanceof ClientFormTypeExtensionInterface) {
                 $extension->buildClientView($clientView, $view, $form, $options);
+            }
+        }
+    }
+
+    /**
+     * @param ResolvedFormTypeInterface $type
+     * @param ClientFormView $clientView
+     * @param FormView $view
+     * @param FormInterface $form
+     * @param array $options
+     */
+    protected function finishClientView(
+        ResolvedFormTypeInterface $type,
+        ClientFormView $clientView,
+        FormView $view,
+        FormInterface $form,
+        array $options
+    ) {
+        /** @var ResolvedFormTypeInterface $parent */
+        $parentType = $type->getParent();
+        if (null !== $parentType) {
+            $this->finishClientView($parentType, $clientView, $view, $form, $options);
+        }
+
+        $innerType = $type->getInnerType();
+        if ($innerType instanceof FinishClientFormTypeInterface) {
+            $innerType->finishClientView($clientView, $view, $form, $options);
+        }
+
+        foreach ($type->getTypeExtensions() as $extension) {
+            if ($extension instanceof FinishClientFormTypeExtensionInterface) {
+                $extension->finishClientView($clientView, $view, $form, $options);
             }
         }
     }
