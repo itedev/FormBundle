@@ -169,6 +169,7 @@ class AjaxChoiceType extends AbstractType
             'route' => null,
             'route_parameters' => [],
             'url' => null,
+            'ajax_delay' => null,
             'choice_label' => null,
             'separator' => ',',
             'widget' => 'choice',
@@ -182,6 +183,9 @@ class AjaxChoiceType extends AbstractType
                 'choice',
                 'hidden',
             ],
+        ]);
+        $resolver->setAllowedTypes([
+            'ajax_delay' => ['null', 'int'],
         ]);
     }
 

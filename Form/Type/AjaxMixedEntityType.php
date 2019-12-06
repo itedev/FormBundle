@@ -288,6 +288,7 @@ class AjaxMixedEntityType extends AbstractType
             'route' => null,
             'route_parameters' => [],
             'url' => null,
+            'ajax_delay' => null,
             'multiple' => false,
             'widget' => 'choice',
             'separator' => ',',
@@ -301,6 +302,7 @@ class AjaxMixedEntityType extends AbstractType
         $resolver->setAllowedTypes([
             'options' => ['array'],
             'multiple' => ['bool'],
+            'ajax_delay' => ['null', 'int'],
         ]);
         $resolver->setAllowedValues([
             'widget' => [

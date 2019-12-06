@@ -29,6 +29,7 @@ abstract class AbstractAjaxChoiceType extends AbstractPluginType implements Clie
                 'ajax' => [
                     'url' => $options['url'],
                     'dataType' => 'json',
+                    'delay' => $options['ajax_delay'],
                 ],
                 'multiple' => $options['multiple'],
                 'placeholder' => $options['placeholder'],
