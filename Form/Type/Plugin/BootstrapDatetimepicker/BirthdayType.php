@@ -41,14 +41,19 @@ class BirthdayType extends AbstractPluginType implements ClientFormTypeInterface
      */
     public function buildClientView(ClientFormView $clientView, FormView $view, FormInterface $form, array $options)
     {
-        $startDate = \DateTime::createFromFormat('Y-m-d H:i:s', sprintf('%d-01-01 00:00:00', $options['years'][0]));
+        $viewTimezone = new \DateTimeZone($options['view_timezone'] ?? 'UTC');
+
+        $startDate = \DateTime::createFromFormat('Y-m-d H:i:s', sprintf('%d-01-01 00:00:00', $options['years'][0]), $viewTimezone);
+        $startDate->setTime(0, 0);
         $endDate = min(
-            new \DateTime(),
+            new \DateTime('now', $viewTimezone),
             \DateTime::createFromFormat(
                 'Y-m-d H:i:s',
-                sprintf('%d-12-31 23:59:59', $options['years'][count($options['years']) - 1])
+                sprintf('%d-12-31 23:59:59', $options['years'][count($options['years']) - 1]),
+                $viewTimezone
             )
         );
+        $endDate->setTime(23, 59, 59);
 
         //$viewTransformers = $form->getConfig()->getViewTransformers();
         ///** @var $dateTimeToLocalizedStringTransformer DateTimeToLocalizedStringTransformer */

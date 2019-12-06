@@ -17,6 +17,16 @@
       var options = pluginData.options;
       var self = this;
 
+      options = $.extend(true, {
+        templateResult: function (data) {
+          if (data.element && true === $(data.element).data('hidden')) {
+            return null;
+          }
+
+          return data.text;
+        }
+      }, options);
+
       // google fonts
       if (extras.hasOwnProperty('google_fonts')) {
         options = $.extend(true, {
