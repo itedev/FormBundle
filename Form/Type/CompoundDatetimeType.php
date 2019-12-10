@@ -22,8 +22,8 @@ class CompoundDatetimeType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $options['date_options']['required'] = $options['required'];
-        //$options['date_options']['model_timezone'] = $options['model_timezone'];
-        //$options['date_options']['view_timezone'] = $options['view_timezone'];
+        $options['date_options']['model_timezone'] = $options['model_timezone'];
+        $options['date_options']['view_timezone'] = $options['model_timezone'];
 
         $options['time_options']['required'] = $options['required'];
         $options['time_options']['model_timezone'] = $options['model_timezone'];
