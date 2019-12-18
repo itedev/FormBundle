@@ -10,7 +10,7 @@ namespace ITE\FormBundle\EntityConverter;
 interface ConverterInterface
 {
     /**
-     * @param mixes $entities
+     * @param mixed $entities
      * @param array $options
      *
      * @return mixed

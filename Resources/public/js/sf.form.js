@@ -6,6 +6,16 @@
   SF.fn.plugins = {};
   SF.fn.validators = {};
 
+  $.fn.sfBindFirst = function(name, fn) {
+    this.on(name, fn);
+
+    this.each(function() {
+      var handlers = $._data(this, 'events')[name.split('.')[0]];
+      var handler = handlers.pop();
+      handlers.splice(0, 0, handler);
+    });
+  };
+
   $.fn.formView = function () {
     if (1 !== this.length) {
       $.error('jQuery.formView can be called only for 1 element.');

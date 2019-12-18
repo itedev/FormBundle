@@ -9,6 +9,8 @@
         return;
       }
 
+      $element.off('.plugin-select2.ite');
+
       $element.select2('destroy');
     },
 
@@ -58,6 +60,16 @@
             }
           }
         }, options);
+
+        $element.sfBindFirst('change.plugin-select2.ite', function (e) {
+          var value = $element.val();
+
+          var $option = $element.find('option[value="' + value + '"]');
+          if ($option.length > 0) {
+            var data = 'undefined' !== typeof $option.data('data') ? $option.data('data') : {};
+            self.processOptionOptions($element, $option, data);
+          }
+        });
       }
 
       // dynamic
@@ -66,7 +78,7 @@
 
         if (!extras['preload_choices']) {
           $element
-            .on('select2:opening', function (e) {
+            .on('select2:opening.plugin-select2.ite', function (e) {
               if ($element.select2('isOpen')) {
                 return;
               }
@@ -80,13 +92,13 @@
                 $element.append(option);
               });
             })
-            .on('select2:close', function (e) {
+            .on('select2:close.plugin-select2.ite', function (e) {
               $element.children('option[value!=""]:not(:selected)').remove();
             })
           ;
         } else {
           $element
-            .on('before-create-option.ite.plugin.select2', function (e) {
+            .on('ite:select2:before-create-option.plugin-select2.ite', function (e) {
               $('[data-dynamic-choice-domain="' + domain + '"]').each(function () {
                 var $sibling = $(this);
 
@@ -102,7 +114,7 @@
           ;
         }
 
-        $element.on('before-create-option.ite.plugin.select2', function (e) {
+        $element.on('ite:select2:before-create-option.plugin-select2.ite', function (e) {
           var choices = SF.dynamicChoiceDomains.get(domain);
           if (!choices.hasOwnProperty(e.text)) {
             choices[e.text] = e.text;
@@ -154,7 +166,7 @@
           }
         }, options);
 
-        $element.on('select2:selecting', function(e) {
+        $element.on('select2:selecting.plugin-select2.ite', function (e) {
           var selection = e.params.args.data;
           if (!selection.hasOwnProperty('isNew')) {
             return;
@@ -163,7 +175,7 @@
           $element.select2('close');
           e.preventDefault();
 
-          var event = $.Event('before-create-option.ite.plugin.select2', {
+          var event = $.Event('ite:select2:before-create-option', {
             text: selection.id
           });
           $element.trigger(event);
@@ -180,13 +192,20 @@
               },
               dataType: 'dataType' in options.ajax ? options.ajax.dataType : 'json',
               success: function (response) {
-                if ($.isPlainObject(response) && response.hasOwnProperty('id') && response.hasOwnProperty('text')) {
-                  self.addOption($element, response);
+                if ($.isPlainObject(response)) {
+                  if (response.hasOwnProperty('id') && response.hasOwnProperty('text')) {
+                    $element.formView().resetErrors($element);
+
+                    self.addOption($element, response);
+
+                    var event = $.Event('ite:select2:after-create-option', {
+                      option: response
+                    });
+                    $element.trigger(event);
+                  } else if (response.hasOwnProperty('errors')) {
+                    $element.formView().showErrors(response.errors, $element);
+                  }
                 }
-                var event = $.Event('after-create-option.ite.plugin.select2', {
-                  option: response
-                });
-                $element.trigger(event);
               }
             });
           } else {
@@ -201,23 +220,23 @@
         })
       }
 
-      $element.on('select2:select', function (e) {
-        var data = e.params.data;
-        var $option = $element.find('option[value="' + data.id + '"]');
-
-        if ($option.length > 0) {
-          self.processOptionOptions($element, $option, data);
-        } else {
-          self.addOption($element, data);
-        }
-      });
+      // $element.sfBindFirst('select2:select.plugin-select2.ite', function (e) {
+      //   var data = e.params.data;
+      //   var $option = $element.find('option[value="' + data.id + '"]');
+      //
+      //   if ($option.length > 0) {
+      //     self.processOptionOptions($element, $option, data);
+      //   } else {
+      //     self.addOption($element, data);
+      //   }
+      // });
 
       $element.select2(options);
     },
 
     processOptionOptions: function ($element, $option, data) {
-      if (typeof data.options !== 'undefined') {
-        var event = $.Event('process-option-options.ite.plugin.select2', {
+      if ('undefined' !== typeof data.options) {
+        var event = $.Event('ite:select2:process-option-options', {
           option: $option,
           data: data
         });
@@ -227,12 +246,13 @@
           switch (optionName) {
             case 'attr':
               $.each(options, function (name, value) {
-                if (typeof value === 'object' || typeof value === 'array') {
+                if ('object' === typeof value || 'array' === typeof value) {
                   value = JSON.stringify(value);
                 }
 
                 $option.attr(name, value);
               });
+
               break;
           }
         });

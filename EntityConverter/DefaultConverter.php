@@ -105,10 +105,12 @@ class DefaultConverter implements ConverterInterface
                     if (is_array($entity)) {
                         foreach ($entity as $item) {
                             $class = get_class($item);
+
                             break 2;
                         }
                     } else {
                         $class = get_class($entity);
+
                         break;
                     }
                 }
