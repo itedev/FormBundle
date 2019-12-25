@@ -12,6 +12,7 @@ use Symfony\Component\Form\Extension\Core\DataTransformer\DataTransformerChain;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
  * Class DateTimeRangeType
@@ -32,11 +33,7 @@ class DateTimeRangeType extends AbstractDateTimePluginType implements ClientForm
         $builder->resetViewTransformers();
         $builder->resetModelTransformers();
 
-        $separator = isset($options['plugin_options']['separator'])
-            ? $options['plugin_options']['separator']
-            : ' - ';
-
-        $builder->addViewTransformer(new RangeToStringTransformer($options['class'], $separator, $partViewTransformer));
+        $builder->addViewTransformer(new RangeToStringTransformer($options['class'], $options['separator'], $partViewTransformer));
     }
 
     /**
@@ -62,9 +59,22 @@ class DateTimeRangeType extends AbstractDateTimePluginType implements ClientForm
         $clientView->addPlugin(BootstrapDaterangepickerPlugin::getName(), [
             'extras' => (object) [],
             'options' => array_replace_recursive($this->options, $options['plugin_options'], [
+                'separator' => $options['separator'],
                 'format' => MomentJsUtils::icuToMomentJs($options['format']),
                 'timePicker' => true,
             ]),
+        ]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        parent::setDefaultOptions($resolver);
+
+        $resolver->setDefaults([
+            'separator' => $this->options['separator'] ?? ' - ',
         ]);
     }
 
