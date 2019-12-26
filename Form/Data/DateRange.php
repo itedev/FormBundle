@@ -31,7 +31,7 @@ class DateRange extends Range
     {
         if (!$raw) {
             $to = clone $this->to;
-            $to->setTime(0, 0, 0);
+            $to->setTime(23, 59, 59);
 
             return $to;
         }

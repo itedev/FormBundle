@@ -54,8 +54,8 @@ class RangeToStringTransformer implements DataTransformerInterface
             throw new TransformationFailedException('Expected a \ITE\FormBundle\Form\Data\RangeInterface.');
         }
 
-        $from = $value->getFrom();
-        $to = $value->getTo();
+        $from = $value->getFrom(true);
+        $to = $value->getTo(true);
         if (null !== $this->transformer) {
             $from = $this->transformer->transform($from);
             $to = $this->transformer->transform($to);
