@@ -31,6 +31,7 @@ abstract class AbstractDatePluginType extends AbstractDateType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         parent::setDefaultOptions($resolver);
+
         $resolver->setDefaults([
             'plugin_options' => [],
         ]);

@@ -33,11 +33,7 @@ class DateRangeType extends AbstractDatePluginType implements ClientFormTypeInte
         $builder->resetViewTransformers();
         $builder->resetModelTransformers();
 
-        $separator = isset($options['plugin_options']['separator'])
-            ? $options['plugin_options']['separator']
-            : ' - ';
-
-        $builder->addViewTransformer(new RangeToStringTransformer($options['class'], $separator, $partViewTransformer));
+        $builder->addViewTransformer(new RangeToStringTransformer($options['class'], $options['separator'], $partViewTransformer));
     }
 
     /**
@@ -69,6 +65,7 @@ class DateRangeType extends AbstractDatePluginType implements ClientFormTypeInte
         $clientView->addPlugin(BootstrapDaterangepickerPlugin::getName(), [
             'extras' => (object) [],
             'options' => array_replace_recursive($this->options, $options['plugin_options'], [
+                'separator' => $options['separator'],
                 'format' => MomentJsUtils::icuToMomentJs($options['format']),
                 'timePicker' => false,
             ]),
@@ -84,6 +81,7 @@ class DateRangeType extends AbstractDatePluginType implements ClientFormTypeInte
 
         $resolver->setDefaults([
             'class' => 'ITE\FormBundle\Form\Data\DateRange',
+            'separator' => $this->options['separator'] ?? ' - ',
         ]);
     }
 
