@@ -196,6 +196,7 @@
                   if (response.hasOwnProperty('id') && response.hasOwnProperty('text')) {
                     $element.formView().resetErrors($element);
 
+                    // self.clearOptions($element);
                     self.addOption($element, response);
 
                     var event = $.Event('ite:select2:after-create-option', {
@@ -210,6 +211,7 @@
             });
           } else {
             $element.find('[value="' + selection.id + '"]').remove();
+            // self.clearOptions($element);
             self.addOption($element, {
               id: selection.id,
               text: selection.id
@@ -281,6 +283,16 @@
       this.processOptionOptions($element, $option, data);
 
       return $option;
+    },
+
+    clearOptions: function ($element) {
+      var required = $element.prop('required');
+
+      if (required) {
+        $element.empty();
+      } else {
+        $element.children('option[value!=""]').remove();
+      }
     },
 
     clearValue: function ($element) {
