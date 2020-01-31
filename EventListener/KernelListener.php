@@ -5,6 +5,7 @@ namespace ITE\FormBundle\EventListener;
 use ITE\FormBundle\Annotation\EntityConverter;
 use ITE\FormBundle\EntityConverter\ConverterManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
 
 /**
@@ -40,11 +41,15 @@ class KernelListener
         $annotation = $event->getRequest()->attributes->get('_entity_converter');
 
         $converter = $this->converterManager->getConverter($annotation->getAlias());
-        $entities = $event->getControllerResult();
+        $result = $event->getControllerResult();
+        if ($result instanceof Response) {
+            return;
+        }
+
         $options = $annotation->getOptions();
         $options['multiple'] = $annotation->isMultiple();
         $options['entity_options_callback'] = $annotation->getEntityOptionsCallback();
-        $convertedResult = $converter->convert($entities, $options);
+        $convertedResult = $converter->convert($result, $options);
 
         $event->setControllerResult($convertedResult);
     }
