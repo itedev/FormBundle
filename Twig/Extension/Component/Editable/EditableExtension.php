@@ -5,6 +5,7 @@ namespace ITE\FormBundle\Twig\Extension\Component\Editable;
 use ITE\FormatterBundle\Twig\PropertyPathAwareFilter;
 use ITE\FormBundle\Component\Editable\EditableManagerInterface;
 use ITE\FormBundle\Twig\NodeVisitor\EditableNodeVisitor;
+use Symfony\Bundle\FrameworkBundle\Templating\TemplateReference;
 
 /**
  * Class EditableExtension
@@ -44,18 +45,28 @@ class EditableExtension extends \Twig_Extension
     public function getFilters()
     {
         return [
-            new PropertyPathAwareFilter('ite_editable', [$this, 'editable'], ['is_safe' => ['html']]),
+            new PropertyPathAwareFilter('ite_editable', [$this, 'editable'], ['is_safe' => ['html'], 'needs_context' => true]),
         ];
     }
 
     /**
+     * @param array $context
      * @param array|null $propertyPath
      * @param mixed $value
      * @param array $options
      * @return string
      */
-    public function editable($propertyPath, $value, array $options = [])
+    public function editable(array $context, $propertyPath, $value, array $options = [])
     {
+        if (!array_key_exists('format', $options)) {
+            $format = 'html';
+            if (isset($context['_template']) && $context['_template'] instanceof TemplateReference) {
+                $format = $context['_template']->get('format');
+            }
+
+            $options['format'] = $format;
+        }
+
         if (null === $propertyPath) {
             return '';
         }

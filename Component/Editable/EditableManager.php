@@ -206,6 +206,7 @@ class EditableManager implements EditableManagerInterface
                 'form_name' => $resolvedOptions['form_name'],
             ]),
             'inline' => $resolvedOptions['inline'],
+            'format' => $resolvedOptions['format'],
             'container_attr' => $resolvedOptions['container_attr'],
             'edit_link_href' => $resolvedOptions['edit_link_href'],
             'edit_link_attr' => $resolvedOptions['edit_link_attr'],
@@ -236,6 +237,7 @@ class EditableManager implements EditableManagerInterface
 
         $resolver->setDefaults([
             'inline' => true,
+            'format' => 'html',
             'text_template' => null,
             'formatter' => null,
             'formatter_options' => $this->defaults['formatter_options'],
@@ -259,6 +261,7 @@ class EditableManager implements EditableManagerInterface
         ]);
         $resolver->setAllowedTypes([
             'inline' => ['bool'],
+            'format' => ['string'],
             'text_template' => ['null', 'string'],
             'formatter' => ['null', 'string'],
             'formatter_options' => ['array'],
