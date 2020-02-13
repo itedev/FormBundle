@@ -50,11 +50,13 @@ class HiddenTypeMarkupExtension extends AbstractTypeExtension
             'markup',
             'markup_attr',
             'markup_property_path',
+            'markup_strict',
         ]);
         $resolver->setAllowedTypes([
             'markup_attr' => ['array'],
             'markup_property_path' => ['string'],
             'translate' => ['bool'],
+            'markup_strict' => ['bool'],
         ]);
 
         if ($this->formatter) {
@@ -111,7 +113,7 @@ class HiddenTypeMarkupExtension extends AbstractTypeExtension
 
         if (isset($options['markup'])) {
             if (is_callable($options['markup'])) {
-                return call_user_func_array($options['markup'], [$parentForm]);
+                return call_user_func_array($options['markup'], [$parentForm, $parentData]);
             } elseif (is_scalar($options['markup'])) {
                 return $options['markup'];
             } else {
@@ -122,9 +124,19 @@ class HiddenTypeMarkupExtension extends AbstractTypeExtension
             $propertyPath = isset($options['markup_property_path'])
                 ? $options['markup_property_path']
                 : $form->getPropertyPath();
+            $strict = $options['markup_strict'] ?? true;
 
             if (!$empty && null !== $propertyPath) {
-                return $this->propertyAccessor->getValue($parentData, $propertyPath);
+                try {
+                    $markup = $this->propertyAccessor->getValue($parentData, $propertyPath);
+                } catch (\Exception $e) {
+                    if ($strict) {
+                        throw $e;
+                    }
+                    $markup = null;
+                }
+
+                return $markup;
             }
 
             return null;
