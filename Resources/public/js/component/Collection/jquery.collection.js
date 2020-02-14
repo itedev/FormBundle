@@ -175,8 +175,12 @@
       return this.$collection.find(this.itemSelector);
     },
 
-    item: function (index) {
-      return this.$collection.find(this.itemSelector).eq(index);
+    item: function (index, ordinal) {
+      ordinal = 'undefined' !== typeof ordinal ? ordinal : false;
+
+      return !ordinal
+        ? this.$collection.formView().getChild(index).getElement()
+        : this.$collection.find(this.itemSelector).eq(index);
     },
 
     currentIndex: function () {
