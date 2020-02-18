@@ -141,11 +141,13 @@
             if (extras.hasOwnProperty('case_sensitive') && extras.case_sensitive === false) {
               var optionsMatch = false;
 
-              $.each(this._request.responseJSON, function () {
-                if (this.text.toLowerCase() == term.toLowerCase()) {
-                  optionsMatch = true;
-                }
-              });
+              if ('undefined' !== typeof this._request) {
+                $.each(this._request.responseJSON, function () {
+                  if (this.text.toLowerCase() == term.toLowerCase()) {
+                    optionsMatch = true;
+                  }
+                });
+              }
 
               this.$element.find('option').each(function() {
                 if (this.value.toLowerCase().indexOf(term.toLowerCase()) > -1) {
@@ -190,7 +192,7 @@
               data: {
                 text: selection.id
               },
-              dataType: 'dataType' in options.ajax ? options.ajax.dataType : 'json',
+              dataType: 'undefined' !== typeof options.ajax && 'dataType' in options.ajax ? options.ajax.dataType : 'json',
               success: function (response) {
                 if ($.isPlainObject(response)) {
                   if (response.hasOwnProperty('id') && response.hasOwnProperty('text')) {
