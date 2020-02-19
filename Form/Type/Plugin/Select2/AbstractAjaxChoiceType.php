@@ -25,7 +25,9 @@ abstract class AbstractAjaxChoiceType extends AbstractPluginType implements Clie
             'extras' => [
                 'ajax' => true,
             ],
-            'options' => array_replace_recursive($this->options, $options['plugin_options'], [
+            'options' => array_replace_recursive($this->options, [
+                'allowClear' => !$options['required'],
+            ], $options['plugin_options'], [
                 'ajax' => [
                     'url' => $options['url'],
                     'dataType' => 'json',
@@ -33,7 +35,6 @@ abstract class AbstractAjaxChoiceType extends AbstractPluginType implements Clie
                 ],
                 'multiple' => $options['multiple'],
                 'placeholder' => $options['placeholder'],
-                'allowClear' => !$options['required'],
             ]),
         ]);
     }

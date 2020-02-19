@@ -49,6 +49,7 @@ class KernelListener
         $options = $annotation->getOptions();
         $options['multiple'] = $annotation->isMultiple();
         $options['entity_options_callback'] = $annotation->getEntityOptionsCallback();
+        $options['entity_options_callback_arguments'] = $annotation->getEntityOptionsCallbackArguments();
         $convertedResult = $converter->convert($result, $options);
 
         $event->setControllerResult($convertedResult);

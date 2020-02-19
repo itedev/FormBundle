@@ -31,6 +31,11 @@ class EntityConverter extends ConfigurationAnnotation
     protected $entityOptionsCallback;
 
     /**
+     * @var array
+     */
+    protected $entityOptionsCallbackArguments;
+
+    /**
      * Get alias
      *
      * @return string
@@ -120,6 +125,29 @@ class EntityConverter extends ConfigurationAnnotation
     public function setEntityOptionsCallback($entityOptionsCallback)
     {
         $this->entityOptionsCallback = $entityOptionsCallback;
+
+        return $this;
+    }
+
+    /**
+     * Get entityOptionsCallbackArguments
+     *
+     * @return array
+     */
+    public function getEntityOptionsCallbackArguments()
+    {
+        return $this->entityOptionsCallbackArguments;
+    }
+
+    /**
+     * Set entityOptionsCallbackArguments
+     *
+     * @param array $entityOptionsCallbackArguments
+     * @return EntityConverter
+     */
+    public function setEntityOptionsCallbackArguments(array $entityOptionsCallbackArguments)
+    {
+        $this->entityOptionsCallbackArguments = $entityOptionsCallbackArguments;
 
         return $this;
     }

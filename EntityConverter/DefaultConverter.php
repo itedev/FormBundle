@@ -151,6 +151,7 @@ class DefaultConverter implements ConverterInterface
         }
 
         $choices = [];
+        $entityOptionsCallbackArguments = $this->getEntityOptionsCallbackArguments($options['entity_options_callback_arguments']);
         foreach ($entities as $i => $entity) {
             if (is_array($entity)) {
                 if (!empty($entity) && !isset($choices[$i])) {
@@ -165,7 +166,10 @@ class DefaultConverter implements ConverterInterface
                         $choices[$i][] = [
                             'value'   => $value,
                             'label'   => $label,
-                            'options' => (array)call_user_func($options['entity_options_callback'], $entity),
+                            'options' => (array) call_user_func_array($options['entity_options_callback'], array_merge(
+                                [$entity],
+                                $entityOptionsCallbackArguments
+                            )),
                         ];
                     } else {
                         $choices[$i][] = [
@@ -183,7 +187,10 @@ class DefaultConverter implements ConverterInterface
                     $choices[] = [
                         'value'   => $value,
                         'label'   => $label,
-                        'options' => (array)call_user_func($options['entity_options_callback'], $entity),
+                        'options' => (array) call_user_func_array($options['entity_options_callback'], array_merge(
+                            [$entity],
+                            $entityOptionsCallbackArguments
+                        )),
                     ];
                 } else {
                     $choices[] = [
@@ -195,6 +202,22 @@ class DefaultConverter implements ConverterInterface
         }
 
         return $options['multiple'] ? $choices : array_pop($choices);
+    }
+
+    /**
+     * @param array $arguments
+     * @return array
+     */
+    protected function getEntityOptionsCallbackArguments(array $arguments)
+    {
+        foreach ($arguments as $i => $argument) {
+            $argument = $this->getExpressionLanguage()->evaluate($argument, [
+                'container' => $this->container,
+            ]);
+            $arguments[$i] = $argument;
+        }
+
+        return $arguments;
     }
 
     /**
