@@ -33,7 +33,7 @@ class EntityConverter extends ConfigurationAnnotation
     /**
      * @var array
      */
-    protected $entityOptionsCallbackArguments;
+    protected $entityOptionsCallbackArguments = [];
 
     /**
      * Get alias
