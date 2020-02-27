@@ -84,6 +84,7 @@ class AjaxFileType extends AbstractType implements ClientFormTypeInterface
     {
         $builder
             ->add($options['file_name'], $options['file_type'], array_merge($options['file_options'], [
+                'required' => $options['required'],
                 'multiple' => $options['multiple'],
             ]))
             ->add($options['data_name'], $options['data_type'], array_merge($options['data_options'], [
