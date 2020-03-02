@@ -861,14 +861,16 @@
         if (this.isCollection()) {
           if ($.isPlainObject(data)) {
             var count = SF.util.objectLength(data);
-            var startIndex = Object.keys(data)[0];
+            var indexes = Object.keys(data).map(function (index) {
+              return parseInt(index);
+            });
 
             $element.collection('clear', true);
             $element.collection('addItems', count, null, function (i, $collectionItem, index) {
               var collectionItemData = data[index];
 
               $collectionItem.formView().setData(collectionItemData, $collectionItem);
-            }, startIndex);
+            }, indexes);
           }
         } else {
           if ($.isPlainObject(data)) {
