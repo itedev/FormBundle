@@ -2,6 +2,9 @@
 
 namespace ITE\FormBundle\Form\Extension\Plugin;
 
+use ITE\FormBundle\SF\Form\ClientFormTypeExtensionInterface;
+use ITE\FormBundle\SF\Form\ClientFormView;
+use ITE\FormBundle\SF\Plugin\InputmaskPlugin;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -9,12 +12,29 @@ use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * Class FormTypeExtension
+ * Class FormTypePluginsExtension
  *
  * @author c1tru55 <mr.c1tru55@gmail.com>
  */
-class FormTypeExtension extends AbstractTypeExtension
+class FormTypePluginsExtension extends AbstractTypeExtension implements ClientFormTypeExtensionInterface
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function buildClientView(ClientFormView $clientView, FormView $view, FormInterface $form, array $options)
+    {
+        if (!isset($options['plugins'])) {
+            return;
+        }
+
+        foreach ($options['plugins'] as $plugin => $pluginOptions) {
+            $clientView->addPlugin($plugin, [
+                'extras' => (object) [],
+                'options' => (object) $pluginOptions,
+            ]);
+        }
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -46,9 +66,6 @@ class FormTypeExtension extends AbstractTypeExtension
         $resolver->setOptional([
             'plugins'
         ]);
-//        $resolver->setDefaults(array(
-//            'plugins' => array()
-//        ));
         $resolver->setAllowedTypes([
             'plugins' => ['array'],
         ]);

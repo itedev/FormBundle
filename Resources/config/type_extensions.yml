@@ -1,5 +1,5 @@
 parameters:
-    ite_form.form.type_extension.plugin.form.class:                             ITE\FormBundle\Form\Extension\Plugin\FormTypeExtension
+    ite_form.form.type_extension.form.plugins.class:                             ITE\FormBundle\Form\Extension\Plugin\FormTypePluginsExtension
     ite_form.form.type_extension.form.attr_callback.class:                      ITE\FormBundle\Form\Extension\FormTypeAttrCallbackExtension
     ite_form.form.type_extension.form.constraints_callback.class:               ITE\FormBundle\Form\Extension\FormTypeConstraintsCallbackExtension
     ite_form.form.type_extension.form.extras.class:                             ITE\FormBundle\Form\Extension\FormTypeExtrasExtension
@@ -17,8 +17,8 @@ parameters:
     ite_form.form.type_extension.button.original_configuration.class:           ITE\FormBundle\Form\Extension\ButtonTypeOriginalConfigurationExtension
 
 services:
-    ite_form.form.type_extension.plugin.form:
-        class: %ite_form.form.type_extension.plugin.form.class%
+    ite_form.form.type_extension.form.plugins:
+        class: %ite_form.form.type_extension.form.plugins.class%
         tags:
             - { name: form.type_extension, alias: form }
 
