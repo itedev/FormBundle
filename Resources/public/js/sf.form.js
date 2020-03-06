@@ -124,6 +124,10 @@
       throw new Error('Method is not implemented.');
     },
 
+    isImmutable: function ($element, formView) {
+      return true;
+    },
+
     destroy: function ($element) {},
 
     clearValue: function ($element) {},
@@ -719,6 +723,29 @@
       }
 
       return this;
+    },
+
+    invalidate: function ($element) {
+      var self = this;
+
+      var resetInitialized = false;
+      var plugins = this.getOption('plugins', {});
+      $.each(plugins, function (plugin, pluginData) {
+        if ('undefined' === typeof SF.plugins[plugin] || !(SF.plugins[plugin] instanceof Plugin)) {
+          throw new Error('Plugin "' + plugin + '" is not registered.');
+        }
+
+        if (!SF.plugins[plugin].isImmutable($element, self)
+          && SF.plugins[plugin].isInitialized($element, pluginData, self)) {
+          SF.plugins[plugin].destroy($element);
+
+          resetInitialized = true;
+        }
+      });
+
+      if (resetInitialized) {
+        $element.removeData('sfInitialized');
+      }
     },
 
     initialize: function ($element, initializationMode) {
