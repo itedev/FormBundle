@@ -811,15 +811,20 @@
     //  $element.trigger('ite-clear.hierarchical');
     //},
 
-    getValue: function ($element) {
+    getValue: function ($element, includeCheckboxes) {
       $element = 'undefined' !== typeof $element ? $element : this.getElement();
+      includeCheckboxes = 'undefined' !== typeof includeCheckboxes ? includeCheckboxes : true;
 
       var value;
       if (this.getOption('compound', false) && !this.hasOption('delegate_selector')) {
         // compound
         value = {};
         $.each(this.children, function (childName, childView) {
-          value[childName] = childView.getValue();
+          var childValue = childView.getValue(undefined, includeCheckboxes);
+
+          if ('undefined' !== typeof childValue) {
+            value[childName] = childValue;
+          }
         });
 
         return value;
@@ -831,7 +836,7 @@
         if (this.hasOption('plugins')) {
           var plugins = this.getOption('plugins', {});
           $.each(plugins, function (plugin, pluginData) {
-            value = SF.plugins[plugin].getValue($element);
+            value = SF.plugins[plugin].getValue($element, includeCheckboxes);
             if ('undefined' !== typeof value) {
               valueTaken = true;
 
@@ -866,7 +871,9 @@
             if ('undefined' !== typeof element && element.nodeName) {
               if ('input' === element.nodeName.toLowerCase() && rxCheckable.test(element.type)) {
                 // checkbox or radio
-                return $element.prop('checked') ? $element.val() : null;
+                return $element.prop('checked')
+                  ? $element.val()
+                  : (includeCheckboxes ? null : undefined);
               } else if (rxText.test(element.nodeName) || rxSelect.test(element.nodeName)) {
                 // input, textarea or select
                 return $element.val();
