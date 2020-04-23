@@ -369,7 +369,9 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
                 $data = $event->getData();
 
                 $options = call_user_func($callback, $data);
-                $form->add($child, $type, $options);
+                if (false !== $options) {
+                    $form->add($child, $type, $options);
+                }
             }
         );
 
