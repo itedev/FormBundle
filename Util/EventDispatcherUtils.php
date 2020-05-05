@@ -106,6 +106,22 @@ class EventDispatcherUtils
         return null;
     }
 
+    public static function removeSubscriberByClass(EventDispatcherInterface $ed, string $class)
+    {
+        $rawEd = self::getRawEventDispatcher($ed);
+
+        $rawListeners = self::getRawListeners($ed);
+        foreach ($rawListeners as $eventName => $eventListeners) {
+            foreach ($eventListeners as $priority => $listeners) {
+                foreach ($listeners as $listener) {
+                    if (is_array($listener) && is_object($listener[0]) && get_class($listener[0]) === $class) {
+                        $rawEd->removeSubscriber($listener[0]);
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * @param EventDispatcherInterface $ed
      * @param string $eventName
