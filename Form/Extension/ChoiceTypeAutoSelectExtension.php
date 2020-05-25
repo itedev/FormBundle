@@ -38,13 +38,6 @@ class ChoiceTypeAutoSelectExtension extends AbstractTypeExtension
             $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($firstChoice) {
                 if (null === $event->getData() || [] === $event->getData()) {
                     $event->setData($firstChoice);
-
-//                    $form = $event->getForm();
-//                    $parents = $form->getConfig()->getOption('hierarchical_parents', []);
-//                    if (!empty($parents)) {
-//                        $form->setRawOption('hierarchical_data', $firstChoice);
-//                        $form->setParameter('hierarchical_affected', true);
-//                    }
                 }
             });
         }
