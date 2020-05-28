@@ -57,7 +57,6 @@ class DatetimeToDateAndTimeTransformer extends BaseDateTimeTransformer
         }
 
         $date = \DateTime::createFromFormat('Y-m-d', $value->format('Y-m-d'), new \DateTimeZone($this->inputTimezone));
-        $date->setTime(0, 0);
         $time = \DateTime::createFromFormat('H:i:s|', $value->format('H:i:s'), new \DateTimeZone($this->inputTimezone));
 
         return [
@@ -83,6 +82,6 @@ class DatetimeToDateAndTimeTransformer extends BaseDateTimeTransformer
         $date = ArrayUtils::getValue($value, $this->dateName);
         $time = ArrayUtils::getValue($value, $this->timeName);
 
-        return DateTimeUtils::createFromDateAndTime($date, $time);
+        return DateTimeUtils::createFromDateAndTime($date, $time, $this->inputTimezone, $this->outputTimezone);
     }
 }
