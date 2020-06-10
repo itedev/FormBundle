@@ -56,7 +56,7 @@ class DatetimeToDateAndTimeTransformer extends BaseDateTimeTransformer
             throw new TransformationFailedException('Expected a \DateTime or \DateTimeInterface.');
         }
 
-        $date = \DateTime::createFromFormat('Y-m-d', $value->format('Y-m-d'), new \DateTimeZone($this->inputTimezone));
+        $date = clone $value;
         $time = \DateTime::createFromFormat('H:i:s|', $value->format('H:i:s'), new \DateTimeZone($this->inputTimezone));
 
         return [
