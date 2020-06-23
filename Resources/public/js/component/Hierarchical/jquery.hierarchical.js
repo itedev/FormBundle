@@ -27,6 +27,8 @@
       $.each($elements, function (i, $element) {
         var view = $element.formView();
         var fullName = view.getFullName();
+        var originatorOldValue = $element.data('oldValue');
+        var originatorNewValue = view.getValue($element);
 
         var childrenInfoMap = {};
         var eventData = {
@@ -87,6 +89,8 @@
           submit = false;
           var childEventData = {
             originator: fullName,
+            originatorOldValue: originatorOldValue,
+            originatorNewValue: originatorNewValue,
             sfOriginalEvent: sfOriginalEvent
           };
           $.each(childrenInfoMap, function (childId, childInfo) {
@@ -100,12 +104,12 @@
           });
         }
 
-        var originatorValue = view.getValue($element);
         var originatorInfo = {
           view: view,
           $element: $element,
           fullName: fullName,
-          originatorValue: originatorValue,
+          originatorOldValue: originatorOldValue,
+          originatorNewValue: originatorNewValue,
           eventData: eventData,
           submit: submit,
           childrenInfoMap: childrenInfoMap
@@ -167,7 +171,8 @@
               // set element value
               var childEventData = {
                 originator: originatorInfo.fullName,
-                originatorValue: originatorInfo.originatorValue,
+                originatorOldValue: originatorInfo.originatorOldValue,
+                originatorNewValue: originatorInfo.originatorNewValue,
                 relatedTarget: $newChildElement.get(0),
                 sfOriginalEvent: sfOriginalEvent
               };

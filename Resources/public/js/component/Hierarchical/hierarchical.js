@@ -15,6 +15,8 @@
       var $form = view.getForm();
 
       $form.hierarchical('trigger', [$element], false, e);
+
+      $element.data('oldValue', view.getValue($element));
     }
   });
 
@@ -54,6 +56,7 @@
       }
 
       $element.data('hierarchical', true);
+      $element.data('oldValue', this.getValue($element));
     },
 
     addCollectionItem: function(name) {
