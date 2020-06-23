@@ -48,11 +48,13 @@ class HiddenTypeMarkupExtension extends AbstractTypeExtension
         ]);
         $resolver->setOptional([
             'markup',
+            'markup_raw',
             'markup_attr',
             'markup_property_path',
             'markup_strict',
         ]);
         $resolver->setAllowedTypes([
+            'markup_raw' => ['bool'],
             'markup_attr' => ['array'],
             'markup_property_path' => ['string'],
             'translate' => ['bool'],
@@ -87,6 +89,7 @@ class HiddenTypeMarkupExtension extends AbstractTypeExtension
 
         $view->vars['translate'] = $options['translate'];
         $view->vars['markup'] = $markup;
+        $view->vars['markup_raw'] = $options['markup_raw'] ?? true;
         $view->vars['markup_attr'] = isset($options['markup_attr']) ? $options['markup_attr'] : [];
 
         $typeName = $form->getConfig()->getType()->getName();

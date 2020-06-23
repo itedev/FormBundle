@@ -50,6 +50,7 @@ class MarkupType extends AbstractType
             'compound' => false,
             'auto_initialize' => false,
             'markup' => null,
+            'markup_raw' => true,
             'translate' => true,
         ]);
         $resolver->setAllowedValues([
@@ -57,6 +58,7 @@ class MarkupType extends AbstractType
         ]);
         $resolver->setAllowedTypes([
             'translate' => 'bool',
+            'markup_raw' => 'bool',
         ]);
 
         if ($this->formatter) {
@@ -101,6 +103,7 @@ class MarkupType extends AbstractType
         }
 
         $view->vars['markup'] = $markup;
+        $view->vars['markup_raw'] = $options['markup_raw'];
     }
 
     /**

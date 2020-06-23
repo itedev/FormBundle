@@ -24,12 +24,19 @@
 {% block ite_markup_widget %}
     <p {{ block('widget_container_attributes') }}>
         {% if translate %}
-            {{ markup|trans({}, translation_domain)|raw }}
-        {% else %}
+            {% set markup = markup|trans({}, translation_domain) %}
+        {% endif %}
+        {% if markup_raw %}
             {{ markup|raw }}
+        {% else %}
+            {{ markup }}
         {% endif %}
     </p>
 {% endblock ite_markup_widget %}
+
+{% block ite_markup_hidden_row %}
+    {{ block('form_row') }}
+{% endblock ite_markup_hidden_row %}
 
 {% block ite_markup_hidden_widget %}
     {% set id_copy = id %}
