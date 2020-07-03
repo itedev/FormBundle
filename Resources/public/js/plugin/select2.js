@@ -267,10 +267,9 @@
       setValue = 'undefined' !== typeof setValue ? setValue : true;
 
       var $option = this.createOptionFromData($element, data);
-      $element
-        .append($option)
-        .triggerHandler('change.select2')
-      ;
+      if (0 === $element.children('[value="' + data.id + '"]').length) {
+        $element.append($option).triggerHandler('change.select2');
+      }
 
       if (setValue) {
         $element
