@@ -70,4 +70,8 @@ class AjaxChoiceList extends SimpleChoiceList
         ReflectionUtils::setValue($this, 'preferredViews', $preferredViews);
         ReflectionUtils::setValue($this, 'remainingViews', $remainingViews);
     }
+
+    public function setData()
+    {
+    }
 }

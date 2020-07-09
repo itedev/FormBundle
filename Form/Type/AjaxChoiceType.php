@@ -68,6 +68,12 @@ class AjaxChoiceType extends AbstractType
             return;
         }
 
+        $data = $form->getData();
+        $empty = null === $data || [] === $data;
+        if (!$empty) {
+            $options['choice_list']->setData($data);
+        }
+
         array_splice(
             $view->vars['block_prefixes'],
             array_search($this->getName(), $view->vars['block_prefixes']),
