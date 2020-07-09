@@ -48,13 +48,14 @@ class AjaxChoiceType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        if ('choice' === $options['widget']) {
-            // choice
-            if ($options['multiple']) {
-                $builder->addViewTransformer(new ChoicesToValuesTransformer($options['choice_list']));
-            } else {
-                $builder->addViewTransformer(new ChoiceToValueTransformer($options['choice_list']));
-            }
+        if ('choice' !== $options['widget']) {
+            return;
+        }
+
+        if ($options['multiple']) {
+            $builder->addViewTransformer(new ChoicesToValuesTransformer($options['choice_list']));
+        } else {
+            $builder->addViewTransformer(new ChoiceToValueTransformer($options['choice_list']));
         }
     }
 
@@ -63,52 +64,47 @@ class AjaxChoiceType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        if ('choice' === $options['widget']) {
-            // choice
-            $data = $form->getData();
-            $empty = null === $data || [] === $data;
-            if (!$empty) {
-                $options['choice_list']->setData($data);
-            }
+        if ('choice' !== $options['widget']) {
+            return;
+        }
 
-            array_splice(
-                $view->vars['block_prefixes'],
-                array_search($this->getName(), $view->vars['block_prefixes']),
-                0,
-                [
-                    'choice',
-                ]
-            );
+        array_splice(
+            $view->vars['block_prefixes'],
+            array_search($this->getName(), $view->vars['block_prefixes']),
+            0,
+            [
+                'choice',
+            ]
+        );
 
-            $view->vars = array_replace($view->vars, [
-                'multiple' => $options['multiple'],
-                'expanded' => false,
-                'preferred_choices' => $options['choice_list']->getPreferredViews(),
-                'choices' => $options['choice_list']->getRemainingViews(),
-                'separator' => '-------------------',
-                'placeholder' => null,
-            ]);
+        $view->vars = array_replace($view->vars, [
+            'multiple' => $options['multiple'],
+            'expanded' => false,
+            'preferred_choices' => $options['choice_list']->getPreferredViews(),
+            'choices' => $options['choice_list']->getRemainingViews(),
+            'separator' => '-------------------',
+            'placeholder' => null,
+        ]);
 
-            if ($options['multiple']) {
-                $view->vars['is_selected'] = function ($choice, array $values) {
-                    return in_array($choice, $values, true);
-                };
-            } else {
-                $view->vars['is_selected'] = function ($choice, $value) {
-                    return $choice === $value;
-                };
-            }
+        if ($options['multiple']) {
+            $view->vars['is_selected'] = function ($choice, array $values) {
+                return in_array($choice, $values, true);
+            };
+        } else {
+            $view->vars['is_selected'] = function ($choice, $value) {
+                return $choice === $value;
+            };
+        }
 
-            $view->vars['placeholder_in_choices'] = 0 !== count($options['choice_list']->getChoicesForValues(['']));
+        $view->vars['placeholder_in_choices'] = 0 !== count($options['choice_list']->getChoicesForValues(['']));
 
-            // Only add the empty value option if this is not the case
-            if (null !== $options['placeholder'] && !$view->vars['placeholder_in_choices']) {
-                $view->vars['placeholder'] = $options['placeholder'];
-            }
+        // Only add the empty value option if this is not the case
+        if (null !== $options['placeholder'] && !$view->vars['placeholder_in_choices']) {
+            $view->vars['placeholder'] = $options['placeholder'];
+        }
 
-            if ($options['multiple']) {
-                $view->vars['full_name'] .= '[]';
-            }
+        if ($options['multiple']) {
+            $view->vars['full_name'] .= '[]';
         }
     }
 
