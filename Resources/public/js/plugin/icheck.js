@@ -27,6 +27,25 @@
       }
 
       return true;
+    },
+
+    setData: function ($element, data, view) {
+      let delegateSelector = view.getOption('delegate_selector', false);
+
+      if (delegateSelector) {
+        // checkbox or radio
+        $element.find(delegateSelector).each(function() {
+          var checked = ':radio' === delegateSelector
+            ? this.value === data
+            : -1 !== $.inArray(this.value, data);
+          $(this).prop('checked', checked);
+        });
+        $element.icheck('updated');
+      } else {
+        $element.icheck(data ? 'checked' : 'unchecked');
+      }
+
+      return true;
     }
   });
 })(jQuery);
