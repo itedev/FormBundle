@@ -439,8 +439,12 @@ class FormBuilder extends BaseFormBuilder implements FormBuilderInterface
     /**
      * {@inheritdoc}
      */
-    public function replaceOptions($name, $callback)
+    public function replaceOptions($name, $callback, bool $throwMissingFieldException = true)
     {
+        if (!$throwMissingFieldException && !$this->has($name)) {
+            return $this;
+        }
+
         $child = $this->get($name);
         $type = $child->getOriginalType();
         $options = $child->getOriginalOptions();

@@ -354,8 +354,12 @@ class Form extends BaseForm implements FormInterface
     /**
      * {@inheritdoc}
      */
-    public function replaceOptions($name, $modifier)
+    public function replaceOptions($name, $modifier, bool $throwMissingFieldException = true)
     {
+        if (!$throwMissingFieldException && !$this->has($name)) {
+            return $this;
+        }
+
         $child = $this->get($name);
         $type = $child->getConfig()->getOriginalType();
         $options = $child->getConfig()->getOriginalOptions();
