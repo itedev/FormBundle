@@ -176,7 +176,7 @@ interface FormInterface extends BaseFormInterface
      * @param bool $throwMissingFieldException
      * @return FormInterface
      */
-    public function replaceOptions($name, $modifier, bool $throwMissingFieldException = true);
+    public function replaceOptions($name, $modifier, $throwMissingFieldException = true);
 
     /**
      * @param FormInterface|string|int $child

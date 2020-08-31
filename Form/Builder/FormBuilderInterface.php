@@ -76,5 +76,5 @@ interface FormBuilderInterface extends BaseFormBuilderInterface
      * @param bool $throwMissingFieldException
      * @return FormBuilderInterface
      */
-    public function replaceOptions($name, $callback, bool $throwMissingFieldException = true);
+    public function replaceOptions($name, $callback, $throwMissingFieldException = true);
 }
