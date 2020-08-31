@@ -158,13 +158,29 @@ class DynamicEntityChoiceList extends EntityChoiceList
         $labels = [];
         $this->extractLabels($choices, $labels);
 
-        $this->addChoices(
-            $preferredViews,
-            $remainingViews,
-            $choices,
-            $labels,
-            $preferredChoices
-        );
+        if (null !== $this->groupPath) {
+            foreach ($choices as $group => $choiceGroup) {
+                $preferredViewsGroup = $preferredViews[$group] ?? [];
+                $remainingViewsGroup = $remainingViews[$group] ?? [];
+                $this->addChoices($preferredViewsGroup, $remainingViewsGroup, $choiceGroup, $labels[$group] ?? [], $preferredChoices);
+
+                if (!empty($preferredViewsGroup)) {
+                    $preferredViews[$group] = $preferredViewsGroup;
+                }
+
+                if (!empty($remainingViewsGroup)) {
+                    $remainingViews[$group] = $remainingViewsGroup;
+                }
+            }
+        } else {
+            $this->addChoices(
+                $preferredViews,
+                $remainingViews,
+                $choices,
+                $labels,
+                $preferredChoices
+            );
+        }
 
         ReflectionUtils::setValue($this, 'preferredViews', $preferredViews);
         ReflectionUtils::setValue($this, 'remainingViews', $remainingViews);
