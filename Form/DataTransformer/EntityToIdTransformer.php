@@ -52,18 +52,30 @@ class EntityToIdTransformer implements DataTransformerInterface
     private $separator;
 
     /**
+     * @var bool
+     */
+    private $strict;
+
+    /**
      * @param EntityManager $em
      * @param string $class
      * @param EntityLoaderInterface $loader
      * @param bool $multiple
      * @param string $separator
      */
-    public function __construct(EntityManager $em, $class, EntityLoaderInterface $loader, $multiple, $separator)
-    {
+    public function __construct(
+        EntityManager $em,
+        $class,
+        EntityLoaderInterface $loader,
+        $multiple,
+        $separator,
+        bool $strict = true
+    ) {
         $this->em = $em;
         $this->loader = $loader;
         $this->multiple = $multiple;
         $this->separator = $separator;
+        $this->strict = $strict;
 
         $this->classMetadata = $this->em->getClassMetadata($class);
         $this->class = $this->classMetadata->getName();
@@ -125,12 +137,12 @@ class EntityToIdTransformer implements DataTransformerInterface
             }
         }
 
-        if (count($ids) !== count($entities)) {
+        if (count($ids) !== count($entities) && $this->strict) {
             throw new TransformationFailedException('Could not find all matching entities for the given ids');
         }
 
         if (!$this->multiple) {
-            return $entities[0];
+            return $entities[0] ?? null;
         } else {
             return $entities;
         }
