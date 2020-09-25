@@ -175,12 +175,14 @@
       return this.$collection.find(this.itemSelector);
     },
 
-    item: function (index, ordinal) {
-      ordinal = 'undefined' !== typeof ordinal ? ordinal : false;
+    item: function (index, ordinal = false) {
+      if (!ordinal) {
+        let itemView = this.$collection.formView().getChild(index);
 
-      return !ordinal
-        ? this.$collection.formView().getChild(index).getElement()
-        : this.$collection.find(this.itemSelector).eq(index);
+        return null !== itemView ? itemView.getElement() : $([]);
+      } else {
+        return this.$collection.find(this.itemSelector).eq(index);
+      }
     },
 
     currentIndex: function () {
