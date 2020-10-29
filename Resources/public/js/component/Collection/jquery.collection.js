@@ -14,7 +14,9 @@
     constructor: Collection,
 
     initialize: function () {
-      this.index = this.$collection.find(this.itemSelector).length - 1;
+      this.index = this.$collection.formView().hasChildren()
+        ? Math.max.apply(null, Object.keys(this.$collection.formView().getChildren()))
+        : -1;
     },
 
     add: function (addCallback, addCallback2, index) {
