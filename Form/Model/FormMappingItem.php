@@ -242,7 +242,7 @@ class FormMappingItem
     {
         $rootItem = new FormMappingItem($prototype->getName(), [
             'by_reference' => $prototype->getConfig()->getByReference(),
-            'mapped' => $prototype->getConfig()->getMapped(),
+            'mapped' => $prototype->getConfig()->getMapped() && !$prototype->getConfig()->getDisabled(),
             'property_path' => $prototype->getPropertyPath(),
         ]);
 
@@ -258,7 +258,7 @@ class FormMappingItem
 
             $childItem = new FormMappingItem($childName, [
                 'by_reference' => $child->getConfig()->getByReference(),
-                'mapped' => $child->getConfig()->getMapped(),
+                'mapped' => $child->getConfig()->getMapped() && !$child->getConfig()->getDisabled(),
                 'property_path' => $child->getPropertyPath(),
             ]);
 
