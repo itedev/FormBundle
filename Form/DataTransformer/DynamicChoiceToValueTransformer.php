@@ -33,7 +33,9 @@ class DynamicChoiceToValueTransformer implements DataTransformerInterface
      */
     public function transform($choice)
     {
-        return (string) current($this->choiceList->getValuesForChoices([$choice]));
+        $value = current($this->choiceList->getValuesForChoices([$choice]));
+
+        return (string) (false !== $value ? $value : $choice);
     }
 
     /**
