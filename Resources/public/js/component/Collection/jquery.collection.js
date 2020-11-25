@@ -14,7 +14,9 @@
     constructor: Collection,
 
     initialize: function () {
-      this.index = this.$collection.find(this.itemSelector).length - 1;
+      this.index = this.$collection.formView().hasChildren()
+        ? Math.max.apply(null, Object.keys(this.$collection.formView().getChildren()))
+        : -1;
     },
 
     add: function (addCallback, addCallback2, index) {
@@ -175,12 +177,14 @@
       return this.$collection.find(this.itemSelector);
     },
 
-    item: function (index, ordinal) {
-      ordinal = 'undefined' !== typeof ordinal ? ordinal : false;
+    item: function (index, ordinal = false) {
+      if (!ordinal) {
+        let itemView = this.$collection.formView().getChild(index);
 
-      return !ordinal
-        ? this.$collection.formView().getChild(index).getElement()
-        : this.$collection.find(this.itemSelector).eq(index);
+        return null !== itemView ? itemView.getElement() : $([]);
+      } else {
+        return this.$collection.find(this.itemSelector).eq(index);
+      }
     },
 
     currentIndex: function () {

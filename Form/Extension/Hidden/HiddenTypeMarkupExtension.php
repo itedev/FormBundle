@@ -116,7 +116,7 @@ class HiddenTypeMarkupExtension extends AbstractTypeExtension
 
         if (isset($options['markup'])) {
             if (is_callable($options['markup'])) {
-                return call_user_func_array($options['markup'], [$parentForm, $parentData]);
+                return call_user_func_array($options['markup'], [$parentForm, $parentData, $form->getData()]);
             } elseif (is_scalar($options['markup'])) {
                 return $options['markup'];
             } else {

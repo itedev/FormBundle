@@ -39,6 +39,11 @@ class DynamicChoiceType extends AbstractType
     private $choiceListCache = [];
 
     /**
+     * @var array
+     */
+    private $choicesCache = [];
+
+    /**
      * @param RegistryInterface $registry
      * @param SFFormExtensionInterface $sfForm
      */
@@ -133,18 +138,19 @@ class DynamicChoiceType extends AbstractType
     {
         $registry = $this->registry;
         $choiceListCache = &$this->choiceListCache;
+        $choicesCache = &$this->choicesCache;
 
         $choiceList = function (Options $options) use (&$choiceListCache) {
-//            $hash = hash('sha256', serialize($options['choices']));
-            $preferredChoices = array_slice($options['choices'], 0, $options['choice_limit'], true);
-
-            return new DynamicChoiceList($options['choices'], $preferredChoices);
+//            $domain = $options['domain'];
 //
-//            if (!isset($choiceListCache[$hash])) {
-//                $choiceListCache[$hash] = new DynamicChoiceList($options['choices'], $preferredChoices);
+//            if (!isset($choiceListCache[$domain])) {
+                $preferredChoices = array_slice($options['choices'], 0, $options['choice_limit'], true);
+
+                return new DynamicChoiceList($options['choices'], $preferredChoices);
+//                $choiceListCache[$domain] = new DynamicChoiceList($options['choices'], $preferredChoices);
 //            }
 //
-//            return $choiceListCache[$hash];
+//            return $choiceListCache[$domain];
         };
 
         $emptyData = function (Options $options) {
@@ -159,12 +165,18 @@ class DynamicChoiceType extends AbstractType
             return $options['required'] ? null : '';
         };
 
-        $choicesNormalizer = function (Options $options, $choices) use ($registry) {
-            if (null !== $options['choice_builder']) {
-                return call_user_func_array($options['choice_builder'], [$registry]);
+        $choicesNormalizer = function (Options $options, $choices) use ($registry, &$choicesCache) {
+            $domain = $options['domain'];
+
+            if (!isset($choicesCache[$domain])) {
+                $choices = null !== $options['choice_builder']
+                    ? call_user_func_array($options['choice_builder'], [$registry])
+                    : $choices;
+
+                $choicesCache[$domain] = $choices;
             }
 
-            return $choices;
+            return $choicesCache[$domain];
         };
 
         $placeholderNormalizer = function (Options $options, $placeholder) {

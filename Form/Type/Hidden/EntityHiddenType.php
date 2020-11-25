@@ -42,7 +42,8 @@ class EntityHiddenType extends AbstractType
             $options['class'],
             $options['loader'],
             $options['multiple'],
-            $options['separator']
+            $options['separator'],
+            $options['strict']
         ));
     }
 
@@ -89,6 +90,7 @@ class EntityHiddenType extends AbstractType
             'em' => null,
             'query_builder' => null,
             'loader' => $loader,
+            'strict' => true,
             'multiple' => false,
             'data_class' => null,
             'separator' => ',',
@@ -104,6 +106,7 @@ class EntityHiddenType extends AbstractType
             'loader' => ['null', 'Symfony\Bridge\Doctrine\Form\ChoiceList\EntityLoaderInterface'],
             'multiple' => ['bool'],
             'separator' => ['string'],
+            'strict' => ['bool'],
         ]);
     }
 
