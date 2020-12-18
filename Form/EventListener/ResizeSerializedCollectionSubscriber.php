@@ -127,10 +127,13 @@ class ResizeSerializedCollectionSubscriber implements EventSubscriberInterface
                 unset($previousData[$name]);
             }
         }
-        foreach ($data as $name => $item) {
-            if (!isset($previousData[$name])) {
-                // added item
-                $previousData[$name] = $item;
+        
+        if (is_array($data) || ($data instanceof \Traversable)) {
+            foreach ($data as $name => $item) {
+                if (!isset($previousData[$name])) {
+                    // added item
+                    $previousData[$name] = $item;
+                }
             }
         }
 
