@@ -689,17 +689,20 @@
       $element.data('sfInitialized', true);
     },
 
-    initializeRecursive: function (force) {
-      force = force || false;
+    initializeRecursive: function (force = false) {
+      let initialized = false;
 
+      let $element;
       if (this.isInitializable()) {
         // view is initializable
-        var $element = this.getElement();
+        $element = this.getElement();
         if (0 !== $element.length) {
           // element exists
           if (!this.isInitialized($element) || force) {
             this.initialize($element, 'forward');
             this.setInitialized($element);
+
+            initialized = true;
           }
         }
       }
@@ -712,14 +715,16 @@
         if (0 !== $element.length) {
           // element exists
           // if (!this.isInitialized($element) || force) {
-            this.initialize($element, 'backward');
-            // this.setInitialized($element);
+          this.initialize($element, 'backward');
+          // this.setInitialized($element);
           // }
         }
       }
 
       if ($element) {
-        $element.trigger('post-initialize.ite.form');
+        $element.trigger('post-initialize.ite.form', {
+          initialized: initialized
+        });
       }
 
       return this;

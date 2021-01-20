@@ -57,6 +57,11 @@
     </div>
 {% endblock ite_ajax_file_widget %}
 
+{%- block ite_inputmask_integer_widget -%}
+    {%- set type = 'text' -%}
+    {{ block('form_widget_simple') }}
+{%- endblock ite_inputmask_integer_widget -%}
+
 {# refactor below #}
 
 {#{% block ite_fileupload_file_widget %}#}
