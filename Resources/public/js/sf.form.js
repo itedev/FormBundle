@@ -297,7 +297,7 @@
     },
 
     getOption: function (option, defaultValue) {
-      defaultValue = defaultValue || null;
+      defaultValue = 'undefined' !== typeof defaultValue ? defaultValue : null;
 
       return this.hasOption(option) ? this.options[option] : defaultValue;
     },
@@ -689,7 +689,7 @@
       $element.data('sfInitialized', true);
     },
 
-    initializeRecursive: function (force = false) {
+    initializeRecursive: function (force = false, initial = false) {
       let initialized = false;
 
       let $element;
@@ -698,7 +698,7 @@
         $element = this.getElement();
         if (0 !== $element.length) {
           // element exists
-          if (!this.isInitialized($element) || force) {
+          if ((!this.isInitialized($element) && (!this.getOption('deferred_initialization', false) || !initial)) || force) {
             this.initialize($element, 'forward');
             this.setInitialized($element);
 
@@ -707,16 +707,18 @@
         }
       }
       $.each(this.children, function (name, childView) {
-        childView.initializeRecursive(force);
+        childView.initializeRecursive(force, initial);
       });
       // @todo: refactor
       if (this.isInitializable()) {
         // view is initializable
         if (0 !== $element.length) {
           // element exists
-          // if (!this.isInitialized($element) || force) {
-          this.initialize($element, 'backward');
-          // this.setInitialized($element);
+          // if ((!this.isInitialized($element) && (!this.getOption('deferred_initialization', false) || !initial)) || force) {
+            this.initialize($element, 'backward');
+            // this.setInitialized($element);
+
+            // initialized = true;
           // }
         }
       }
@@ -1122,7 +1124,7 @@
 
     initialize: function (force) {
       $.each(this.forms, function (name, view) {
-        view.initializeRecursive(force);
+        view.initializeRecursive(force, true);
       });
 
       return this;
