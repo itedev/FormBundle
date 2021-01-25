@@ -698,7 +698,7 @@
         $element = this.getElement();
         if (0 !== $element.length) {
           // element exists
-          if ((!this.isInitialized($element) && (!this.getOption('deferred_initialization', false) || !initial)) || force) {
+          if ((!this.isInitialized($element) && (!initial || !this.getOption('deferred_initialization', false))) || force) {
             this.initialize($element, 'forward');
             this.setInitialized($element);
 
