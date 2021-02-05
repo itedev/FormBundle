@@ -2,7 +2,9 @@
 
 namespace ITE\FormBundle\Form\Extension;
 
+use Doctrine\Common\Persistence\ObjectManager;
 use ITE\FormBundle\Form\ChoiceList\DynamicEntityChoiceList;
+use Symfony\Bridge\Doctrine\Form\ChoiceList\ORMQueryBuilderLoader;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -61,6 +63,15 @@ class EntityTypeKeepDataOptionExtension extends AbstractTypeExtension
     {
         $choiceListCache = &$this->choiceListCache;
         $propertyAccessor = $this->propertyAccessor;
+        $type = $this;
+
+        $extraOptionLoader = function (Options $options) use ($type) {
+            $queryBuilder = (null !== $options['extra_option_query_builder'])
+                ? $options['extra_option_query_builder']
+                : $options['em']->getRepository($options['class'])->createQueryBuilder('e');
+
+            return $type->getLoader($options['em'], $queryBuilder, $options['class']);
+        };
 
         $choiceList = function (Options $options) use (&$choiceListCache, $propertyAccessor) {
             // Support for closures
@@ -105,6 +116,10 @@ class EntityTypeKeepDataOptionExtension extends AbstractTypeExtension
                 ? spl_object_hash($options['group_by'])
                 : $options['group_by'];
 
+            $extraOptionLoaderHash = is_object($options['extra_option_loader'])
+                ? spl_object_hash($options['extra_option_loader'])
+                : $options['extra_option_loader'];
+
             $hash = hash('sha256', json_encode([
                 spl_object_hash($options['em']),
                 $options['class'],
@@ -113,6 +128,8 @@ class EntityTypeKeepDataOptionExtension extends AbstractTypeExtension
                 $choiceHashes,
                 $preferredChoiceHashes,
                 $groupByHash,
+                $options['allow_extra_option'],
+                $extraOptionLoaderHash,
             ]));
 
             if (!isset($choiceListCache[$hash])) {
@@ -124,6 +141,8 @@ class EntityTypeKeepDataOptionExtension extends AbstractTypeExtension
                     $options['choices'],
                     $options['preferred_choices'],
                     $options['group_by'],
+                    $options['allow_extra_option'],
+                    $options['extra_option_loader'],
                     $propertyAccessor
                 );
             }
@@ -134,10 +153,24 @@ class EntityTypeKeepDataOptionExtension extends AbstractTypeExtension
         $resolver->setDefaults([
             'keep_data_option' => false,
             'choice_list' => $choiceList,
+            'allow_extra_option' => false,
+            'extra_option_query_builder' => null,
+            'extra_option_loader' => $extraOptionLoader,
         ]);
         $resolver->setAllowedTypes([
             'keep_data_option' => ['bool'],
+            'allow_extra_option' => ['bool'],
+            'extra_option_loader' => ['null', 'Symfony\Bridge\Doctrine\Form\ChoiceList\EntityLoaderInterface'],
         ]);
+    }
+
+    public function getLoader(ObjectManager $manager, $queryBuilder, $class)
+    {
+        return new ORMQueryBuilderLoader(
+            $queryBuilder,
+            $manager,
+            $class
+        );
     }
 
     public function getExtendedType(): string

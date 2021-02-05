@@ -3,11 +3,13 @@
 namespace ITE\FormBundle\Form\ChoiceList;
 
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use ITE\Common\Util\ReflectionUtils;
 use Symfony\Bridge\Doctrine\Form\ChoiceList\EntityChoiceList;
 use Symfony\Bridge\Doctrine\Form\ChoiceList\EntityLoaderInterface;
 use Symfony\Component\Form\Exception\InvalidArgumentException;
 use Symfony\Component\Form\Exception\InvalidConfigurationException;
+use Symfony\Component\Form\Exception\RuntimeException;
 use Symfony\Component\Form\Exception\StringCastException;
 use Symfony\Component\Form\FormConfigBuilder;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
@@ -22,6 +24,26 @@ use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 class DynamicEntityChoiceList extends EntityChoiceList
 {
     /**
+     * @var ObjectManager
+     */
+    private $em;
+
+    /**
+     * @var EntityLoaderInterface
+     */
+    private $entityLoader;
+
+    /**
+     * @var ClassMetadata
+     */
+    private $classMetadata;
+
+    /**
+     * @var string
+     */
+    private $class;
+
+    /**
      * @var string
      */
     private $labelPath;
@@ -30,6 +52,31 @@ class DynamicEntityChoiceList extends EntityChoiceList
      * @var string
      */
     private $groupPath;
+
+    /**
+     * @var bool
+     */
+    private $allowExtraOption;
+
+    /**
+     * @var EntityLoaderInterface
+     */
+    private $extraOptionEntityLoader;
+
+    /**
+     * @var array
+     */
+    private $idField = null;
+
+    /**
+     * @var bool
+     */
+    private $idAsIndex = false;
+
+    /**
+     * @var bool
+     */
+    private $idAsValue = false;
 
     /**
      * @var PropertyAccessorInterface
@@ -44,6 +91,8 @@ class DynamicEntityChoiceList extends EntityChoiceList
         $entities = null,
         array $preferredEntities = array(),
         $groupPath = null,
+        bool $allowExtraOption = false,
+        EntityLoaderInterface $extraOptionEntityLoader = null,
         PropertyAccessorInterface $propertyAccessor = null
     ) {
         parent::__construct(
@@ -57,9 +106,26 @@ class DynamicEntityChoiceList extends EntityChoiceList
             $propertyAccessor
         );
 
+        $this->em = $manager;
+        $this->entityLoader = $entityLoader;
+        $this->classMetadata = $manager->getClassMetadata($class);
+        $this->class = $this->classMetadata->getName();
         $this->labelPath = $labelPath;
         $this->groupPath = $groupPath;
+        $this->allowExtraOption = $allowExtraOption;
+        $this->extraOptionEntityLoader = $extraOptionEntityLoader;
         $this->propertyAccessor = $propertyAccessor ?: PropertyAccess::createPropertyAccessor();
+
+        $identifier = $this->classMetadata->getIdentifierFieldNames();
+
+        if (1 === count($identifier)) {
+            $this->idField = $identifier[0];
+            $this->idAsValue = true;
+
+            if (in_array($this->classMetadata->getTypeOfField($this->idField), ['integer', 'smallint', 'bigint'])) {
+                $this->idAsIndex = true;
+            }
+        }
     }
 
     public function addDataChoices($data, bool $asPreferred = false): void
@@ -94,6 +160,47 @@ class DynamicEntityChoiceList extends EntityChoiceList
 //
 //        return array_slice($views, 0, $limit, true);
 //    }
+
+    public function getChoicesForValues(array $values)
+    {
+        if (!$this->allowExtraOption) {
+            return parent::getChoicesForValues($values);
+        }
+
+        $unorderedEntities = $this->extraOptionEntityLoader->getEntitiesByIds($this->idField, $values);
+        $entitiesByValue = [];
+        $entities = [];
+
+        foreach ($unorderedEntities as $entity) {
+            $value = $this->fixValue(current($this->getIdentifierValues($entity)));
+            $entitiesByValue[$value] = $entity;
+        }
+
+        foreach ($values as $i => $value) {
+            if (isset($entitiesByValue[$value])) {
+                $entities[$i] = $entitiesByValue[$value];
+            }
+        }
+
+        return $entities;
+    }
+
+    public function getValuesForChoices(array $entities)
+    {
+        if (!$this->allowExtraOption) {
+            return parent::getValuesForChoices($entities);
+        }
+
+        $values = [];
+
+        foreach ($entities as $i => $entity) {
+            if ($entity instanceof $this->class) {
+                $values[$i] = $this->fixValue(current($this->getIdentifierValues($entity)));
+            }
+        }
+
+        return $values;
+    }
 
     protected function addChoicesInner($choices, array $labels, array $preferredChoices): void
     {
@@ -184,6 +291,20 @@ class DynamicEntityChoiceList extends EntityChoiceList
 
         ReflectionUtils::setValue($this, 'preferredViews', $preferredViews);
         ReflectionUtils::setValue($this, 'remainingViews', $remainingViews);
+    }
+
+    private function getIdentifierValues($entity)
+    {
+        if (!$this->em->contains($entity)) {
+            throw new RuntimeException(
+                'Entities passed to the choice field must be managed. Maybe '.
+                'persist them in the entity manager?'
+            );
+        }
+
+        $this->em->initializeObject($entity);
+
+        return $this->classMetadata->getIdentifierValues($entity);
     }
 
     protected function extractLabels($choices, array &$labels): void
