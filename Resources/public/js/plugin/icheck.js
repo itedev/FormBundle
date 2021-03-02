@@ -42,7 +42,7 @@
         });
         $element.icheck('updated');
       } else {
-        $element.icheck(data ? 'checked' : 'unchecked');
+        $element.icheck(true == data ? 'checked' : 'unchecked');
       }
 
       return true;
