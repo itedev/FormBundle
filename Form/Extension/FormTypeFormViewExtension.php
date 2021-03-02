@@ -10,6 +10,7 @@ use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use ITE\FormBundle\Form\FormInterface as ExtendedFormInterface;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
  * Class FormTypeFormViewExtension
@@ -69,6 +70,22 @@ class FormTypeFormViewExtension extends AbstractTypeExtension implements ClientF
             'required' => $view->vars['required'],
             'errors' => iterator_to_array($view->vars['errors']),
             'valid' => $view->vars['valid'],
+        ]);
+        if (isset($options['deferred_initialization'])) {
+            $clientView->setOption('deferred_initialization', $options['deferred_initialization']);
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        $resolver->setOptional([
+            'deferred_initialization',
+        ]);
+        $resolver->setAllowedTypes([
+            'deferred_initialization' => 'bool',
         ]);
     }
 

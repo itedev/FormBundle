@@ -2,6 +2,7 @@ parameters:
     ite_form.form.type.plugin.inputmask.money.class:    ITE\FormBundle\Form\Type\Plugin\Inputmask\MoneyType
     ite_form.form.type.plugin.inputmask.number.class:   ITE\FormBundle\Form\Type\Plugin\Inputmask\NumberType
     ite_form.form.type.plugin.inputmask.integer.class:  ITE\FormBundle\Form\Type\Plugin\Inputmask\IntegerType
+    ite_form.form.type.plugin.inputmask.percent.class:  ITE\FormBundle\Form\Type\Plugin\Inputmask\PercentType
 
 services:
     ite_form.form.type.plugin.inputmask.money:
@@ -21,3 +22,9 @@ services:
         arguments: [ %ite_form.plugin.inputmask.options% ]
         tags:
             - { name: form.type, alias: ite_inputmask_integer }
+
+    ite_form.form.type.plugin.inputmask.percent:
+        class: %ite_form.form.type.plugin.inputmask.percent.class%
+        arguments: [ %ite_form.plugin.inputmask.options% ]
+        tags:
+            - { name: form.type, alias: ite_inputmask_percent }
