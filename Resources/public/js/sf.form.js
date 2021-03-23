@@ -959,7 +959,7 @@
             var element = $element.get(0);
             if ('input' === element.nodeName.toLowerCase() && rxCheckable.test(element.type)) {
               // checkbox or radio
-              $element.prop('checked', data);
+              $element.prop('checked', true == data);
             } else if (rxText.test(element.nodeName) || rxSelect.test(element.nodeName)) {
               // input, textarea or select
               $element.val(data);
