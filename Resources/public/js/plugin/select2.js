@@ -263,20 +263,24 @@
       }
     },
 
-    addOption: function ($element, data, setValue) {
+    addOption: function ($element, data, setValue = true, triggerEvent = true) {
       setValue = 'undefined' !== typeof setValue ? setValue : true;
 
-      var $option = this.createOptionFromData($element, data);
-      if (0 === $element.children('[value="' + data.id + '"]').length) {
+      let $option = $element.children('[value="' + data.id + '"]');
+      if (0 === $option.length) {
+        $option = this.createOptionFromData($element, data);
+
         $element.append($option).triggerHandler('change.select2');
       }
 
       if (setValue) {
-        $element
-          .val(data.id)
-          .trigger('change')
-        ;
+        $element.val(data.id);
       }
+      if (triggerEvent) {
+        $element.trigger('change');
+      }
+
+      return $option;
     },
 
     createOptionFromData: function ($element, data) {

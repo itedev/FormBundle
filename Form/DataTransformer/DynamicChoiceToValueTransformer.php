@@ -55,7 +55,7 @@ class DynamicChoiceToValueTransformer implements DataTransformerInterface
 
         $choices = $this->choiceList->getChoicesForValues([$value]);
         if (1 !== count($choices)) {
-            $this->choiceList->setData($value);
+            $this->choiceList->addDataChoices($value);
 
             $choices = $this->choiceList->getChoicesForValues([$value]);
             if (1 !== count($choices)) {

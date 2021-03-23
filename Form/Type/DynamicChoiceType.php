@@ -80,7 +80,7 @@ class DynamicChoiceType extends AbstractType
             $data = $form->getData();
             $empty = null === $data || [] === $data;
             if (!$empty) {
-                $options['choice_list']->setData($data, !$options['preload_choices']);
+                $options['choice_list']->addDataChoices($data, !$options['preload_choices']);
             }
 
             $dynamicChoiceDomainBag = $this->sfForm->getDynamicChoiceDomainBag();

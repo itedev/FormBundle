@@ -24,18 +24,14 @@ class DynamicChoiceList extends SimpleChoiceList
         parent::__construct($choices, $preferredChoices);
     }
 
-    /**
-     * @param mixed $data
-     * @param bool $asPreferred
-     */
-    public function setData($data, $asPreferred = false)
+    public function addDataChoices($data, bool $asPreferred = false): void
     {
         if (!is_array($data) && !($data instanceof \Traversable)) {
             $data = [$data];
         }
         $data = array_combine($data, $data);
 
-        $this->addChoicesInner($data, [], $asPreferred ? array_keys($data) : []);
+        $this->addChoicesInner($data, [], $asPreferred ? $data : []);
     }
 
     public function clear()
@@ -62,11 +58,6 @@ class DynamicChoiceList extends SimpleChoiceList
         return array_slice($views, 0, $limit, true);
     }
 
-    /**
-     * @param $choices
-     * @param array $labels
-     * @param array $preferredChoices
-     */
     protected function addChoicesInner($choices, array $labels, array $preferredChoices)
     {
         $preferredViews = $this->getPreferredViews();

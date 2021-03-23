@@ -1172,6 +1172,35 @@
       return this.has(domain) ? this.domainChoices[domain] : {};
     },
 
+    getDomainLabelByValue: function (domain, value) {
+      if (!this.has(domain)) {
+        return null;
+      }
+
+      let choices = this.get(domain);
+
+      return choices.hasOwnProperty(value) ? choices[value] : null;
+    },
+
+    getDomainValueByLabel: function (domain, label) {
+      if (!this.has(domain)) {
+        return null;
+      }
+
+      let choices = this.get(domain);
+
+      let value = null;
+      $.each(choices, (currentValue, currentLabel) => {
+        if (currentLabel === label) {
+          value = currentValue;
+
+          return false; // break
+        }
+      });
+
+      return value;
+    },
+
     set: function (domain, choices) {
       this.domainChoices[domain] = choices;
 
