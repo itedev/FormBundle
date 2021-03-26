@@ -39,7 +39,11 @@ class AbstractChoiceType extends AbstractPluginType implements ClientFormTypeInt
     public function buildClientView(ClientFormView $clientView, FormView $view, FormInterface $form, array $options)
     {
         $clientView->addPlugin(Select2Plugin::getName(), [
-            'extras' => (object) [],
+            'extras' => [
+                'allow_create' => $options['allow_create'],
+                'create_option_format' => $options['create_option_format'],
+                'case_sensitive' => $options['case_sensitive'],
+            ],
             'options' => (object) array_replace_recursive($this->options, $options['plugin_options'])
         ]);
     }
@@ -59,6 +63,25 @@ class AbstractChoiceType extends AbstractPluginType implements ClientFormTypeInt
             0,
             'ite_select2'
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        parent::setDefaultOptions($resolver);
+
+        $resolver->setDefaults([
+            'allow_create' => false,
+            'create_option_format' => null, // available placeholders: %term%
+            'case_sensitive' => true,
+        ]);
+        $resolver->setAllowedTypes([
+            'allow_create' => ['bool'],
+            'create_option_format' => ['null', 'string'],
+            'case_sensitive' => ['bool'],
+        ]);
     }
 
     /**

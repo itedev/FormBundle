@@ -128,37 +128,59 @@
         options = $.extend(true, {
           tags: true,
           createTag: function (params) {
-            var term = $.trim(params.term);
-
+            let term = $.trim(params.term);
             if ('' === term) {
               return null;
             }
 
-            var createOptionText = (extras.hasOwnProperty('create_option_format') && 'string' === typeof extras['create_option_format'])
-              ? extras['create_option_format'].replace('%term%', term)
-              : term;
+            let caseSensitive = extras.hasOwnProperty('case_sensitive')
+              && true === extras.case_sensitive;
+            let getNormalizedText = function (text) {
+              return caseSensitive ? text : text.toLowerCase();
+            }
 
-            if (extras.hasOwnProperty('case_sensitive') && extras.case_sensitive === false) {
-              var optionsMatch = false;
+            let normalizedTerm = getNormalizedText(term);
+            let matched = false;
 
-              if ('undefined' !== typeof this._request) {
-                $.each(this._request.responseJSON, function () {
-                  if (this.text.toLowerCase() == term.toLowerCase()) {
-                    optionsMatch = true;
-                  }
-                });
-              }
+            if ('undefined' !== typeof this._request) {
+              $.each(this._request.responseJSON, function (i, option) {
+                let optionText = option.text;
+                let normalizedOptionText = getNormalizedText(optionText);
 
-              this.$element.find('option').each(function() {
-                if (this.value.toLowerCase().indexOf(term.toLowerCase()) > -1) {
-                  optionsMatch = true;
+                if (normalizedOptionText === normalizedTerm) {
+                  matched = true;
+
+                  return false; // break
                 }
               });
-
-              if (optionsMatch) {
-                return null;
-              }
             }
+
+            if (!matched) {
+              this.$element.find('option').each((i, option) => {
+                let $option = $(option);
+
+                if ($option.data('hidden')) {
+                  return;
+                }
+
+                let optionText = $.trim($option.text());
+                let normalizedOptionText = getNormalizedText(optionText);
+
+                if (normalizedOptionText === normalizedTerm) {
+                  matched = true;
+
+                  return false; // break
+                }
+              });
+            }
+
+            if (matched) {
+              return null;
+            }
+
+            let createOptionText = (extras.hasOwnProperty('create_option_format') && 'string' === typeof extras['create_option_format'])
+              ? extras['create_option_format'].replace('%term%', term)
+              : term;
 
             return {
               id: term,
