@@ -276,7 +276,7 @@
       if (setValue) {
         $element.val(data.id);
       }
-      if (triggerEvent) {
+      if (setValue && triggerEvent) {
         $element.trigger('change');
       }
 
