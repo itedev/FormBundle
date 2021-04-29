@@ -84,6 +84,10 @@
         var $textContainer = $container.find('.ite-editable-text');
         var $formContainer = $container.find('.ite-editable-form');
 
+        if (!$form.length) {
+          $form = $container.find('.form-inline');
+        }
+
         var data = {
           class: $container.attr('data-ite-editable-class'),
           identifier: $container.attr('data-ite-editable-identifier'),
@@ -95,7 +99,7 @@
         $.ajax({
           type: $form.attr('method'),
           url: $form.attr('action'),
-          data: $.param(data) + '&' + $form.serialize(),
+          data: $.param(data) + '&' + $form.find(':input').serialize(),
           dataType: 'json',
           success: function (response) {
             var $html = $(response.html);

@@ -237,6 +237,7 @@ class EditableManager implements EditableManagerInterface
 
         $resolver->setDefaults([
             'inline' => true,
+            'form_inline' => false,
             'format' => 'html',
             'text_template' => null,
             'formatter' => null,
@@ -261,6 +262,7 @@ class EditableManager implements EditableManagerInterface
         ]);
         $resolver->setAllowedTypes([
             'inline' => ['bool'],
+            'form_inline' => ['bool'],
             'format' => ['string'],
             'text_template' => ['null', 'string'],
             'formatter' => ['null', 'string'],
